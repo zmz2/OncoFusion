@@ -29,6 +29,8 @@ python scripts/stress_offline.py
 
 ## 交付验证与继续验证
 
-当前机器的实际测试数、覆盖率、HTTP/stress 数字以 `verification/` 的机器可读文件为准。CI 配置覆盖 Python 3.11/3.12/3.13；是否已远端通过以对应 GitHub Actions 运行结果为准。
+当前测试数、覆盖率、HTTP/stress 与三版本 CI 实测状态见 `verification/FOLLOWUP.md` 和 `verification/followup_summary.json`。起始工程的历史 JSON 已在索引中单独标明。
 
-待真实环境核验：实际供应商协议、长上下文与速率限制、完整上游数据下载/对齐、真实答案和引用质量、Docker 镜像构建。已有执行脚本与验收指令，具体结果应写入 TASK 中约定的报告。模拟通过说明已覆盖的工程条件；新增供应商或新版本数据继续通过相同边界测试。
+已通过完整公开数据准备/抽样联调及 Docker 构建/容器接口验收。待真实模型环境核验：供应商协议、长上下文与速率限制、真实答案和引用质量。具体结果写入 TASK 中约定的报告。新增供应商或新版本数据继续通过相同边界测试。
+
+本轮增加的回归覆盖 native REVISIONS 标签、未解决问题传递、消融参数贯穿检索、空字段与会议摘要来源标识、失败用量计费、24 个并发幂等请求、重启后请求重放、SSE 游标和跨域请求头。CI 中 `.github/workflows/container.yml` 通过实际 TCP 复核幂等和续传；`.github/workflows/public-data.yml` 下载并审计真实来源，仅保留统计与书目元数据，不导出论文或病例正文。
