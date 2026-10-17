@@ -96,4 +96,4 @@ def catalog() -> dict:
     return {"version": "2.0", "roles": CONTRACTS,
             "reuse": {"langgraph": "runtime dependency", "tooluniverse": "optional SDK for approved source snapshots",
                       "GeneAgent": "mechanism adaptation", "PaperQA2": "mechanism adaptation",
-                      "MDAgents": "design reference", "medspaCy": "design reference"}}
+                      "MDAgents": "design reference", "medspaCy": "optional actual ConText runtime; English mention attributes"}}

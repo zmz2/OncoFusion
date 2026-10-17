@@ -1,3 +1,11 @@
+## research_v1 接入补充
+
+网页读取 `/v1/workflows` 的 `recommended_config` 并完整放入 `POST /v1/runs.config`。省略 config 继续运行 legacy 兼容配置。新版增加 task_scoped 与 clinical_context 开关；选择缺失依赖返回 503，进入队列前失败。
+
+真实 API 同时要求 allow_remote_processing=true 与 data_class 为 synthetic/deidentified；unreviewed 返回 422。data_class 是操作者的审核声明，系统没有自动医学脱敏能力。当前共享 Bearer 模式用于单用户/单团队，公开多租户需要身份与行级数据隔离。
+
+新增 CaseInput.claim_fields 为原主张的结构化字段，来源是 CIViC 原始 claim.content 白名单；gold 修订信息继续隔离。v1 synthesis 的 decision.integration 固定包含 molecular、pathology_context、pathway、drug、literature 五项，每项有 status、statement、citations；有依据的项必须有原文引用，缺证项为 insufficient_evidence。MCQ/verification 的评分协议保持原样。事件 task_scope 返回资料种类与角色适用性，适合网页显示“未提供/不适用”。
+
 # API 契约 v1
 
 启动：`python -m oncofusion serve --host 127.0.0.1 --port 8000`。交互文档 `/docs`，规范 `/openapi.json`；静态导出：`python -m oncofusion openapi --out docs/openapi.json`。

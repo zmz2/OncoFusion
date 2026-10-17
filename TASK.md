@@ -1,118 +1,61 @@
-# OncoFusion：真实环境接手任务
+# OncoFusion 第一版接手任务
 
-## 上游复用版接手（先读）
+先读 `docs/V1_PROJECT_REVIEW.md`。首版目标是肿瘤异构证据整合与核验；当前只开发算法与后端，网页沿用 `/v1`。
 
-用户要求重新审查成熟 Agent 后，本轮增加实际 LangGraph 图执行和实际 ToolUniverse 读工具 SDK。完整逐角色说明在 `docs/AGENT_REUSE_AUDIT.md`，精确复用层级在 `upstream_manifest.json`。当前实现保留原25预设；新推荐候选使用 evidence_first、specialist_contracts、latest_role_board 三开关与 LangGraph。真实质量比较后再决定默认配置。
+## 当前路线
 
-```bash
-python -m pip install -e '.[dev,graph,biomedical]'
-export LANGSMITH_TRACING=false
-export LANGCHAIN_TRACING_V2=false
-python -m pytest -q
-python scripts/check_upstream.py --out results/upstream/checks.json
-# 下面额外访问公开 MyGene 数据库；不调用商业大模型
-python scripts/check_upstream.py --out results/upstream/live.json --live-database
-```
+使用 LangGraph 的有界协调器—专业模块流程、ToolUniverse 受限读工具、medspaCy 英语临床语境组件。主评测为 MTBBench 患者级纵向问答；CIViC-Fact 核验与文章内检索是组件评测，分别报告。自定义 synthesis 返回突变/病理语境/通路/药物/文献五项带来源的证据整合，缺证环节明确记录。
 
-网页继续使用 `/v1`；新增 GET `/v1/agents` 返回角色职责与来源，GET `/v1/workflows` 返回图说明和 recommended_config。POST `/v1/runs` 将该配置放入 config 即可。默认配置保持兼容，图执行需要 graph extra。本轮图节点串行，不含可恢复 checkpoint；任务级持久化和实验级 resume 保持原流程。
+`experiments/research_v1.json` 是首版运行配置。旧25预设保持兼容对照；API 省略 config 时仍为 legacy。网页读取 `/v1/workflows.recommended_config` 并作为 config 提交。能力来源详见 `upstream_manifest.json`；GeneAgent、TxAgent、PaperQA2 的完整 Agent/权重尚未加载。
 
-接通真实 API 后运行新增 `experiments/upstream_civic_dev.json`、`experiments/upstream_mtb_dev.json`：各24配置×3重复，含五个开发集来源组，先 `--dry-run` 确认执行数和预算。旧Full、仅图运行、仅三机制单开、完整候选、强单Agent、七角色与九机制消融分别报告。新增清单更长，应同时报告实际 token；调整预算时所有对照统一。
+## 1. 安装并复跑
 
-```bash
-python scripts/run_study.py --plan experiments/upstream_civic_dev.json --dataset data/civicfact --out results/upstream_civic --dry-run
-# 审核预算后追加 --allow-remote，并明确 execution-cap
-```
-
-ToolUniverse 用于自定义当前 synthesis 任务的审核后公开实体查询快照。先查看示例 `experiments/public_source_plan.json`；该计划明确表明查询已审查、来源条款已接受，使用前按实际情况调整。仅使用演示BRAF查询可运行：
-
-```bash
-python scripts/prepare_sources.py --plan experiments/public_source_plan.json --out data/source_snapshot --allow-remote
-# 对真实自定义研究案例，可增加 --case path/to/reviewed_synthesis.json
-```
-
-标准 CIViC-Fact/MTBBench 输入继续封闭，快照不会自动进入 benchmark；历史病例也不接入当前知识。SDK响应为数据库或搜索记录，原论文语义引用仍须核查。GeneAgent/PaperQA2 仅为方法适配；TxAgent 模型与 PaperQA2 完整规划器均未集成。完整替换 Literature 时先解决其所有额外LLM/embedding计费、语料限制和引用定位，保持同预算对照。
-
-## 目标与当前范围
-
-算法、后端、七角色、数据适配、基线、消融、统计、报告与大量模拟测试已经搭建。你的主要工作是**执行既有流程、核实真实供应商与正式数据、修复实际发现的问题、生成真实实验结果**。网页开发后置，保持 `/v1` 契约。
-
-阅读顺序：README → verification/README → docs/DATA → docs/EVALUATION → 本任务执行清单。架构说明在 docs/ARCHITECTURE，网页接口在 docs/API。
-
-科学任务：MTBBench 逐阶段文本选择题；CIViC-Fact 给定证据三分类核验；CIViC-Fact 独立同文章段落检索。三个任务分别报告。角色包括 Timeline、Genomics、Pathology & Context、Drug、Literature、Verifier、Decision。
-
-## 本轮接手前必读
-
-此次接手以已验证的现有代码为起点。新增的独立回归集中在 `test_hardening.py`、`test_usage_accounting.py` 和 `test_frontend_contract.py`。验证结果和真实数据联调记录见 `verification/FOLLOWUP.md`。
-
-固定的 CIViC-Fact 2026.06.09 使用 SUPPORTS/REVISIONS/NEI。保留原标签体系：REVISIONS 是需要修订的部分支持，禁止将其改写成 REFUTES。原主张、证据输入模型；gold revised_claim、人工解释和标签留给评测器。默认准备命令已使用 revisions scheme；旧版或用户数据可以显式选择 refutes scheme，各体系分别评测。
-
-真实 MTBBench 的空白源文件已适配并审计。CIViC 空标题、空许可证保留未知状态；检查 audit 的 missing_* 计数。独立检索中同文章同主张存在冲突标签的整组查询排除，先核对审计再明确允许 exclusions，报告保留实际分母。
-
-新增网页契约：POST /v1/runs 使用 Idempotency-Key 避免网络重试重复计费；相同 key 与内容返回原任务，修改内容返回 409。失败或中断后的明确重跑换新 key。SSE 支持 Last-Event-ID 和 after，按较大序号续传。数据上传、示例调用、进度与证据图接口保持 /v1。
-
-费用报告区分 reported usage 和估算 usage；失败前已观测的 token/费用继续计入。真实模式有估算、HTTP 重试、缺失 usage 时 cost_complete=false；estimated_cost_usd 与 known_cost_usd 分开。恢复实验时保留代码、模型、超时和重试策略指纹。
-
-## 0. 工作原则
-
-使用现成代码与计划开始，不重做研究方向。真实失败由实际输入、HTTP 响应或日志定位，最小修改并增加回归测试。原始公开数据保存在 data/，结果在 results/，密钥保存在本地环境。所有模拟结果保留 simulated 标记。
-
-当上游真实格式与已核查格式不同，保存版本、字段样例和错误，再编写明确适配；保持标签和未来资料隔离。模型质量不足则如实报告，使用开发集改善提示；测试集用于冻结后的比较。
-
-## 1. 安装与完整工程回归
+推荐 Python 3.11；核心轻量后端也测试3.12/3.13。CPU＋现有API即可。
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -e '.[dev]'
+python -m pip install -e '.[dev,graph,clinical]'
 export ONCOFUSION_PROVIDER=mock
+export LANGSMITH_TRACING=false
+export LANGCHAIN_TRACING_V2=false
+export LOGURU_LEVEL=WARNING
 python scripts/run_checks.py
 python scripts/http_smoke.py
 python scripts/stress_offline.py
-python -m oncofusion examples --out data/examples
-python -m oncofusion demo --out results/demo.json
+python -m oncofusion demo --config experiments/research_v1.json --out results/v1_mock_demo.json
 ```
 
-Windows 使用 `.venv\Scripts\Activate.ps1` 和 `$env:NAME="value"`。具体已测试版本在 constraints-tested.txt；项目范围依赖在 pyproject.toml。无需 GPU。
-
-验收：pytest 全通过；HTTP smoke 所有 checks 通过；stress 4,048 次全部通过。单元测试数量以本次 pytest 输出和 FOLLOWUP 记录为准。保存当前运行版本与测试日志。新变更完成后重跑，而不是仅复用交付报告。
-
-## 2. 获取正式数据并审计
-
-先阅读 docs/DATA 的来源许可，再运行：
+真实依赖环境的 medspaCy 和 LangGraph 测试应实际执行；仅核心安装会明确跳过可选依赖测试。记录当前commit、依赖和输出，不复用历史测试数字。Docker默认包含graph/clinical，来源快照准备使用下面的独立环境。medspaCy/spaCy 的已验证二进制依赖 NumPy 1.26.4，ToolUniverse 要求 NumPy >=2.2；两个 extra 分开安装，避免实际复现的 ABI 冲突。
 
 ```bash
-python scripts/prepare_data.py civicfact --raw data/raw/civicfact --out data/civicfact \
-  --download --accept-source-terms
-python scripts/prepare_data.py mtbbench --raw data/raw/mtbbench --out data/mtbbench \
-  --download --accept-source-terms
-python scripts/retrieval_study.py prepare --download --accept-source-terms \
-  --raw data/raw/civic_retrieval --out data/civic_retrieval
+python3.11 -m venv .venv-tools
+.venv-tools/bin/python -m pip install -e '.[dev,graph,biomedical]'
+.venv-tools/bin/python scripts/check_upstream.py --out results/upstream/tools.json
+# 仅在准备审核过的当前研究来源快照时运行：
+.venv-tools/bin/python scripts/prepare_sources.py --plan experiments/public_source_plan.json --out data/source_snapshot --allow-remote
 ```
 
-CIViC-Fact 已固定 commit/build 与二进制文件 blob 校验，MTBBench 先解析并保存 HF revision 后下载。脚本自动做字段白名单、路径映射、分组检查和审计。无需重新搜索默认数据源。
+推理服务继续在 `.venv` 或 Docker 中运行，两侧只交换已保存的 JSON 快照。Windows 对应使用 `.venv-tools\Scripts\python.exe`。
 
-重点检查各 audit：实际样本数、组数、标签、分区、长度、模态与许可证。MTBBench 的输入来源仅包含事件已宣布文件，答案在 `_gold`；同患者全部阶段保持同划分。CIViC 保留官方文章分组。当前版本标签为 SUPPORTS/REVISIONS/NEI，使用该词表与对应定义评测。
+## 2. 准备并审计正式数据
 
-检索准备出现 excluded 时先读 `retrieval_audit.json`。确认原因后用已下载文件重跑并加 `--allow-exclusions`，保留排除统计；正例按人工跨度覆盖率至少 75% 定义。文档中有完整命令。
-
-**只有实际失败时才需要自由开发：**HF 仓库访问/文件布局变化、供应商协议变化、真实文件中的未覆盖格式。保留原资料，补明确适配和测试，不放宽为任意字段自动猜测。
-
-## 3. 在正式内容上先跑模拟 smoke
+先阅读 `docs/DATA.md` 的来源许可。
 
 ```bash
-python scripts/run_study.py --plan experiments/civic_dev_smoke.json \
-  --dataset data/civicfact --out results/mock_civic_smoke
-python scripts/run_study.py --plan experiments/mtb_dev_smoke.json \
-  --dataset data/mtbbench --out results/mock_mtb_smoke
-python scripts/retrieval_study.py evaluate --dataset data/civic_retrieval --split dev \
-  --out results/retrieval/dev.json
+python scripts/prepare_data.py mtbbench --raw data/raw/mtbbench --out data/mtbbench --download --accept-source-terms
+python scripts/prepare_data.py civicfact --raw data/raw/civicfact --out data/civicfact --download --accept-source-terms
+python scripts/audit_dataset_scope.py --dataset data/mtbbench --out results/mtb_scope.json --require-heterogeneous
+python scripts/audit_dataset_scope.py --dataset data/civicfact --out results/civic_scope.json
 ```
 
-验收的是导入、协议、轨迹、预算与引用边界，模拟标签成绩单独归档。正式真实模型结果使用新的 results 目录。
+固定CIViC版使用 SUPPORTS/REVISIONS/NEI；REVISIONS保留原定义。新 claim_fields 只含原 claim.content 白名单；适配该版原生 type=claim 对象（兼容旧 table）、字典字段、disease 单数与 therapies 列表，完整保留药物组合。labels、revised_claim、reviews、civic.description 保持评测侧隔离。患者全部阶段保持同组和同划分。新导入格式确有差异时保留字段样例，明确适配并增加回归，不自动猜测标签/路径。
 
-## 4. 接通真实 API
+审查 scope 中的异构资料、角色适用数以及原数据审计的缺失/排除项。CIViC单文献核验不能证明患者级异构整合；无时间线或无可重排候选的子集不用于该机制的有效性结论。
 
-模型供应商与 key 由用户本地已有配置获得；服务端读取以下环境变量：
+## 3. 接入本地已有真实API，先小样本
+
+密钥从本地环境读取，不写入代码、日志、GitHub或网页请求。
 
 ```bash
 export ONCOFUSION_PROVIDER=openai_compatible
@@ -125,66 +68,32 @@ export ONCOFUSION_SEND_TEMPERATURE=false
 export ONCOFUSION_SEND_SEED=false
 export ONCOFUSION_TIMEOUT=60
 export ONCOFUSION_RETRIES=2
-# 按供应商实际 USD / 1M token 设置价格后再报告费用
-# export ONCOFUSION_INPUT_PRICE=...
-# export ONCOFUSION_OUTPUT_PRICE=...
-python -m oncofusion demo --out results/real_demo.json --allow-remote
+python -m oncofusion demo --config experiments/research_v1.json --out results/v1_real_demo.json --allow-remote
 ```
 
-这是 Chat Completions 兼容接口。`BASE_URL` 是 `/v1` 前缀，程序追加 `/chat/completions`。供应商使用 `max_completion_tokens` 时显式改 `TOKEN_PARAMETER`；不支持 JSON mode 则显式设 false。拒绝采样参数时保持 SEND_* false。只有支持时启用，保存配置用于全部对照。
+使用供应商实际 token 参数；需要时改 max_completion_tokens。价格按实际每百万token设置 ONCOFUSION_INPUT_PRICE/OUTPUT_PRICE，缺价格时保留不完整标记。截断/空内容的已报告usage会计入失败成本。真实病例必须先审核并标为deidentified；data_class是操作者声明，系统不自动完成脱敏。
 
-先看 real_demo：`simulated=false`、状态 completed、task 标签有效、引用原文匹配、usage 可解释；再分别跑四个示例。若模型因输出结构失败，用单独 `--preset schema_repair` 检验有界修复。正式所有对照采用一致的修复设置，写入冻结计划，而不是只给 Full 增加重试优势。
-
-模型返回不合法 JSON、截断、不可引用结论时，定位真实返回格式/长度并修复；始终保持真实模式显式失败策略。修改 max_output_tokens / 全局预算会改变实验，应统一并另存输出。
-
-## 5. 真实开发集 smoke 与成本估算
+然后运行两组×四系统×一次的开发集pilot，各组保留全部题目。首版各对照统一采用200,000总token上限；这是调用预算上限，UTF-8保守预检可能提前停止，实际费用按供应商usage记录。该上限由公开开发集模拟联调中两次单Agent预算耗尽调整而来，旧120,000预算对照仍保留：
 
 ```bash
-python scripts/run_study.py --plan experiments/civic_dev_smoke.json \
-  --dataset data/civicfact --out results/real_civic_smoke --dry-run
-python scripts/run_study.py --plan experiments/civic_dev_smoke.json \
-  --dataset data/civicfact --out results/real_civic_smoke --allow-remote
-python scripts/run_study.py --plan experiments/mtb_dev_smoke.json \
-  --dataset data/mtbbench --out results/real_mtb_smoke --allow-remote
+python scripts/run_study.py --plan experiments/v1_mtb_pilot.json --dataset data/mtbbench --out results/v1_mtb_pilot --dry-run
+python scripts/run_study.py --plan experiments/v1_civic_pilot.json --dataset data/civicfact --out results/v1_civic_pilot --dry-run
+# 审核执行数量和预算后，去掉 --dry-run 并加 --allow-remote
 ```
 
-smoke 选 5 个患者/文章组，各组全部样本，并跑 5 个基线系统。若执行数超过默认 1000，先看 dry-run 与费用，明确提升 `--execution-cap`。记录平均 tokens、费用、失败率、p95 时间、上下文上限和回查次数；按 workload 外推完整实验预算。
+验收：真实模式simulated=false；失败保留分母；每个角色读取相应资料；答案标签与引用原文匹配；随机复查至少20条引用的语义支持。记录成功率、失败原因、平均token、费用和延迟。测试通过不等于模型效果通过。预算不足时所有对照统一调整并使用新结果目录。
 
-验收：所有样本获得可解释终态；真实失败被记录，错误率/引用质量据实报告。工程成功与回答正确率分别呈现。长病例达到保守预检预算时统一调整预算或设计有依据的文档选择，保留原协议版本。
+## 4. 逐角色实验与科学结果
 
-## 6. 开发集完整实验
+pilot完成后使用 v1_mtb_ablations.json、v1_civic_ablations.json；每项三次重复。包含四个基线、七角色内部机制开关、七角色通用委派；MTB另含medspaCy关闭对照。先dry-run并明确 execution-cap，再进行付费运行。每个Agent的适用子集与实际输入范围一起报告，零适用项标记N/A。
 
-```bash
-python scripts/run_study.py --plan experiments/civic_dev_complete.json \
-  --dataset data/civicfact --out results/real_civic_dev --dry-run
-python scripts/run_study.py --plan experiments/mtb_dev_complete.json \
-  --dataset data/mtbbench --out results/real_mtb_dev --dry-run
-```
+独立检索按 docs/DATA 与 docs/EVALUATION 使用 retrieval_study.py，保留排除统计。完整旧41配置计划属于扩展研究，第一轮不必全部执行。所有真实对照同模型、同工具可访问范围、同预算上限，额外报告实际token。
 
-完整计划有 41 treatments × 3 次重复；主基线、9 机制、7 角色、信息消融、扰动、检索深度、两种预算均已准备。预算确认后给命令增加 `--allow-remote --execution-cap <明确上限>` 执行。长实验可以中断后 `--resume`；需要重试已失败样本时加 `--retry-failed`。
+开发集选择最终配置，冻结模型、提示、数据revision、代码SHA与协议，再复制计划切换test分区。保存 FROZEN_PROTOCOL.md；测试集性能按既定协议报告。公开基准的预训练污染风险与有限患者数在结果解释中说明。
 
-代码/输入/供应商/计划改变后使用新输出目录，保持旧轨迹。无需手动编辑结果来恢复。重点分析每个 Agent 的适用任务、机制变化及成本，零收益模块如实归纳。
+用 build_report.py 和 review_citations.py 生成表格与双人引用审核，具体命令在 docs/EVALUATION。最终交付 REAL_API_ACCEPTANCE.md、DATA_ACCEPTANCE.md、FINAL_REPORT.md，至少包含患者问答、主张核验、独立检索、角色消融、成本、引用质量和成功/失败案例。
 
-## 7. 冻结后运行测试集
-
-将最终模型、提示、参数、数据 revision、split、计划与代码 SHA 记入 `results/FROZEN_PROTOCOL.md`。提示已在 engine.DUTIES 与系统提示中，主要比较与脚本均准备好。
-
-采用 experiments/civic_test_complete.json 与 mtb_test_complete.json，仍先 dry-run，再按预算显式运行。独立段落检索切换 `--split test`。测试期间继续保存运行错误，但调参回到开发集并形成新协议。
-
-## 8. 生成报告与双人引用审查
-
-```bash
-python scripts/build_report.py --study results/real_civic_dev/study.json --out results/reports/civic_dev
-python scripts/build_report.py --study results/real_mtb_dev/study.json --out results/reports/mtb_dev
-python scripts/review_citations.py export --study results/real_civic_dev \
-  --inputs data/civicfact/inputs.jsonl --out results/citation_review --limit 200
-```
-
-评审各自填写 reviewer_A/B.csv 的 supports=yes/no/unclear，私有 mapping 不交给评审。用 review_citations.py score 输出一致率、kappa 与待仲裁项。语义支持需要实际审查，原文偏移通过仅证明引用完整性。
-
-最终报告至少包含：主比较、各 Agent 委派与机制消融、信息扰动、预算/成本、独立检索、真实引用质量、六个典型案例（成功/失败/纠错各有代表）。每项标明样本数、真实/模拟、失败分母、置信区间与来源版本。
-
-## 9. 后端真实任务验收
+## 5. 网页接口与范围
 
 ```bash
 export ONCOFUSION_API_TOKEN='GENERATE_A_LONG_RANDOM_SECRET'
@@ -192,12 +101,6 @@ export ONCOFUSION_CORS_ORIGINS='http://localhost:5173'
 python -m oncofusion serve --host 127.0.0.1 --port 8000
 ```
 
-经 API 测试：带鉴权获取例子；真实处理同意后运行示例；上传一份已脱敏自定义 CaseInput；查询状态/事件/SSE/graph；验证无效文件和超限处理；重启后检查 interrupted；重复查询既有 run_id。代码只在 queued 状态取消，避免虚报运行中请求已停止。默认单 ASGI 进程，生产多用户队列另行规划。
+测试示例、审核后的JSON/JSONL上传、recommended_config运行、状态/事件/SSE/graph、Idempotency-Key重放、缺依赖503和未审核远程请求422。检查synthesis的五项integration在API持久化后仍保留。
 
-有 Docker 时额外执行 `docker build -t oncofusion .`，运行时传 API_TOKEN 和明确模型环境。当前环境的 Docker 构建状态见验证记录。图像/PDF/VCF 解析后续单独设计，当前网页上传统一 JSON/JSONL。
-
-## 10. 交付结果文件
-
-新增 `results/REAL_API_ACCEPTANCE.md`（供应商/模型/参数、成功失败、费用）、`results/DATA_ACCEPTANCE.md`（版本/数量/排除原因）、`results/FROZEN_PROTOCOL.md`、`results/FINAL_REPORT.md`，附脚本生成的表格与轨迹路径。报告可以提交脱敏摘要，原始数据、密钥、患者记录与全文继续保留本地。
-
-可以继续自由开发的工作以真实失败与明确质量瓶颈为依据，例如更稳的供应商结构化输出、经标注验证的检索改进、数据对齐扩展。现有完整工程和实验套件是起点，保留可复现基线。
+当前单进程、单团队共享Bearer；面向独立用户上线前增加用户身份与数据所有权隔离。保持API版本和既有字段兼容。原始PDF/WSI/VCF、中文临床NLP、影像模型、完整PaperQA2规划器、自动试验匹配与多轮自主规划另行立项，以真实需求和评测为依据。

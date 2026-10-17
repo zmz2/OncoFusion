@@ -10,6 +10,7 @@ from collections.abc import Callable
 from pydantic import ValidationError
 from . import __version__
 from .agent_design import duty as specialist_duty
+from .specialists import MODULES, coverage, scoped_signals
 from .workflow import dependency_identity, execute as execute_workflow
 from .evidence import (canonical_variant, check_citations, deduplicate_documents,
                        deduplicate_findings, entity_compatibility, pathology_fields, polarity, retrieve, variant_mentions, visible_case)
@@ -55,6 +56,8 @@ class Engine:
     def run(self, case: CaseInput, config: RunConfig | None = None,
             on_event: Callable[[TraceEvent], None] | None = None) -> RunResult:
         config = config or RunConfig()
+        if not self.provider.simulated and case.data_class == "unreviewed":
+            raise ValueError("review and deidentify the case before remote model processing")
         visible = visible_case(case)
         docs = visible.documents
         started = time.monotonic()
@@ -72,9 +75,10 @@ class Engine:
                 on_event(event)
 
         prepared_roles: set[str] = set()
+        context_rows = None
 
         def tool(role, query=None):
-            nonlocal selected
+            nonlocal selected, context_rows
             if usage.tool_calls >= config.max_tool_calls:
                 raise BudgetExceeded("tool-call budget exhausted")
             usage.tool_calls += 1
@@ -118,6 +122,13 @@ class Engine:
                 signals["pathology_field_limit"] = 100
             if "drug" in prepared_roles:
                 signals["directions"] = {d.id: polarity(d.text) for d in selected} if a.drug_polarity else {}
+            if config.clinical_context and role in ("timeline", "pathology", "drug"):
+                if context_rows is None:
+                    from .clinical_context import assertions
+                    context_rows = assertions(docs, visible.entities)
+                signals["clinical_assertions"] = context_rows
+                signals["clinical_assertions_limit"] = 200
+                signals["clinical_assertions_semantics"] = "English rule-based mention attributes; verify in original text."
             if role == "verifier":
                 signals["verification_mode"] = "source_grounded" if a.external_verification else "reflection_only"
             emit("tool_completed", role, source_ids=[d.id for d in selected], query=query or "",
@@ -126,10 +137,15 @@ class Engine:
         def model(role, repair_attempt=0):
             nonlocal decision
             available = selected
+            if config.task_scoped and config.mode in ("multi", "fixed_five"):
+                available = MODULES[role].sources(available)
             if config.ablations.source_deduplication:
                 available = deduplicate_documents(available)
             current_reports = list({r.role: r for r in reports}.values()) if config.latest_role_board else reports
             flat = [f for r in current_reports for f in r.output.findings]
+            if config.task_scoped and role not in ("decision", "verifier"):
+                allowed = {d.id for d in available}
+                flat = [f for f in flat if all(c.document_id in allowed for c in f.citations)]
             if config.ablations.source_deduplication:
                 flat = deduplicate_findings(flat, docs)
             board = [f.model_dump(mode="json") for f in flat]
@@ -144,8 +160,11 @@ class Engine:
                        "options": visible.options, "entities": visible.entities.model_dump(),
                        "stage": visible.stage, "as_of_day": visible.as_of_day,
                        "sources": [] if reflection else [d.model_dump(mode="json") for d in available],
-                       "signals": {} if reflection else signals, "board": board,
+                       "signals": {} if reflection else scoped_signals(signals, available) if config.task_scoped else signals, "board": board,
                        "unresolved": unresolved if config.ablations.structured_board else json.dumps(unresolved, ensure_ascii=False)}
+            if config.task_scoped:
+                payload["claim_fields"] = visible.claim_fields.model_dump()
+                payload["task_scope"] = coverage(visible)
             executor = "generalist" if role in config.delegated_roles or config.mode not in ("multi", "fixed_five") else role
             role_duty = specialist_duty(role) if config.specialist_contracts else DUTIES[role]
             duty = role_duty if executor == role else "Analyze the supplied evidence as a generalist and complete the assigned output schema."
@@ -158,12 +177,24 @@ class Engine:
                       "Address unresolved items from the latest role reports; preserve concerns that remain unsupported. "
                       "Separate evidence insufficiency from uncertainty. Return JSON only, conforming to this schema: " +
                       json.dumps(schema.model_json_schema(), ensure_ascii=False))
-            if visible.task == "verification" and role == "decision":
-                system += " The answer must be exactly one of: " + ", ".join(visible.verification_labels) + "."
+            if visible.task == "verification":
+                system += " Use only this claim-relation vocabulary: " + ", ".join(visible.verification_labels) + "."
+                if role == "decision":
+                    system += " The answer must be exactly one of: " + ", ".join(visible.verification_labels) + "."
                 if visible.verification_scheme == "revisions":
                     system += " SUPPORTS means the entire claim is evidenced as written. REVISIONS means partial support with a necessary claim correction; it is not equivalent to REFUTES. NEI means missing, irrelevant or insufficient evidence. Infer corrections only from visible evidence; gold revised claims are never available."
             if visible.task == "mcq" and role == "decision":
                 system += " The answer must be exactly one option key."
+            if config.task_scoped:
+                system += (" This task measures evidence integration, not the best clinical treatment. "
+                           "Report clinical records as observations, curated databases as secondary knowledge, and search metadata as discovery hints. "
+                           "A search hit or a pathway membership is insufficient evidence of patient-specific drug benefit. "
+                           "For MCQ and synthesis, cite visible sources when they are supplied. Mark unobserved outcomes as predictions.")
+            if config.task_scoped and visible.task == "synthesis" and role == "decision":
+                system += (" Fill all five integration sections: molecular, pathology_context, pathway, drug, literature. "
+                           "Each supported section requires a source quote. Use insufficient_evidence when a chain link is missing. "
+                           "A gene association alone cannot support pathway activation or drug sensitivity. "
+                           "The final answer is a research evidence synthesis; report supported candidate relationships and unresolved links.")
             if repair_attempt:
                 system += " A prior response failed validation. Reconstruct valid JSON from the original sources; use exact unique quotes and valid task labels. Empty or insufficient evidence may yield NEI with no citations."
             reserved = len((system + json.dumps(payload, ensure_ascii=False)).encode()) + config.max_output_tokens
@@ -175,7 +206,15 @@ class Engine:
             emit("agent_started", role, executor=executor,
                  payload_sha256=hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest(),
                  source_ids=[d.id for d in available], token_reservation=reserved)
-            reply = self.provider.complete(system, payload, config.max_output_tokens, config.temperature, config.seed)
+            try:
+                reply = self.provider.complete(system, payload, config.max_output_tokens, config.temperature, config.seed)
+            except ProviderError as exc:
+                if exc.reply is not None:
+                    partial = exc.reply
+                    emit("model_usage", role, input_tokens=partial.input_tokens,
+                         output_tokens=partial.output_tokens, attempts=partial.attempts,
+                         estimated=partial.estimated, unusable_response=True)
+                raise
             usage.input_tokens += reply.input_tokens
             usage.output_tokens += reply.output_tokens
             usage.http_attempts += reply.attempts
@@ -192,8 +231,15 @@ class Engine:
                     if visible.task == "mcq" and output.answer not in visible.options:
                         raise ValueError("mcq answer is not an option key")
                     check_citations(output.citations, available)
+                    if config.task_scoped and available and visible.task != "verification" and not output.citations:
+                        raise ValueError("source-based MCQ/synthesis requires at least one citation")
                     if visible.task == "verification" and output.answer != "NEI" and not output.citations:
                         raise ValueError("asserted verification answers require citations")
+                    if output.integration is not None:
+                        for name in output.integration.__class__.model_fields:
+                            check_citations(getattr(output.integration, name).citations, available)
+                    if config.task_scoped and visible.task == "synthesis" and output.integration is None:
+                        raise ValueError("research synthesis requires all five integration sections")
                     decision = output
                 else:
                     # Reflection can cite only earlier visible source excerpts; mechanical integrity always applies.
@@ -217,11 +263,16 @@ class Engine:
             emit("agent_completed", role, executor=executor, output=output.model_dump(mode="json"))
 
         def analyze(role):
+            if config.task_scoped:
+                active, basis = MODULES[role].applicability(visible)
+                if not active:
+                    emit("agent_skipped", role, reason=basis, applicability="not_applicable")
+                    return
             empty_specialty = (role == "timeline" and not any(d.kind == "clinical" or d.event_day is not None for d in docs)) or (
                 role == "genomics" and not visible.entities.gene and not any(d.kind == "genomics" for d in docs)) or (
                 role == "pathology" and not visible.entities.disease and not any(d.kind == "pathology" for d in docs)) or (
                 role == "drug" and not visible.entities.drug and not any(d.kind == "therapy" for d in docs))
-            if config.routing == "adaptive" and empty_specialty:
+            if not config.task_scoped and config.routing == "adaptive" and empty_specialty:
                 emit("agent_skipped", role, reason="no matching input modality")
                 return
             tool(role)
@@ -236,6 +287,8 @@ class Engine:
                         model("literature")
 
         def needs_requery():
+            if config.task_scoped and not any(d.kind == "literature" and d.id not in {s.id for s in selected} for d in docs):
+                return False  # No unexamined evidence is available in the permitted corpus.
             verifier = next((r for r in reversed(reports) if r.role == "verifier"), None)
             return bool(config.ablations.targeted_requery and verifier and verifier.output.requery)
 
@@ -248,6 +301,8 @@ class Engine:
 
         emit("run_started", visible_ids=[d.id for d in docs], fingerprint=fingerprint,
              simulated=self.provider.simulated, version=__version__)
+        if config.task_scoped:
+            emit("task_scope", **coverage(visible))
         try:
             execute_workflow(config, analyze, single, needs_requery, requery, lambda: model("decision"))
         except BudgetExceeded as exc:

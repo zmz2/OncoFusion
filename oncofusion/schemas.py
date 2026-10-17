@@ -39,6 +39,15 @@ class Document(StrictModel):
     license: str = Field(default="", max_length=500)
 
 
+class ClaimFields(StrictModel):
+    """Original claim fields only; never a curated revision or gold explanation."""
+    molecular_profile: str = Field(default="", max_length=2000)
+    evidence_type: str = Field(default="", max_length=240)
+    significance: str = Field(default="", max_length=1000)
+    therapies: str = Field(default="", max_length=2000)
+    disease: str = Field(default="", max_length=1000)
+
+
 class CaseInput(StrictModel):
     schema_version: Literal["1.0"] = "1.0"
     id: Identifier
@@ -48,6 +57,7 @@ class CaseInput(StrictModel):
     verification_scheme: VerificationScheme = "refutes"
     options: dict[str, str] = Field(default_factory=dict, max_length=30)
     entities: Entities = Field(default_factory=Entities)
+    claim_fields: ClaimFields = Field(default_factory=ClaimFields)
     stage: int = Field(default=0, ge=0)
     as_of_day: int | None = None
     documents: list[Document] = Field(default_factory=list, max_length=500)
@@ -93,6 +103,8 @@ class RunConfig(StrictModel):
     delegated_roles: list[Role] = Field(default_factory=list, max_length=7)
     routing: Literal["fixed", "adaptive"] = "fixed"
     workflow_backend: Literal["native", "langgraph"] = "native"
+    task_scoped: bool = False
+    clinical_context: bool = False
     evidence_first: bool = False
     specialist_contracts: bool = False
     latest_role_board: bool = False
@@ -142,12 +154,33 @@ class AnalysisOutput(StrictModel):
     requery: str = Field(default="", max_length=1000)
 
 
+class EvidenceSection(StrictModel):
+    status: Literal["supported", "insufficient_evidence"]
+    statement: str = Field(min_length=1, max_length=2000)
+    citations: list[Citation] = Field(default_factory=list, max_length=3)
+
+    @model_validator(mode="after")
+    def supported_source(self):
+        if self.status == "supported" and not self.citations:
+            raise ValueError("supported integration sections require source citations")
+        return self
+
+
+class ResearchIntegration(StrictModel):
+    molecular: EvidenceSection
+    pathology_context: EvidenceSection
+    pathway: EvidenceSection
+    drug: EvidenceSection
+    literature: EvidenceSection
+
+
 class DecisionOutput(StrictModel):
     answer: str = Field(min_length=1, max_length=6000)
     explanation: str = Field(min_length=1, max_length=8000)
     citations: list[Citation] = Field(default_factory=list, max_length=30)
     unresolved: list[str] = Field(default_factory=list, max_length=20)
     confidence: float | None = Field(default=None, ge=0, le=1)
+    integration: ResearchIntegration | None = None
 
 
 class AgentReport(StrictModel):

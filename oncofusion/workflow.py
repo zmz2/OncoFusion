@@ -16,12 +16,15 @@ class WorkflowState(TypedDict):
 
 
 def dependency_identity(config: RunConfig) -> dict[str, str]:
-    if config.workflow_backend == "native":
-        return {}
+    packages = []
+    if config.workflow_backend == "langgraph":
+        packages += ["langgraph", "langchain-core", "langgraph-checkpoint"]
+    if config.clinical_context:
+        packages += ["medspacy", "spacy"]
     try:
-        return {name: version(name) for name in ("langgraph", "langchain-core", "langgraph-checkpoint")}
+        return {name: version(name) for name in packages}
     except PackageNotFoundError as exc:
-        raise RuntimeError("langgraph backend requires pip install -e '.[graph]'") from exc
+        raise RuntimeError("selected workflow requires pip install -e '.[graph,clinical]'") from exc
 
 
 def role_order(config: RunConfig) -> tuple[str, ...]:

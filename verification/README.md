@@ -1,3 +1,5 @@
+> 首版整体审查与最新执行范围见 `docs/V1_PROJECT_REVIEW.md`（仓库根目录相对路径）及根目录 TASK.md；下文保留既有协议/历史背景。新增medspaCy为实际运行组件，相关验证以当前CI为准。
+
 # 验证记录索引
 
 最新上游复用版记录见 [UPSTREAM.md](UPSTREAM.md)。下文保留上一版的验证历史。

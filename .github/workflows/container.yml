@@ -50,8 +50,11 @@ jobs:
           else:
               raise AssertionError('authentication bypass')
           _, _, raw = call('/v1/examples')
-          example = json.loads(raw)[0]['id']
-          body = {'example_id': example}
+          assert any(e['id'] == 'synthetic-timeline' for e in json.loads(raw))
+          _, _, raw = call('/v1/workflows')
+          config = json.loads(raw)['recommended_config']
+          assert config['task_scoped'] and config['clinical_context'] and config['workflow_backend'] == 'langgraph'
+          body = {'example_id': 'synthetic-timeline', 'config': config}
           key = {'Idempotency-Key':'container-example-1'}
           status, _, raw = call('/v1/runs', body, key)
           assert status == 202

@@ -10,7 +10,7 @@ from typing import Literal
 from urllib.parse import quote
 
 from pydantic import Field
-from .schemas import CaseInput, Document, Identifier, StrictModel, VerificationScheme, VERIFICATION_LABELS
+from .schemas import CaseInput, ClaimFields, Document, Identifier, StrictModel, VerificationScheme, VERIFICATION_LABELS
 
 
 class GoldRecord(StrictModel):
@@ -69,6 +69,36 @@ def civic_article_reference(value: str | int) -> tuple[str, str, str]:
     raise ValueError("unsupported article identifier; inspect source namespace before importing")
 
 
+def original_claim_fields(row: dict) -> ClaimFields:
+    """Read only the documented original table, excluding all meta/revised fields."""
+    names = {"molecularProfile": "molecular_profile", "evidenceType": "evidence_type",
+             "significance": "significance", "therapies": "therapies",
+             "disease": "disease", "diseases": "disease"}
+    result = {}
+    claim = row.get("claim", [])
+    # The pinned 2026.06.09 release uses one type=claim object with a field dictionary.
+    # Earlier documented examples use a list of tables containing name/value pairs.
+    tables = [claim] if isinstance(claim, dict) else claim
+    if not isinstance(tables, list):
+        raise ValueError("unsupported original claim structure; inspect the pinned source")
+    for table in tables:
+        if not isinstance(table, dict) or table.get("type") not in {"table", "claim"}:
+            raise ValueError("unsupported original claim structure; inspect the pinned source")
+        content = table["content"]
+        fields = content.items() if isinstance(content, dict) else content
+        for name, value in fields:
+            if name == "therapies" and isinstance(value, list):
+                if any(not isinstance(item, str) for item in value):
+                    raise ValueError("original therapies must contain strings")
+                # Keep the supplied set intact; never select one drug from a combination.
+                value = json.dumps(value, ensure_ascii=False) if value else ""
+            if name in names:
+                if names[name] in result and result[names[name]] != value:
+                    raise ValueError("conflicting original claim fields")
+                result[names[name]] = value
+    return ClaimFields.model_validate(result)
+
+
 def import_civicfact(rows: list[dict], refutes_label: str = "REFUTES", *,
                      verification_scheme: VerificationScheme = "refutes") -> tuple[list[CaseInput], list[GoldRecord]]:
     if refutes_label != "REFUTES":
@@ -88,7 +118,8 @@ def import_civicfact(rows: list[dict], refutes_label: str = "REFUTES", *,
             title="" if row.get("document.title") is None else row["document.title"], url=source_url,
             license="" if row.get("document.license") is None else row["document.license"])]
         cases.append(CaseInput(id=cid, patient_id=group_id, task="verification",
-                               question=row["claim.flat"], documents=documents, data_class="deidentified",
+                               question=row["claim.flat"], claim_fields=original_claim_fields(row),
+                               documents=documents, data_class="deidentified",
                                verification_scheme=verification_scheme))
         gold.append(GoldRecord(case_id=cid, label=label, group_id=group_id,
                                split=row["partition"]))
@@ -179,3 +210,14 @@ def group_split(group_ids: list[str], seed: int = 0, dev_fraction: float = .2) -
         raise ValueError("at least two groups are required")
     count = max(1, min(len(groups) - 1, round(len(groups) * dev_fraction)))
     return {g: "dev" if i < count else "test" for i, g in enumerate(groups)}
+
+
+def validate_patient_groups(cases: list[CaseInput], gold: list[GoldRecord]) -> None:
+    """Gold sidecars must not split one patient's stages into independent groups."""
+    labels = {g.case_id: g for g in gold}
+    seen = {}
+    for case in cases:
+        group = labels[case.id].group_id
+        previous = seen.setdefault(case.patient_id, group)
+        if previous != group:
+            raise ValueError("one patient maps to multiple evaluation groups")
