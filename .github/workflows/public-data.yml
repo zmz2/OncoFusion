@@ -26,10 +26,33 @@ jobs:
           python scripts/public_data_checks.py --accept-source-terms \
             --datasets '${{ matrix.dataset }}' \
             --out 'results/public_${{ matrix.dataset }}.json'
+      - name: Audit bibliography metadata only
+        if: always() && matrix.dataset == 'civicfact'
+        run: |
+          python - <<'PY'
+          import gzip,json,re
+          from pathlib import Path
+          from collections import Counter
+          path=Path('data/public_checks/civicfact/raw/data.jsonl.gz')
+          if path.exists():
+              with gzip.open(path,'rt') as f:
+                  rows=[json.loads(line) for line in f if line.strip()]
+              identifiers=Counter(str(r.get('document.pmid')) for r in rows)
+              profile={'rows':len(rows), 'labels':dict(Counter(r['gold_label_name'] for r in rows)),
+                       'partitions':dict(Counter(r['partition'] for r in rows)),
+                       'non_numeric_source_identifiers':{k:v for k,v in identifiers.items() if not re.fullmatch('[0-9]+',k)},
+                       'source_text_exported':False,
+                       'field_max_lengths':{k:max((len(str(r.get(k) or '')) for r in rows),default=0)
+                           for k in ['document.title','document.license','claim.flat','evidence.flat']}}
+              Path('results').mkdir(exist_ok=True)
+              Path('results/source_profile_civicfact.json').write_text(json.dumps(profile,indent=2))
+          PY
       - name: Retain aggregate audit only
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: public-data-${{ matrix.dataset }}
-          path: results/public_${{ matrix.dataset }}.json
+          path: |
+            results/public_${{ matrix.dataset }}.json
+            results/source_profile_${{ matrix.dataset }}.json
           retention-days: 14
