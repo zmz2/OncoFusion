@@ -6,6 +6,7 @@ from oncofusion.engine import Engine
 from oncofusion.evaluation import load_evaluation
 from oncofusion.experiments import StudyPlan, run_study, select_cases
 from oncofusion.providers import provider_from_env
+from oncofusion.profiles import coverage_report
 
 
 def main():
@@ -19,11 +20,13 @@ def main():
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--execution-cap", type=int, default=1000, help="maximum permitted real case executions; raise explicitly after reviewing cost")
     args = p.parse_args()
+    if args.execution_cap < 1:
+        p.error("execution-cap must be positive")
     plan = StudyPlan.model_validate_json(args.plan.read_text())
     cases, gold = load_evaluation(args.dataset / "inputs.jsonl", args.dataset / "_gold" / "labels.jsonl")
     selected, _ = select_cases(cases, gold, plan)
     executions = len(selected) * len(plan.treatments) * len(plan.seeds)
-    print(json.dumps({"case_count": len(selected), "treatments": len(plan.treatments),
+    print(json.dumps({"role_coverage": coverage_report(selected), "case_count": len(selected), "treatments": len(plan.treatments),
                       "repeats": len(plan.seeds), "case_executions": executions,
                       "max_model_calls": len(selected) * sum(t.config(seed).max_calls for t in plan.treatments for seed in plan.seeds)}))
     if args.dry_run:

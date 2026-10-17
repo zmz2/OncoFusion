@@ -37,6 +37,8 @@ def main():
         ToolRequest(name="DGIdb_get_drug_gene_interactions", arguments={"genes": ["BRAF"]}),
         ToolRequest(name="OpenTargets_get_associated_drugs_by_target_ensemblID", arguments={"ensemblId": "ENSG00000157764"}),
         ToolRequest(name="PubMed_search_articles", arguments={"query": "BRAF melanoma", "limit": 2}),
+        ToolRequest(name="Reactome_map_uniprot_to_pathways", arguments={"uniprot_id": "P15056"}),
+        ToolRequest(name="Reactome_get_pathway", arguments={"stId": "R-HSA-5673001"}),
     ]
     for request in requests:
         sdk.validate(request)

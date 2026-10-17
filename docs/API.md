@@ -86,3 +86,9 @@ CORS 允许 Authorization、Content-Type、Idempotency-Key、Last-Event-ID，并
 GET `/v1/agents` 返回七角色目的、步骤、设计来源及复用层级。GET `/v1/workflows` 返回 legacy/evidence_first 图描述及 recommended_config。两者使用既有 Bearer 鉴权。运行时把 recommended_config 放入 POST `/v1/runs` 的 config 字段；业务任务、SSE、Idempotency-Key 契约保持不变。
 
 四个新增可选 config 字段：`workflow_backend`（native/langgraph，默认native），`evidence_first`、`specialist_contracts`、`latest_role_board`（默认false）。`langgraph` 需要单独安装 graph extra；缺失时运行明确失败。返回图说明中的 `parallel=false`、`checkpoint_resume=false` 是本轮实际边界。数据库快照通过审核后的CLI准备，网页暂不提供任意外部工具执行。
+
+## 第一版profile与输入检查
+
+GET `/v1/profiles` 返回v1固定配置、运行依赖可用性及范围；GET `/v1/profiles/v1/example` 返回多来源虚构样本；POST `/v1/cases/inspect` 接受CaseInput并返回角色结构化输入覆盖、可见模态及警告，不保存病例、不调用模型。三者均遵循现有Bearer。
+
+网页将v1.config传给POST /v1/runs；缺图依赖返回503且无持久化任务；真实provider拒绝unreviewed病例。data_class人工审核声明与allow_remote_processing同意标志分别保留。默认省略config仍使用历史预设。graph增加id=decision的最终答案节点及其直接引用边，原source/finding节点保持兼容。

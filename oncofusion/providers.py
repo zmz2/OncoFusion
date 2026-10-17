@@ -15,7 +15,9 @@ from .schemas import AnalysisOutput, DecisionOutput, Document, Finding
 
 
 class ProviderError(RuntimeError):
-    pass
+    def __init__(self, message: str, *, observed_reply: ModelReply | None = None):
+        super().__init__(message)
+        self.observed_reply = observed_reply
 
 
 @dataclass
@@ -177,24 +179,29 @@ class OpenAICompatibleProvider:
                 if response.status_code != 200:
                     # Do not leak response bodies, URLs, prompts, or credentials into API errors.
                     raise ProviderError(f"model endpoint returned HTTP {response.status_code}")
+                observed = None
                 try:
                     data = response.json()
+                    usage = data.get("usage")
+                    if usage is not None:
+                        incoming, outgoing = usage["prompt_tokens"], usage["completion_tokens"]
+                        if type(incoming) is not int or type(outgoing) is not int or min(incoming, outgoing) < 0:
+                            raise ValueError("invalid token usage")
+                        observed = ModelReply("", incoming, outgoing, attempt + 1, False)
                     choice = data["choices"][0]
                     if choice.get("finish_reason") == "length":
-                        raise ProviderError("model output was truncated; raise max_output_tokens")
+                        raise ProviderError("model output was truncated; raise max_output_tokens", observed_reply=observed)
                     content = choice["message"]["content"]
                     if not isinstance(content, str) or not content.strip():
                         raise ValueError("empty content")
-                    usage = data.get("usage")
-                    if usage is None:
-                        incoming, outgoing, estimated = len(json.dumps(body, ensure_ascii=False)) // 4, len(content) // 4, True
+                    if observed is None:
+                        observed = ModelReply(content, len(json.dumps(body, ensure_ascii=False)) // 4,
+                                              len(content) // 4, attempt + 1, True)
                     else:
-                        incoming, outgoing, estimated = usage["prompt_tokens"], usage["completion_tokens"], False
-                        if type(incoming) is not int or type(outgoing) is not int or min(incoming, outgoing) < 0:
-                            raise ValueError("invalid token usage")
-                    return ModelReply(content, incoming, outgoing, attempt + 1, estimated)
-                except (ValueError, KeyError, IndexError, TypeError) as exc:
-                    raise ProviderError("invalid model response envelope") from exc
+                        observed.content = content
+                    return observed
+                except (ValueError, KeyError, IndexError, TypeError, AttributeError) as exc:
+                    raise ProviderError("invalid model response envelope", observed_reply=observed) from exc
         raise AssertionError("retry loop must return or raise")
 
 

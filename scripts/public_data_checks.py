@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+from collections import Counter
 from pathlib import Path
 
 import httpx
@@ -12,6 +13,7 @@ from oncofusion.engine import Engine
 from oncofusion.evaluation import evaluate, load_evaluation
 from oncofusion.experiments import select_cases, standard_plan
 from oncofusion.preparation import CIVIC_URL, CIVIC_BLOB, CIVIC_REVISION, acquire_mtb, download, prepare_civic, prepare_mtb
+from oncofusion.profiles import v1_config
 from oncofusion.providers import MockProvider
 from oncofusion.retrieval_benchmark import evaluate_retrieval, prepare_retrieval
 from oncofusion.config import presets
@@ -38,6 +40,8 @@ def main():
                     source = raw / 'data.jsonl.gz'
                     download(client, CIVIC_URL, source, git_blob=CIVIC_BLOB)
                     audit = prepare_civic(source, prepared)
+                    covered = audit['role_coverage']['explicit_role_input_cases']
+                    assert all(covered[r] > 0 for r in ('genomics', 'pathology', 'drug')), 'pinned claim entity extraction unexpectedly empty'
                 elif dataset == 'mtbbench':
                     source = acquire_mtb(client, raw)
                     audit = prepare_mtb(raw / source['questions'], raw, prepared, source['path_map'])
@@ -58,6 +62,12 @@ def main():
                 test = {'sample_count':len(selected), 'configurations':len(runs), 'case_executions':len(selected)*len(runs),
                         'completed':sum(r['count']-r['failed_or_incomplete'] for r in runs),
                         'failed_or_incomplete':sum(r['failed_or_incomplete'] for r in runs)}
+                # All MTB inputs exercise engineering limits; no test-label accuracy is inspected.
+                v1_inputs = cases if dataset == 'mtbbench' else selected
+                v1_statuses = Counter(Engine(MockProvider()).run(c, v1_config('native')).status for c in v1_inputs)
+                test['v1_input_smoke'] = {'count': len(v1_inputs), 'statuses': dict(v1_statuses),
+                                          'failed': len(v1_inputs) - v1_statuses['completed'],
+                                          'label_accuracy_evaluated': False}
             results.append({'dataset':dataset,'status':'passed', 'audit':audit, 'test':test, 'duration_seconds':round(time.monotonic()-started,3)})
         except Exception as exc:
             # Integration boundary: retain failures separately so other public sources are still checked.
@@ -67,7 +77,8 @@ def main():
                    'real_provider_calls':0, 'results':results, 'scientific_accuracy_claim':False}
         args.out.write_text(json.dumps(summary,ensure_ascii=False,indent=2))
         print(json.dumps(results[-1],ensure_ascii=False),flush=True)
-    return 0 if all(r['status']=='passed' and not r.get('test',{}).get('failed_or_incomplete') for r in results) else 2
+    return 0 if all(r['status']=='passed' and not r.get('test',{}).get('failed_or_incomplete')
+                    and not r.get('test',{}).get('v1_input_smoke',{}).get('failed') for r in results) else 2
 
 
 if __name__ == '__main__':

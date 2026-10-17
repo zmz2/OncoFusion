@@ -10,10 +10,11 @@ from typing import Literal
 
 from pydantic import Field, model_validator
 from .config import presets
-from .datasets import GoldRecord, validate_splits
+from .datasets import GoldRecord, validate_alignment
 from .engine import Engine, implementation_digest
 from .evaluation import evaluate, paired_cluster_bootstrap
 from .providers import provider_identity
+from .profiles import coverage_report
 from .workflow import dependency_identity
 from .schemas import CaseInput, Document, Identifier, RunConfig, StrictModel
 
@@ -91,7 +92,7 @@ def perturb(case: CaseInput, name: str, seed: int) -> CaseInput:
 
 
 def select_cases(cases: list[CaseInput], gold: list[GoldRecord], plan: StudyPlan):
-    validate_splits(gold)
+    validate_alignment(cases, gold)
     labels = {g.case_id: g for g in gold}
     if len(labels) != len(gold) or set(labels) != {c.id for c in cases}:
         raise ValueError("case/gold mismatch")
@@ -149,7 +150,8 @@ def run_study(plan: StudyPlan, cases: list[CaseInput], gold: list[GoldRecord], e
             summaries.append({"treatment": treatment.name, "seed": seed, "report": report})
     result = analyze(plan, summaries)
     result.update({"identity": identity, "simulated": engine.provider.simulated,
-                   "case_count": len(cases), "group_count": len({g.group_id for g in gold})})
+                   "case_count": len(cases), "group_count": len({g.group_id for g in gold}),
+                   "role_coverage": coverage_report(cases)})
     atomic_json(output / "study.json", result)
     return result
 

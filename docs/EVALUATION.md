@@ -1,5 +1,9 @@
 # 实验协议与完整消融
 
+## 第一版执行优先级
+
+首版按 `experiments/v1_*_smoke.json`（3系统×1次×3组）→ `v1_*_ablations.json`（11配置×3次）推进。v1关闭自动回查，MTBBench为整合主任务，CIViC为组件核验/检索任务。下文完整研究预设保留作后续扩展。输入覆盖随数据审计、dry-run及study报告输出。详见V1_REVIEW.md。
+
 ## 两个主任务，独立报告
 
 MTBBench 使用逐阶段选择题 Accuracy、患者平均 Accuracy、成本与失败率。CIViC-Fact 当前固定版保留 SUPPORTS/REVISIONS/NEI，使用给定证据的三分类 Accuracy、Macro-F1、分标签 Precision/Recall/F1。独立段落检索报告 Recall@1/3/6/10、AP@1/3/6/10。模拟结果仅用于工程验证。

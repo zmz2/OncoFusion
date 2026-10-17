@@ -179,3 +179,21 @@ def group_split(group_ids: list[str], seed: int = 0, dev_fraction: float = .2) -
         raise ValueError("at least two groups are required")
     count = max(1, min(len(groups) - 1, round(len(groups) * dev_fraction)))
     return {g: "dev" if i < count else "test" for i, g in enumerate(groups)}
+
+
+def validate_alignment(cases: list[CaseInput], gold: list[GoldRecord]) -> None:
+    """Validate external input/label joins and preserve patient/article grouping.
+
+    Group names may be aliases, but one patient/article must map to one group.
+    Call before selecting any split; otherwise cross-split aliases disappear.
+    """
+    labels = {g.case_id: g for g in gold}
+    if len(labels) != len(gold) or len({c.id for c in cases}) != len(cases) or set(labels) != {c.id for c in cases}:
+        raise ValueError("unique and exactly aligned case/gold sets required")
+    validate_splits(gold)
+    patients = {}
+    for case in cases:
+        record = labels[case.id]
+        previous = patients.setdefault(case.patient_id, record.group_id)
+        if previous != record.group_id:
+            raise ValueError("patient/article maps to multiple evaluation groups")

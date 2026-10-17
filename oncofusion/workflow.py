@@ -40,7 +40,7 @@ def specification(config: RunConfig) -> dict:
     return {"backend": config.workflow_backend, "evidence_first": config.evidence_first,
             "nodes": nodes, "initial_sequence": nodes[:-2], "terminal": "decision",
             "conditional": {"after_analysis": ["requery", "decision"], "after_requery": "decision"},
-            "max_requeries": 1, "parallel": False, "checkpoint_resume": False}
+            "max_requeries": int(config.ablations.targeted_requery and config.mode == "multi"), "parallel": False, "checkpoint_resume": False}
 
 
 def execute(config: RunConfig, analyze: Callable[[str], None], single: Callable[[], None],

@@ -8,8 +8,9 @@ from collections import Counter
 from pathlib import Path, PurePosixPath
 
 import httpx
-from .datasets import GoldRecord, import_civicfact, import_mtbbench, group_split, read_jsonl, validate_splits, write_dataset
+from .datasets import GoldRecord, import_civicfact, import_mtbbench, group_split, read_jsonl, validate_alignment, write_dataset
 from .schemas import CaseInput, Entities, VerificationScheme
+from .profiles import coverage_report
 
 CIVIC_REVISION = "1a767d889b015a836f0f4331afcac5cef165ec7f"
 CIVIC_FILE = "data_builder/builds/civicfact-2026.06.09/data.jsonl.gz"
@@ -67,23 +68,42 @@ def build_path_map(upstream_paths: list[str], local_paths: list[str]) -> dict[st
 
 
 def claim_entities(row: dict) -> Entities:
-    """Extract only declared claim-table fields. Never copy claim entities into source evidence."""
+    """Read original claim fields from legacy tables or upstream Text(type='claim').
+
+    The pinned 2026 exporter uses dict content, singular disease and a therapies
+    list. Gold revisions, metadata and evidence contents are deliberately excluded.
+    """
     blocks = row.get("claim", [])
     if isinstance(blocks, dict):
         blocks = [blocks]
     pairs = {}
     for block in blocks:
         if block.get("type") == "table":
-            for key, value in block["content"]:
-                pairs[key.casefold().replace(" ", "")] = str(value)
+            items = block["content"]
+        elif block.get("type") == "claim":
+            items = block["content"].items()
+        else:
+            continue
+        for key, value in items:
+            key = key.casefold().replace(" ", "")
+            if key not in {"molecularprofile", "disease", "diseases", "therapies"} or value is None:
+                continue
+            if key == "therapies" and isinstance(value, list):
+                if any(not isinstance(name, str) for name in value):
+                    raise ValueError("claim therapies must contain names")
+                value = "; ".join(value)
+            if not isinstance(value, str):
+                raise ValueError("claim entity fields must be strings")
+            pairs[key] = value
     molecular = pairs.get("molecularprofile", "")
-    match = re.fullmatch(r"([A-Za-z][A-Za-z0-9-]*)\s+([^;]+)", molecular)
+    composite = re.search(r"\b(?:AND|OR)\b|;", molecular, re.I)
+    match = None if composite else re.fullmatch(r"([A-Za-z][A-Za-z0-9-]*)\s+([^;]+)", molecular)
     return Entities(gene=match[1] if match else "", variant=match[2] if match else "",
-                    disease=pairs.get("diseases", ""), drug=pairs.get("therapies", ""))
+                    disease=pairs.get("disease", pairs.get("diseases", "")), drug=pairs.get("therapies", ""))
 
 
 def dataset_audit(cases: list[CaseInput], gold: list[GoldRecord]) -> dict:
-    validate_splits(gold)
+    validate_alignment(cases, gold)
     if len(cases) != len(gold) or len({c.id for c in cases}) != len(cases) or {c.id for c in cases} != {g.case_id for g in gold}:
         raise ValueError("case and label sets must align uniquely")
     tasks = Counter(c.task for c in cases)
@@ -100,7 +120,7 @@ def dataset_audit(cases: list[CaseInput], gold: list[GoldRecord]) -> dict:
         warnings.append("Source reuse licenses require review before redistribution.")
     if lengths and lengths[-1] > 100_000:
         warnings.append("Large cases may exceed token budgets; inspect dry-run and smoke traces.")
-    return {"cases": len(cases), "groups": len(group_counts), "tasks": dict(tasks), "labels": dict(labels),
+    return {"role_coverage": coverage_report(cases), "cases": len(cases), "groups": len(group_counts), "tasks": dict(tasks), "labels": dict(labels),
             "splits": dict(splits), "document_kinds": dict(kinds), "licenses": dict(licenses),
             "source_bytes_median": lengths[len(lengths)//2] if lengths else 0,
             "source_bytes_max": max(lengths, default=0), "warnings": warnings,

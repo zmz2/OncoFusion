@@ -6,7 +6,7 @@ import random
 import statistics
 from collections import defaultdict
 from pathlib import Path
-from .datasets import GoldRecord, read_jsonl, validate_splits
+from .datasets import validate_alignment, GoldRecord, read_jsonl, validate_splits
 from .engine import Engine, run_fingerprint
 from .providers import ProviderError
 from .schemas import CaseInput, RunConfig, RunResult, TraceEvent
@@ -73,7 +73,7 @@ def risk_coverage(correct: list[bool], confidence: list[float]) -> list[dict]:
 
 def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, config: RunConfig,
              output: Path | None = None, resume: bool = False, retry_failed: bool = False) -> dict:
-    validate_splits(gold)
+    validate_alignment(cases, gold)
     labels = {g.case_id: g for g in gold}
     if not cases or len(labels) != len(gold) or len({c.id for c in cases}) != len(cases) or set(labels) != {c.id for c in cases}:
         raise ValueError("unique and exactly aligned case/gold sets required")
@@ -82,7 +82,7 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
     if cases[0].task == "verification" and len({c.verification_scheme for c in cases}) != 1:
         raise ValueError("evaluate one verification vocabulary at a time")
     universe = list(cases[0].verification_labels) if cases[0].task == "verification" else sorted({key for case in cases for key in case.options})
-    if not all(g.label in universe for g in gold):
+    if not all(labels[c.id].label in (c.verification_labels if c.task == "verification" else c.options) for c in cases):
         raise ValueError("gold labels must belong to the declared task vocabulary")
     if output:
         output.mkdir(parents=True, exist_ok=True)
@@ -164,5 +164,7 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
 
 
 def load_evaluation(inputs: Path, labels: Path) -> tuple[list[CaseInput], list[GoldRecord]]:
-    return ([CaseInput.model_validate(row) for row in read_jsonl(inputs)],
-            [GoldRecord.model_validate(row) for row in read_jsonl(labels)])
+    cases = [CaseInput.model_validate(row) for row in read_jsonl(inputs)]
+    gold = [GoldRecord.model_validate(row) for row in read_jsonl(labels)]
+    validate_alignment(cases, gold)
+    return cases, gold

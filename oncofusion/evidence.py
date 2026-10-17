@@ -145,7 +145,7 @@ def retrieve(query: str, documents: list[Document], top_k: int, candidate_k: int
     return [d for _, d in candidates[:top_k]]
 
 
-def evidence_graph(reports, docs: list[Document]) -> dict:
+def evidence_graph(reports, docs: list[Document], decision=None) -> dict:
     nodes = [{"id": "source:" + d.id, "type": "source", "origin_id": d.origin_id, "title": d.title} for d in docs]
     edges = []
     for i, report in enumerate(reports):
@@ -155,6 +155,11 @@ def evidence_graph(reports, docs: list[Document]) -> dict:
                           "statement": finding.statement, "relation": finding.relation})
             edges.extend({"source": "source:" + c.document_id, "target": fid, "type": "cited_by",
                           "start": c.start, "end": c.end} for c in finding.citations)
+    if decision is not None:
+        nodes.append({"id": "decision", "type": "decision", "answer": decision.answer,
+                      "explanation": decision.explanation, "unresolved": decision.unresolved})
+        edges.extend({"source": "source:" + c.document_id, "target": "decision", "type": "cited_by",
+                      "start": c.start, "end": c.end} for c in decision.citations)
     return {"nodes": nodes, "edges": edges}
 
 
