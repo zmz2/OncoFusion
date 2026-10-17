@@ -79,6 +79,11 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
         raise ValueError("unique and exactly aligned case/gold sets required")
     if len({c.task for c in cases}) != 1 or cases[0].task == "synthesis":
         raise ValueError("evaluate one labeled task at a time; synthesis requires a separate rubric")
+    if cases[0].task == "verification" and len({c.verification_scheme for c in cases}) != 1:
+        raise ValueError("evaluate one verification vocabulary at a time")
+    universe = list(cases[0].verification_labels) if cases[0].task == "verification" else sorted({key for case in cases for key in case.options})
+    if not all(g.label in universe for g in gold):
+        raise ValueError("gold labels must belong to the declared task vocabulary")
     if output:
         output.mkdir(parents=True, exist_ok=True)
     rows = []
@@ -119,7 +124,6 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
                 (output / (case.id + ".failed.json")).write_text(json.dumps({
                     "error": str(exc), "fingerprint": run_fingerprint(case, config, engine.provider), "trace": [e.model_dump() for e in events]}, ensure_ascii=False), encoding="utf-8")
         rows.append(row)
-    universe = ["SUPPORTS", "REFUTES", "NEI"] if cases[0].task == "verification" else sorted({g.label for g in gold})
     metrics = classification_metrics([r["gold"] for r in rows], [r["prediction"] for r in rows], universe)
     group_scores = defaultdict(list)
     for row in rows:
@@ -138,7 +142,7 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
     report = {"provider": engine.provider.name, "model": engine.provider.model,
               "simulated": engine.provider.simulated,
               "interpretation": "software-only; no biomedical efficacy claim" if engine.provider.simulated else "requires benchmark protocol audit",
-              "task": cases[0].task, "count": len(rows), "config": config.model_dump(), "metrics": metrics, "efficiency": efficiency,
+              "task": cases[0].task, "verification_scheme": cases[0].verification_scheme if cases[0].task == "verification" else None, "count": len(rows), "config": config.model_dump(), "metrics": metrics, "efficiency": efficiency,
               "failed_or_incomplete": sum(r["status"] != "completed" for r in rows), "rows": rows}
     if output:
         (output / "summary.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")

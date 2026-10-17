@@ -5,7 +5,12 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 Identifier = Annotated[str, Field(min_length=1, max_length=120, pattern=r"^[A-Za-z0-9][A-Za-z0-9_.:-]*$")]
-Label = Literal["SUPPORTS", "REFUTES", "NEI"]
+Label = Literal["SUPPORTS", "REFUTES", "REVISIONS", "NEI"]
+VerificationScheme = Literal["refutes", "revisions"]
+VERIFICATION_LABELS = {
+    "refutes": ("SUPPORTS", "REFUTES", "NEI"),
+    "revisions": ("SUPPORTS", "REVISIONS", "NEI"),
+}
 Role = Literal["timeline", "genomics", "pathology", "drug", "literature", "verifier", "decision"]
 ROLES = ("timeline", "genomics", "pathology", "drug", "literature", "verifier", "decision")
 
@@ -40,12 +45,17 @@ class CaseInput(StrictModel):
     patient_id: Identifier
     task: Literal["verification", "mcq", "synthesis"]
     question: str = Field(min_length=1, max_length=20_000)
+    verification_scheme: VerificationScheme = "refutes"
     options: dict[str, str] = Field(default_factory=dict, max_length=30)
     entities: Entities = Field(default_factory=Entities)
     stage: int = Field(default=0, ge=0)
     as_of_day: int | None = None
     documents: list[Document] = Field(default_factory=list, max_length=500)
     data_class: Literal["synthetic", "deidentified", "unreviewed"] = "unreviewed"
+
+    @property
+    def verification_labels(self) -> tuple[str, ...]:
+        return VERIFICATION_LABELS[self.verification_scheme]
 
     @model_validator(mode="after")
     def consistent(self):

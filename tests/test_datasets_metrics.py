@@ -33,8 +33,11 @@ def test_civic_whitelist(label, recorder):
 def test_explicit_label_mapping():
     with pytest.raises(ValueError, match="unsupported"):
         import_civicfact([civic_row("REVISIONS")])
-    _, gold = import_civicfact([civic_row("REVISIONS")], "REVISIONS")
-    assert gold[0].label == "REFUTES"
+    with pytest.raises(ValueError, match="remapping"):
+        import_civicfact([civic_row("REVISIONS")], "REVISIONS")
+    cases, gold = import_civicfact([civic_row("REVISIONS")], verification_scheme="revisions")
+    assert gold[0].label == "REVISIONS"
+    assert cases[0].verification_scheme == "revisions"
 
 
 def test_civic_empty_evidence():

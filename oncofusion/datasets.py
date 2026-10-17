@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Literal
 
 from pydantic import Field
-from .schemas import CaseInput, Document, Identifier, StrictModel
+from .schemas import CaseInput, Document, Identifier, StrictModel, VerificationScheme, VERIFICATION_LABELS
 
 
 class GoldRecord(StrictModel):
@@ -54,13 +54,15 @@ def write_dataset(cases: list[CaseInput], gold: list[GoldRecord], output: Path, 
     return manifest
 
 
-def import_civicfact(rows: list[dict], refutes_label: str = "REFUTES") -> tuple[list[CaseInput], list[GoldRecord]]:
+def import_civicfact(rows: list[dict], refutes_label: str = "REFUTES", *,
+                     verification_scheme: VerificationScheme = "refutes") -> tuple[list[CaseInput], list[GoldRecord]]:
+    if refutes_label != "REFUTES":
+        raise ValueError("label remapping is unsupported; preserve REVISIONS with verification_scheme=revisions")
+    allowed = VERIFICATION_LABELS[verification_scheme]
     cases, gold = [], []
     for row in rows:
         label = row["gold_label_name"]
-        if label == refutes_label:
-            label = "REFUTES"
-        if label not in ("SUPPORTS", "REFUTES", "NEI"):
+        if label not in allowed:
             raise ValueError(f"unsupported CIViC-Fact label {label!r}; inspect release semantics explicitly")
         cid = "civic-" + str(row["id"])
         pmid = str(row["document.pmid"])
@@ -71,7 +73,8 @@ def import_civicfact(rows: list[dict], refutes_label: str = "REFUTES") -> tuple[
             title=row.get("document.title", ""), url="https://pubmed.ncbi.nlm.nih.gov/" + pmid + "/",
             license=row.get("document.license", ""))]
         cases.append(CaseInput(id=cid, patient_id="article-" + pmid, task="verification",
-                               question=row["claim.flat"], documents=documents, data_class="deidentified"))
+                               question=row["claim.flat"], documents=documents, data_class="deidentified",
+                               verification_scheme=verification_scheme))
         gold.append(GoldRecord(case_id=cid, label=label, group_id="article-" + pmid,
                                split=row["partition"]))
     return cases, gold
@@ -112,7 +115,7 @@ def import_mtbbench(records: dict[str, list[dict]], root: Path,
         docs: dict[str, Document] = {}
         question_number = 0
         for stage, entry in enumerate(entries):
-            if "context" in entry:
+            if "context" in entry and entry["context"].strip():
                 sid = f"context-{stage}"
                 docs[sid] = Document(id=sid, origin_id=sid, kind="clinical", text=entry["context"], available_stage=stage)
             if "file_paths" in entry:
@@ -121,6 +124,9 @@ def import_mtbbench(records: dict[str, list[dict]], root: Path,
                         raise ValueError("unmapped upstream file; audit and add it to path_map")
                     path = safe_source(root, path_map[upstream])
                     text = path.read_text(encoding="utf-8")
+                    if not text.strip():
+                        # Empty upstream files have no citable evidence. Do not infer a negative finding.
+                        continue
                     sid = "file-" + hashlib.sha256(upstream.encode()).hexdigest()[:20]
                     if sid not in docs:
                         name = path.name.casefold()

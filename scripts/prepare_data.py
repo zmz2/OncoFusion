@@ -16,7 +16,8 @@ def main():
     p.add_argument("--accept-source-terms", action="store_true")
     p.add_argument("--source", type=Path)
     p.add_argument("--path-map", type=Path)
-    p.add_argument("--refutes-label", default="REFUTES")
+    p.add_argument("--refutes-label", default="REFUTES", help="legacy identity value only; labels are preserved")
+    p.add_argument("--verification-scheme", choices=("refutes", "revisions"), default="revisions")
     args = p.parse_args()
     if args.download and not args.accept_source_terms:
         p.error("review source data terms and pass --accept-source-terms to download")
@@ -34,7 +35,7 @@ def main():
         p.error("supply --source or --download")
     if args.path_map:
         mapping = json.loads(args.path_map.read_text())
-    report = prepare_civic(source, args.out, args.refutes_label) if args.dataset == "civicfact" else prepare_mtb(source, args.raw, args.out, mapping)
+    report = prepare_civic(source, args.out, args.refutes_label, verification_scheme=args.verification_scheme) if args.dataset == "civicfact" else prepare_mtb(source, args.raw, args.out, mapping)
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0
 

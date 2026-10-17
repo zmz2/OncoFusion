@@ -65,6 +65,9 @@ class MockProvider:
                 relation = "SUPPORTS"
                 if claim_direction != "unknown" and direction != "unknown" and claim_direction != direction:
                     relation = "REFUTES"
+            if payload["task"] == "verification" and relation not in payload.get("verification_labels", ("SUPPORTS", "REFUTES", "NEI")):
+                # The lexical simulator cannot infer a supported revision from a contradiction.
+                relation = "NEI"
             findings.append(Finding(statement=doc.text[:300], relation=relation,
                                     citations=[quote_document(doc)]))
         if payload["role"] == "decision":
@@ -207,7 +210,7 @@ def provider_identity(provider: Provider) -> dict:
     identity = {"provider": provider.name, "model": provider.model, "simulated": provider.simulated}
     if isinstance(provider, OpenAICompatibleProvider):
         identity.update({key: getattr(provider, key) for key in
-                         ("base_url", "json_mode", "token_parameter", "send_temperature", "send_seed", "input_price", "output_price")})
+                         ("base_url", "timeout", "retries", "json_mode", "token_parameter", "send_temperature", "send_seed", "input_price", "output_price")})
     return identity
 
 

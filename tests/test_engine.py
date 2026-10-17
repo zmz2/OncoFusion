@@ -171,7 +171,7 @@ def test_requery_retains_previously_seen_sources(case, monkeypatch, recorder):
     case.documents.append(Document(id="paper2", origin_id="paper2", kind="literature",
                                    text="Second targeted source describes GENE1.", entities=case.entities))
     calls = []
-    def alternating(query, documents, *args):
+    def alternating(query, documents, *args, **kwargs):
         calls.append(query)
         return [next(d for d in documents if d.id == ("paper1" if len(calls) == 1 else "paper2"))]
     monkeypatch.setattr("oncofusion.engine.retrieve", alternating)

@@ -108,7 +108,8 @@ def entity_compatibility(query: Entities, source: Entities, normalize_variant: b
 
 
 def retrieve(query: str, documents: list[Document], top_k: int, candidate_k: int,
-             entities: Entities, rerank: bool = True) -> list[Document]:
+             entities: Entities, rerank: bool = True, *,
+             normalize_variant: bool = True, match_disease: bool = True) -> list[Document]:
     """BM25 shortlist then transparent entity-overlap reranking (not a neural reranker)."""
     if not documents:
         return []
@@ -129,7 +130,9 @@ def retrieve(query: str, documents: list[Document], top_k: int, candidate_k: int
     if rerank:
         def key(item):
             score, doc = item
-            matches = entity_compatibility(entities, doc.entities)
+            matches = entity_compatibility(entities, doc.entities, normalize_variant)
+            if not match_disease:
+                del matches["disease"]
             # Raw passage corpora may not carry curated entity metadata. Literal
             # query-entity mentions supply a transparent, query-only coverage feature.
             for field, state in matches.items():
