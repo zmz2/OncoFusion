@@ -76,13 +76,13 @@ def original_claim_fields(row: dict) -> ClaimFields:
              "disease": "disease", "diseases": "disease"}
     result = {}
     claim = row.get("claim", [])
-    # The pinned 2026.06.09 release uses one table object with a field dictionary.
+    # The pinned 2026.06.09 release uses one type=claim object with a field dictionary.
     # Earlier documented examples use a list of tables containing name/value pairs.
     tables = [claim] if isinstance(claim, dict) else claim
     if not isinstance(tables, list):
         raise ValueError("unsupported original claim structure; inspect the pinned source")
     for table in tables:
-        if not isinstance(table, dict) or table.get("type") != "table":
+        if not isinstance(table, dict) or table.get("type") not in {"table", "claim"}:
             raise ValueError("unsupported original claim structure; inspect the pinned source")
         content = table["content"]
         fields = content.items() if isinstance(content, dict) else content
