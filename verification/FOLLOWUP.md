@@ -1,24 +1,61 @@
-# Independent backend verification — 2026-10-17
+# 独立开发与验证记录 — 2026-10-17
 
-The starting repository already contained the seven-agent backend and 446 tests. This pass first reproduced those tests on Python 3.11, 3.12 and 3.13 in GitHub Actions, then added independent failing regression cases.
+## 版本与范围
 
-## Corrected defects
+起始仓库 `5e26a3197c4e88cde7205eb62d3547b6756119f9` 已包含七角色后端和 446 项测试。本轮保留现有工程，独立审查、修复实际缺陷并增加 64 项回归测试。
 
-- The latest verifier's unresolved concerns were omitted from the decision payload. They are now passed as sourced role context; a newer role report replaces its older unresolved list.
-- Variant normalization and disease matching ablations did not reach the retrieval reranker. Both switches now govern every affected preprocessing path.
-- Provider retry and timeout settings were absent from the inference/cache identity.
-- The pinned CIViC-Fact 2026.06.09 release uses SUPPORTS / REVISIONS / NEI. REVISIONS is preserved as a native label, with a release-level verification_scheme. It is not mapped to REFUTES. Gold revised claims, curator descriptions and reviews remain evaluator-only.
-- Real MTBBench includes empty source files. These are audited and skipped without creating biological absence claims.
-- Independent retrieval includes repeated query groups with conflicting source labels. Preparation excludes the entire ambiguous query group and requires explicit audit acceptance.
+已验证算法/API/测试代码提交：`c1badbc391da145cc71b80c7762c9153f403f190`。此后的本轮收尾提交更新验证文档和摘要。模型全部采用确定性模拟器或本地兼容 HTTP 模型服务，真实商业模型调用数为 0。
 
-## Evidence obtained
+## 实际通过的检查
 
-Initial CI: https://github.com/zmz2/OncoFusion/actions/runs/39007477337 — all three Python versions, loopback HTTP, offline stress and wheel build passed.
+| 检查 | 结果 |
+|---|---|
+| pytest | 510 passed，0 failed / error / skipped |
+| Python 矩阵 | 3.11、3.12、3.13 全部通过 |
+| 覆盖率（Python 3.12 CI） | 语句 98.1864%；分支 94.6532%；综合 97.2731% |
+| 离线组合与扰动 | 4,048 次完整流程，0 失败；CI 用时 34.481 秒 |
+| 独立 TCP/HTTP 服务 | 25 个预设、162 次模型接口请求、11 类检查通过 |
+| 包分发 | wheel 构建通过 |
+| Docker | 镜像构建、UID 10001 非 root 启动通过 |
+| 容器接口 | 鉴权、示例提交、重复请求、成功终态、证据图、SSE 续传、单任务持久化通过 |
+| 公开数据 | 三套真实来源完整准备与小样本执行联调全部通过 |
 
-Initial authentic-source integration: https://github.com/zmz2/OncoFusion/actions/runs/39007655854 — exposed the three real-data adapter failures above. These failures are retained as discovery evidence, not passed acceptance.
+可复核的 GitHub Actions：
 
-Local tests after source corrections: 473 passed. Native-label tests preserve SUPPORTS, REVISIONS and NEI without passing gold revisions to inference.
+- [510 项测试、三个 Python 版本、HTTP、4,048 场景及 wheel](https://github.com/zmz2/OncoFusion/actions/runs/39010268136)
+- [三套公开数据完整准备及抽样执行](https://github.com/zmz2/OncoFusion/actions/runs/39010268095)
+- [Docker 与实际网络接口验收](https://github.com/zmz2/OncoFusion/actions/runs/39010268090)
 
-Official label definitions: https://github.com/creisle/civicfact/blob/1a767d889b015a836f0f4331afcac5cef165ec7f/experiments/src/api/create_explanation_prompts.py
+CI 附件包含 JUnit、覆盖率、HTTP/stress 摘要、wheel、带提交 SHA 和校验和的源码归档。保留时间为 14 天；本目录保存长期摘要。后续修改使用新的 CI 和结果文件验收。
 
-This file will be finalized after the corrected authentic-source integration and additional backend regressions. All model outputs in this pass are simulated; no real model quality claim is made.
+## 真实数据审计
+
+**MTBBench：**完整导入 183 道题、40 位患者；本项目按患者固定划分为 dev 43 题、test 140 题。14 个开发样本 × 5 个基线配置，70 次模拟执行全部完成。输入仅保留当前与历史阶段已宣布资料，答案独立存放。协议为阶段可见文本适配器，结果与本协议内基线比较。
+
+**CIViC-Fact：**固定 2026.06.09 build 与源 commit/blob 校验；完整导入 12,476 条、1,409 个来源组。官方分区为 train 9,693、dev 1,044、test 1,026、unassigned 713；未分配记录保留在数据中，不混入指定 dev/test 计划。原始标签 SUPPORTS 4,208、REVISIONS 4,300、NEI 3,968。9 个开发样本 × 5 配置，45 次模拟执行全部完成。
+
+该版本有 4,945 条缺少标题、8,021 条缺少许可证。缺失值保留未知状态；来源内容保存在本地数据目录。数字 PMID、ASH DOI 和 ASCO 摘要编号分别处理，ASCO 编号保留命名空间而不制造 PubMed/DOI URL。
+
+**独立段落检索：**本项目适配后有 1,140 个查询，合并 398 条重复行；审计列出 106 个 NEI 排除项、40 个冲突查询组和 23 个缺少文章/对齐跨度的排除项。2 个开发查询分别执行 BM25 与实体重排检索，模型调用 0。相关段落按人工跨度至少 75% 覆盖匹配。查询范围为同篇来源文章，并非全 PubMed 检索。排除策略及实际分母需要在正式报告保留。
+
+完整导入规模与抽样推理规模分别记录。以上是工程/数据兼容性验收，医学正确性与 Agent 收益由真实模型实验评价。
+
+## 本轮发现并修复的问题
+
+1. 最新核验/专业角色的 unresolved 未传给 Decision：现在传递每个角色的最新问题列表，补证后替换旧列表。
+2. 关闭变异归一化或癌种匹配后，重排器仍使用对应信息：开关已覆盖所有相关预处理路径。
+3. 超时与重试设置未进入缓存/实验身份：已纳入供应商指纹。
+4. REVISIONS 被按旧版 REFUTES 处理：加入显式 verification_scheme，保留原标签及定义；gold 修订、审稿和描述留在评测侧。
+5. 真实源文件空白、标题/许可证为 null、会议摘要标识混在 PMID 字段：逐项明确适配和测试，保留来源与未知状态。
+6. 独立检索同主张同文章冲突标签：整组审计排除，要求显式接受排除策略。
+7. 中途失败丢失已产生 token/费用，估算和重试费用误标完整：现在累计可观测用量，区分 known/estimated，保留 cost_complete=false。
+8. 前端网络重试产生重复任务：新增持久化 Idempotency-Key，同内容返回原任务，冲突 409；覆盖并发、满队列、重启、删除清理。
+9. SSE 断线续传：支持 Last-Event-ID 与 after 的较大游标；补齐 CORS 请求/暴露头及 OpenAPI。
+
+主要回归文件：test_hardening.py、test_usage_accounting.py、test_frontend_contract.py、test_source_identifiers.py、test_abstract_sources.py。
+
+## Codex 接手
+
+根目录 TASK.md 给出安装、真实供应商配置、数据审计、smoke、预算估算、41 配置 × 3 重复、冻结测试集、报告和双人引用审查的完整执行命令。
+
+下一阶段重点：真实 API 协议/速率/上下文验证，真实答案与引用质量，开发集调整后的冻结比较。现有部署为单 ASGI 进程、共享 Bearer 权限；正式多用户隔离与队列由后续网页阶段扩展。首版上传 JSON/JSONL，病理图像/PDF/VCF 解析后续单独接入。
