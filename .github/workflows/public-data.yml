@@ -1,0 +1,35 @@
+name: Public benchmark integration
+on:
+  pull_request:
+    paths: ['.github/workflows/public-data.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  public-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        dataset: [civicfact, mtbbench, retrieval]
+    env:
+      ONCOFUSION_PROVIDER: mock
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e '.[dev]'
+      - name: Acquire pinned public sources and validate the benchmark adapter
+        run: |
+          python scripts/public_data_checks.py --accept-source-terms \
+            --datasets '${{ matrix.dataset }}' \
+            --out 'results/public_${{ matrix.dataset }}.json'
+      - name: Retain aggregate audit only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-data-${{ matrix.dataset }}
+          path: results/public_${{ matrix.dataset }}.json
+          retention-days: 14
