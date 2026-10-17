@@ -1,3 +1,39 @@
+# 本轮增补：成熟组件复用 v0.2
+
+先阅读 `docs/AGENT_DESIGN.md`、`THIRD_PARTY_NOTICES.md` 和 `verification/UPSTREAM.md`。精确来源在 `third_party/upstream-lock.json`。
+
+本轮新增实际 LangGraph 执行、证据先行流程、逐主张核验、PaperQA 两个原版 RCS 提示模板、ToolUniverse 真实 SDK 适配和 GeneAgent 富集函数改编。完整 TxAgent/PaperQA/Biomni 模型平台未移植，各层来源见设计表。
+
+## 推荐接手顺序
+
+```bash
+python -m pip install -e '.[dev]'
+python scripts/run_checks.py
+python scripts/http_smoke.py
+python -m oncofusion demo --preset grounded_v2 --out results/v2_mock.json
+python -m oncofusion demo --preset grounded_v2_contexts --out results/v2_contexts_mock.json
+```
+
+接通下面既有真实 API 配置后，对这两个 preset 分别加 `--allow-remote`。先检查结构化逐主张判定、未核验事项和原文引用；PaperQA RCS 的模型调用也要计入费用。真实不足按原流程记录，模拟器的逐条判定均标为 insufficient。
+
+使用新计划 `experiments/civic_dev_upstream.json` 与 `experiments/mtb_dev_upstream.json`，仍先 dry-run 和预算估算。比较旧版/单 Agent/新版、角色委派、九机制与新增流程/RCS/主张核验消融。旧版 `full` 和历史 41-treatment 计划继续保留。API 通过 `/v1/configs` 获取 `grounded_v2` 的完整 config 后提交，默认 config 继续保持历史行为。
+
+## 可选的真实知识工具准备（CPU 即可）
+
+```bash
+python -m pip install -e '.[dev,biomedical]'
+python -m pytest integration_tests -q
+python scripts/check_biomedical.py --live --out results/upstream_live.json
+python scripts/freeze_biomedical.py --queries docs/public_queries.example.json \
+  --out data/public_snapshots/v1 --allow-remote
+```
+
+最后一个命令使用文件中已审核的公共基因/疾病/药物检索标识。可以同时传 `--case <synthesis_case.json> --case-out <new_enriched_case.json>`，把真实知识响应加入明确的 synthesis 任务。CIViC-Fact 给定证据与 MTBBench MCQ 的封闭基准继续使用既定语料；知识库快照与其另建评测条件。使用 GeneAgent 派生富集函数见设计文档；富集结果与患者通路活动分别解释。
+
+网页后续消费现有 `/v1` 上传、示例、任务、事件、SSE 与证据图。逐条审查记录在 `reports[].claim_reviews`，RCS 信息在 trace 的 `context_completed`。本轮依然单进程任务池，不宣称运行中 checkpoint 续跑。
+
+---
+
 # OncoFusion：真实环境接手任务
 
 ## 目标与当前范围

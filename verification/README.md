@@ -1,3 +1,5 @@
+最新组件复用验证见 [UPSTREAM.md](UPSTREAM.md)；下列记录保留各历史交付版本。
+
 # 验证记录索引
 
 **当前交付状态见 [FOLLOWUP.md](FOLLOWUP.md) 与 [followup_summary.json](followup_summary.json)。**

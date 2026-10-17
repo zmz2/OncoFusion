@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "OncoFusion research API",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "paths": {
     "/healthz": {
@@ -46,6 +46,27 @@
       "get": {
         "summary": "Case Schema",
         "operationId": "case_schema_v1_schemas_case_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/schemas/result": {
+      "get": {
+        "summary": "Result Schema",
+        "operationId": "result_schema_v1_schemas_result_get",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -1084,6 +1105,58 @@
             ],
             "title": "Routing",
             "default": "fixed"
+          },
+          "workflow": {
+            "type": "string",
+            "enum": [
+              "legacy",
+              "evidence_first"
+            ],
+            "title": "Workflow",
+            "default": "legacy"
+          },
+          "orchestrator": {
+            "type": "string",
+            "enum": [
+              "python",
+              "langgraph"
+            ],
+            "title": "Orchestrator",
+            "default": "python"
+          },
+          "specialist_protocols": {
+            "type": "boolean",
+            "title": "Specialist Protocols",
+            "default": false
+          },
+          "latest_report_board": {
+            "type": "boolean",
+            "title": "Latest Report Board",
+            "default": false
+          },
+          "claim_verification": {
+            "type": "boolean",
+            "title": "Claim Verification",
+            "default": false
+          },
+          "literature_contexts": {
+            "type": "boolean",
+            "title": "Literature Contexts",
+            "default": false
+          },
+          "max_review_claims": {
+            "type": "integer",
+            "maximum": 12.0,
+            "minimum": 1.0,
+            "title": "Max Review Claims",
+            "default": 6
+          },
+          "max_contexts": {
+            "type": "integer",
+            "maximum": 6.0,
+            "minimum": 1.0,
+            "title": "Max Contexts",
+            "default": 3
           },
           "max_calls": {
             "type": "integer",

@@ -146,15 +146,27 @@ def retrieve(query: str, documents: list[Document], top_k: int, candidate_k: int
 
 
 def evidence_graph(reports, docs: list[Document]) -> dict:
+    from .verification import claim_identifier
+    origins = {d.id: d.origin_id for d in docs}
+    by_claim = {}
     nodes = [{"id": "source:" + d.id, "type": "source", "origin_id": d.origin_id, "title": d.title} for d in docs]
     edges = []
     for i, report in enumerate(reports):
         for j, finding in enumerate(report.output.findings):
             fid = f"finding:{i}:{j}"
-            nodes.append({"id": fid, "type": "finding", "role": report.role,
-                          "statement": finding.statement, "relation": finding.relation})
+            cid = claim_identifier(finding, origins)
+            by_claim.setdefault(cid, []).append(fid)
+            nodes.append({"id": fid, "type": "finding", "role": report.role, "claim_id": cid,
+                          "report_index": i, "statement": finding.statement, "relation": finding.relation})
             edges.extend({"source": "source:" + c.document_id, "target": fid, "type": "cited_by",
                           "start": c.start, "end": c.end} for c in finding.citations)
+        for j, review in enumerate(report.claim_reviews):
+            rid = f"review:{i}:{j}"
+            nodes.append({"id": rid, "type": "review", "role": report.role,
+                          "claim_id": review.claim_id, "verdict": review.verdict, "rationale": review.rationale})
+            edges.extend({"source": rid, "target": fid, "type": "reviews"} for fid in by_claim[review.claim_id])
+            edges.extend({"source": "source:" + c.document_id, "target": rid, "type": "cited_by",
+                          "start": c.start, "end": c.end} for c in review.citations)
     return {"nodes": nodes, "edges": edges}
 
 

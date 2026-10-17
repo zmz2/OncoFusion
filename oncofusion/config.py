@@ -2,7 +2,7 @@
 from .schemas import Ablations, ROLES, RunConfig
 
 
-def presets() -> dict[str, RunConfig]:
+def legacy_presets() -> dict[str, RunConfig]:
     configs = {"full": RunConfig()}
     for mode in ("single_direct", "single_tools", "single_iterative"):
         configs[mode] = RunConfig(mode=mode)
@@ -17,4 +17,12 @@ def presets() -> dict[str, RunConfig]:
         configs["without_" + feature] = RunConfig(ablations=Ablations(**{feature: False}))
     for role in ROLES:
         configs["delegate_" + role] = RunConfig(delegated_roles=[role])
+    return configs
+
+
+def presets() -> dict[str, RunConfig]:
+    configs = legacy_presets()
+    configs["grounded_v2"] = RunConfig(workflow="evidence_first", orchestrator="langgraph",
+        specialist_protocols=True, claim_verification=True, latest_report_board=True)
+    configs["grounded_v2_contexts"] = configs["grounded_v2"].model_copy(update={"literature_contexts": True})
     return configs

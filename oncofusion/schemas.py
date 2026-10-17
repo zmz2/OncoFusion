@@ -92,6 +92,14 @@ class RunConfig(StrictModel):
     ablations: Ablations = Field(default_factory=Ablations)
     delegated_roles: list[Role] = Field(default_factory=list, max_length=7)
     routing: Literal["fixed", "adaptive"] = "fixed"
+    workflow: Literal["legacy", "evidence_first"] = "legacy"
+    orchestrator: Literal["python", "langgraph"] = "python"
+    specialist_protocols: bool = False
+    latest_report_board: bool = False
+    claim_verification: bool = False
+    literature_contexts: bool = False
+    max_review_claims: int = Field(default=6, ge=1, le=12)
+    max_contexts: int = Field(default=3, ge=1, le=6)
     max_calls: int = Field(default=12, ge=1, le=50)
     max_tool_calls: int = Field(default=12, ge=1, le=50)
     max_total_tokens: int = Field(default=120_000, ge=100, le=2_000_000)
@@ -104,6 +112,10 @@ class RunConfig(StrictModel):
 
     @model_validator(mode="after")
     def valid_config(self):
+        if self.orchestrator == "langgraph" and (self.workflow != "evidence_first" or self.mode != "multi"):
+            raise ValueError("langgraph requires the evidence_first multi-agent workflow")
+        if self.claim_verification and self.mode != "multi":
+            raise ValueError("claim_verification requires an independent verifier in multi mode")
         if self.candidate_k < self.top_k:
             raise ValueError("candidate_k must be at least top_k")
         if len(self.delegated_roles) != len(set(self.delegated_roles)):
@@ -138,6 +150,22 @@ class AnalysisOutput(StrictModel):
     requery: str = Field(default="", max_length=1000)
 
 
+class ClaimReview(StrictModel):
+    claim_id: str = Field(pattern=r"^claim-[a-f0-9]{24}$")
+    verdict: Literal["supported", "contradicted", "needs_revision", "insufficient"]
+    rationale: str = Field(min_length=1, max_length=1000)
+    citations: list[Citation] = Field(default_factory=list, max_length=3)
+
+
+class VerifiedAnalysisOutput(AnalysisOutput):
+    reviews: list[ClaimReview] = Field(max_length=12)
+
+
+class LiteratureContext(StrictModel):
+    summary: str = Field(max_length=2000)
+    relevance_score: int = Field(ge=0, le=10, strict=True)
+
+
 class DecisionOutput(StrictModel):
     answer: str = Field(min_length=1, max_length=6000)
     explanation: str = Field(min_length=1, max_length=8000)
@@ -150,6 +178,7 @@ class AgentReport(StrictModel):
     role: Role
     executor: str
     output: AnalysisOutput
+    claim_reviews: list[ClaimReview] = Field(default_factory=list, max_length=12)
 
 
 class Usage(StrictModel):

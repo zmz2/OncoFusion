@@ -1,3 +1,14 @@
+# v0.2 成熟组件复用版本
+
+推荐从 `grounded_v2` 开始真实开发集联调；旧版 `full` 保留为基线。新版使用真实 LangGraph 节点、PaperQA RCS 模板、ToolUniverse SDK 与 GeneAgent 函数适配。逐 Agent 设计、来源和取舍见 [设计审查](docs/AGENT_DESIGN.md)，实测记录见 [组件验证](verification/UPSTREAM.md)，真实 API 接手入口为 [TASK.md](TASK.md)。
+
+```bash
+python -m pip install -e '.[dev]'
+python -m oncofusion demo --preset grounded_v2 --out results/grounded_v2.json
+```
+
+---
+
 # OncoFusion
 
 **肿瘤异构证据整合与核验的多智能体研究后端。**
