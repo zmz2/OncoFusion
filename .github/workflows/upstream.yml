@@ -1,0 +1,41 @@
+name: Upstream SDK acceptance
+on:
+  pull_request:
+    paths: ['oncofusion/**', 'integration_tests/**', 'scripts/check_biomedical.py', 'pyproject.toml', '.github/workflows/upstream.yml']
+  push:
+    branches: [main]
+    paths: ['oncofusion/**', 'integration_tests/**', 'scripts/check_biomedical.py', 'pyproject.toml', '.github/workflows/upstream.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: upstream-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  sdk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ONCOFUSION_PROVIDER: mock
+      TOOLUNIVERSE_LIGHT_IMPORT: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e '.[dev,biomedical]'
+      - name: Actual SDK with deterministic upstream HTTP fixtures
+        run: python -m pytest integration_tests -q
+      - name: Public service availability (recorded separately from deterministic contracts)
+        continue-on-error: true
+        run: python scripts/check_biomedical.py --live --out results/upstream_live.json
+      - run: mkdir -p results && python -m pip freeze > results/upstream_dependencies.txt
+        if: always()
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: upstream-sdk-acceptance
+          path: |
+            results/upstream_live.json
+            results/upstream_dependencies.txt
+          retention-days: 14

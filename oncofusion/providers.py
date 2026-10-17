@@ -11,7 +11,7 @@ from urllib.parse import urlsplit
 
 import httpx
 from .evidence import polarity, quote_document, tokens
-from .schemas import AnalysisOutput, DecisionOutput, Document, Finding
+from .schemas import AnalysisOutput, DecisionOutput, Document, Finding, ClaimReview, VerifiedAnalysisOutput, LiteratureContext
 
 
 class ProviderError(RuntimeError):
@@ -50,6 +50,11 @@ class MockProvider:
     def complete(self, system: str, payload: dict, max_tokens: int,
                  temperature: float, seed: int) -> ModelReply:
         docs = [Document.model_validate(d) for d in payload["sources"]]
+        if payload["role"] == "literature_context":
+            out = LiteratureContext(summary="SIMULATED context extraction; inspect the original source.", relevance_score=0)
+            content = out.model_dump_json()
+            return ModelReply(content, max(1, len(json.dumps(payload)) // 4),
+                              max(1, len(content) // 4), estimated=True)
         signals = payload["signals"]
         findings = []
         claim_direction = polarity(payload["question"])
@@ -103,6 +108,11 @@ class MockProvider:
             unresolved = [] if relevant else ["No matching evidence in the provided source view."]
             out = AnalysisOutput(findings=relevant, unresolved=unresolved,
                                  requery=payload["question"] if unresolved and payload["role"] == "verifier" else "")
+        if payload["role"] == "verifier" and "verification_targets" in payload:
+            reviews = [ClaimReview(claim_id=v["claim_id"], verdict="insufficient",
+                                   rationale="SIMULATED: semantic verification requires a real model.")
+                       for v in payload["verification_targets"]]
+            out = VerifiedAnalysisOutput(**out.model_dump(), reviews=reviews)
         content = out.model_dump_json()
         while len(content) // 4 > max_tokens:
             if isinstance(out, AnalysisOutput) and out.findings:

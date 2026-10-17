@@ -80,3 +80,8 @@ curl -X POST http://127.0.0.1:8000/v1/runs \
 `GET /v1/runs/{id}/stream` 接受 `Last-Event-ID` 请求头。若同时传 `after`，从二者较大值之后回放，结束仍发 `event: done`。序号范围为 -1 至 2^63-1。响应设置 `X-Accel-Buffering: no`；反向代理也应允许长连接。
 
 CORS 允许 Authorization、Content-Type、Idempotency-Key、Last-Event-ID，并暴露 Idempotency-Replayed。Bearer 场景使用支持自定义请求头的 fetch/SSE 客户端。
+
+
+## v0.2 additions
+
+`GET /v1/capabilities` advertises `recommended_preset=grounded_v2`; defaults retain legacy behavior. `GET /v1/configs` returns selectable configurations. `GET /v1/schemas/result` describes typed results, including `reports[].claim_reviews`. The evidence graph adds `review` nodes, stable claim IDs and `reviews` edges. RCS events are `context_completed`; summaries remain model-generated. External SDK tools are preparation-only and are never implicitly invoked on uploaded patient text.

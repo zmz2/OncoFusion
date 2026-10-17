@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Literal
 
 from pydantic import Field, model_validator
-from .config import presets
+from .config import presets, legacy_presets
 from .datasets import GoldRecord, validate_splits
 from .engine import Engine, implementation_digest
 from .evaluation import evaluate, paired_cluster_bootstrap
@@ -187,7 +187,7 @@ def analyze(plan: StudyPlan, summaries: list[dict]) -> dict:
 
 
 def standard_plan(task: str, split: str = "dev", group_limit: int | None = None, smoke: bool = False) -> StudyPlan:
-    names = ["full", "single_direct", "single_tools", "single_iterative", "fixed_five"] if smoke else list(presets())
+    names = ["full", "single_direct", "single_tools", "single_iterative", "fixed_five"] if smoke else list(legacy_presets())
     treatments = [Treatment(name=n, preset=n) for n in names]
     if not smoke:
         treatments += [Treatment(name="robust_" + n, perturbation=n) for n in PERTURBATIONS if n != "none"]

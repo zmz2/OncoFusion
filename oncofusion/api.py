@@ -24,7 +24,7 @@ from .engine import Engine
 from .evidence import evidence_graph, visible_case
 from .examples import examples
 from .providers import Provider, ProviderError, provider_from_env, provider_identity
-from .schemas import AgentReport, CaseInput, RunRequest
+from .schemas import AgentReport, CaseInput, RunRequest, RunResult
 from .store import Store, TERMINAL
 
 MAX_BODY = 2_000_000
@@ -93,11 +93,16 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
                 "simulated": provider.simulated, "auth_enabled": bool(token), "research_only": True,
                 "upload_formats": ["json", "jsonl"], "max_body_bytes": MAX_BODY,
                 "job_execution": "single-process thread pool", "gpu_required": False,
+                "recommended_preset": "grounded_v2", "external_tools": "explicit offline preparation",
                 "idempotency_header": "Idempotency-Key", "sse_resume_header": "Last-Event-ID"}
 
     @router.get("/schemas/case")
     def case_schema():
         return CaseInput.model_json_schema()
+
+    @router.get("/schemas/result")
+    def result_schema():
+        return RunResult.model_json_schema()
 
     @router.get("/configs")
     def configurations():
