@@ -49,7 +49,7 @@ python scripts/audit_dataset_scope.py --dataset data/mtbbench --out results/mtb_
 python scripts/audit_dataset_scope.py --dataset data/civicfact --out results/civic_scope.json
 ```
 
-固定CIViC版使用 SUPPORTS/REVISIONS/NEI；REVISIONS保留原定义。新 claim_fields 只含原 claim.content 白名单；适配该版单个 table 对象、字典字段、disease 单数与 therapies 列表，完整保留药物组合。labels、revised_claim、reviews、civic.description 保持评测侧隔离。患者全部阶段保持同组和同划分。新导入格式确有差异时保留字段样例，明确适配并增加回归，不自动猜测标签/路径。
+固定CIViC版使用 SUPPORTS/REVISIONS/NEI；REVISIONS保留原定义。新 claim_fields 只含原 claim.content 白名单；适配该版原生 type=claim 对象（兼容旧 table）、字典字段、disease 单数与 therapies 列表，完整保留药物组合。labels、revised_claim、reviews、civic.description 保持评测侧隔离。患者全部阶段保持同组和同划分。新导入格式确有差异时保留字段样例，明确适配并增加回归，不自动猜测标签/路径。
 
 审查 scope 中的异构资料、角色适用数以及原数据审计的缺失/排除项。CIViC单文献核验不能证明患者级异构整合；无时间线或无可重排候选的子集不用于该机制的有效性结论。
 
@@ -73,7 +73,7 @@ python -m oncofusion demo --config experiments/research_v1.json --out results/v1
 
 使用供应商实际 token 参数；需要时改 max_completion_tokens。价格按实际每百万token设置 ONCOFUSION_INPUT_PRICE/OUTPUT_PRICE，缺价格时保留不完整标记。截断/空内容的已报告usage会计入失败成本。真实病例必须先审核并标为deidentified；data_class是操作者声明，系统不自动完成脱敏。
 
-然后运行两组×四系统×一次的开发集pilot，各组保留全部题目：
+然后运行两组×四系统×一次的开发集pilot，各组保留全部题目。首版各对照统一采用200,000总token上限；这是调用预算上限，UTF-8保守预检可能提前停止，实际费用按供应商usage记录。该上限由公开开发集模拟联调中两次单Agent预算耗尽调整而来，旧120,000预算对照仍保留：
 
 ```bash
 python scripts/run_study.py --plan experiments/v1_mtb_pilot.json --dataset data/mtbbench --out results/v1_mtb_pilot --dry-run

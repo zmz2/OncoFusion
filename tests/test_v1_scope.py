@@ -164,6 +164,7 @@ def test_v1_plans_load_and_share_input_policies(path):
 def test_v1_profile_requires_real_graph_and_optional_clinical_module():
     c=research_v1_config()
     assert c.workflow_backend=="langgraph" and c.task_scoped and c.clinical_context
+    assert c.max_total_tokens == 200_000
 
 @pytest.mark.parametrize('case',list(examples().values()), ids=lambda c:c.id)
 @pytest.mark.parametrize('mode',['multi','single_iterative'])

@@ -24,4 +24,4 @@ def research_v1_config(*, clinical: bool = True) -> RunConfig:
     """Conservative explicit profile; old presets retain their control semantics."""
     return RunConfig(workflow_backend="langgraph", task_scoped=True,
                      evidence_first=True, specialist_contracts=True, latest_role_board=True,
-                     clinical_context=clinical, schema_retries=1)
+                     clinical_context=clinical, schema_retries=1, max_total_tokens=200_000)

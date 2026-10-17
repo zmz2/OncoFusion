@@ -38,7 +38,7 @@ LangGraph 节点仍串行，补证最多一次。已有 SQLite 任务持久化�
 | 未审核数据允许远程模型处理 | API/Engine/批量评测入口检查 data_class；API 仍要求远程处理同意 |
 | 推荐图配置在默认容器缺依赖 | Docker 使用与上游验收一致的 Python 3.11，安装 graph/clinical；容器测试实际调用 recommended_config |
 | 成熟工具组合安装的二进制兼容风险 | 真实 CI 复现 NumPy ABI 冲突；临床环境固定 NumPy1.26.4/spaCy3.7.5/Thinc8.2.5，ToolUniverse 单独准备 JSON 快照，各环境独立执行 CI |
-| 原文档示例与真实 CIViC claim 结构不同 | 全量数据元结构审计后适配单个 table 对象、字典 content、disease 单数及 therapies 列表；保留旧对照格式并测试原字段白名单 |
+| 原文档示例与真实 CIViC claim 结构不同 | 全量数据元结构审计后适配原生 type=claim 对象（兼容旧 table）、字典 content、disease 单数及 therapies 列表；保留旧对照格式并测试原字段白名单 |
 | 接手清单过大、先跑数千次实验 | 先2组×4系统×1次开发集 pilot，随后按适用范围做逐角色消融；旧完整计划继续保留 |
 
 ## 4. 发布前仍需的真实验收
@@ -65,3 +65,9 @@ LangGraph 节点仍串行，补证最多一次。已有 SQLite 任务持久化�
 ## 实际依赖隔离
 
 临床推理使用 `.[dev,graph,clinical]`；来源准备另建 `.venv-tools` 安装 `.[dev,graph,biomedical]`。前者固定已验证的 NumPy 1 ABI，后者使用 ToolUniverse 的 NumPy 2 依赖。两个环境只通过审核后的 JSON 快照衔接，均执行真实包导入和回归。联合安装时依赖解析明确报冲突，避免“安装成功、运行时崩溃”。
+
+## 真实输入覆盖与预算预检
+
+全量 MTBBench 183 道题中，152 道具备至少两类资料，其余31道为临床文本；主数据无独立文献文档，Literature 在该分支标记不适用，使用 CIViC 独立文章内检索验证。每个角色的作用按对应子集报告。
+
+首版四种对照在14道开发题的模拟联调中，单Agent迭代对照出现2次120,000预算预检终止，其他组完整返回。首版所有组统一调整到200,000预算上限，保留原始失败记录与旧120,000对照；真实API仍先小样本测量成本和上下文上限。模拟预检通过只验证执行流程，不等于真实准确率或费用。
