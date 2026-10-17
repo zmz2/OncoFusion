@@ -19,12 +19,14 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import ValidationError
 
 from . import __version__
+from .agent_design import catalog as agent_catalog
+from .workflow import specification
 from .config import presets
 from .engine import Engine
 from .evidence import evidence_graph, visible_case
 from .examples import examples
 from .providers import Provider, ProviderError, provider_from_env, provider_identity
-from .schemas import AgentReport, CaseInput, RunRequest
+from .schemas import AgentReport, CaseInput, RunRequest, RunConfig
 from .store import Store, TERMINAL
 
 MAX_BODY = 2_000_000
@@ -98,6 +100,21 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
     @router.get("/schemas/case")
     def case_schema():
         return CaseInput.model_json_schema()
+
+    @router.get("/agents")
+    def agents():
+        return agent_catalog()
+
+    @router.get("/workflows")
+    def workflows():
+        return {
+            "legacy": specification(RunConfig()),
+            "evidence_first": specification(RunConfig(workflow_backend="langgraph", evidence_first=True)),
+            "recommended_config": RunConfig(workflow_backend="langgraph", evidence_first=True,
+                                            specialist_contracts=True, latest_role_board=True).model_dump(),
+            "optional_install": "pip install -e '.[graph]'",
+            "external_tools": "Reviewed ToolUniverse snapshots for custom synthesis; closed-corpus benchmarks stay isolated.",
+        }
 
     @router.get("/configs")
     def configurations():

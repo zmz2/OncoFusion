@@ -14,6 +14,7 @@ from .datasets import GoldRecord, validate_splits
 from .engine import Engine, implementation_digest
 from .evaluation import evaluate, paired_cluster_bootstrap
 from .providers import provider_identity
+from .workflow import dependency_identity
 from .schemas import CaseInput, Document, Identifier, RunConfig, StrictModel
 
 PERTURBATIONS = ("none", "shuffle", "duplicate", "irrelevant", "future_canary",
@@ -106,7 +107,8 @@ def select_cases(cases: list[CaseInput], gold: list[GoldRecord], plan: StudyPlan
 
 
 def plan_identity(plan: StudyPlan, cases: list[CaseInput], gold: list[GoldRecord], engine: Engine) -> str:
-    payload = {"implementation": implementation_digest(), "plan": plan.model_dump(), "provider": provider_identity(engine.provider),
+    payload = {"dependencies": {t.name: dependency_identity(t.config(0)) for t in plan.treatments},
+               "implementation": implementation_digest(), "plan": plan.model_dump(), "provider": provider_identity(engine.provider),
                "inputs": [c.model_dump() for c in cases], "gold": [g.model_dump() for g in gold]}
     return hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
