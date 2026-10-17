@@ -1,5 +1,37 @@
 # OncoFusion：真实环境接手任务
 
+## 上游复用版接手（先读）
+
+用户要求重新审查成熟 Agent 后，本轮增加实际 LangGraph 图执行和实际 ToolUniverse 读工具 SDK。完整逐角色说明在 `docs/AGENT_REUSE_AUDIT.md`，精确复用层级在 `upstream_manifest.json`。当前实现保留原25预设；新推荐候选使用 evidence_first、specialist_contracts、latest_role_board 三开关与 LangGraph。真实质量比较后再决定默认配置。
+
+```bash
+python -m pip install -e '.[dev,graph,biomedical]'
+export LANGSMITH_TRACING=false
+export LANGCHAIN_TRACING_V2=false
+python -m pytest -q
+python scripts/check_upstream.py --out results/upstream/checks.json
+# 下面额外访问公开 MyGene 数据库；不调用商业大模型
+python scripts/check_upstream.py --out results/upstream/live.json --live-database
+```
+
+网页继续使用 `/v1`；新增 GET `/v1/agents` 返回角色职责与来源，GET `/v1/workflows` 返回图说明和 recommended_config。POST `/v1/runs` 将该配置放入 config 即可。默认配置保持兼容，图执行需要 graph extra。本轮图节点串行，不含可恢复 checkpoint；任务级持久化和实验级 resume 保持原流程。
+
+接通真实 API 后运行新增 `experiments/upstream_civic_dev.json`、`experiments/upstream_mtb_dev.json`：各24配置×3重复，含五个开发集来源组，先 `--dry-run` 确认执行数和预算。旧Full、仅图运行、仅三机制单开、完整候选、强单Agent、七角色与九机制消融分别报告。新增清单更长，应同时报告实际 token；调整预算时所有对照统一。
+
+```bash
+python scripts/run_study.py --plan experiments/upstream_civic_dev.json --dataset data/civicfact --out results/upstream_civic --dry-run
+# 审核预算后追加 --allow-remote，并明确 execution-cap
+```
+
+ToolUniverse 用于自定义当前 synthesis 任务的审核后公开实体查询快照。先查看示例 `experiments/public_source_plan.json`；该计划明确表明查询已审查、来源条款已接受，使用前按实际情况调整。仅使用演示BRAF查询可运行：
+
+```bash
+python scripts/prepare_sources.py --plan experiments/public_source_plan.json --out data/source_snapshot --allow-remote
+# 对真实自定义研究案例，可增加 --case path/to/reviewed_synthesis.json
+```
+
+标准 CIViC-Fact/MTBBench 输入继续封闭，快照不会自动进入 benchmark；历史病例也不接入当前知识。SDK响应为数据库或搜索记录，原论文语义引用仍须核查。GeneAgent/PaperQA2 仅为方法适配；TxAgent 模型与 PaperQA2 完整规划器均未集成。完整替换 Literature 时先解决其所有额外LLM/embedding计费、语料限制和引用定位，保持同预算对照。
+
 ## 目标与当前范围
 
 算法、后端、七角色、数据适配、基线、消融、统计、报告与大量模拟测试已经搭建。你的主要工作是**执行既有流程、核实真实供应商与正式数据、修复实际发现的问题、生成真实实验结果**。网页开发后置，保持 `/v1` 契约。

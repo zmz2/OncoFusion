@@ -82,3 +82,7 @@ python scripts/review_citations.py score --first results/review/reviewer_A.csv \
 ## 最终需要的结果
 
 主结果表、七角色委派表、九机制表、数据扰动/成本表、独立检索表、人工引用语义表，以及至少 6 个完整成功/失败/纠错案例。基线与消融均已实现；真实实验的“哪个模块有效”根据结果填写。
+
+## 上游复用版开发集计划
+
+新增两个 `upstream_*_dev.json` 计划，各24配置×3重复、五个开发集来源组。新机制为证据先行、专业工作清单和同角色最新报告板；LangGraph/native等价比较单独报告。每个旧角色与机制消融也套用新版配置。外部ToolUniverse快照不加入标准基准；未来扩展必须所有对照共用固定快照并单独定义协议。全文见 AGENT_REUSE_AUDIT。

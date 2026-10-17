@@ -1,0 +1,89 @@
+{
+  "review_date": "2026-10-17",
+  "base_commit": "bf8efe2b1aafa9a78f0837e1433bd61da220a053",
+  "runtime_dependencies": [
+    {
+      "name": "LangGraph",
+      "package": "langgraph",
+      "version": "1.2.16",
+      "license": "MIT",
+      "url": "https://github.com/langchain-ai/langgraph",
+      "local": "oncofusion/workflow.py",
+      "scope": "actual StateGraph runtime; serial nodes; no durable checkpoints"
+    },
+    {
+      "name": "ToolUniverse",
+      "package": "tooluniverse",
+      "version": "1.5.7",
+      "license": "Apache-2.0",
+      "url": "https://github.com/mims-harvard/ToolUniverse",
+      "local": "oncofusion/upstream_tools.py",
+      "scope": "actual SDK; five read-only source tools, isolated workspace, hooks disabled"
+    }
+  ],
+  "method_references": [
+    {
+      "name": "GeneAgent",
+      "url": "https://github.com/ncbi-nlp/GeneAgent",
+      "reviewed_files": [
+        "README.md",
+        "worker.py"
+      ],
+      "scope": "generate/source-verify/revise design; individual variant task is different; runner and model weights not copied"
+    },
+    {
+      "name": "TxAgent",
+      "url": "https://github.com/mims-harvard/TxAgent",
+      "reviewed_files": [
+        "README.md"
+      ],
+      "scope": "therapeutic reasoning and its ToolUniverse tool layer; original TxAgent models/runner not used"
+    },
+    {
+      "name": "ToolUniverse precision-oncology skill",
+      "url": "https://github.com/mims-harvard/ToolUniverse/blob/9f6b13919394393311d355c0b2376db63c7ab452/skills/tooluniverse-precision-oncology/SKILL.md",
+      "scope": "profile validation, evidence applicability and resistance distinctions adapted; fixed treatment tables and forced clinical outputs excluded"
+    },
+    {
+      "name": "PaperQA2",
+      "url": "https://github.com/Future-House/paper-qa",
+      "scope": "search/gather/source-grounded synthesis and contradiction design; package, embeddings, neural retrieval and internal planner not integrated"
+    },
+    {
+      "name": "MDAgents",
+      "url": "https://github.com/mitmedialab/MDAgents",
+      "scope": "moderator/team design reference only; current modality routing is not its complexity classifier"
+    },
+    {
+      "name": "medspaCy",
+      "url": "https://github.com/medspacy/medspacy",
+      "scope": "negated/historical/experiencer distinctions in role instructions; NLP models not integrated"
+    }
+  ],
+  "retained": [
+    "closed-corpus benchmark adapters",
+    "patient/source split isolation",
+    "exact quote validation",
+    "budget and cost accounting",
+    "API persistence/idempotency/SSE",
+    "legacy 25 presets"
+  ],
+  "not_adopted": [
+    {
+      "name": "PathChat",
+      "url": "https://www.nature.com/articles/s41586-024-07618-3",
+      "reason": "image pathology task differs from current structured text; requires independent image integration and evaluation"
+    },
+    {
+      "name": "Biomni",
+      "url": "https://github.com/snap-stanford/Biomni",
+      "reason": "general biomedical execution environment is broader than required scoped read-only evidence tasks"
+    },
+    {
+      "name": "BioMCP",
+      "url": "https://github.com/genomoncology/biomcp",
+      "reason": "credible alternative read-tool layer; avoid adding a second overlapping dependency before testing the selected ToolUniverse adapter"
+    }
+  ],
+  "performance_status": "engineering validation only; superiority requires frozen real-model development comparison"
+}
