@@ -38,6 +38,8 @@ def main():
                     source = raw / 'data.jsonl.gz'
                     download(client, CIVIC_URL, source, git_blob=CIVIC_BLOB)
                     audit = prepare_civic(source, prepared)
+                    covered = audit['role_coverage']['explicit_role_input_cases']
+                    assert all(covered[r] > 0 for r in ('genomics', 'pathology', 'drug')), 'pinned claim entity extraction unexpectedly empty'
                 elif dataset == 'mtbbench':
                     source = acquire_mtb(client, raw)
                     audit = prepare_mtb(raw / source['questions'], raw, prepared, source['path_map'])
