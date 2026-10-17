@@ -2,7 +2,7 @@ name: Apply verified backend validation
 on:
   push:
     branches: [codex/backend-validation-20261017]
-    paths: ['.github/workflows/apply-validation.yml', '.delivery/*.b64']
+    paths: ['.github/workflows/apply-validation.yml']
 permissions:
   contents: write
 jobs:
@@ -21,9 +21,9 @@ jobs:
           python - <<'PY'
           import base64, hashlib, lzma, subprocess
           from pathlib import Path
-          p = Path('.delivery/phase1.b64')
+          p = Path('.delivery/phase2.b64')
           payload = base64.b64decode(p.read_text().strip(), validate=True)
-          assert hashlib.sha256(payload).hexdigest() == 'd97c22decf7756ca7b75e6223890eaacdeaf3d41bcaf35d920b41ca633191f59'
+          assert hashlib.sha256(payload).hexdigest() == '0f47b02db80cddf172bed2f688e929d42cd6b31ec4c340adce27f2f78ca1a3e6'
           patch = lzma.decompress(payload)
           subprocess.run(['git','apply','--check','-'], input=patch, check=True)
           subprocess.run(['git','apply','--index','-'], input=patch, check=True)
@@ -35,6 +35,6 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add oncofusion scripts tests .delivery
-          git commit -m 'fix: preserve native benchmark labels, evidence concerns and ablation isolation'
+          git add oncofusion scripts tests docs README.md TASK.md .delivery
+          git commit -m 'feat: idempotent browser jobs, resumable SSE and complete usage audits'
           git push origin HEAD:codex/backend-validation-20261017
