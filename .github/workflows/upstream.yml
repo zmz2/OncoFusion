@@ -1,7 +1,7 @@
 name: Upstream integration
 on:
   push:
-    branches: [codex/upstream-agents-20261017, main]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 permissions:
@@ -22,26 +22,23 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install upstream runtime packages
-        run: python -m pip install 'langgraph==1.2.16' 'tooluniverse==1.5.7'
-      - name: Archive graph wheels for offline reproduction
+      - name: Install actual upstream dependencies
+        run: python -m pip install -e '.[dev,graph,biomedical]'
+      - name: Record tested environment
         run: |
-          mkdir -p results/upstream/wheels
-          python -m pip download --only-binary=:all: --dest results/upstream/wheels 'langgraph==1.2.16'
+          mkdir -p results/upstream
           python -m pip freeze > results/upstream/environment.txt
-      - uses: actions/upload-artifact@v4
-        with:
-          name: upstream-runtime
-          path: results/upstream/
-          retention-days: 7
-      - name: Install OncoFusion and run tests
+      - name: Test backend with actual graph and biomedical SDK
         run: |
-          python -m pip install -e '.[dev]'
-          python -m pytest -q
-          if test -f scripts/check_upstream.py; then python scripts/check_upstream.py --out results/upstream/checks.json; fi
+          python scripts/run_checks.py
+          python scripts/check_upstream.py --out results/upstream/checks.json
+          python scripts/http_smoke.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: upstream-checks
-          path: results/upstream/checks.json
+          path: |
+            results/checks/
+            results/upstream/
+            results/http_smoke.json
           retention-days: 14
