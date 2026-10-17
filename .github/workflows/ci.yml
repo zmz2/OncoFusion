@@ -40,7 +40,9 @@ jobs:
       - name: Install backend and test dependencies
         run: python -m pip install -e '.[dev]'
       - name: Unit and integration tests
-        run: python scripts/run_checks.py
+        run: |
+          python scripts/run_checks.py
+          python scripts/check_v1.py --backend native --out results/checks/v1.json
       - name: Real loopback HTTP integration
         run: python scripts/http_smoke.py
       - name: Exhaustive offline scenarios
