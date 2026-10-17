@@ -1,10 +1,16 @@
 name: Public benchmark integration
 on:
+  push:
+    branches: [main]
+    paths: ['oncofusion/**', 'scripts/public_data_checks.py', 'pyproject.toml', '.github/workflows/public-data.yml']
   pull_request:
-    paths: ['.github/workflows/public-data.yml']
+    paths: ['oncofusion/**', 'scripts/public_data_checks.py', 'pyproject.toml', '.github/workflows/public-data.yml']
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: public-data-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   public-data:
     runs-on: ubuntu-latest
