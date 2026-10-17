@@ -70,8 +70,8 @@ def import_civicfact(rows: list[dict], refutes_label: str = "REFUTES", *,
         # Whitelist fields; never forward civic.description, reviews, labels, or augmentation metadata.
         documents = [] if not evidence.strip() else [Document(
             id="evidence", origin_id="pmid-" + pmid, kind="literature", text=evidence,
-            title=row.get("document.title", ""), url="https://pubmed.ncbi.nlm.nih.gov/" + pmid + "/",
-            license=row.get("document.license", ""))]
+            title="" if row.get("document.title") is None else row["document.title"], url="https://pubmed.ncbi.nlm.nih.gov/" + pmid + "/",
+            license="" if row.get("document.license") is None else row["document.license"])]
         cases.append(CaseInput(id=cid, patient_id="article-" + pmid, task="verification",
                                question=row["claim.flat"], documents=documents, data_class="deidentified",
                                verification_scheme=verification_scheme))

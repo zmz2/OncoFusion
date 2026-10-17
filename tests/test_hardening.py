@@ -72,7 +72,7 @@ def test_retry_policy_changes_run_identity():
 import pytest
 from oncofusion.datasets import GoldRecord, import_civicfact, import_mtbbench
 from oncofusion.evaluation import evaluate
-from oncofusion.preparation import prepare_mtb
+from oncofusion.preparation import prepare_mtb, prepare_civic
 from oncofusion.providers import ProviderError
 from oncofusion.retrieval_benchmark import import_retrieval, prepare_retrieval
 from oncofusion.schemas import Finding
@@ -216,3 +216,15 @@ def test_unresolved_evidence_same_information_in_both_board_formats(structured):
     if not structured:
         issues = json.loads(issues)
     assert {row['role'] for row in issues} == {'timeline', 'genomics', 'pathology', 'drug', 'literature', 'verifier'}
+
+
+def test_civic_real_null_metadata_stays_unknown(tmp_path):
+    row = civic_record('SUPPORTS')
+    row.update({'document.title': None, 'document.license': None})
+    cases, gold = import_civicfact([row], verification_scheme='revisions')
+    assert cases[0].documents[0].title == ''
+    assert cases[0].documents[0].license == ''
+    source = tmp_path/'source.jsonl'
+    source.write_text(json.dumps(row)+'\n')
+    audit = prepare_civic(source, tmp_path/'out')
+    assert audit['missing_title_records'] == 1 and audit['missing_license_records'] == 1

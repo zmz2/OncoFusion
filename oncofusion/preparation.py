@@ -117,6 +117,9 @@ def prepare_civic(source: Path, output: Path, refutes_label: str = "REFUTES", *,
     audit = dataset_audit(cases, gold)
     manifest = write_dataset(cases, gold, output, str(source))
     audit["manifest"] = manifest
+    audit["missing_title_records"] = sum(not row.get("document.title") for row in rows)
+    audit["missing_license_records"] = sum(not row.get("document.license") for row in rows)
+    audit["unknown_metadata_policy"] = "blank metadata remains unknown; no license grant inferred"
     audit["verification_scheme"] = verification_scheme
     audit["label_policy"] = "native upstream labels retained; no REVISIONS to REFUTES mapping"
     (output / "audit.json").write_text(json.dumps(audit, ensure_ascii=False, indent=2))

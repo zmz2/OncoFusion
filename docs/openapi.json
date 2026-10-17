@@ -373,6 +373,27 @@
             "HTTPBearer": []
           }
         ],
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "pattern": "^[A-Za-z0-9._:-]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -568,6 +589,7 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "maximum": 9223372036854775807,
               "minimum": -1,
               "default": -1,
               "title": "After"
@@ -633,9 +655,28 @@
             "required": false,
             "schema": {
               "type": "integer",
+              "maximum": 9223372036854775807,
               "minimum": -1,
               "default": -1,
               "title": "After"
+            }
+          },
+          {
+            "name": "last-event-id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "maximum": 9223372036854775807,
+                  "minimum": -1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Last-Event-Id"
             }
           }
         ],
@@ -808,6 +849,15 @@
             "maxLength": 20000,
             "minLength": 1,
             "title": "Question"
+          },
+          "verification_scheme": {
+            "type": "string",
+            "enum": [
+              "refutes",
+              "revisions"
+            ],
+            "title": "Verification Scheme",
+            "default": "refutes"
           },
           "options": {
             "additionalProperties": {

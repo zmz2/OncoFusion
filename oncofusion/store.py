@@ -29,6 +29,9 @@ class Store:
                     run_id TEXT NOT NULL REFERENCES runs(id) ON DELETE CASCADE,
                     sequence INTEGER NOT NULL, payload TEXT NOT NULL,
                     PRIMARY KEY(run_id, sequence));
+                CREATE TABLE IF NOT EXISTS request_keys (
+                    key TEXT PRIMARY KEY, fingerprint TEXT NOT NULL,
+                    run_id TEXT NOT NULL REFERENCES runs(id) ON DELETE CASCADE);
             """)
         self.path.chmod(0o600)
 
@@ -63,6 +66,19 @@ class Store:
             conn.execute("INSERT INTO runs VALUES (?, ?, ?, 'queued', NULL, NULL, ?, ?)",
                          (rid, case_id, config.model_dump_json(), now, now))
         return rid
+
+    def request_run(self, key: str, fingerprint: str) -> str | None:
+        with self.connect() as conn:
+            row = conn.execute("SELECT fingerprint, run_id FROM request_keys WHERE key=?", (key,)).fetchone()
+        if row is None:
+            return None
+        if row["fingerprint"] != fingerprint:
+            raise ValueError("idempotency key already used for a different request")
+        return row["run_id"]
+
+    def remember_request(self, key: str, fingerprint: str, run_id: str) -> None:
+        with self.connect() as conn:
+            conn.execute("INSERT INTO request_keys VALUES (?, ?, ?)", (key, fingerprint, run_id))
 
     def claim_run(self, run_id: str) -> bool:
         with self.connect() as conn:
