@@ -6,7 +6,7 @@
 
 阅读顺序：本文件 → docs/V1_REVIEW.md → docs/DATA.md → docs/EVALUATION.md → verification/README.md。实际复用层级见upstream_manifest.json与docs/AGENT_REUSE_AUDIT.md。
 
-当前第一版配置在`oncofusion/profiles.py:v1_config`：**LangGraph固定七角色、同一模型API、结构化证据、文献先行、最新角色工作板、零自动补证**。角色顺序为 Literature → Timeline → Genomics → Pathology & Context → Drug → Verifier → Decision。固定流程优先；保留原生执行器用于等价测试，原25预设和大型计划作为后续实验。
+当前第一版配置在`oncofusion/profiles.py:v1_config`：**LangGraph固定七角色、同一模型API、结构化证据、文献先行、最新角色工作板、零自动补证**。角色顺序为 Literature → Timeline → Genomics → Pathology & Context → Drug → Verifier → Decision。第一版所有系统每病例统一200,000 token总上限，模型/工具调用上限各12，常规流程7次模型调用。该数值是总预算上限，实际消费按usage统计；先跑smoke估算费用。固定流程优先；保留原生执行器用于等价测试，原25预设和大型计划作为后续实验。
 
 LangGraph和ToolUniverse是实际运行依赖；GeneAgent/TxAgent/PaperQA2是明确注明的方法适配，完整Agent和专用权重未加载。首版不做网页、图像、自由群聊、强化学习或持久化图checkpoint。已有SQLite任务持久化、SSE、实验resume继续使用。
 
@@ -38,7 +38,7 @@ python scripts/retrieval_study.py prepare --raw data/raw/civic_retrieval --out d
 
 下载前阅读docs/DATA的来源条款。原资料留在data/；标签在_gold/，Agent仅见允许输入。MTBBench按患者分组且按阶段暴露资料；CIViC保持来源分组，固定2026.06.09原生SUPPORTS/REVISIONS/NEI词表。REVISIONS是部分支持但主张需修订，与REFUTES分开。标签、gold修订文本和人工解释始终隔离。
 
-重点读audit中的版本、标签、样本数、缺失字段、分区、排除项和新增role_coverage。检查各角色实际拥有的输入，尤其CIViC给定证据任务的单文献条件。检索排除项先人工确认，再用已有资料加--allow-exclusions重跑；结果保留真实分母。
+重点读audit中的版本、标签、样本数、缺失字段、分区、排除项和新增role_coverage。本轮修复2026版type=claim对象、单数disease和therapies列表解析。已有CIViC prepared资料应由原始文件重导到新目录，重记inputs SHA256；原标签不变，旧结果保持独立。检查各角色实际拥有的输入，尤其CIViC给定证据任务的单文献条件。检索排除项先人工确认，再用已有资料加--allow-exclusions重跑；结果保留真实分母。
 
 `import-civic/import-mtb`命令现在与prepare_data共用适配和审计，避免同一来源走两个入口形成不同输入。导入与评测都联合检查Case patient_id和Gold group_id；同患者改组名无法绕过隔离。
 

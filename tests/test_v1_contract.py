@@ -232,3 +232,20 @@ def test_cli_remote_execution_cap_prevents_model_calls(tmp_path,monkeypatch,reco
                   '--labels',str(tmp_path/'dataset/_gold/labels.jsonl'),'--out',str(tmp_path/'out'),
                   '--allow-remote','--execution-cap','1'])
     assert error.value.code == 2 and recorder.payloads == []
+
+
+def test_v1_long_input_has_headroom_and_all_controls_share_the_declared_cap():
+    text = 'FICTIONAL LONG CASE. Clinical information recorded.\n' + ' '.join(
+        f'documented-event-{i}' for i in range(2300))
+    case = CaseInput(id='long', patient_id='p', task='mcq',
+                    question='Which option is supported?', options={'A':'observed','B':'unknown'},
+                    documents=[Document(id='clinical', origin_id='clinical', kind='clinical', text=text)])
+    config = v1_config('native')
+    old = Engine(MockProvider()).run(case, config.model_copy(update={'max_total_tokens':120000}))
+    result = Engine(MockProvider()).run(case, config)
+    assert old.status == 'budget_exhausted'
+    assert result.status == 'completed' and result.usage.calls == 7
+    assert config.max_total_tokens == 200000
+    for path in (ROOT/'experiments').glob('v1_*.json'):
+        plan = json.loads(path.read_text())
+        assert all(t['overrides']['max_total_tokens'] == config.max_total_tokens for t in plan['treatments'])

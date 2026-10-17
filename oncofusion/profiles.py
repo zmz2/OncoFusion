@@ -11,7 +11,7 @@ from .schemas import Ablations, CaseInput, Document, Entities, ROLES, RunConfig
 
 
 def v1_config(backend: str = 'langgraph') -> RunConfig:
-    return RunConfig(workflow_backend=backend, evidence_first=True,
+    return RunConfig(workflow_backend=backend, max_total_tokens=200_000, evidence_first=True,
                      specialist_contracts=True, latest_role_board=True,
                      routing='fixed', ablations=Ablations(targeted_requery=False))
 
