@@ -45,6 +45,11 @@ jobs:
       - name: Validate actual biomedical SDK schemas
         if: matrix.profile == 'biomedical'
         run: python scripts/check_upstream.py --out results/upstream/checks.json
+      - name: Exercise recommended v1 on authentic inputs
+        if: matrix.profile == 'clinical'
+        run: |
+          python scripts/public_data_checks.py --accept-source-terms --clinical-graph \
+            --datasets mtbbench civicfact --out results/upstream/v1_data.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
