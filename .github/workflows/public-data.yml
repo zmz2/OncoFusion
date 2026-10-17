@@ -32,13 +32,21 @@ jobs:
           python scripts/public_data_checks.py --accept-source-terms \
             --datasets '${{ matrix.dataset }}' \
             --out 'results/public_${{ matrix.dataset }}.json'
-      - name: Audit bibliography metadata only
+      - name: Audit source schema metadata only
         if: always() && matrix.dataset == 'civicfact'
         run: |
           python - <<'PY'
           import gzip,json,re
           from pathlib import Path
           from collections import Counter
+          def shape(value, depth=0):
+              if depth > 3:
+                  return type(value).__name__
+              if isinstance(value,dict):
+                  return {key:shape(item,depth+1) for key,item in value.items() if key != 'meta'}
+              if isinstance(value,list):
+                  return [shape(value[0],depth+1)] if value else []
+              return type(value).__name__
           path=Path('data/public_checks/civicfact/raw/data.jsonl.gz')
           if path.exists():
               with gzip.open(path,'rt') as f:
@@ -46,6 +54,7 @@ jobs:
               identifiers=Counter(str(r.get('document.pmid')) for r in rows)
               profile={'rows':len(rows), 'labels':dict(Counter(r['gold_label_name'] for r in rows)),
                        'partitions':dict(Counter(r['partition'] for r in rows)),
+                       'claim_shapes':dict(Counter(json.dumps(shape(r.get('claim')),sort_keys=True) for r in rows)),
                        'non_numeric_source_identifiers':{k:v for k,v in identifiers.items() if not re.fullmatch('[0-9]+',k)},
                        'source_text_exported':False,
                        'field_max_lengths':{k:max((len(str(r.get(k) or '')) for r in rows),default=0)
