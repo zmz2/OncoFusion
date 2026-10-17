@@ -56,13 +56,16 @@ def write_dataset(cases: list[CaseInput], gold: list[GoldRecord], output: Path, 
 
 
 def civic_article_reference(value: str | int) -> tuple[str, str, str]:
-    """Preserve the two source identifier formats observed in the pinned CIViC release."""
+    """Preserve the source identifier formats observed in the pinned CIViC release."""
     source = str(value)
     if re.fullmatch(r"[0-9]+", source):
         return "pmid-" + source, "article-" + source, "https://pubmed.ncbi.nlm.nih.gov/" + source + "/"
     if re.fullmatch(r"ASH:10\.[0-9]{4,9}/\S+", source):
         digest = hashlib.sha256(source.encode()).hexdigest()
         return "source-" + digest, "article-" + digest, "https://doi.org/" + quote(source[4:], safe="/():.-")
+    if re.fullmatch(r"ASCO:[0-9]+", source):
+        # This namespace is an abstract identifier, not a PMID or a DOI.
+        return "source-" + source, "article-" + source, ""
     raise ValueError("unsupported article identifier; inspect source namespace before importing")
 
 
