@@ -184,3 +184,34 @@ def test_api_missing_selected_dependency_fails_before_queuing(tmp_path,monkeypat
         reply=client.post('/v1/runs',json={'example_id':'synthetic-support'})
         assert reply.status_code==503
         assert client.get('/v1/runs').json()==[]
+
+
+@pytest.mark.parametrize("therapies", [["Compound-A", "Compound-B"], []])
+def test_native_civic_table_dictionary_and_therapy_list(therapies):
+    row = {"id": "native", "document.pmid": 123, "partition": "dev", "gold_label_name": "SUPPORTS",
+           "claim.flat": "Original combination claim", "evidence.flat": "Public evidence",
+           "claim": {"type": "table", "content": {
+               "molecularProfile": "GENE1 V1A", "disease": "Cancer-X", "therapies": therapies,
+               "evidenceType": "PREDICTIVE", "significance": "response", "reviews": "GOLD_SENTINEL"},
+               "meta": {"gold_label_name": "GOLD_SENTINEL"}},
+           "revised_claim": {"content": {"therapies": ["GOLD_SENTINEL"]}}}
+    case = import_civicfact([row])[0][0]
+    assert case.claim_fields.disease == "Cancer-X"
+    assert case.claim_fields.therapies == (json.dumps(therapies) if therapies else "")
+    assert "GOLD_SENTINEL" not in case.model_dump_json()
+    assert MODULES["drug"].applicability(case)[0] == bool(therapies)
+
+
+@pytest.mark.parametrize("claim", ["unsupported", [{"type": "unstructured", "content": []}]])
+def test_unknown_original_claim_shape_is_explicit_failure(claim):
+    from oncofusion.datasets import original_claim_fields
+    with pytest.raises(ValueError, match="original claim"):
+        original_claim_fields({"claim": claim})
+
+
+def test_clinical_numeric_abi_is_explicitly_pinned():
+    import tomllib
+    extras = tomllib.loads(Path("pyproject.toml").read_text())["project"]["optional-dependencies"]
+    assert "numpy==1.26.4" in extras["clinical"]
+    assert "thinc==8.2.5" in extras["clinical"]
+    assert not any("tooluniverse" in item for item in extras["clinical"])

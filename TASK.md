@@ -15,19 +15,28 @@
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -e '.[dev,graph,clinical,biomedical]'
+python -m pip install -e '.[dev,graph,clinical]'
 export ONCOFUSION_PROVIDER=mock
 export LANGSMITH_TRACING=false
 export LANGCHAIN_TRACING_V2=false
 export LOGURU_LEVEL=WARNING
 python scripts/run_checks.py
-python scripts/check_upstream.py --out results/upstream/checks.json
 python scripts/http_smoke.py
 python scripts/stress_offline.py
 python -m oncofusion demo --config experiments/research_v1.json --out results/v1_mock_demo.json
 ```
 
-真实依赖环境的 medspaCy 和 LangGraph 测试应实际执行；仅核心安装会明确跳过可选依赖测试。记录当前commit、依赖和输出，不复用历史测试数字。Docker默认包含graph/clinical，来源快照准备可在独立环境安装biomedical。
+真实依赖环境的 medspaCy 和 LangGraph 测试应实际执行；仅核心安装会明确跳过可选依赖测试。记录当前commit、依赖和输出，不复用历史测试数字。Docker默认包含graph/clinical，来源快照准备使用下面的独立环境。medspaCy/spaCy 的已验证二进制依赖 NumPy 1.26.4，ToolUniverse 要求 NumPy >=2.2；两个 extra 分开安装，避免实际复现的 ABI 冲突。
+
+```bash
+python3.11 -m venv .venv-tools
+.venv-tools/bin/python -m pip install -e '.[dev,graph,biomedical]'
+.venv-tools/bin/python scripts/check_upstream.py --out results/upstream/tools.json
+# 仅在准备审核过的当前研究来源快照时运行：
+.venv-tools/bin/python scripts/prepare_sources.py --plan experiments/public_source_plan.json --out data/source_snapshot --allow-remote
+```
+
+推理服务继续在 `.venv` 或 Docker 中运行，两侧只交换已保存的 JSON 快照。Windows 对应使用 `.venv-tools\Scripts\python.exe`。
 
 ## 2. 准备并审计正式数据
 
@@ -40,7 +49,7 @@ python scripts/audit_dataset_scope.py --dataset data/mtbbench --out results/mtb_
 python scripts/audit_dataset_scope.py --dataset data/civicfact --out results/civic_scope.json
 ```
 
-固定CIViC版使用 SUPPORTS/REVISIONS/NEI；REVISIONS保留原定义。新 claim_fields 只含原 claim.content 白名单。labels、revised_claim、reviews、civic.description 保持评测侧隔离。患者全部阶段保持同组和同划分。新导入格式确有差异时保留字段样例，明确适配并增加回归，不自动猜测标签/路径。
+固定CIViC版使用 SUPPORTS/REVISIONS/NEI；REVISIONS保留原定义。新 claim_fields 只含原 claim.content 白名单；适配该版单个 table 对象、字典字段、disease 单数与 therapies 列表，完整保留药物组合。labels、revised_claim、reviews、civic.description 保持评测侧隔离。患者全部阶段保持同组和同划分。新导入格式确有差异时保留字段样例，明确适配并增加回归，不自动猜测标签/路径。
 
 审查 scope 中的异构资料、角色适用数以及原数据审计的缺失/排除项。CIViC单文献核验不能证明患者级异构整合；无时间线或无可重排候选的子集不用于该机制的有效性结论。
 

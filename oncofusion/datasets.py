@@ -72,12 +72,26 @@ def civic_article_reference(value: str | int) -> tuple[str, str, str]:
 def original_claim_fields(row: dict) -> ClaimFields:
     """Read only the documented original table, excluding all meta/revised fields."""
     names = {"molecularProfile": "molecular_profile", "evidenceType": "evidence_type",
-             "significance": "significance", "therapies": "therapies", "diseases": "disease"}
+             "significance": "significance", "therapies": "therapies",
+             "disease": "disease", "diseases": "disease"}
     result = {}
-    for table in row.get("claim", []):
-        if table["type"] != "table":
+    claim = row.get("claim", [])
+    # The pinned 2026.06.09 release uses one table object with a field dictionary.
+    # Earlier documented examples use a list of tables containing name/value pairs.
+    tables = [claim] if isinstance(claim, dict) else claim
+    if not isinstance(tables, list):
+        raise ValueError("unsupported original claim structure; inspect the pinned source")
+    for table in tables:
+        if not isinstance(table, dict) or table.get("type") != "table":
             raise ValueError("unsupported original claim structure; inspect the pinned source")
-        for name, value in table["content"]:
+        content = table["content"]
+        fields = content.items() if isinstance(content, dict) else content
+        for name, value in fields:
+            if name == "therapies" and isinstance(value, list):
+                if any(not isinstance(item, str) for item in value):
+                    raise ValueError("original therapies must contain strings")
+                # Keep the supplied set intact; never select one drug from a combination.
+                value = json.dumps(value, ensure_ascii=False) if value else ""
             if name in names:
                 if names[name] in result and result[names[name]] != value:
                     raise ValueError("conflicting original claim fields")

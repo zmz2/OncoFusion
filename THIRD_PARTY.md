@@ -9,3 +9,5 @@ OncoFusion uses LangGraph 1.2.16 (MIT) as an optional execution dependency and T
 GeneAgent (NCBI/NLM), TxAgent and ToolUniverse (Zitnik Lab), PaperQA2 (FutureHouse), MDAgents (MIT Media Lab) and medspaCy informed the independently written role contracts. Those projects' model weights, runners, full skills and source files are not vendored here. No license to reuse their data or model weights is implied.
 
 See `upstream_manifest.json` for exact adoption levels and `docs/AGENT_REUSE_AUDIT.md` for the task-fit review, source links and excluded mechanisms. Attribution does not imply that OncoFusion has reproduced the original systems or their benchmark performance.
+
+Clinical runtime pins: medspaCy 1.3.1, spaCy 3.7.5, Thinc 8.2.5, NumPy 1.26.4. ToolUniverse 1.5.7 source preparation uses its own virtual environment because it requires NumPy >=2.2. The boundary is the reviewed JSON source snapshot, not an in-process dependency combination.

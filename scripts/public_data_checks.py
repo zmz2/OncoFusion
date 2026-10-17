@@ -14,7 +14,8 @@ from oncofusion.experiments import select_cases, standard_plan
 from oncofusion.preparation import CIVIC_URL, CIVIC_BLOB, CIVIC_REVISION, acquire_mtb, download, prepare_civic, prepare_mtb
 from oncofusion.providers import MockProvider
 from oncofusion.retrieval_benchmark import evaluate_retrieval, prepare_retrieval
-from oncofusion.config import presets
+from oncofusion.config import presets, research_v1_config
+from oncofusion.specialists import coverage
 
 
 def main():
@@ -58,7 +59,26 @@ def main():
                 test = {'sample_count':len(selected), 'configurations':len(runs), 'case_executions':len(selected)*len(runs),
                         'completed':sum(r['count']-r['failed_or_incomplete'] for r in runs),
                         'failed_or_incomplete':sum(r['failed_or_incomplete'] for r in runs)}
-            results.append({'dataset':dataset,'status':'passed', 'audit':audit, 'test':test, 'duration_seconds':round(time.monotonic()-started,3)})
+            entry = {'dataset':dataset,'status':'passed', 'audit':audit, 'test':test}
+            if dataset != 'retrieval':
+                # Exercise the new role views on genuine contents, independently of
+                # optional package tests. Clinical/graph runtimes have their own CI.
+                base = research_v1_config(clinical=False).model_copy(update={"workflow_backend": "native"})
+                candidates = [base.model_copy(update={"mode": mode})
+                              for mode in ("multi", "single_tools", "single_iterative", "fixed_five")]
+                checked = [evaluate(selected, targets, Engine(MockProvider()), cfg) for cfg in candidates]
+                scopes = [coverage(c) for c in cases]
+                entry["v1_test"] = {"sample_count": len(selected), "configurations": len(checked),
+                    "case_executions": len(selected)*len(checked),
+                    "failed_or_incomplete": sum(r["failed_or_incomplete"] for r in checked),
+                    "workflow_backend": "native", "clinical_context": False}
+                entry["input_scope"] = {"heterogeneous_cases": sum(c["heterogeneous_input"] for c in scopes),
+                    "applicable_cases_by_role": {role: sum(c["roles"][role]["applicable"] for c in scopes)
+                                                 for role in scopes[0]["roles"]}}
+                if entry["v1_test"]["failed_or_incomplete"]:
+                    entry["status"] = "failed"
+            entry['duration_seconds'] = round(time.monotonic()-started,3)
+            results.append(entry)
         except Exception as exc:
             # Integration boundary: retain failures separately so other public sources are still checked.
             results.append({'dataset':dataset,'status':'failed','error_type':type(exc).__name__,'error':str(exc)[:2000],

@@ -8,7 +8,7 @@
 
 这次确认原设计的任务适配风险：给定证据数据可以只有一个文献文档；强制七角色容易制造空任务。临床治疗史又常位于 clinical 类型，旧 adaptive 可能跳过 Drug。新版使用任务与可见输入决定适用性，并在轨迹、逐样本结果和数据审计中记录；缺失输入与阴性结果区分。
 
-`claim_fields` 只读取原 claim.content 中的 molecularProfile/evidenceType/significance/therapies/diseases。复杂分子组合完整保留；不把多基因组合强行压成单一变异。此处只提供结构化原主张，不读取标签、reviews、civic.description、revised_claim 或增强生成元数据。
+`claim_fields` 只读取原 claim.content 中的 molecularProfile/evidenceType/significance/therapies/disease（兼容旧名 diseases）。复杂分子组合完整保留；不把多基因组合强行压成单一变异。此处只提供结构化原主张，不读取标签、reviews、civic.description、revised_claim 或增强生成元数据。
 
 先运行 `scripts/audit_dataset_scope.py`，核对真实模态和各角色适用样本数。主患者级数据需存在异构资料；单文献子任务只支持相应组件的结论。零适用样本的消融在报告中标记 N/A。单文献上的检索重排、没有临床记录时的时间线、复杂分子组合上的蛋白替换归一化，都应明确适用子集；用独立检索和原文抽样评审补充，而非强行宣称七项提升。
 
@@ -37,6 +37,8 @@ LangGraph 节点仍串行，补证最多一次。已有 SQLite 任务持久化�
 | 截断/空内容的已报告 token 丢失 | ProviderError 携带可观测 usage，失败轨迹与费用仍计入；五项独立回归先复现后修复 |
 | 未审核数据允许远程模型处理 | API/Engine/批量评测入口检查 data_class；API 仍要求远程处理同意 |
 | 推荐图配置在默认容器缺依赖 | Docker 使用与上游验收一致的 Python 3.11，安装 graph/clinical；容器测试实际调用 recommended_config |
+| 成熟工具组合安装的二进制兼容风险 | 真实 CI 复现 NumPy ABI 冲突；临床环境固定 NumPy1.26.4/spaCy3.7.5/Thinc8.2.5，ToolUniverse 单独准备 JSON 快照，各环境独立执行 CI |
+| 原文档示例与真实 CIViC claim 结构不同 | 全量数据元结构审计后适配单个 table 对象、字典 content、disease 单数及 therapies 列表；保留旧对照格式并测试原字段白名单 |
 | 接手清单过大、先跑数千次实验 | 先2组×4系统×1次开发集 pilot，随后按适用范围做逐角色消融；旧完整计划继续保留 |
 
 ## 4. 发布前仍需的真实验收
@@ -59,3 +61,7 @@ LangGraph 节点仍串行，补证最多一次。已有 SQLite 任务持久化�
 - PaperQA2: https://github.com/Future-House/paper-qa
 - MTBBench: https://github.com/bunnelab/mtbbench
 - CIViC-Fact: https://github.com/creisle/civicfact
+
+## 实际依赖隔离
+
+临床推理使用 `.[dev,graph,clinical]`；来源准备另建 `.venv-tools` 安装 `.[dev,graph,biomedical]`。前者固定已验证的 NumPy 1 ABI，后者使用 ToolUniverse 的 NumPy 2 依赖。两个环境只通过审核后的 JSON 快照衔接，均执行真实包导入和回归。联合安装时依赖解析明确报冲突，避免“安装成功、运行时崩溃”。

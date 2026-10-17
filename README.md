@@ -10,7 +10,7 @@
 
 ```bash
 # 推荐Python3.11，运行完整首版
-python -m pip install -e '.[dev,graph,clinical,biomedical]'
+python -m pip install -e '.[dev,graph,clinical]'
 python -m oncofusion demo --config experiments/research_v1.json --out results/v1_demo.json
 ```
 
@@ -111,3 +111,5 @@ TASK.md       后续真实环境执行任务
 ## 上游复用与角色审查
 
 逐角色设计见 [AGENT_REUSE_AUDIT](docs/AGENT_REUSE_AUDIT.md)。可选安装 `python -m pip install -e '.[graph,biomedical]'`：实际复用 LangGraph StateGraph 和 ToolUniverse SDK，原25预设继续保留。`/v1/agents` 与 `/v1/workflows` 提供网页所需的职责、来源和配置。真实模型比较使用 `experiments/upstream_*_dev.json`，工程结果与医学质量分开报告。
+
+临床推理安装 `.[graph,clinical]`；ToolUniverse 来源准备在独立 `.venv-tools` 中安装 `.[graph,biomedical]`。两个模块通过固定 JSON 快照衔接，避免 NumPy 1/2 二进制冲突。完整命令见 TASK.md。
