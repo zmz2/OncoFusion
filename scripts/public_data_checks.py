@@ -5,6 +5,7 @@ import argparse
 import json
 import time
 from pathlib import Path
+from collections import Counter
 
 import httpx
 from oncofusion.datasets import iter_jsonl
@@ -23,6 +24,7 @@ def main():
     parser.add_argument('--root', type=Path, default=Path('data/public_checks'))
     parser.add_argument('--out', type=Path, default=Path('results/public_data_checks.json'))
     parser.add_argument('--accept-source-terms', action='store_true')
+    parser.add_argument('--clinical-graph', action='store_true', help='exercise installed graph and clinical packages')
     parser.add_argument('--datasets', nargs='+', choices=['civicfact','mtbbench','retrieval'], default=['civicfact','mtbbench','retrieval'])
     args = parser.parse_args()
     if not args.accept_source_terms:
@@ -63,7 +65,8 @@ def main():
             if dataset != 'retrieval':
                 # Exercise the new role views on genuine contents, independently of
                 # optional package tests. Clinical/graph runtimes have their own CI.
-                base = research_v1_config(clinical=False).model_copy(update={"workflow_backend": "native"})
+                base = research_v1_config(clinical=args.clinical_graph and dataset == "mtbbench").model_copy(
+                    update={"workflow_backend": "langgraph" if args.clinical_graph else "native"})
                 candidates = [base.model_copy(update={"mode": mode})
                               for mode in ("multi", "single_tools", "single_iterative", "fixed_five")]
                 checked = [evaluate(selected, targets, Engine(MockProvider()), cfg) for cfg in candidates]
@@ -71,7 +74,11 @@ def main():
                 entry["v1_test"] = {"sample_count": len(selected), "configurations": len(checked),
                     "case_executions": len(selected)*len(checked),
                     "failed_or_incomplete": sum(r["failed_or_incomplete"] for r in checked),
-                    "workflow_backend": "native", "clinical_context": False}
+                    "workflow_backend": base.workflow_backend, "clinical_context": base.clinical_context,
+                    "status_by_configuration": {r["config"]["mode"]: dict(Counter(row["status"] for row in r["rows"])) for r in checked},
+                    "failure_details": [{"mode": r["config"]["mode"], "status": row["status"],
+                                         "error": row.get("error", ""), "usage": row.get("usage", {})}
+                                        for r in checked for row in r["rows"] if row["status"] != "completed"]}
                 entry["input_scope"] = {"heterogeneous_cases": sum(c["heterogeneous_input"] for c in scopes),
                     "applicable_cases_by_role": {role: sum(c["roles"][role]["applicable"] for c in scopes)
                                                  for role in scopes[0]["roles"]}}
