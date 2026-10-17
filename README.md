@@ -95,3 +95,7 @@ TASK.md       后续真实环境执行任务
 ```
 
 外部数据保存在已忽略的 `data/`，模型结果与审查表保存在 `results/`；本地密钥、患者上传和运行数据库保持在仓库之外。CIViC-Fact 的论文片段继承各自来源许可，原始材料由使用者按许可获取。
+
+## 上游复用与角色审查
+
+逐角色设计见 [AGENT_REUSE_AUDIT](docs/AGENT_REUSE_AUDIT.md)。可选安装 `python -m pip install -e '.[graph,biomedical]'`：实际复用 LangGraph StateGraph 和 ToolUniverse SDK，原25预设继续保留。`/v1/agents` 与 `/v1/workflows` 提供网页所需的职责、来源和配置。真实模型比较使用 `experiments/upstream_*_dev.json`，工程结果与医学质量分开报告。

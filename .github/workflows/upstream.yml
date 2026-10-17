@@ -1,0 +1,44 @@
+name: Upstream integration
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: upstream-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ONCOFUSION_PROVIDER: mock
+      LANGSMITH_TRACING: 'false'
+      LANGCHAIN_TRACING_V2: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install actual upstream dependencies
+        run: python -m pip install -e '.[dev,graph,biomedical]'
+      - name: Record tested environment
+        run: |
+          mkdir -p results/upstream
+          python -m pip freeze > results/upstream/environment.txt
+      - name: Test backend with actual graph and biomedical SDK
+        run: |
+          python scripts/run_checks.py
+          python scripts/check_upstream.py --out results/upstream/checks.json
+          python scripts/http_smoke.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: upstream-checks
+          path: |
+            results/checks/
+            results/upstream/
+            results/http_smoke.json
+          retention-days: 14

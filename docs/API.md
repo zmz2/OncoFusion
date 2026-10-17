@@ -80,3 +80,9 @@ curl -X POST http://127.0.0.1:8000/v1/runs \
 `GET /v1/runs/{id}/stream` 接受 `Last-Event-ID` 请求头。若同时传 `after`，从二者较大值之后回放，结束仍发 `event: done`。序号范围为 -1 至 2^63-1。响应设置 `X-Accel-Buffering: no`；反向代理也应允许长连接。
 
 CORS 允许 Authorization、Content-Type、Idempotency-Key、Last-Event-ID，并暴露 Idempotency-Replayed。Bearer 场景使用支持自定义请求头的 fetch/SSE 客户端。
+
+## 上游复用版补充接口
+
+GET `/v1/agents` 返回七角色目的、步骤、设计来源及复用层级。GET `/v1/workflows` 返回 legacy/evidence_first 图描述及 recommended_config。两者使用既有 Bearer 鉴权。运行时把 recommended_config 放入 POST `/v1/runs` 的 config 字段；业务任务、SSE、Idempotency-Key 契约保持不变。
+
+四个新增可选 config 字段：`workflow_backend`（native/langgraph，默认native），`evidence_first`、`specialist_contracts`、`latest_role_board`（默认false）。`langgraph` 需要单独安装 graph extra；缺失时运行明确失败。返回图说明中的 `parallel=false`、`checkpoint_resume=false` 是本轮实际边界。数据库快照通过审核后的CLI准备，网页暂不提供任意外部工具执行。

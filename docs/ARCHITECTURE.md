@@ -45,3 +45,7 @@ Web 层与 Engine 通过 Pydantic 边界交互。后续分布式队列可以替�
 ## 可选外部工具
 
 `tools.py` 提供 PubMed 搜索/摘要、Ensembl VEP 和本地快照缓存，已使用 HTTP 模拟测试。默认 benchmark 使用冻结材料；公共工具的网络调用与正式测试分开。研究者可以将已审核的公共检索结果转换为 Document，明确标注来源、许可和可见阶段后上传。新加语料的实验使用单独协议，与原始给定证据任务分别报告。
+
+## 上游复用版
+
+`workflow.py` 以同一节点闭包支持native和真实LangGraph StateGraph；只把已执行节点名存入图状态，病例、预算与轨迹沿用Engine执行上下文，因此当前图不提供checkpoint恢复或并行执行。`agent_design.py` 为七角色提供有来源的工作清单；`upstream_tools.py` 隔离地调用实际ToolUniverse SDK，生成审核后源快照。新增三机制开关独立于运行库开关；旧预设保持不变。详细设计和复用层级见 AGENT_REUSE_AUDIT。

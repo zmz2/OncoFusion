@@ -92,6 +92,10 @@ class RunConfig(StrictModel):
     ablations: Ablations = Field(default_factory=Ablations)
     delegated_roles: list[Role] = Field(default_factory=list, max_length=7)
     routing: Literal["fixed", "adaptive"] = "fixed"
+    workflow_backend: Literal["native", "langgraph"] = "native"
+    evidence_first: bool = False
+    specialist_contracts: bool = False
+    latest_role_board: bool = False
     max_calls: int = Field(default=12, ge=1, le=50)
     max_tool_calls: int = Field(default=12, ge=1, le=50)
     max_total_tokens: int = Field(default=120_000, ge=100, le=2_000_000)

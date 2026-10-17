@@ -1,5 +1,7 @@
 # 验证记录索引
 
+最新上游复用版记录见 [UPSTREAM.md](UPSTREAM.md)。下文保留上一版的验证历史。
+
 **当前交付状态见 [FOLLOWUP.md](FOLLOWUP.md) 与 [followup_summary.json](followup_summary.json)。**
 
 2026-10-17 独立验证：510 项 pytest 全通过；Python 3.11/3.12/3.13 CI 全通过；综合覆盖率 97.2731%；4,048 次离线组合/扰动通过；25 预设、162 次实际 HTTP 请求通过；wheel 与非 root Docker 构建/接口验收通过。
