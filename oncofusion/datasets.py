@@ -7,6 +7,7 @@ import json
 import re
 from pathlib import Path
 from typing import Literal
+from urllib.parse import quote
 
 from pydantic import Field
 from .schemas import CaseInput, Document, Identifier, StrictModel, VerificationScheme, VERIFICATION_LABELS
@@ -54,6 +55,17 @@ def write_dataset(cases: list[CaseInput], gold: list[GoldRecord], output: Path, 
     return manifest
 
 
+def civic_article_reference(value: str | int) -> tuple[str, str, str]:
+    """Preserve the two source identifier formats observed in the pinned CIViC release."""
+    source = str(value)
+    if re.fullmatch(r"[0-9]+", source):
+        return "pmid-" + source, "article-" + source, "https://pubmed.ncbi.nlm.nih.gov/" + source + "/"
+    if re.fullmatch(r"ASH:10\.[0-9]{4,9}/\S+", source):
+        digest = hashlib.sha256(source.encode()).hexdigest()
+        return "source-" + digest, "article-" + digest, "https://doi.org/" + quote(source[4:], safe="/():.-")
+    raise ValueError("unsupported article identifier; inspect source namespace before importing")
+
+
 def import_civicfact(rows: list[dict], refutes_label: str = "REFUTES", *,
                      verification_scheme: VerificationScheme = "refutes") -> tuple[list[CaseInput], list[GoldRecord]]:
     if refutes_label != "REFUTES":
@@ -65,17 +77,17 @@ def import_civicfact(rows: list[dict], refutes_label: str = "REFUTES", *,
         if label not in allowed:
             raise ValueError(f"unsupported CIViC-Fact label {label!r}; inspect release semantics explicitly")
         cid = "civic-" + str(row["id"])
-        pmid = str(row["document.pmid"])
+        origin_id, group_id, source_url = civic_article_reference(row["document.pmid"])
         evidence = row["evidence.flat"]
         # Whitelist fields; never forward civic.description, reviews, labels, or augmentation metadata.
         documents = [] if not evidence.strip() else [Document(
-            id="evidence", origin_id="pmid-" + pmid, kind="literature", text=evidence,
-            title="" if row.get("document.title") is None else row["document.title"], url="https://pubmed.ncbi.nlm.nih.gov/" + pmid + "/",
+            id="evidence", origin_id=origin_id, kind="literature", text=evidence,
+            title="" if row.get("document.title") is None else row["document.title"], url=source_url,
             license="" if row.get("document.license") is None else row["document.license"])]
-        cases.append(CaseInput(id=cid, patient_id="article-" + pmid, task="verification",
+        cases.append(CaseInput(id=cid, patient_id=group_id, task="verification",
                                question=row["claim.flat"], documents=documents, data_class="deidentified",
                                verification_scheme=verification_scheme))
-        gold.append(GoldRecord(case_id=cid, label=label, group_id="article-" + pmid,
+        gold.append(GoldRecord(case_id=cid, label=label, group_id=group_id,
                                split=row["partition"]))
     return cases, gold
 
@@ -83,7 +95,7 @@ def import_civicfact(rows: list[dict], refutes_label: str = "REFUTES", *,
 def parse_mcq(question: str) -> tuple[str, dict[str, str]]:
     matches = list(re.finditer(r"(?:^|\n)\s*([A-Z])[).:]\s+", question))
     if len(matches) < 2:
-        raise ValueError("MCQ options must be line-separated, e.g. A) ...\\nB) ...")
+        raise ValueError("MCQ options must be line-separated, e.g. A) ...\nB) ...")
     options = {m[1]: question[m.end():matches[i + 1].start() if i + 1 < len(matches) else len(question)].strip()
                for i, m in enumerate(matches)}
     if len(options) != len(matches):
