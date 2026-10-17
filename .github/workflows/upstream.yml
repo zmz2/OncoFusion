@@ -1,0 +1,47 @@
+name: Upstream integration
+on:
+  push:
+    branches: [codex/upstream-agents-20261017, main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: upstream-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ONCOFUSION_PROVIDER: mock
+      LANGSMITH_TRACING: 'false'
+      LANGCHAIN_TRACING_V2: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install upstream runtime packages
+        run: python -m pip install 'langgraph==1.2.16' 'tooluniverse==1.5.7'
+      - name: Archive graph wheels for offline reproduction
+        run: |
+          mkdir -p results/upstream/wheels
+          python -m pip download --only-binary=:all: --dest results/upstream/wheels 'langgraph==1.2.16'
+          python -m pip freeze > results/upstream/environment.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: upstream-runtime
+          path: results/upstream/
+          retention-days: 7
+      - name: Install OncoFusion and run tests
+        run: |
+          python -m pip install -e '.[dev]'
+          python -m pytest -q
+          if test -f scripts/check_upstream.py; then python scripts/check_upstream.py --out results/upstream/checks.json; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: upstream-checks
+          path: results/upstream/checks.json
+          retention-days: 14
