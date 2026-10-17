@@ -1,0 +1,52 @@
+name: Upstream implementation audit
+on:
+  push:
+    branches: [codex/upstream-agent-integration-20261017]
+    paths: ['.github/workflows/upstream-review.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Collect public upstream source and exact revisions
+        run: |
+          python - <<'PY'
+          import hashlib, json, subprocess, urllib.request
+          from pathlib import Path
+          root = Path('audit'); root.mkdir()
+          repos = ['ncbi-nlp/GeneAgent', 'mims-harvard/TxAgent', 'mitmedialab/MDAgents', 'Future-House/paper-qa', 'mims-harvard/ToolUniverse', 'snap-stanford/Biomni']
+          manifest = {}
+          for repo in repos:
+              target = Path('checkouts') / repo.split('/')[-1]
+              subprocess.run(['git','clone','--depth=1','--filter=blob:none','https://github.com/'+repo+'.git',str(target)], check=True, stdout=subprocess.DEVNULL)
+              sha = subprocess.check_output(['git','-C',str(target),'rev-parse','HEAD'],text=True).strip()
+              files = {}
+              for p in target.rglob('*'):
+                  if not p.is_file() or '.git' in p.parts or p.stat().st_size > 400000:
+                      continue
+                  relative = p.relative_to(target)
+                  if p.suffix not in {'.py','.toml','.md','.json','.yaml','.yml','.txt'} and not p.name.startswith(('LICENSE','NOTICE')):
+                      continue
+                  if any(part in {'Datasets','Outputs','Verification Reports','figs','web'} for part in relative.parts):
+                      continue
+                  dest = root / repo / relative; dest.parent.mkdir(parents=True,exist_ok=True)
+                  data = p.read_bytes(); dest.write_bytes(data)
+                  files[str(relative)] = hashlib.sha256(data).hexdigest()
+              manifest[repo] = {'commit':sha,'files':files}
+          (root/'manifest.json').write_text(json.dumps(manifest,indent=2))
+          PY
+      - name: Download graph runtime wheels and ToolUniverse package
+        run: |
+          python -m pip download 'langgraph>=1.0,<1.1' --dest audit/wheels
+          python -m pip download --no-deps tooluniverse==1.5.7 --dest audit/wheels
+      - uses: actions/upload-artifact@v4
+        with:
+          name: upstream-audit
+          path: audit/
+          retention-days: 7
