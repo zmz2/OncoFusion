@@ -1,3 +1,7 @@
+## 首版审查更新
+
+实际新增依赖 medspaCy 1.3.1（MIT），使用官方 ConText/TargetMatcher/PyRuSH 组件；源文件 `oncofusion/clinical_context.py`。精确版本由 `upstream_manifest.json` 和 CI 环境记录。其余 Agent 的方法借鉴与工具复用按下文逐项区分。
+
 # Upstream attribution
 
 OncoFusion uses LangGraph 1.2.16 (MIT) as an optional execution dependency and ToolUniverse 1.5.7 (Apache-2.0) as an optional read-only source SDK. Their licenses remain in the installed distributions. Source/database licenses are separate from software licenses.

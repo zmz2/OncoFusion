@@ -4,6 +4,18 @@
 
 从头实现七个专业角色、结构化证据共享、一次定向回查，以及可复现的基线和消融评测。当前交付覆盖算法与后端；网页通过版本化 HTTP API 接入。
 
+## 第一版入口
+
+当前首版使用 `experiments/research_v1.json`：LangGraph协调器＋专业模块＋一次受限补证，按任务分配资料；medspaCy执行英语临床语境提取，ToolUniverse准备经审核的数据库快照。患者级主数据为MTBBench，CIViC-Fact用于证据核验与检索组件评测。先读 [TASK.md](TASK.md) 和 [完整审查](docs/V1_PROJECT_REVIEW.md)。
+
+```bash
+# 推荐Python3.11，运行完整首版
+python -m pip install -e '.[dev,graph,clinical,biomedical]'
+python -m oncofusion demo --config experiments/research_v1.json --out results/v1_demo.json
+```
+
+下面轻量入口保留旧配置的兼容行为；网页使用 `/v1/workflows` 返回的 recommended_config。
+
 ## 快速运行
 
 Python 3.11–3.13，CPU 即可。模拟模式无需模型密钥，所有内置病例都是合成数据。

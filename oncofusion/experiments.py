@@ -10,7 +10,7 @@ from typing import Literal
 
 from pydantic import Field, model_validator
 from .config import presets
-from .datasets import GoldRecord, validate_splits
+from .datasets import GoldRecord, validate_splits, validate_patient_groups
 from .engine import Engine, implementation_digest
 from .evaluation import evaluate, paired_cluster_bootstrap
 from .providers import provider_identity
@@ -95,6 +95,7 @@ def select_cases(cases: list[CaseInput], gold: list[GoldRecord], plan: StudyPlan
     labels = {g.case_id: g for g in gold}
     if len(labels) != len(gold) or set(labels) != {c.id for c in cases}:
         raise ValueError("case/gold mismatch")
+    validate_patient_groups(cases, gold)
     chosen = [c for c in cases if c.task == plan.task and labels[c.id].split == plan.split]
     groups = sorted({labels[c.id].group_id for c in chosen},
                     key=lambda x: hashlib.sha256(x.encode()).digest())

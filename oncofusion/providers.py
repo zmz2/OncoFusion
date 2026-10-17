@@ -11,11 +11,14 @@ from urllib.parse import urlsplit
 
 import httpx
 from .evidence import polarity, quote_document, tokens
-from .schemas import AnalysisOutput, DecisionOutput, Document, Finding
+from .schemas import AnalysisOutput, DecisionOutput, Document, Finding, EvidenceSection, ResearchIntegration
 
 
 class ProviderError(RuntimeError):
-    pass
+    def __init__(self, message: str, *, reply: ModelReply | None = None):
+        super().__init__(message)
+        # An unusable answer can still have billable, reported token usage.
+        self.reply = reply
 
 
 @dataclass
@@ -103,6 +106,12 @@ class MockProvider:
             unresolved = [] if relevant else ["No matching evidence in the provided source view."]
             out = AnalysisOutput(findings=relevant, unresolved=unresolved,
                                  requery=payload["question"] if unresolved and payload["role"] == "verifier" else "")
+        if payload["role"] == "decision" and payload["task"] == "synthesis" and "task_scope" in payload:
+            # The simulator demonstrates the schema, never a mechanistic efficacy chain.
+            out.integration = ResearchIntegration(**{
+                name: EvidenceSection(status="insufficient_evidence",
+                                      statement="SIMULATED: this evidence link requires real-model and source review.")
+                for name in ResearchIntegration.model_fields})
         content = out.model_dump_json()
         while len(content) // 4 > max_tokens:
             if isinstance(out, AnalysisOutput) and out.findings:
@@ -177,24 +186,28 @@ class OpenAICompatibleProvider:
                 if response.status_code != 200:
                     # Do not leak response bodies, URLs, prompts, or credentials into API errors.
                     raise ProviderError(f"model endpoint returned HTTP {response.status_code}")
+                partial = None
                 try:
                     data = response.json()
+                    usage = data.get("usage")
+                    if usage is not None:
+                        incoming, outgoing = usage["prompt_tokens"], usage["completion_tokens"]
+                        if type(incoming) is not int or type(outgoing) is not int or min(incoming, outgoing) < 0:
+                            raise ValueError("invalid token usage")
+                        partial = ModelReply("", incoming, outgoing, attempt + 1, False)
                     choice = data["choices"][0]
                     if choice.get("finish_reason") == "length":
-                        raise ProviderError("model output was truncated; raise max_output_tokens")
+                        raise ProviderError("model output was truncated; raise max_output_tokens", reply=partial)
                     content = choice["message"]["content"]
                     if not isinstance(content, str) or not content.strip():
                         raise ValueError("empty content")
-                    usage = data.get("usage")
-                    if usage is None:
-                        incoming, outgoing, estimated = len(json.dumps(body, ensure_ascii=False)) // 4, len(content) // 4, True
-                    else:
-                        incoming, outgoing, estimated = usage["prompt_tokens"], usage["completion_tokens"], False
-                        if type(incoming) is not int or type(outgoing) is not int or min(incoming, outgoing) < 0:
-                            raise ValueError("invalid token usage")
-                    return ModelReply(content, incoming, outgoing, attempt + 1, estimated)
-                except (ValueError, KeyError, IndexError, TypeError) as exc:
-                    raise ProviderError("invalid model response envelope") from exc
+                    if partial is not None:
+                        partial.content = content
+                        return partial
+                    return ModelReply(content, len(json.dumps(body, ensure_ascii=False)) // 4,
+                                      len(content) // 4, attempt + 1, True)
+                except (ValueError, KeyError, IndexError, TypeError, AttributeError) as exc:
+                    raise ProviderError("invalid model response envelope", reply=partial) from exc
         raise AssertionError("retry loop must return or raise")
 
 

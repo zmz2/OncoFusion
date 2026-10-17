@@ -14,7 +14,7 @@ from .engine import Engine
 from .evaluation import evaluate, load_evaluation
 from .examples import examples
 from .providers import MockProvider, provider_from_env
-from .schemas import CaseInput
+from .schemas import CaseInput, RunConfig
 
 
 def parser() -> argparse.ArgumentParser:
@@ -29,6 +29,7 @@ def parser() -> argparse.ArgumentParser:
     demo = commands.add_parser("demo")
     demo.add_argument("--example", choices=list(examples()), default="synthetic-support")
     demo.add_argument("--preset", choices=list(presets()), default="full")
+    demo.add_argument("--config", type=Path, help="explicit RunConfig JSON; overrides --preset")
     demo.add_argument("--out", type=Path, required=True)
     demo.add_argument("--allow-remote", action="store_true")
     civic = commands.add_parser("import-civic")
@@ -103,7 +104,8 @@ def main(argv: list[str] | None = None) -> int:
         p.error("real API calls require --allow-remote after reviewing data and cost")
     engine = Engine(provider)
     if args.command == "demo":
-        result = engine.run(examples()[args.example], presets()[args.preset])
+        config = RunConfig.model_validate_json(args.config.read_text()) if args.config else presets()[args.preset]
+        result = engine.run(examples()[args.example], config)
         save(args.out, result.model_dump(mode="json"))
         print(json.dumps({"status": result.status, "simulated": result.simulated, "output": str(args.out)}))
         return 0 if result.status == "completed" else 2

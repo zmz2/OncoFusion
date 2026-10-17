@@ -20,8 +20,8 @@ from pydantic import ValidationError
 
 from . import __version__
 from .agent_design import catalog as agent_catalog
-from .workflow import specification
-from .config import presets
+from .workflow import specification, dependency_identity
+from .config import presets, research_v1_config
 from .engine import Engine
 from .evidence import evidence_graph, visible_case
 from .examples import examples
@@ -110,9 +110,11 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
         return {
             "legacy": specification(RunConfig()),
             "evidence_first": specification(RunConfig(workflow_backend="langgraph", evidence_first=True)),
-            "recommended_config": RunConfig(workflow_backend="langgraph", evidence_first=True,
-                                            specialist_contracts=True, latest_role_board=True).model_dump(),
-            "optional_install": "pip install -e '.[graph]'",
+            "recommended_config": research_v1_config().model_dump(),
+            "optional_install": "pip install -e '.[graph,clinical]'",
+            "architecture": "bounded supervisor + specialist workers + source-grounded review",
+            "language": "clinical assertion rules: English; no automatic clinical translation",
+            "claim": "research evidence integration, not validated treatment optimization",
             "external_tools": "Reviewed ToolUniverse snapshots for custom synthesis; closed-corpus benchmarks stay isolated.",
         }
 
@@ -214,6 +216,12 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
                 case, cid = get_example(request.example_id), None
             else:
                 case, cid = request.case, None
+            if not provider.simulated and case.data_class == "unreviewed":
+                raise HTTPException(422, "review and deidentify the case before remote processing")
+            try:
+                dependency_identity(request.config)
+            except RuntimeError:
+                raise HTTPException(503, "selected workflow dependencies are unavailable; install graph/clinical extras") from None
             if not slots.acquire(blocking=False):
                 raise HTTPException(429, "run queue is full")
             try:

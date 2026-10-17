@@ -6,9 +6,10 @@ import random
 import statistics
 from collections import defaultdict
 from pathlib import Path
-from .datasets import GoldRecord, read_jsonl, validate_splits
+from .datasets import GoldRecord, read_jsonl, validate_splits, validate_patient_groups
 from .engine import Engine, run_fingerprint
 from .providers import ProviderError
+from .specialists import coverage
 from .schemas import CaseInput, RunConfig, RunResult, TraceEvent
 
 
@@ -77,6 +78,11 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
     labels = {g.case_id: g for g in gold}
     if not cases or len(labels) != len(gold) or len({c.id for c in cases}) != len(cases) or set(labels) != {c.id for c in cases}:
         raise ValueError("unique and exactly aligned case/gold sets required")
+    validate_patient_groups(cases, gold)
+    if not engine.provider.simulated and any(c.data_class == "unreviewed" for c in cases):
+        raise ValueError("review and deidentify every case before remote evaluation")
+    if any(c.task == "mcq" and labels[c.id].label not in c.options for c in cases):
+        raise ValueError("gold label must belong to its own case option keys")
     if len({c.task for c in cases}) != 1 or cases[0].task == "synthesis":
         raise ValueError("evaluate one labeled task at a time; synthesis requires a separate rubric")
     if cases[0].task == "verification" and len({c.verification_scheme for c in cases}) != 1:
@@ -135,7 +141,13 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
         row["usage_incomplete"] = row.get("usage_incomplete", False) or (
             not engine.provider.simulated and any(e["estimated"] or e["attempts"] > 1 for e in observed_events))
         row["cost_complete"] = prices_known and not row["usage_incomplete"]
+        scope = coverage(case)
+        row["input_scope"] = scope
+        row["executed_roles"] = sorted({e.role for e in events if e.kind == "agent_started"})
         rows.append(row)
+    input_coverage = {"heterogeneous_cases": sum(r["input_scope"]["heterogeneous_input"] for r in rows),
+                      "applicable_cases_by_role": {role: sum(r["input_scope"]["roles"][role]["applicable"] for r in rows)
+                                                   for role in rows[0]["input_scope"]["roles"]}}
     metrics = classification_metrics([r["gold"] for r in rows], [r["prediction"] for r in rows], universe)
     group_scores = defaultdict(list)
     for row in rows:
@@ -153,7 +165,7 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
                   "known_cost_usd": sum(r["known_cost_usd"] for r in rows),
                   "estimated_cost_usd": sum(r["estimated_cost_usd"] for r in rows if r["estimated_cost_usd"] is not None),
                   "cost_complete": all(r["cost_complete"] for r in rows)}
-    report = {"provider": engine.provider.name, "model": engine.provider.model,
+    report = {"input_coverage": input_coverage, "provider": engine.provider.name, "model": engine.provider.model,
               "simulated": engine.provider.simulated,
               "interpretation": "software-only; no biomedical efficacy claim" if engine.provider.simulated else "requires benchmark protocol audit",
               "task": cases[0].task, "verification_scheme": cases[0].verification_scheme if cases[0].task == "verification" else None, "count": len(rows), "config": config.model_dump(), "metrics": metrics, "efficiency": efficiency,
@@ -164,5 +176,8 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
 
 
 def load_evaluation(inputs: Path, labels: Path) -> tuple[list[CaseInput], list[GoldRecord]]:
-    return ([CaseInput.model_validate(row) for row in read_jsonl(inputs)],
-            [GoldRecord.model_validate(row) for row in read_jsonl(labels)])
+    cases = [CaseInput.model_validate(row) for row in read_jsonl(inputs)]
+    gold = [GoldRecord.model_validate(row) for row in read_jsonl(labels)]
+    validate_splits(gold)
+    validate_patient_groups(cases, gold)
+    return cases, gold
