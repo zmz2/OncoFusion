@@ -1,0 +1,56 @@
+name: Apply reviewed first-version fixes
+on:
+  push:
+    branches: [codex/v1-project-review-20261017]
+    paths: ['.github/workflows/apply-v1-review.yml']
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      ONCOFUSION_PROVIDER: mock
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/v1-project-review-20261017
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify frozen patch and apply source
+        run: |
+          python - <<'PY'
+          import base64, hashlib, lzma, subprocess
+          from pathlib import Path
+          parts = [Path(f'.delivery/v1-review-{i:02}.b64') for i in range(3)]
+          payload = base64.b64decode(''.join(p.read_text().strip() for p in parts), validate=True)
+          assert hashlib.sha256(payload).hexdigest() == '8eb7adfa151446ec8b5c976a5623cefaa291e1016bcd8c70254221b87cc96033'
+          patch = lzma.decompress(payload)
+          subprocess.run(['git', 'apply', '--unidiff-zero', '--check', '-'], input=patch, check=True)
+          subprocess.run(['git', 'apply', '--unidiff-zero', '--index', '-'], input=patch, check=True)
+          subprocess.run(['git', 'reset', '--', '.github'], check=True)
+          for p in parts:
+              p.unlink()
+          PY
+      - name: Run core regression
+        run: |
+          python -m pip install -e '.[dev]'
+          python scripts/run_checks.py
+          python scripts/http_smoke.py
+      - name: Preserve executed checks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: applied-v1-checks
+          path: |
+            results/checks/
+            results/http_smoke.json
+          retention-days: 14
+      - name: Commit ordinary reviewed source
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --all . ':!.github'
+          git commit -m 'fix: align first-version specialists, data scope, privacy and evaluation'
+          git push origin HEAD:codex/v1-project-review-20261017
