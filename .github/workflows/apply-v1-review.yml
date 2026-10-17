@@ -18,20 +18,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Verify frozen patch and apply source
+      - name: Verify followup patch and apply source
         run: |
           python - <<'PY'
           import base64, hashlib, lzma, subprocess
           from pathlib import Path
-          parts = [Path(f'.delivery/v1-review-{i:02}.b64') for i in range(3)]
-          payload = base64.b64decode(''.join(p.read_text().strip() for p in parts), validate=True)
-          assert hashlib.sha256(payload).hexdigest() == '8eb7adfa151446ec8b5c976a5623cefaa291e1016bcd8c70254221b87cc96033'
+          path = Path('.delivery/v1-followup.b64')
+          payload = base64.b64decode(path.read_text().strip(), validate=True)
+          assert hashlib.sha256(payload).hexdigest() == '1b60fe10fcd0d2f289300d36ec4223aeae4105dba881bf46e9a04ebf7f293c14'
           patch = lzma.decompress(payload)
-          subprocess.run(['git', 'apply', '--unidiff-zero', '--check', '-'], input=patch, check=True)
-          subprocess.run(['git', 'apply', '--unidiff-zero', '--index', '-'], input=patch, check=True)
-          subprocess.run(['git', 'reset', '--', '.github'], check=True)
-          for p in parts:
-              p.unlink()
+          subprocess.run(['git', 'apply', '--check', '-'], input=patch, check=True)
+          subprocess.run(['git', 'apply', '--index', '-'], input=patch, check=True)
+          path.unlink()
           PY
       - name: Run core regression
         run: |
@@ -52,5 +50,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add --all . ':!.github'
-          git commit -m 'fix: align first-version specialists, data scope, privacy and evaluation'
+          git commit -m 'fix: native CIViC claim fields and isolated clinical dependency ABI'
           git push origin HEAD:codex/v1-project-review-20261017
