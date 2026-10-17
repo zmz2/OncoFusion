@@ -63,10 +63,11 @@ jobs:
           for _ in range(100):
               _, _, raw = call('/v1/runs/'+run_id)
               run = json.loads(raw)
-              if run['status'] in {'completed','failed','cancelled','interrupted'}:
+              if run['status'] in {'succeeded','failed','cancelled','interrupted','budget_exhausted'}:
                   break
               time.sleep(.1)
-          assert run['status'] == 'completed', run['status']
+          assert run['status'] == 'succeeded', run['status']
+          assert run['result']['status'] == 'completed'
           _, _, raw = call('/v1/runs/'+run_id+'/graph')
           assert json.loads(raw)['nodes']
           _, _, raw = call('/v1/runs/'+run_id+'/stream', headers={'Last-Event-ID':'0'})
