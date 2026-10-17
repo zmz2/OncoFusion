@@ -35,6 +35,7 @@ def parser() -> argparse.ArgumentParser:
     civic.add_argument("--source", type=Path, required=True)
     civic.add_argument("--out", type=Path, required=True)
     civic.add_argument("--refutes-label", default="REFUTES")
+    civic.add_argument("--verification-scheme", choices=("refutes", "revisions"), default="revisions")
     mtb = commands.add_parser("import-mtb")
     mtb.add_argument("--source", type=Path, required=True)
     mtb.add_argument("--root", type=Path, required=True)
@@ -86,7 +87,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(write_dataset(cases, gold, args.out, "OncoFusion synthetic software fixtures")))
         return 0
     if args.command == "import-civic":
-        cases, gold = import_civicfact(read_jsonl(args.source), args.refutes_label)
+        cases, gold = import_civicfact(read_jsonl(args.source), args.refutes_label, verification_scheme=args.verification_scheme)
         print(json.dumps(write_dataset(cases, gold, args.out, str(args.source))))
         return 0
     if args.command == "import-mtb":

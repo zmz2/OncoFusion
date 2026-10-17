@@ -2,7 +2,7 @@
 
 ## 两个主任务，独立报告
 
-MTBBench 使用逐阶段选择题 Accuracy、患者平均 Accuracy、成本与失败率。CIViC-Fact 使用给定证据的三分类 Accuracy、Macro-F1、分标签 Precision/Recall/F1。独立段落检索报告 Recall@1/3/6/10、AP@1/3/6/10。模拟结果仅用于工程验证。
+MTBBench 使用逐阶段选择题 Accuracy、患者平均 Accuracy、成本与失败率。CIViC-Fact 当前固定版保留 SUPPORTS/REVISIONS/NEI，使用给定证据的三分类 Accuracy、Macro-F1、分标签 Precision/Recall/F1。独立段落检索报告 Recall@1/3/6/10、AP@1/3/6/10。模拟结果仅用于工程验证。
 
 研究主问题：同模型、可访问工具和预算上限下，专业分工、证据表示与核验是否改善最终表现。预先指定 Full vs single_tools / single_iterative 为主要比较，其余为探索性消融。真实结果决定模块保留、合并与适用任务。
 
@@ -62,7 +62,9 @@ python scripts/run_study.py --plan experiments/civic_dev_smoke.json \
 
 重复运行先在样本内平均，再按患者/文章聚类进行配对 bootstrap，默认 2000 次。所有运行使用相同分组与样本 ID。探索性多重比较暂不校正，报告需按此解释。
 
-失败、超预算样本的预测按错误计入分母。真实网络错误可能发生在供应商已处理但未返回 usage 时，此时费用只报告可观察下界；`cost_complete=false` 或 `usage_incomplete_runs>0` 应保留在表格中。价格缺失时 `known_cost_usd=0` 表示已知费用之和，并非免费。
+失败、超预算样本的预测按错误计入分母。真实网络错误可能发生在供应商已处理但未返回 usage 时，此时费用只报告可观察下界；`cost_complete=false` 或 `usage_incomplete_runs>0` 应保留在表格中。失败轨迹中已有供应商 usage 的调用继续计入 token、逻辑调用数和已知费用。`known_cost_usd` 仅汇总已报告 usage 按配置价格估算的金额；字符估算 usage 的金额另列 `estimated_cost_usd`。真实模式出现估算 usage、HTTP 重试或未返回 usage 的失败时标记不完整。价格缺失时已知费用为零只是可计算项为空。模拟器的零费用只代表模拟运行。
+
+最终决策接收各角色最新 `unresolved` 列表；定向补证后的同角色报告替换旧的未解决列表。角色输出仍是待核查的推论，最终答案依据原始来源。变异归一化/癌种匹配开关同时控制预处理和检索重排，避免消融发生旁路。
 
 ## 报告与人工语义核验
 

@@ -55,7 +55,7 @@ curl -X POST http://127.0.0.1:8000/v1/runs \
 curl http://127.0.0.1:8000/v1/runs/RUN_ID
 ```
 
-支持 JSON/JSONL 病例上传、不可变病例快照、异步运行、状态查询、事件回放/SSE、来源关系图和删除。单进程线程池 + SQLite WAL；默认本地单用户。公开监听需要设置 `ONCOFUSION_API_TOKEN`。原始 PDF、WSI、VCF 的解析和多用户隔离属于独立扩展，当前输入为统一 `CaseInput`。
+支持 JSON/JSONL 病例上传、不可变病例快照、异步运行、状态查询、带 Last-Event-ID 的事件回放/SSE、来源关系图和删除；Idempotency-Key 防止重复提交同一任务。单进程线程池 + SQLite WAL；默认本地单用户。公开监听需要设置 `ONCOFUSION_API_TOKEN`。原始 PDF、WSI、VCF 的解析和多用户隔离属于独立扩展，当前输入为统一 `CaseInput`。
 
 ## 真实模型接入
 
@@ -70,6 +70,10 @@ python -m oncofusion demo --out results/real_demo.json --allow-remote
 ```
 
 支持 `max_completion_tokens`、关闭供应商不支持的 `seed` / `temperature`、超时、429/5xx 有限重试、JSON 校验与有界结构修复。真实模式报错会显式失败，模型类型保持原样。价格从环境变量配置；未提供价格时成本字段保留不完整标识。
+
+## 数据标签
+
+固定 CIViC-Fact 2026.06.09 使用 SUPPORTS / REVISIONS / NEI；REVISIONS 保留“主张需要修订”的含义。自定义或旧版数据可以使用 refutes 标签体系。两类任务按显式 verification_scheme 分别评测，gold 修订文本保持评测侧隔离。
 
 ## 阅读入口
 
@@ -86,7 +90,7 @@ scripts/       测试、下载、实验执行、报告和盲审入口
 experiments/   固定实验计划
 tests/        单元、集成、故障与协议测试
 docs/         架构、API、数据、实验与验收说明
- verification/ 实测摘要（无原始患者/论文数据）
+verification/ 实测摘要（无原始患者/论文数据）
 TASK.md       后续真实环境执行任务
 ```
 

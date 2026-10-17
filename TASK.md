@@ -8,6 +8,18 @@
 
 科学任务：MTBBench 逐阶段文本选择题；CIViC-Fact 给定证据三分类核验；CIViC-Fact 独立同文章段落检索。三个任务分别报告。角色包括 Timeline、Genomics、Pathology & Context、Drug、Literature、Verifier、Decision。
 
+## 本轮接手前必读
+
+此次接手以已验证的现有代码为起点。新增的独立回归集中在 `test_hardening.py`、`test_usage_accounting.py` 和 `test_frontend_contract.py`。验证结果和真实数据联调记录见 `verification/FOLLOWUP.md`。
+
+固定的 CIViC-Fact 2026.06.09 使用 SUPPORTS/REVISIONS/NEI。保留原标签体系：REVISIONS 是需要修订的部分支持，禁止将其改写成 REFUTES。原主张、证据输入模型；gold revised_claim、人工解释和标签留给评测器。默认准备命令已使用 revisions scheme；旧版或用户数据可以显式选择 refutes scheme，各体系分别评测。
+
+真实 MTBBench 的空白源文件已适配并审计。CIViC 空标题、空许可证保留未知状态；检查 audit 的 missing_* 计数。独立检索中同文章同主张存在冲突标签的整组查询排除，先核对审计再明确允许 exclusions，报告保留实际分母。
+
+新增网页契约：POST /v1/runs 使用 Idempotency-Key 避免网络重试重复计费；相同 key 与内容返回原任务，修改内容返回 409。失败或中断后的明确重跑换新 key。SSE 支持 Last-Event-ID 和 after，按较大序号续传。数据上传、示例调用、进度与证据图接口保持 /v1。
+
+费用报告区分 reported usage 和估算 usage；失败前已观测的 token/费用继续计入。真实模式有估算、HTTP 重试、缺失 usage 时 cost_complete=false；estimated_cost_usd 与 known_cost_usd 分开。恢复实验时保留代码、模型、超时和重试策略指纹。
+
 ## 0. 工作原则
 
 使用现成代码与计划开始，不重做研究方向。真实失败由实际输入、HTTP 响应或日志定位，最小修改并增加回归测试。原始公开数据保存在 data/，结果在 results/，密钥保存在本地环境。所有模拟结果保留 simulated 标记。
@@ -30,7 +42,7 @@ python -m oncofusion demo --out results/demo.json
 
 Windows 使用 `.venv\Scripts\Activate.ps1` 和 `$env:NAME="value"`。具体已测试版本在 constraints-tested.txt；项目范围依赖在 pyproject.toml。无需 GPU。
 
-验收：pytest 全通过；HTTP smoke 所有 checks 通过；stress 4,048 次全部通过。保存当前运行版本与测试日志。新变更完成后重跑，而不是仅复用交付报告。
+验收：pytest 全通过；HTTP smoke 所有 checks 通过；stress 4,048 次全部通过。单元测试数量以本次 pytest 输出和 FOLLOWUP 记录为准。保存当前运行版本与测试日志。新变更完成后重跑，而不是仅复用交付报告。
 
 ## 2. 获取正式数据并审计
 
@@ -47,7 +59,7 @@ python scripts/retrieval_study.py prepare --download --accept-source-terms \
 
 CIViC-Fact 已固定 commit/build 与二进制文件 blob 校验，MTBBench 先解析并保存 HF revision 后下载。脚本自动做字段白名单、路径映射、分组检查和审计。无需重新搜索默认数据源。
 
-重点检查各 audit：实际样本数、组数、标签、分区、长度、模态与许可证。MTBBench 的输入来源仅包含事件已宣布文件，答案在 `_gold`；同患者全部阶段保持同划分。CIViC 保留官方文章分组。NEI/REFUTES 等标签按该版本实际语义判断。
+重点检查各 audit：实际样本数、组数、标签、分区、长度、模态与许可证。MTBBench 的输入来源仅包含事件已宣布文件，答案在 `_gold`；同患者全部阶段保持同划分。CIViC 保留官方文章分组。当前版本标签为 SUPPORTS/REVISIONS/NEI，使用该词表与对应定义评测。
 
 检索准备出现 excluded 时先读 `retrieval_audit.json`。确认原因后用已下载文件重跑并加 `--allow-exclusions`，保留排除统计；正例按人工跨度覆盖率至少 75% 定义。文档中有完整命令。
 

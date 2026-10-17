@@ -9,7 +9,7 @@ from pathlib import Path, PurePosixPath
 
 import httpx
 from .datasets import GoldRecord, import_civicfact, import_mtbbench, group_split, read_jsonl, validate_splits, write_dataset
-from .schemas import CaseInput, Entities
+from .schemas import CaseInput, Entities, VerificationScheme
 
 CIVIC_REVISION = "1a767d889b015a836f0f4331afcac5cef165ec7f"
 CIVIC_FILE = "data_builder/builds/civicfact-2026.06.09/data.jsonl.gz"
@@ -108,14 +108,20 @@ def dataset_audit(cases: list[CaseInput], gold: list[GoldRecord]) -> dict:
             "runtime_input_schema": "oncofusion.schemas.CaseInput"}
 
 
-def prepare_civic(source: Path, output: Path, refutes_label: str = "REFUTES") -> dict:
+def prepare_civic(source: Path, output: Path, refutes_label: str = "REFUTES", *,
+                  verification_scheme: VerificationScheme = "revisions") -> dict:
     rows = read_jsonl(source)
-    cases, gold = import_civicfact(rows, refutes_label)
+    cases, gold = import_civicfact(rows, refutes_label, verification_scheme=verification_scheme)
     for case, row in zip(cases, rows):
         case.entities = claim_entities(row)
     audit = dataset_audit(cases, gold)
     manifest = write_dataset(cases, gold, output, str(source))
     audit["manifest"] = manifest
+    audit["missing_title_records"] = sum(not row.get("document.title") for row in rows)
+    audit["missing_license_records"] = sum(not row.get("document.license") for row in rows)
+    audit["unknown_metadata_policy"] = "blank metadata remains unknown; no license grant inferred"
+    audit["verification_scheme"] = verification_scheme
+    audit["label_policy"] = "native upstream labels retained; no REVISIONS to REFUTES mapping"
     (output / "audit.json").write_text(json.dumps(audit, ensure_ascii=False, indent=2))
     return audit
 
@@ -135,7 +141,9 @@ def prepare_mtb(source: Path, root: Path, output: Path, path_map: dict[str, str]
         row.split = split[row.group_id]
     audit = dataset_audit(cases, gold)
     manifest = write_dataset(cases, gold, output, str(source))
+    empty_files = sorted({name for name in path_map.values() if not (root / name).read_text(encoding="utf-8").strip()})
     audit.update({"manifest": manifest, "split_seed": 0, "dev_fraction": .2,
+                  "empty_source_files": empty_files, "empty_source_policy": "omit empty files; infer no biological absence",
                   "protocol": "stage-visible text adapter; compare within this protocol, not as identical to official tool runs"})
     (output / "path_map.json").write_text(json.dumps(path_map, indent=2))
     (output / "audit.json").write_text(json.dumps(audit, ensure_ascii=False, indent=2))

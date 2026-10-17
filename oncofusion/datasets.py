@@ -7,9 +7,10 @@ import json
 import re
 from pathlib import Path
 from typing import Literal
+from urllib.parse import quote
 
 from pydantic import Field
-from .schemas import CaseInput, Document, Identifier, StrictModel
+from .schemas import CaseInput, Document, Identifier, StrictModel, VerificationScheme, VERIFICATION_LABELS
 
 
 class GoldRecord(StrictModel):
@@ -54,25 +55,42 @@ def write_dataset(cases: list[CaseInput], gold: list[GoldRecord], output: Path, 
     return manifest
 
 
-def import_civicfact(rows: list[dict], refutes_label: str = "REFUTES") -> tuple[list[CaseInput], list[GoldRecord]]:
+def civic_article_reference(value: str | int) -> tuple[str, str, str]:
+    """Preserve the source identifier formats observed in the pinned CIViC release."""
+    source = str(value)
+    if re.fullmatch(r"[0-9]+", source):
+        return "pmid-" + source, "article-" + source, "https://pubmed.ncbi.nlm.nih.gov/" + source + "/"
+    if re.fullmatch(r"ASH:10\.[0-9]{4,9}/\S+", source):
+        digest = hashlib.sha256(source.encode()).hexdigest()
+        return "source-" + digest, "article-" + digest, "https://doi.org/" + quote(source[4:], safe="/():.-")
+    if re.fullmatch(r"ASCO:[0-9]+", source):
+        # This namespace is an abstract identifier, not a PMID or a DOI.
+        return "source-" + source, "article-" + source, ""
+    raise ValueError("unsupported article identifier; inspect source namespace before importing")
+
+
+def import_civicfact(rows: list[dict], refutes_label: str = "REFUTES", *,
+                     verification_scheme: VerificationScheme = "refutes") -> tuple[list[CaseInput], list[GoldRecord]]:
+    if refutes_label != "REFUTES":
+        raise ValueError("label remapping is unsupported; preserve REVISIONS with verification_scheme=revisions")
+    allowed = VERIFICATION_LABELS[verification_scheme]
     cases, gold = [], []
     for row in rows:
         label = row["gold_label_name"]
-        if label == refutes_label:
-            label = "REFUTES"
-        if label not in ("SUPPORTS", "REFUTES", "NEI"):
+        if label not in allowed:
             raise ValueError(f"unsupported CIViC-Fact label {label!r}; inspect release semantics explicitly")
         cid = "civic-" + str(row["id"])
-        pmid = str(row["document.pmid"])
+        origin_id, group_id, source_url = civic_article_reference(row["document.pmid"])
         evidence = row["evidence.flat"]
         # Whitelist fields; never forward civic.description, reviews, labels, or augmentation metadata.
         documents = [] if not evidence.strip() else [Document(
-            id="evidence", origin_id="pmid-" + pmid, kind="literature", text=evidence,
-            title=row.get("document.title", ""), url="https://pubmed.ncbi.nlm.nih.gov/" + pmid + "/",
-            license=row.get("document.license", ""))]
-        cases.append(CaseInput(id=cid, patient_id="article-" + pmid, task="verification",
-                               question=row["claim.flat"], documents=documents, data_class="deidentified"))
-        gold.append(GoldRecord(case_id=cid, label=label, group_id="article-" + pmid,
+            id="evidence", origin_id=origin_id, kind="literature", text=evidence,
+            title="" if row.get("document.title") is None else row["document.title"], url=source_url,
+            license="" if row.get("document.license") is None else row["document.license"])]
+        cases.append(CaseInput(id=cid, patient_id=group_id, task="verification",
+                               question=row["claim.flat"], documents=documents, data_class="deidentified",
+                               verification_scheme=verification_scheme))
+        gold.append(GoldRecord(case_id=cid, label=label, group_id=group_id,
                                split=row["partition"]))
     return cases, gold
 
@@ -80,7 +98,7 @@ def import_civicfact(rows: list[dict], refutes_label: str = "REFUTES") -> tuple[
 def parse_mcq(question: str) -> tuple[str, dict[str, str]]:
     matches = list(re.finditer(r"(?:^|\n)\s*([A-Z])[).:]\s+", question))
     if len(matches) < 2:
-        raise ValueError("MCQ options must be line-separated, e.g. A) ...\\nB) ...")
+        raise ValueError("MCQ options must be line-separated, e.g. A) ...\nB) ...")
     options = {m[1]: question[m.end():matches[i + 1].start() if i + 1 < len(matches) else len(question)].strip()
                for i, m in enumerate(matches)}
     if len(options) != len(matches):
@@ -112,7 +130,7 @@ def import_mtbbench(records: dict[str, list[dict]], root: Path,
         docs: dict[str, Document] = {}
         question_number = 0
         for stage, entry in enumerate(entries):
-            if "context" in entry:
+            if "context" in entry and entry["context"].strip():
                 sid = f"context-{stage}"
                 docs[sid] = Document(id=sid, origin_id=sid, kind="clinical", text=entry["context"], available_stage=stage)
             if "file_paths" in entry:
@@ -121,6 +139,9 @@ def import_mtbbench(records: dict[str, list[dict]], root: Path,
                         raise ValueError("unmapped upstream file; audit and add it to path_map")
                     path = safe_source(root, path_map[upstream])
                     text = path.read_text(encoding="utf-8")
+                    if not text.strip():
+                        # Empty upstream files have no citable evidence. Do not infer a negative finding.
+                        continue
                     sid = "file-" + hashlib.sha256(upstream.encode()).hexdigest()[:20]
                     if sid not in docs:
                         name = path.name.casefold()

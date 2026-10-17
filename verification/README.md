@@ -1,20 +1,22 @@
-# 交付验证记录
+# 验证记录索引
 
-本目录只包含软件测试摘要，原始病例、论文全文、密钥和私有评审资料继续保存在本地。
+**当前交付状态见 [FOLLOWUP.md](FOLLOWUP.md) 与 [followup_summary.json](followup_summary.json)。**
 
-| 检查 | 本地实测结果 |
-|---|---|
-| pytest | 446 passed，0 failed / error / skipped |
-| 覆盖率 | 语句 98.21%；分支 94.53%；语句+分支综合 97.26% |
-| 扩展机制与扰动 | 4,048 次完整流程，全部通过 |
-| 实际 TCP / HTTP | 25 个预设，162 次本地模型 HTTP 请求；11 类检查通过 |
-| 完整实验计划 | 41 配置 × 3 次重复；两个任务合计 492 次运行，0 未完成 |
-| 真实内容补充 | 3 份上游人工复核主张/证据片段 × 25 预设，75 次模拟流程通过 |
-| 报告/盲审导出 | CSV/Markdown 报告与 20 条引用盲审表生成通过 |
-| 安装包 | pip wheel 构建通过 |
+2026-10-17 独立验证：510 项 pytest 全通过；Python 3.11/3.12/3.13 CI 全通过；综合覆盖率 97.2731%；4,048 次离线组合/扰动通过；25 预设、162 次实际 HTTP 请求通过；wheel 与非 root Docker 构建/接口验收通过。
 
-模型均为确定性模拟器；HTTP 测试使用真实本地网络与独立服务进程。真实供应商与完整正式基准的实测状态另由 GitHub CI 或接手环境记录，以上数字不代表模型的生物医学质量。
+完整公开数据准备通过：MTBBench 183 题/40 患者；CIViC-Fact 12,476 条/1,409 来源组；本项目独立检索适配 1,140 查询。抽样执行规模、排除策略、具体 CI 链接和缺陷修复见 FOLLOWUP。
 
-`local_checks.json` 提供真实依赖、pytest 数量与覆盖率；`stress.json`、`http_smoke.json`、`study_smoke.json`、`upstream_smoke.json` 对应上述范围。GitHub Actions 的结果以远端真实运行状态为准。
+所有模型结果为模拟器输出。真实数据导入、软件工程成功、真实医学答案质量分别评价。真实 API 与科学实验按根目录 TASK.md 接手。
 
-完整测试命令与故障覆盖见 docs/TESTING.md。新增修复后重跑测试并更新对应记录，保留版本与来源。
+## 历史文件
+
+以下 JSON 保留起始工程 `5e26a3197c4e88cde7205eb62d3547b6756119f9` 的历史记录：
+
+- local_checks.json：446 项测试与当时的依赖/覆盖率。
+- stress.json、http_smoke.json：当时的组合与 HTTP 验证。
+- study_smoke.json、upstream_smoke.json：当时的完整模拟计划与少量上游片段验证。
+- source_manifest.json：起始源码的校验和清单，供复核历史快照。
+
+这些历史文件不充当最新工作树的校验清单。当前 CI 每次归档实际 checkout 的源码、Git SHA、SHA256、JUnit、覆盖率与实验摘要；新修改以对应 CI 记录为准。附件保留 14 天，长期结果摘要在本目录。
+
+原始病例、论文全文、密钥与私有评审资料保存在本地，不进入本目录。完整测试命令见 docs/TESTING.md。

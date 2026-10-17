@@ -6,40 +6,56 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      ONCOFUSION_PROVIDER: mock
     strategy:
       fail-fast: false
       matrix:
         python: ['3.11', '3.12', '3.13']
     steps:
       - uses: actions/checkout@v4
-      - name: Detect initialized source tree
-        id: source
-        run: |
-          if test -f pyproject.toml; then echo 'ready=true' >> "$GITHUB_OUTPUT"; fi
       - uses: actions/setup-python@v5
-        if: steps.source.outputs.ready == 'true'
         with:
           python-version: ${{ matrix.python }}
+      - name: Archive tracked source for reproducibility
+        if: matrix.python == '3.12'
+        run: |
+          mkdir -p results/source
+          git archive --format=tar.gz --output=results/source/oncofusion-source.tar.gz HEAD
+          git rev-parse HEAD > results/source/commit.txt
+          sha256sum results/source/oncofusion-source.tar.gz > results/source/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        if: matrix.python == '3.12'
+        with:
+          name: oncofusion-verified-source
+          path: results/source/
+          retention-days: 14
       - name: Install backend and test dependencies
-        if: steps.source.outputs.ready == 'true'
         run: python -m pip install -e '.[dev]'
       - name: Unit and integration tests
-        if: steps.source.outputs.ready == 'true'
         run: python scripts/run_checks.py
       - name: Real loopback HTTP integration
-        if: steps.source.outputs.ready == 'true'
         run: python scripts/http_smoke.py
       - name: Exhaustive offline scenarios
-        if: steps.source.outputs.ready == 'true' && matrix.python == '3.12'
+        if: matrix.python == '3.12'
         run: python scripts/stress_offline.py
+      - name: Build distributable wheel
+        if: matrix.python == '3.12'
+        run: python -m pip wheel --no-deps --wheel-dir results/wheels .
       - uses: actions/upload-artifact@v4
-        if: always() && steps.source.outputs.ready == 'true'
+        if: always()
         with:
           name: checks-python-${{ matrix.python }}
           path: |
             results/checks/
             results/http_smoke.json
             results/stress.json
+            results/wheels/
+          retention-days: 14

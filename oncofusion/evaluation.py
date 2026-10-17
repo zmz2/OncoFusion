@@ -79,6 +79,11 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
         raise ValueError("unique and exactly aligned case/gold sets required")
     if len({c.task for c in cases}) != 1 or cases[0].task == "synthesis":
         raise ValueError("evaluate one labeled task at a time; synthesis requires a separate rubric")
+    if cases[0].task == "verification" and len({c.verification_scheme for c in cases}) != 1:
+        raise ValueError("evaluate one verification vocabulary at a time")
+    universe = list(cases[0].verification_labels) if cases[0].task == "verification" else sorted({key for case in cases for key in case.options})
+    if not all(g.label in universe for g in gold):
+        raise ValueError("gold labels must belong to the declared task vocabulary")
     if output:
         output.mkdir(parents=True, exist_ok=True)
     rows = []
@@ -103,6 +108,7 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
                 raise ProviderError(failure["error"])
             if result is None:
                 result = engine.run(case, config, events.append)
+            events = result.trace
             prediction = result.decision.answer if result.decision else "__INCOMPLETE__"
             row = {"case_id": case.id, "group_id": labels[case.id].group_id,
                    "gold": labels[case.id].label, "prediction": prediction,
@@ -113,32 +119,44 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
         except ProviderError as exc:
             row = {"case_id": case.id, "group_id": labels[case.id].group_id,
                    "gold": labels[case.id].label, "prediction": "__FAILED__", "status": "failed", "error": str(exc), "usage_incomplete": True,
-                   "observed_usage": {"input_tokens": sum(e.details["input_tokens"] for e in events if e.kind == "model_usage"),
+                   "observed_usage": {"calls": sum(e.kind == "agent_started" for e in events),
+                                      "input_tokens": sum(e.details["input_tokens"] for e in events if e.kind == "model_usage"),
                                       "output_tokens": sum(e.details["output_tokens"] for e in events if e.kind == "model_usage")}}
             if output:
                 (output / (case.id + ".failed.json")).write_text(json.dumps({
                     "error": str(exc), "fingerprint": run_fingerprint(case, config, engine.provider), "trace": [e.model_dump() for e in events]}, ensure_ascii=False), encoding="utf-8")
+        observed_events = [e.details for e in events if e.kind == "model_usage"]
+        prices_known = engine.provider.input_price is not None and engine.provider.output_price is not None
+        def event_cost(event):
+            return (event["input_tokens"] * engine.provider.input_price +
+                    event["output_tokens"] * engine.provider.output_price) / 1_000_000
+        row["known_cost_usd"] = sum(event_cost(e) for e in observed_events if not e["estimated"]) if prices_known else 0.0
+        row["estimated_cost_usd"] = sum(event_cost(e) for e in observed_events if e["estimated"]) if prices_known else None
+        row["usage_incomplete"] = row.get("usage_incomplete", False) or (
+            not engine.provider.simulated and any(e["estimated"] or e["attempts"] > 1 for e in observed_events))
+        row["cost_complete"] = prices_known and not row["usage_incomplete"]
         rows.append(row)
-    universe = ["SUPPORTS", "REFUTES", "NEI"] if cases[0].task == "verification" else sorted({g.label for g in gold})
     metrics = classification_metrics([r["gold"] for r in rows], [r["prediction"] for r in rows], universe)
     group_scores = defaultdict(list)
     for row in rows:
         group_scores[row["group_id"]].append(row["prediction"] == row["gold"])
     metrics["group_macro_accuracy"] = statistics.mean(statistics.mean(values) for values in group_scores.values())
-    observed = [r["usage"] for r in rows if "usage" in r]
+    observed = [r["usage"] if "usage" in r else r["observed_usage"] for r in rows]
     times = sorted(r["duration_seconds"] for r in rows if "duration_seconds" in r)
-    efficiency = {"observed_completed_runs": len(observed), "usage_incomplete_runs": len(rows) - len(observed),
+    efficiency = {"observed_completed_runs": sum(r["status"] == "completed" for r in rows),
+                  "usage_incomplete_runs": sum(r["usage_incomplete"] for r in rows),
                   "total_calls": sum(u["calls"] for u in observed),
                   "total_input_tokens": sum(u["input_tokens"] for u in observed),
                   "total_output_tokens": sum(u["output_tokens"] for u in observed),
                   "mean_seconds": statistics.mean(times) if times else None,
                   "p95_seconds": times[min(len(times) - 1, int(.95 * len(times)))] if times else None,
-                  "known_cost_usd": sum(u["cost_usd"] for u in observed if u["cost_usd"] is not None),
-                  "cost_complete": len(observed) == len(rows) and all(u["cost_usd"] is not None for u in observed)}
+                  "known_cost_usd": sum(r["known_cost_usd"] for r in rows),
+                  "estimated_cost_usd": sum(r["estimated_cost_usd"] for r in rows if r["estimated_cost_usd"] is not None),
+                  "cost_complete": all(r["cost_complete"] for r in rows)}
     report = {"provider": engine.provider.name, "model": engine.provider.model,
               "simulated": engine.provider.simulated,
               "interpretation": "software-only; no biomedical efficacy claim" if engine.provider.simulated else "requires benchmark protocol audit",
-              "task": cases[0].task, "count": len(rows), "config": config.model_dump(), "metrics": metrics, "efficiency": efficiency,
+              "task": cases[0].task, "verification_scheme": cases[0].verification_scheme if cases[0].task == "verification" else None, "count": len(rows), "config": config.model_dump(), "metrics": metrics, "efficiency": efficiency,
               "failed_or_incomplete": sum(r["status"] != "completed" for r in rows), "rows": rows}
     if output:
         (output / "summary.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")

@@ -19,7 +19,8 @@ from .preparation import claim_entities, dataset_audit
 from .schemas import CaseInput, Document
 
 
-def import_retrieval(queries: Iterable[dict], chunks: Iterable[dict], min_overlap: float = .75):
+def import_retrieval(queries: Iterable[dict], chunks: Iterable[dict], min_overlap: float = .75, *,
+                     exclude_conflicts: bool = False):
     if not 0 < min_overlap <= 1:
         raise ValueError("min_overlap must be in (0,1]")
     by_article = defaultdict(list)
@@ -32,13 +33,16 @@ def import_retrieval(queries: Iterable[dict], chunks: Iterable[dict], min_overla
                             kind="literature", text=row["chunk.text"], license=row.get("license", ""))
         by_article[pmid].append((document, start, end, row["partition"]))
     grouped = {}
+    conflicts = set()
     merged_rows = 0
     for row in queries:
         key = (str(row["document.pmid"]), row["claim.flat"])
         if key in grouped:
             existing = grouped[key]
             if row.get("gold_label_name", "SUPPORTS") != existing.get("gold_label_name", "SUPPORTS"):
-                raise ValueError("duplicate retrieval query has conflicting source labels")
+                if not exclude_conflicts:
+                    raise ValueError("duplicate retrieval query has conflicting source labels")
+                conflicts.add(key)
             existing["evidence"].extend(row["evidence"])
             merged_rows += 1
         else:
@@ -48,6 +52,9 @@ def import_retrieval(queries: Iterable[dict], chunks: Iterable[dict], min_overla
         pmid, question = str(row["document.pmid"]), row["claim.flat"]
         # A query groups all equivalent curated selections for one claim in one article.
         cid = "retrieval-" + hashlib.sha256((pmid + "\0" + question).encode()).hexdigest()[:32]
+        if (pmid, question) in conflicts:
+            excluded.append({"row": number, "case_id": cid, "reason": "same article and claim have conflicting evidence labels"})
+            continue
         if row.get("gold_label_name") == "NEI":
             excluded.append({"row": number, "case_id": cid, "reason": "NEI has no retrieval relevance target"})
             continue
@@ -76,12 +83,13 @@ def import_retrieval(queries: Iterable[dict], chunks: Iterable[dict], min_overla
                                split=next(iter(splits)), relevant_document_ids=relevant))
     validate_splits(gold)
     return cases, gold, {"merged_duplicate_rows": merged_rows, "min_curated_span_overlap": min_overlap, "included": len(cases), "excluded": excluded,
+                         "conflicting_query_groups": len(conflicts),
                          "source_metadata_forwarded": ["chunk.id", "document.pmid", "chunk.text", "license"],
                          "scope": "same source article, not global PubMed retrieval"}
 
 
 def prepare_retrieval(queries, chunks, output: Path, allow_exclusions: bool = False):
-    cases, gold, audit = import_retrieval(queries, chunks)
+    cases, gold, audit = import_retrieval(queries, chunks, exclude_conflicts=True)
     output.mkdir(parents=True, exist_ok=True)
     (output / "retrieval_audit.json").write_text(json.dumps(audit, indent=2))
     if not cases:

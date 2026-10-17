@@ -53,7 +53,7 @@ curl -X POST http://127.0.0.1:8000/v1/cases/upload -F 'file=@case.json'
 }
 ```
 
-任务：verification 返回 SUPPORTS/REFUTES/NEI；mcq 额外提供 options 对象并返回选项键；synthesis 返回研究摘要。所有模式返回统一 evidence、unresolved、usage、simulated 标识。病例对象排除 answer、gold_label、任意文件路径和额外字段。
+任务：verification 按 `verification_scheme` 返回标签：`refutes`（默认）为 SUPPORTS/REFUTES/NEI，`revisions` 为 SUPPORTS/REVISIONS/NEI；mcq 额外提供 options 对象并返回选项键；synthesis 返回研究摘要。结果包含 `decision`、各角色 `reports`、`trace`、`usage`、`simulated`；未解决项位于 decision 或相应角色报告的 `unresolved`。病例对象排除 answer、gold_label、任意文件路径和额外字段。
 
 ## 状态与错误
 
@@ -62,3 +62,21 @@ curl -X POST http://127.0.0.1:8000/v1/cases/upload -F 'file=@case.json'
 400/422：请求或数据错误；401：鉴权；404：记录不存在；409：状态冲突；413：大小限制；415：文件格式；429：队列满。客户端仅对明确可重试的错误有限重试；已返回 run_id 后通过查询恢复，避免重复提交计费任务。
 
 事件序号从 0 开始。`after=-1` 表示全部；断线重连传已处理的最大序号。原生 EventSource 无自定义 Authorization header，启用 Bearer 时用 fetch 流式读取或带鉴权的 SSE 客户端。事件内容包含研究资料，按病例权限处理。
+
+## 重复提交保护
+
+`POST /v1/runs` 支持可选 `Idempotency-Key` 请求头（1–128 位英文字母、数字、点、下划线、冒号或连字符）。相同 key、相同请求及供应商配置返回同一 run_id，且不再次执行模型。相同 key 携带不同请求返回 409。响应头 `Idempotency-Replayed: true/false` 标明是否重放，状态字段反映保存的当前状态。
+
+key 随 SQLite 持久化；重启后仍有效。已取消、失败和 interrupted 的任务重放原终态，明确重试使用新 key。删除病例及关联运行时对应 key 也删除。队列满时已有 key 的重放仍可返回。当前约束为单进程、单用户或共享 Bearer 域；未来多用户部署需要将 key 与用户身份一起限定作用域。
+
+```bash
+curl -X POST http://127.0.0.1:8000/v1/runs \
+  -H 'Content-Type: application/json' -H 'Idempotency-Key: web-demo-001' \
+  -d '{"example_id":"synthetic-support"}'
+```
+
+## SSE 恢复
+
+`GET /v1/runs/{id}/stream` 接受 `Last-Event-ID` 请求头。若同时传 `after`，从二者较大值之后回放，结束仍发 `event: done`。序号范围为 -1 至 2^63-1。响应设置 `X-Accel-Buffering: no`；反向代理也应允许长连接。
+
+CORS 允许 Authorization、Content-Type、Idempotency-Key、Last-Event-ID，并暴露 Idempotency-Replayed。Bearer 场景使用支持自定义请求头的 fetch/SSE 客户端。

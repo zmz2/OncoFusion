@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import hmac
 import json
 import os
@@ -10,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, FastAPI, File, HTTPException, Query, Request, UploadFile
+from fastapi import APIRouter, Depends, FastAPI, File, Header, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.exceptions import RequestValidationError
@@ -22,7 +23,7 @@ from .config import presets
 from .engine import Engine
 from .evidence import evidence_graph, visible_case
 from .examples import examples
-from .providers import Provider, ProviderError, provider_from_env
+from .providers import Provider, ProviderError, provider_from_env, provider_identity
 from .schemas import AgentReport, CaseInput, RunRequest
 from .store import Store, TERMINAL
 
@@ -37,6 +38,7 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
     store = Store(db_path or os.getenv("ONCOFUSION_DB", "runtime/oncofusion.sqlite3"))
     token = api_token if api_token is not None else os.getenv("ONCOFUSION_API_TOKEN", "")
     slots = threading.BoundedSemaphore(max_pending)
+    submission_lock = threading.Lock()
 
     @asynccontextmanager
     async def lifespan(app):
@@ -51,7 +53,8 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
     origins = [s.strip() for s in os.getenv("ONCOFUSION_CORS_ORIGINS", "").split(",") if s.strip()]
     if origins:
         app.add_middleware(CORSMiddleware, allow_origins=origins,
-                           allow_methods=["GET", "POST", "DELETE"], allow_headers=["Authorization", "Content-Type"])
+                           allow_methods=["GET", "POST", "DELETE"], allow_headers=["Authorization", "Content-Type", "Idempotency-Key", "Last-Event-ID"],
+                           expose_headers=["Idempotency-Replayed"])
 
     @app.middleware("http")
     async def bounded_body(request: Request, call_next):
@@ -89,7 +92,8 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
         return {"schema_version": "1.0", "provider": provider.name, "model": provider.model,
                 "simulated": provider.simulated, "auth_enabled": bool(token), "research_only": True,
                 "upload_formats": ["json", "jsonl"], "max_body_bytes": MAX_BODY,
-                "job_execution": "single-process thread pool", "gpu_required": False}
+                "job_execution": "single-process thread pool", "gpu_required": False,
+                "idempotency_header": "Idempotency-Key", "sse_resume_header": "Last-Event-ID"}
 
     @router.get("/schemas/case")
     def case_schema():
@@ -149,7 +153,8 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
     @router.delete("/cases/{case_id}", status_code=204)
     def delete_case(case_id: str):
         try:
-            store.delete_case(case_id)
+            with submission_lock:
+                store.delete_case(case_id)
         except KeyError:
             raise HTTPException(404, "case not found") from None
         except ValueError:
@@ -169,29 +174,49 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
             slots.release()
 
     @router.post("/runs", status_code=202)
-    def submit_run(request: RunRequest):
+    def submit_run(request: RunRequest, idempotency_key: str | None = Header(
+            default=None, min_length=1, max_length=128, pattern=r"^[A-Za-z0-9._:-]+$")):
         if not provider.simulated and not request.allow_remote_processing:
             raise HTTPException(422, "real API runs require allow_remote_processing=true after data review")
-        if request.case_id:
-            case, cid = get_case(request.case_id), request.case_id
-        elif request.example_id:
-            case, cid = get_example(request.example_id), None
-        else:
-            case, cid = request.case, None
-        if not slots.acquire(blocking=False):
-            raise HTTPException(429, "run queue is full")
-        try:
-            if cid is None:
-                cid = store.save_cases([case])[0]
-            run_id = store.create_run(cid, request.config)
-            app.state.pool.submit(work, run_id, case, request.config)
-        except Exception:
-            if "run_id" in locals():
-                store.cancel(run_id)
-            slots.release()
-            raise
-        return {"run_id": run_id, "case_id": cid, "status": "queued",
-                "status_url": "/v1/runs/" + run_id, "events_url": "/v1/runs/" + run_id + "/events"}
+        fingerprint = hashlib.sha256(json.dumps({
+            "request": request.model_dump(mode="json"), "provider": provider_identity(provider)
+        }, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+        # Serialize only submission, not inference. The API intentionally runs in one process.
+        with submission_lock:
+            if idempotency_key:
+                try:
+                    previous = store.request_run(idempotency_key, fingerprint)
+                except ValueError as exc:
+                    raise HTTPException(409, str(exc)) from None
+                if previous:
+                    saved = store.run(previous)
+                    return accepted(previous, saved["case_id"], saved["status"], replayed=True)
+            if request.case_id:
+                case, cid = get_case(request.case_id), request.case_id
+            elif request.example_id:
+                case, cid = get_example(request.example_id), None
+            else:
+                case, cid = request.case, None
+            if not slots.acquire(blocking=False):
+                raise HTTPException(429, "run queue is full")
+            try:
+                if cid is None:
+                    cid = store.save_cases([case])[0]
+                run_id = store.create_run(cid, request.config)
+                if idempotency_key:
+                    store.remember_request(idempotency_key, fingerprint, run_id)
+                app.state.pool.submit(work, run_id, case, request.config)
+            except Exception:
+                if "run_id" in locals():
+                    store.cancel(run_id)
+                slots.release()
+                raise
+            return accepted(run_id, cid, "queued", replayed=False)
+
+    def accepted(run_id, case_id, status, *, replayed):
+        return JSONResponse(status_code=202, headers={"Idempotency-Replayed": str(replayed).lower()}, content={
+            "run_id": run_id, "case_id": case_id, "status": status,
+            "status_url": "/v1/runs/" + run_id, "events_url": "/v1/runs/" + run_id + "/events"})
 
     @router.get("/runs")
     def list_runs(limit: int = Query(50, ge=1, le=200), offset: int = Query(0, ge=0)):
@@ -212,16 +237,17 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
         return {"run_id": run_id, "status": "cancelled"}
 
     @router.get("/runs/{run_id}/events")
-    def get_events(run_id: str, after: int = Query(-1, ge=-1), limit: int = Query(200, ge=1, le=500)):
+    def get_events(run_id: str, after: int = Query(-1, ge=-1, le=2**63-1), limit: int = Query(200, ge=1, le=500)):
         get_run(run_id)
         return store.events(run_id, after, limit)
 
     @router.get("/runs/{run_id}/stream")
-    async def stream_events(run_id: str, after: int = Query(-1, ge=-1)):
+    async def stream_events(run_id: str, after: int = Query(-1, ge=-1, le=2**63-1),
+                            last_event_id: int | None = Header(default=None, ge=-1, le=2**63-1)):
         get_run(run_id)
 
         async def stream():
-            cursor = after
+            cursor = max(after, last_event_id if last_event_id is not None else -1)
             while True:
                 events = store.events(run_id, cursor)
                 for event in events:
@@ -231,7 +257,7 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
                     yield "event: done\ndata: {}\n\n"
                     break
                 await asyncio.sleep(.1)
-        return StreamingResponse(stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache"})
+        return StreamingResponse(stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 
     @router.get("/runs/{run_id}/graph")
     def get_graph(run_id: str):

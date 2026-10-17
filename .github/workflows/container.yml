@@ -1,0 +1,95 @@
+name: Container acceptance
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build production-layout image
+        run: docker build -t oncofusion:ci .
+      - name: Start isolated mock backend
+        run: |
+          docker run --detach --name oncofusion-ci --publish 127.0.0.1:8000:8000 \
+            --env ONCOFUSION_PROVIDER=mock \
+            --env ONCOFUSION_API_TOKEN=ci-only-not-a-real-credential oncofusion:ci
+          test "$(docker exec oncofusion-ci id -u)" = 10001
+      - name: Exercise authenticated frontend contract
+        run: |
+          python - <<'PY'
+          import json, time, urllib.request, urllib.error
+          from pathlib import Path
+          root = 'http://127.0.0.1:8000'
+          def call(path, body=None, headers=None, auth=True):
+              h = {'Authorization':'Bearer ci-only-not-a-real-credential'} if auth else {}
+              h.update(headers or {})
+              payload = None if body is None else json.dumps(body).encode()
+              if payload is not None:
+                  h['Content-Type'] = 'application/json'
+              with urllib.request.urlopen(urllib.request.Request(root+path, data=payload, headers=h), timeout=15) as response:
+                  return response.status, dict(response.headers), response.read()
+          for attempt in range(30):
+              try:
+                  status, _, raw = call('/healthz', auth=False)
+                  break
+              except (urllib.error.URLError, ConnectionError):
+                  time.sleep(.5)
+          else:
+              raise RuntimeError('container did not become healthy')
+          assert status == 200 and json.loads(raw)['simulated'] is True
+          try:
+              call('/v1/examples', auth=False)
+          except urllib.error.HTTPError as error:
+              assert error.code == 401
+          else:
+              raise AssertionError('authentication bypass')
+          _, _, raw = call('/v1/examples')
+          example = json.loads(raw)[0]['id']
+          body = {'example_id': example}
+          key = {'Idempotency-Key':'container-example-1'}
+          status, _, raw = call('/v1/runs', body, key)
+          assert status == 202
+          run_id = json.loads(raw)['run_id']
+          for _ in range(3):
+              _, headers, raw = call('/v1/runs', body, key)
+              assert json.loads(raw)['run_id'] == run_id
+              assert {k.lower():v for k,v in headers.items()}['idempotency-replayed'] == 'true'
+          for _ in range(100):
+              _, _, raw = call('/v1/runs/'+run_id)
+              run = json.loads(raw)
+              if run['status'] in {'succeeded','failed','cancelled','interrupted','budget_exhausted'}:
+                  break
+              time.sleep(.1)
+          assert run['status'] == 'succeeded', run['status']
+          assert run['result']['status'] == 'completed'
+          _, _, raw = call('/v1/runs/'+run_id+'/graph')
+          assert json.loads(raw)['nodes']
+          _, _, raw = call('/v1/runs/'+run_id+'/stream', headers={'Last-Event-ID':'0'})
+          assert b'event: done' in raw and b'id: 0\n' not in raw
+          _, _, raw = call('/v1/runs')
+          assert len(json.loads(raw)) == 1
+          report = {'status':'passed','model':'mock','real_provider_calls':0,
+                    'checks':['docker_build','non_root','health','authentication','example_submission',
+                              'idempotency_over_tcp','completed_job','evidence_graph','resumable_sse','single_run']}
+          Path('results').mkdir(exist_ok=True)
+          Path('results/container.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report))
+          PY
+      - name: Container logs on failure
+        if: failure()
+        run: docker logs oncofusion-ci || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: container-acceptance
+          path: results/container.json
+          retention-days: 14
+      - name: Stop test container
+        if: always()
+        run: docker rm -f oncofusion-ci || true
