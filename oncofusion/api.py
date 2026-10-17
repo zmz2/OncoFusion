@@ -20,13 +20,14 @@ from pydantic import ValidationError
 
 from . import __version__
 from .agent_design import catalog as agent_catalog
-from .workflow import specification
+from .workflow import specification, dependency_identity
+from .profiles import profile_catalog, inspect_case, integration_example, v1_config
 from .config import presets
 from .engine import Engine
 from .evidence import evidence_graph, visible_case
 from .examples import examples
 from .providers import Provider, ProviderError, provider_from_env, provider_identity
-from .schemas import AgentReport, CaseInput, RunRequest, RunConfig
+from .schemas import AgentReport, CaseInput, RunRequest, RunConfig, DecisionOutput
 from .store import Store, TERMINAL
 
 MAX_BODY = 2_000_000
@@ -97,6 +98,18 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
                 "job_execution": "single-process thread pool", "gpu_required": False,
                 "idempotency_header": "Idempotency-Key", "sse_resume_header": "Last-Event-ID"}
 
+    @router.get("/profiles")
+    def profiles():
+        return profile_catalog()
+
+    @router.get("/profiles/v1/example", response_model=CaseInput)
+    def research_example():
+        return integration_example()
+
+    @router.post("/cases/inspect")
+    def inspect_input(case: CaseInput):
+        return inspect_case(case)
+
     @router.get("/schemas/case")
     def case_schema():
         return CaseInput.model_json_schema()
@@ -110,8 +123,7 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
         return {
             "legacy": specification(RunConfig()),
             "evidence_first": specification(RunConfig(workflow_backend="langgraph", evidence_first=True)),
-            "recommended_config": RunConfig(workflow_backend="langgraph", evidence_first=True,
-                                            specialist_contracts=True, latest_role_board=True).model_dump(),
+            "recommended_config": v1_config().model_dump(),
             "optional_install": "pip install -e '.[graph]'",
             "external_tools": "Reviewed ToolUniverse snapshots for custom synthesis; closed-corpus benchmarks stay isolated.",
         }
@@ -214,6 +226,12 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
                 case, cid = get_example(request.example_id), None
             else:
                 case, cid = request.case, None
+            if not provider.simulated and case.data_class == "unreviewed":
+                raise HTTPException(422, "review/deidentify the case and set data_class before remote processing")
+            try:
+                dependency_identity(request.config)
+            except RuntimeError as exc:
+                raise HTTPException(503, str(exc)) from None
             if not slots.acquire(blocking=False):
                 raise HTTPException(429, "run queue is full")
             try:
@@ -283,7 +301,8 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
             raise HTTPException(409, "run has no result yet")
         case = visible_case(store.case(run["case_id"]))
         reports = [AgentReport.model_validate(r) for r in run["result"]["reports"]]
-        return evidence_graph(reports, case.documents)
+        decision = run["result"]["decision"]
+        return evidence_graph(reports, case.documents, DecisionOutput.model_validate(decision) if decision else None)
 
     app.include_router(router)
     return app

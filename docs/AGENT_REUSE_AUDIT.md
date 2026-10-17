@@ -1,5 +1,9 @@
 # Agent 与上游复用审计（2026-10-17）
 
+## 第一版审查补充
+
+后续风险审查见V1_REVIEW.md。当前v1固定LangGraph、零自动补证，并增加Reactome两项实际SDK工具，共7项。下文五工具和一次补证描述保留为上一轮历史方案。
+
 ## 结论
 
 采用 **LangGraph 执行图 + ToolUniverse 受限工具层 + OncoFusion 评测与来源契约**。

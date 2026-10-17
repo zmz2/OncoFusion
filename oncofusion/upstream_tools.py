@@ -23,10 +23,13 @@ TOOLS = {
     "OpenTargets_get_associated_drugs_by_target_ensemblID": {
         "kind": "therapy", "url": "https://platform.opentargets.org/"},
     "PubMed_search_articles": {"kind": "literature", "url": "https://pubmed.ncbi.nlm.nih.gov/"},
+    "Reactome_map_uniprot_to_pathways": {"kind": "genomics", "url": "https://reactome.org/"},
+    "Reactome_get_pathway": {"kind": "genomics", "url": "https://reactome.org/"},
 }
 ToolName = Literal["MyGene_query_genes", "UniProt_get_function_by_accession",
                    "DGIdb_get_drug_gene_interactions",
-                   "OpenTargets_get_associated_drugs_by_target_ensemblID", "PubMed_search_articles"]
+                   "OpenTargets_get_associated_drugs_by_target_ensemblID", "PubMed_search_articles",
+                   "Reactome_map_uniprot_to_pathways", "Reactome_get_pathway"]
 
 
 def canonical(value) -> str:
@@ -100,7 +103,8 @@ class ToolUniverseSources:
             except Exception as exc:
                 # Actual SDK/network boundary. Preserve failure, never fabricate evidence.
                 raise ToolFailure(f"{request.name} failed: {type(exc).__name__}") from exc
-            if result is None or result == "" or result == [] or result == {}:
+            empty_pathway_list = request.name == "Reactome_map_uniprot_to_pathways" and result == []
+            if result is None or result == "" or (result == [] and not empty_pathway_list) or result == {}:
                 raise ToolFailure(f"{request.name} returned no record")
             if isinstance(result, dict) and (result.get("error") or result.get("errors")
                     or result.get("status") in ("error", "failed") or result.get("success") is False):
@@ -111,6 +115,7 @@ class ToolUniverseSources:
             if len(raw.encode()) > 90000:
                 raise ToolFailure(f"{request.name} response exceeds snapshot limit; narrow the query")
             records.append({"request": request.model_dump(), "response": result,
+                            "result_status": "no_results" if empty_pathway_list else "returned",
                             "retrieved_at": datetime.now(timezone.utc).isoformat(),
                             "response_sha256": digest(result), "request_sha256": key})
         return {"schema_version": "1.0", "tooluniverse_version": self.sdk_version,

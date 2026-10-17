@@ -8,13 +8,14 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from .config import presets
-from .datasets import (GoldRecord, group_split, import_civicfact, import_mtbbench,
-                       read_jsonl, write_dataset)
+from .datasets import GoldRecord, write_dataset
 from .engine import Engine
 from .evaluation import evaluate, load_evaluation
 from .examples import examples
 from .providers import MockProvider, provider_from_env
 from .schemas import CaseInput
+from .profiles import v1_config
+from .preparation import prepare_civic, prepare_mtb
 
 
 def parser() -> argparse.ArgumentParser:
@@ -29,6 +30,7 @@ def parser() -> argparse.ArgumentParser:
     demo = commands.add_parser("demo")
     demo.add_argument("--example", choices=list(examples()), default="synthetic-support")
     demo.add_argument("--preset", choices=list(presets()), default="full")
+    demo.add_argument("--profile", choices=("v1",))
     demo.add_argument("--out", type=Path, required=True)
     demo.add_argument("--allow-remote", action="store_true")
     civic = commands.add_parser("import-civic")
@@ -47,9 +49,11 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--labels", type=Path, required=True)
         command.add_argument("--out", type=Path, required=True)
         command.add_argument("--task", choices=("verification", "mcq"), default="verification")
-        command.add_argument("--split", choices=("all", "train", "dev", "test"), default="all")
+        command.add_argument("--split", choices=("all", "train", "dev", "test"), default="dev")
+        command.add_argument("--execution-cap", type=int, default=1000)
         command.add_argument("--allow-remote", action="store_true")
         if name == "evaluate":
+            command.add_argument("--profile", choices=("v1",))
             command.add_argument("--preset", choices=list(presets()), default="full")
         else:
             command.add_argument("--presets", nargs="+", choices=["all"] + list(presets()), default=["all"])
@@ -87,23 +91,19 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(write_dataset(cases, gold, args.out, "OncoFusion synthetic software fixtures")))
         return 0
     if args.command == "import-civic":
-        cases, gold = import_civicfact(read_jsonl(args.source), args.refutes_label, verification_scheme=args.verification_scheme)
-        print(json.dumps(write_dataset(cases, gold, args.out, str(args.source))))
+        print(json.dumps(prepare_civic(args.source, args.out, args.refutes_label,
+                                       verification_scheme=args.verification_scheme)))
         return 0
     if args.command == "import-mtb":
-        cases, gold = import_mtbbench(json.loads(args.source.read_text(encoding="utf-8")), args.root,
-                                     json.loads(args.path_map.read_text(encoding="utf-8")))
-        split = group_split([g.group_id for g in gold])
-        for g in gold:
-            g.split = split[g.group_id]
-        print(json.dumps(write_dataset(cases, gold, args.out, str(args.source))))
+        print(json.dumps(prepare_mtb(args.source, args.root, args.out,
+                                     json.loads(args.path_map.read_text(encoding="utf-8")))))
         return 0
     provider = provider_from_env()
     if not provider.simulated and not args.allow_remote:
         p.error("real API calls require --allow-remote after reviewing data and cost")
     engine = Engine(provider)
     if args.command == "demo":
-        result = engine.run(examples()[args.example], presets()[args.preset])
+        result = engine.run(examples()[args.example], v1_config() if args.profile else presets()[args.preset])
         save(args.out, result.model_dump(mode="json"))
         print(json.dumps({"status": result.status, "simulated": result.simulated, "output": str(args.out)}))
         return 0 if result.status == "completed" else 2
@@ -112,13 +112,19 @@ def main(argv: list[str] | None = None) -> int:
     cases = [c for c in cases if c.task == args.task and c.id in allowed]
     ids = {c.id for c in cases}
     gold = [g for g in gold if g.case_id in ids]
+    if args.execution_cap < 1:
+        p.error("execution-cap must be positive")
     if args.command == "evaluate":
-        report = evaluate(cases, gold, engine, presets()[args.preset], args.out)
+        if not provider.simulated and len(cases) > args.execution_cap:
+            p.error("execution cap exceeded; inspect workload and set an explicit --execution-cap")
+        report = evaluate(cases, gold, engine, v1_config() if args.profile else presets()[args.preset], args.out)
         print(json.dumps({"simulated": report["simulated"], "metrics": report["metrics"], "failed_or_incomplete": report["failed_or_incomplete"]}))
         return 0 if report["failed_or_incomplete"] == 0 else 2
     if args.repeats < 1 or args.repeats > 20:
         p.error("repeats must be in [1,20]")
     selected = presets() if "all" in args.presets else {name: presets()[name] for name in args.presets}
+    if not provider.simulated and len(cases) * len(selected) * args.repeats > args.execution_cap:
+        p.error("execution cap exceeded; inspect workload and set an explicit --execution-cap")
     summaries = []
     for name, config in selected.items():
         for repeat in range(args.repeats):

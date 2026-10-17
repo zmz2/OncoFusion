@@ -1,5 +1,9 @@
 # 验证记录索引
 
+## 本轮风险审查
+
+当前执行记录见V1_AUDIT.md；范围、问题及处置见../docs/V1_REVIEW.md。下文650/510/446等记录对应历史提交，最新测试数与CI以本轮记录为准。
+
 最新上游复用版记录见 [UPSTREAM.md](UPSTREAM.md)。下文保留上一版的验证历史。
 
 **当前交付状态见 [FOLLOWUP.md](FOLLOWUP.md) 与 [followup_summary.json](followup_summary.json)。**

@@ -8,8 +8,9 @@ from collections import Counter
 from pathlib import Path, PurePosixPath
 
 import httpx
-from .datasets import GoldRecord, import_civicfact, import_mtbbench, group_split, read_jsonl, validate_splits, write_dataset
+from .datasets import GoldRecord, import_civicfact, import_mtbbench, group_split, read_jsonl, validate_alignment, write_dataset
 from .schemas import CaseInput, Entities, VerificationScheme
+from .profiles import coverage_report
 
 CIVIC_REVISION = "1a767d889b015a836f0f4331afcac5cef165ec7f"
 CIVIC_FILE = "data_builder/builds/civicfact-2026.06.09/data.jsonl.gz"
@@ -83,7 +84,7 @@ def claim_entities(row: dict) -> Entities:
 
 
 def dataset_audit(cases: list[CaseInput], gold: list[GoldRecord]) -> dict:
-    validate_splits(gold)
+    validate_alignment(cases, gold)
     if len(cases) != len(gold) or len({c.id for c in cases}) != len(cases) or {c.id for c in cases} != {g.case_id for g in gold}:
         raise ValueError("case and label sets must align uniquely")
     tasks = Counter(c.task for c in cases)
@@ -100,7 +101,7 @@ def dataset_audit(cases: list[CaseInput], gold: list[GoldRecord]) -> dict:
         warnings.append("Source reuse licenses require review before redistribution.")
     if lengths and lengths[-1] > 100_000:
         warnings.append("Large cases may exceed token budgets; inspect dry-run and smoke traces.")
-    return {"cases": len(cases), "groups": len(group_counts), "tasks": dict(tasks), "labels": dict(labels),
+    return {"role_coverage": coverage_report(cases), "cases": len(cases), "groups": len(group_counts), "tasks": dict(tasks), "labels": dict(labels),
             "splits": dict(splits), "document_kinds": dict(kinds), "licenses": dict(licenses),
             "source_bytes_median": lengths[len(lengths)//2] if lengths else 0,
             "source_bytes_max": max(lengths, default=0), "warnings": warnings,
