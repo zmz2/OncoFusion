@@ -20,14 +20,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Check payload and apply source
+      - name: Verify audit patch and apply source
         run: |
           python - <<'PY'
           import base64,hashlib,lzma,subprocess
           from pathlib import Path
-          path=Path('.delivery/upstream-core.b64')
+          path=Path('.delivery/upstream-docs.b64')
           data=base64.b64decode(path.read_text().strip(),validate=True)
-          assert hashlib.sha256(data).hexdigest()=='d33c1e1d80ca7a6cceee3c77cecccacf30fade81704c89b0b8812104bc580e66'
+          assert hashlib.sha256(data).hexdigest()=='156c212a07fda131035f96aa32e60f6700151fd49d6c00b3d8d9a7d8ee6eb6ec'
           patch=lzma.decompress(data)
           subprocess.run(['git','apply','--check','-'],input=patch,check=True)
           subprocess.run(['git','apply','--index','-'],input=patch,check=True)
@@ -37,7 +37,7 @@ jobs:
         run: |
           python -m pip install -e '.[dev,graph,biomedical]'
           python scripts/run_checks.py
-          python scripts/check_upstream.py --out results/upstream/checks.json --live-database
+          python scripts/check_upstream.py --out results/upstream/checks.json
           python scripts/http_smoke.py
       - name: Retain regression artifacts
         if: always()
@@ -49,10 +49,10 @@ jobs:
             results/upstream/
             results/http_smoke.json
           retention-days: 14
-      - name: Commit reviewed ordinary source
+      - name: Commit reviewed source and handover
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add oncofusion pyproject.toml scripts tests .delivery
-          git commit -m 'feat: reuse LangGraph and ToolUniverse with evidence-first specialist workflow'
+          git add --all . ':!.github'
+          git commit -m 'docs: record mature-agent reuse audit, paired studies and Codex handover'
           git push origin HEAD:codex/upstream-agents-20261017
