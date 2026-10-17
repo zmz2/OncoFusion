@@ -10,7 +10,9 @@ requires-python = ">=3.11"
 dependencies = ["fastapi>=0.115,<1", "pydantic>=2.10,<3", "httpx>=0.27,<1", "uvicorn>=0.30,<1", "python-multipart>=0.0.20,<1"]
 
 [project.optional-dependencies]
-clinical = ["medspacy==1.3.1"]
+# The reviewed clinical wheels use the NumPy 1 ABI. Prepare ToolUniverse
+# snapshots in a separate environment: its NumPy >=2.2 requirement conflicts.
+clinical = ["medspacy==1.3.1", "spacy==3.7.5", "thinc==8.2.5", "numpy==1.26.4"]
 graph = ["langgraph==1.2.16"]
 biomedical = ["tooluniverse==1.5.7"]
 dev = ["pytest>=8,<10", "pytest-cov>=6,<8", "jsonschema>=4.23,<5"]
