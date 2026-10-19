@@ -55,6 +55,16 @@ def test_demo_page_is_self_contained(client):
     assert "历史真实结果回放" in body and "输入检查" in body
 
 
+def test_demo_page_script_is_syntactically_balanced(client):
+    """Template-literal mistakes silently kill the whole page script; catch them without a JS runtime."""
+    body = client.get("/app").text
+    script = body.split("<script>", 1)[1].split("</script>", 1)[0]
+    assert script.count("`") % 2 == 0, "unbalanced template literal in the demo page"
+    for symbol in ("function boot", "async function api", "async function openLibraryItem", "const PINS"):
+        assert symbol in script
+    assert "await boot()" in script or "boot();" in script
+
+
 def test_demo_config_is_the_verified_fast_profile(client):
     demo = client.get("/v1/configs/demo").json()
     assert demo["name"] == "v1_fast"

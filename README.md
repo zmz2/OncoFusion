@@ -39,7 +39,8 @@ export ONCOFUSION_API_TOKEN="$(cat /path/to/demo-token)" ONCOFUSION_RESULTS_DIR=
 
 # 使用机器侧：SSH 转发后直接打开
 ssh -N -o ServerAliveInterval=20 -L 18180:127.0.0.1:8180 server21-direct
-# 浏览器访问 http://127.0.0.1:18180/app ，粘贴本机保存的演示令牌
+# 浏览器访问 http://127.0.0.1:18180/app ，粘贴本机保存的演示令牌；或在本机再跑一层回环中继 `python scripts/demo_relay.py`（每个请求自动带上令牌、上游仍开启鉴权），
+# 然后直接打开 http://127.0.0.1:18181/app ，无需粘贴任何东西
 ```
 
 停止：转发端 Ctrl-C；服务器端按启动时记录的 PID 精确结束（共享主机上不要按名字批量 kill）。

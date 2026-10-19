@@ -208,18 +208,19 @@ function showAnswer(run, item) {
 }
 
 function taskPanel(run, item) {
-  const src = run || item || {};
-  $("taskinfo").innerHTML = run
-    ? `<div class="kv"><span>模式</span><b>真实运行中</b></div>
-       <div class="kv"><span>run_id</span><b>${esc(run.run_id || S.runId)}</b></div>
-       <div class="kv"><span>状态</span><b>${esc(run.status)}</b></div>
-       `<div class="kv"><span>事件游标</span><b><span id="curline">${S.cursor}</span></b></div>`
-    : item
-    ? `<div class="kv"><span>模式</span><b>历史真实结果回放</b></div>
-       <div class="kv"><span>样本</span><b>${esc(item.case_id)}</b></div>
-       <div class="kv"><span>臂 / 状态</span><b>${esc(item.arm)} · ${esc(item.status)}</b></div>
-       <div class="kv"><span>答案 / 标签</span><b>${esc(item.answer)} / ${esc(item.gold_label)}</b></div>`
-    : `<div class="hint">尚未发起运行，也未选择历史结果。</div>`;
+  if (run) {
+    $("taskinfo").innerHTML = '<div class="kv"><span>模式</span><b>真实运行中</b></div>'
+      + '<div class="kv"><span>run_id</span><b>' + esc(run.run_id || S.runId) + '</b></div>'
+      + '<div class="kv"><span>状态</span><b>' + esc(run.status) + '</b></div>'
+      + '<div class="kv"><span>事件游标</span><b><span id="curline">' + S.cursor + '</span></b></div>';
+  } else if (item) {
+    $("taskinfo").innerHTML = '<div class="kv"><span>模式</span><b>历史真实结果回放</b></div>'
+      + '<div class="kv"><span>样本</span><b>' + esc(item.case_id) + '</b></div>'
+      + '<div class="kv"><span>臂 / 状态</span><b>' + esc(item.arm) + ' · ' + esc(item.status) + '</b></div>'
+      + '<div class="kv"><span>答案 / 标签</span><b>' + esc(item.answer) + ' / ' + esc(item.gold_label) + '</b></div>';
+  } else {
+    $("taskinfo").innerHTML = '<div class="hint">尚未发起运行，也未选择历史结果。</div>';
+  }
   if (run) $("b-mode").textContent = "真实运行中";
   else if (item) $("b-mode").textContent = "历史回放";
 }
