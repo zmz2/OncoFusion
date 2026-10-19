@@ -120,7 +120,7 @@ python scripts/review_citations.py export --study results/v1/real_civic_dev --in
 
 服务保持单ASGI进程，研究成员共享Bearer工作区。生产多用户需要独立授权与队列设计。保持已有API字段兼容；新网页避免省略config而落入历史默认预设。
 
-交付results/REAL_API_ACCEPTANCE.md、DATA_ACCEPTANCE.md、FROZEN_PROTOCOL.md、FINAL_REPORT.md及脚本结果。仅提交脱敏汇总，原病例、论文全文、日志中的患者信息和密钥留本地。下一步的主要工作是实际API与科学验收，不再扩张Agent数量。
+交付results/REAL_API_ACCEPTANCE.md、DATA_ACCEPTANCE.md、FROZEN_PROTOCOL.md、FINAL_REPORT.md及脚本结果。（2026-10-19 更新：所有者改为明确指示把 data/ 与 results/ 全量提交进公开仓库，见 data/README.md 的许可提醒；密钥与令牌仍然留本地，提交前已逐文件核对。）下一步的主要工作是实际API与科学验收，不再扩张Agent数量。
 
 ## 8. 当前阶段：真实 API 流畅性优先（2026-10-18 起，取代第 5 节的启动顺序）
 

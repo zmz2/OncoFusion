@@ -112,6 +112,20 @@ python -m oncofusion demo --profile v1 --out results/real_demo.json --allow-remo
 
 支持 `max_completion_tokens`、关闭供应商不支持的 `seed` / `temperature`、超时、429/5xx 有限重试、JSON 校验与有界结构修复。真实模式报错会显式失败，模型类型保持原样。价格从环境变量配置；未提供价格时成本字段保留不完整标识。
 
+## 数据与结果
+
+`data/` 存四个预处理数据集（mtbbench、civicfact、civicfact-pmidids、civic_retrieval），
+每个目录都有 `manifest.json`（来源与逐文件 sha256）、`audit.json`（覆盖统计、划分、许可计数）和
+`_gold/labels.jsonl`（标签与组号，评测侧使用）。上游取回配方在 `data/raw/*/acquisition.json`，
+记录了精确 URL、固定 revision 或 commit、字节数与 sha256，重新取回后指纹应逐字一致。
+
+`results/` 存每个 study 的逐例结果与 `summary.json`、`scripts/real_metrics.py` 的指标表、
+`scripts/review_citations.py` 的引用核对表，以及 `results/v1/demo_runs/` 里从服务存储导出的 8 次网页真实运行。
+
+这两个目录连同 206 MB 的第三方原文已按项目所有者 2026-10-19 的指示整体提交进这个公开仓库；
+其中文章正文分块相当一部分许可标注为 UNSPECIFIED，MTBBench 的 MSK 去标识病例没有声明许可，
+具体计数与提醒见 `data/README.md`。密钥、演示令牌、`runtime/` 与日志不入库。
+
 ## 数据标签
 
 固定 CIViC-Fact 2026.06.09 使用 SUPPORTS / REVISIONS / NEI；REVISIONS 保留“主张需要修订”的含义。自定义或旧版数据可以使用 refutes 标签体系。两类任务按显式 verification_scheme 分别评测，gold 修订文本保持评测侧隔离。
