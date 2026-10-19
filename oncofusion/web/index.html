@@ -426,9 +426,27 @@ async function attach(runId) {
       }
     }
   } catch (e) {
-    status("事件流中断：" + e.message + "（任务仍在服务器执行，可刷新继续查看）");
+    status("事件流中断：" + e.message + "（任务仍在服务器执行，改用轮询补取）");
   }
   S.streaming = false;
+}
+
+async function watch(runId) {
+  if (S.watching) return;
+  S.watching = true;
+  for (let i = 0; i < 500; i++) {
+    await attach(runId);
+    try {
+      const evs = await api("/v1/runs/" + runId + "/events?after=" + S.cursor);
+      (evs || []).forEach((e) => { S.cursor = e.sequence; applyEvent(e.kind, e, runId); });
+    } catch (e) { status("补取事件失败：" + e.message + "，将继续重试。"); }
+    const run = await api("/v1/runs/" + runId).catch(() => null);
+    if (run && ["queued", "running"].indexOf(run.status) < 0) {
+      await finish(runId); S.watching = false; return;
+    }
+    await new Promise((r) => setTimeout(r, 4000));
+  }
+  S.watching = false;
 }
 
 function handleFrame(frame, runId) {
@@ -438,6 +456,10 @@ function handleFrame(frame, runId) {
     else if (line.indexOf("event: ") === 0) kind = line.slice(7);
     else if (line.indexOf("data: ") === 0) { try { data = JSON.parse(line.slice(6)); } catch (e) {} }
   });
+  applyEvent(kind, data, runId);
+}
+
+function applyEvent(kind, data, runId) {
   if (kind === "done") { finish(runId); return; }
   if (!data) return;
   const role = data.role, d = data.details || {};
@@ -507,7 +529,7 @@ async function startRun() {
     $("b-mode").textContent = S.simulated ? "本次为模拟后端" : "真实运行中（真实 API）";
     status("任务已创建：" + res.run_id + "（" + res.status + "）");
     logEvent("任务已创建 " + res.run_id);
-    attach(res.run_id);
+    watch(res.run_id);
   } catch (e) { status("提交失败：" + e.message); }
 }
 
@@ -591,7 +613,7 @@ async function resume(runId) {
   S.runId = runId; S.cursor = -1;
   resetState();
   await finish(runId);
-  if (["queued", "running"].indexOf(run.status) >= 0) attach(runId);
+  if (["queued", "running"].indexOf(run.status) >= 0) watch(runId);
 }
 
 async function loadDataset() {
