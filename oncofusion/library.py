@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from pathlib import Path
 
 # name -> (dataset label, study directory name, treatment)
@@ -45,10 +46,29 @@ def _summary(study: str, treatment: str, label: str, data: dict, root_project: P
     usage = data.get("usage", {})
     decision = data.get("decision") or {}
     gold = _labels(root_project, study).get(data["case_id"], {})
+    per_role = {}
+    for event in data.get("trace", []):
+        if event.get("kind") == "model_usage":
+            details = event.get("details", {})
+            per_role[event.get("role")] = {"seconds": details.get("seconds"),
+                                           "input_tokens": details.get("input_tokens"),
+                                           "output_tokens": details.get("output_tokens")}
     roles = [{"role": report["role"], "executor": report["executor"],
               "findings": len(report["output"]["findings"]),
               "citations": sum(len(f["citations"]) for f in report["output"]["findings"]),
-              "unresolved": report["output"]["unresolved"]} for report in data.get("reports", [])]
+              "unresolved": report["output"]["unresolved"],
+              "seconds": per_role.get(report["role"], {}).get("seconds"),
+              "input_tokens": per_role.get(report["role"], {}).get("input_tokens"),
+              "output_tokens": per_role.get(report["role"], {}).get("output_tokens")}
+             for report in data.get("reports", [])]
+    decision_row = {"role": "decision", "executor": "decision",
+                    "findings": 1 if decision.get("answer") else 0,
+                    "citations": len(decision.get("citations") or []),
+                    "unresolved": [],
+                    "seconds": per_role.get("decision", {}).get("seconds"),
+                    "input_tokens": per_role.get("decision", {}).get("input_tokens"),
+                    "output_tokens": per_role.get("decision", {}).get("output_tokens")}
+    roles = roles + [decision_row]
     return {"id": f"{study}:{treatment}:{data['case_id']}", "study": study, "arm": treatment,
             "dataset_label": label, "case_id": data["case_id"], "task": data.get("config", {}).get("mode"),
             "question": _inputs(root_project, study).get(data["case_id"], {}).get("question", ""),
@@ -62,7 +82,17 @@ def _summary(study: str, treatment: str, label: str, data: dict, root_project: P
             "failure": data.get("error")}
 
 
+# Replay data is append-only and the demo polls it repeatedly, so a short TTL keeps
+# the pages responsive without freezing what a reviewer can see.
+_LIST_TTL_SECONDS = 30.0
+_list_cache: tuple[float, list[dict]] | None = None
+
+
 def list_items(root: Path | None = None, project: Path | None = None) -> list[dict]:
+    global _list_cache
+    now = time.monotonic()
+    if root is None and _list_cache is not None and now - _list_cache[0] < _LIST_TTL_SECONDS:
+        return _list_cache[1]
     base, project_root = results_root(root), Path(project or Path.cwd())
     items = []
     for study, treatment, label in ARMS:
@@ -77,6 +107,8 @@ def list_items(root: Path | None = None, project: Path | None = None) -> list[di
             except (json.JSONDecodeError, OSError):
                 continue
             items.append(_summary(study, treatment, label, data, project_root))
+    if root is None:
+        _list_cache = (time.monotonic(), items)
     return items
 
 
@@ -137,6 +169,6 @@ def dataset_summary(root: Path | None = None, project: Path | None = None) -> di
                     "tokens_per_case": round(sum(bucket["tokens"]) / bucket["cases"]),
                     "seconds_p50": seconds[len(seconds) // 2], "seconds_max": seconds[-1],
                     "simulated": bucket["simulated"]})
-    return {"note": "Small development-set acceptance run, not a significance claim; "
-                    "labels stay on the evaluation side and are shown only for this internal demo.",
+    return {"note": "开发集验收规模的小批量真实运行，只用于说明流程能跑通，不构成显著性结论；"
+                    "标签留在评测侧，仅在这个内部演示里展示。",
             "arms": out}
