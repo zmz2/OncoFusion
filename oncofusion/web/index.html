@@ -380,6 +380,8 @@ function renderRoles() {
   renderFlow();
 }
 
+const CLASS_NOTES = {};
+function caseKey() { return ((S.current || {}).case || {}).id || ""; }
 const VERDICT_CN = {confirmed: "已确认", corrected: "已更正", rejected: "已否定", insufficient: "证据不足"};
 const SCOPE_CN = {temporal: "时间与事件", molecular: "分子与变异", pathologic: "病理与癌种",
   exposure: "既往用药", relationship: "药物关系", source: "资料来源", verification: "核验",
@@ -426,7 +428,12 @@ function renderClaims() {
       (excluded.indexOf(c.id) >= 0 ? "<span class=\"pill bad\">决策排除</span>" : "<span class=hint>决策未点名</span>");
     return "<tr><td><b>" + esc(c.id) + "</b><br><span class=hint>" + esc(c.author) + "</span></td>" +
       "<td>" + (c.scope ? "<span class=pill>" + esc(SCOPE_CN[c.scope] || c.scope) + "</span>" : "") +
-        esc(c.statement.slice(0, 220)) + "</td>" +
+      (c.level ? "<span class=pill>" + esc(LEVEL_CN[c.level] || c.level) + "</span>" : "") +
+      (c.material && c.material !== "present"
+        ? "<span class=\"pill warn\">" + esc(MATERIAL_CN[c.material] || c.material) + "</span>" : "") +
+      "<details><summary>看模型原文陈述</summary><div class=quote>" + esc(c.statement) + "</div></details>" +
+      (c.statement.indexOf("not_applicable") === 0 || c.statement.indexOf("unknown") === 0
+        ? "<span class=hint>该角色声明本题缺少可核对的对应资料</span>" : "") + "</td>" +
       "<td>" + (c.used.length ? c.used.map((u) => "<span class=pill>" + esc(u) + "</span>").join("") : "<span class=hint>未声明</span>") + "</td>" +
       "<td>" + (v ? "<span class=\"pill " + (v.verdict === "rejected" ? "bad" : (v.verdict === "insufficient" ? "warn" : "ok")) +
         "\">" + (VERDICT_CN[v.verdict] || v.verdict) + "</span>" + (v.note ? "<br><span class=hint>" + esc(v.note.slice(0, 160)) + "</span>" : "")
@@ -435,7 +442,9 @@ function renderClaims() {
   const edges = [];
   rows.forEach((c) => c.used.forEach((u) => edges.push(esc(u) + " → " + esc(c.id))));
   Object.keys(verdicts).forEach((k) => edges.push("核验 " + esc(k) + " : " + (VERDICT_CN[verdicts[k].verdict] || verdicts[k].verdict)));
-  $("claims").innerHTML = "<table><tr><th>主张 ID / 作者</th><th>主张内容</th><th>它声明依据的主张</th>" +
+  $("claims").innerHTML = "<div class=hint>下表每行是一条后端记录的主张：中文标签是它所属层面、依据类型与资料状态，" +
+    "英文原文折叠在下面，关系与核验结论按后端保存的 ID 生成。</div>" +
+    "<table><tr><th>主张 ID / 作者</th><th>主张内容与层面</th><th>它声明依据的主张</th>" +
     "<th>核验结论</th><th>决策处理</th></tr>" + table + "</table>" +
     "<div class=hint style=margin-top:6px>关系边：" + (edges.join(" · ") || "没有记录到跨主张引用") +
     "</div><div class=hint>主张 ID 由后端按角色与顺序分配，模型只能引用已存在的 ID；引用不存在的 ID 会让本次运行失败并留下记录。</div>";
@@ -489,7 +498,10 @@ function showAnswer() {
     return;
   }
   box.innerHTML = "<div class=kv><span>最终答案</span><b>" + esc(REL_CN[decision.answer] || decision.answer) + "</b></div>" +
-    "<div class=kv><span>解释</span><b style=text-align:right>" + esc((decision.explanation || "").slice(0, 300)) + "</b></div>" +
+    (CLASS_NOTES[caseKey()] ? "<div class=kv><span>课堂要点（中文）</span><b style=text-align:right>" +
+      esc(CLASS_NOTES[caseKey()]) + "</b></div>" : "") +
+    "<div class=kv><span>模型解释（英文原文）</span><details open style=text-align:right><summary>展开或收起</summary>" +
+      "<div class=quote>" + esc(decision.explanation || "") + "</div></details></div>" +
     "<div class=kv><span>模型调用 / token / 耗时</span><b>" + totals.calls + " 次 · " + totals.in + " + " + totals.out +
     " · " + totals.sec.toFixed(0) + "s</b></div>" +
     "<div class=io><b>支撑答案的引用</b>" + (decision.citations || []).map(citationBlock).join("") + "</div>" +
@@ -714,8 +726,25 @@ async function openLibraryItem(id) {
   status("回放：" + id + "；点“发起真实 API 运行”可用同一输入重新跑一次。");
 }
 
+const CLASSROOM_CASES = ["mtb-P-0027883-q7", "mtb-P-0022916-q2",
+  "civic-60a33dc8-2af3-4b38-9a5c-951b40aafd27"];
+
+function classroomPins() {
+  const pool = (S.library || []).filter((i) => i.study.indexOf("real_class6b") === 0 && i.status === "completed");
+  const pins = [];
+  CLASSROOM_CASES.forEach((caseId) => {
+    const hit = pool.filter((i) => i.case_id === caseId)[0];
+    if (hit) pins.push([caseId.indexOf("civic") === 0 ? "课堂 · CIViC 单文献核验" : "课堂 · MTB 多来源整合", hit.id]);
+  });
+  pool.forEach((i) => {
+    if (pins.length < 3) pins.push(["课堂 · " + i.dataset_label.slice(0, 12), i.id]);
+  });
+  return pins;
+}
+
 function renderHistory() {
-  $("pinned").innerHTML = PINS.filter((pair) => S.library.some((i) => i.id === pair[1]))
+  const classroom = classroomPins();
+  $("pinned").innerHTML = PINS.concat(classroom).filter((pair) => S.library.some((i) => i.id === pair[1]))
     .map((pair) => "<button style=width:auto data-pin=\"" + esc(pair[1]) + "\">" + esc(pair[0]) + "</button>").join("");
   Array.prototype.forEach.call(document.querySelectorAll("[data-pin]"), (b) => {
     b.onclick = () => openLibraryItem(b.getAttribute("data-pin"));
