@@ -45,13 +45,12 @@ ssh -N -o ServerAliveInterval=20 -L 18180:127.0.0.1:8180 server21-direct
 
 停止：转发端 Ctrl-C；服务器端按启动时记录的 PID 精确结束（共享主机上不要按名字批量 kill）。
 
-链路抖动时可交给看护脚本：每 3 分钟经本机转发探一次 `/v1/capabilities`，失败就按端口精确重启服务器实例并重建
-`ssh -f -N -L 18180:127.0.0.1:8180 server21-direct`（脚本形如 `/tmp/of_demo_watch.sh`，令牌从本机文件读取，不入仓库）。
+链路抖动或后端回落由看护脚本处理：每 2 分钟经本机转发读一次 `/healthz`，不可达或看到 `simulated":true` 就按 pidfile（`/tmp/of_demo_api.pid`）精确重启服务器实例并重建 `ssh -f -N -L 18180:127.0.0.1:8180 server21-direct`；脚本形如 `/tmp/of_demo_watch2.sh`，令牌从本机文件读取，不入仓库。重启必须带 `set -a; . ~/.config/oncofusion/real-api.env; set +a`：漏掉这步进程照常应答，但 provider 回落到 mock，只有 `/healthz` 的 `simulated` 字段会暴露。
 
 PR 目前无法自动创建：本机可用凭据只有 zmz2 的 **SSH 身份**（keychain 无 HTTPS 令牌、`gh` 未登录），
 分支可推送但 GitHub 的 PR 只能经 HTTPS API/CLI 建；需 `gh auth login` 或 fine-grained 令牌后代开。
 
-页面完成一条闭环：选择输入（内置示例 / MTBBench 与 CIViC-Fact 真实开发集样例 / 上传 JSON 或 JSONL 并选其中一条）→ `/v1/cases/inspect` 输入检查 → 以 `/v1/configs/demo` 返回的 v1_fast 配置发起真实运行（不会落入历史默认预设）→ 事件驱动的七角色卡片显示每个 Agent 的运行状态、结构化发现、引用、未解决项与逐角色 token/秒 → 最终答案与解释，引用可展开看到原文片段与字符偏移 → 失败时给出原因并保留已完成步骤。另有 62 条已完成真实结果的回放列表和「数据集结果」小表；刷新页面后可凭 run_id 重新查询任务与结果。
+页面完成一条闭环：选择输入（内置示例 / MTBBench 与 CIViC-Fact 真实开发集样例 / 上传 JSON 或 JSONL 并选其中一条）→ `/v1/cases/inspect` 输入检查（输入面板给出任务、题号、原题逐字以及每份可见资料的类别、长度和正文）→ 以 `/v1/configs/demo` 返回的 v1_fast 配置发起真实运行（不会落入历史默认预设）→ 七角色卡片按固定顺序逐个亮起，每张写清该角色的职责、后端递给它的证据片段数、前序已完成角色交来的结论与未解决项、本步产出的结论数与原文引用数、移交下去的未解决项，以及逐角色 token 和秒→ 关系图给出「来源被哪些角色引用」和「角色之间传递了什么」→ 最终答案与解释，引用可展开对照模型给出的片段与原文偏移→ 失败时给出原因并保留已完成步骤。另有 62 条已完成真实结果的回放列表、中文「数据集结果」小表和逐角色平均耗时（含综合决策）；刷新页面后可凭 run_id 重新查询任务与结果。
 
 模型密钥只存在服务器环境变量与本机演示令牌中，页面不显示密钥；`simulated` 标记区分真实与模拟后端。
 

@@ -309,12 +309,14 @@ function outputBlock(output) {
 
 function renderRoles() {
   const UP = {};
-  let carryF = 0, carryU = 0;
+  let carryF = 0, carryU = 0, carryN = 0;
   ROLES.forEach((r) => {
-    UP[r] = { findings: carryF, unresolved: carryU };
-    const o = (STATE[r] || {}).output || {};
+    UP[r] = { findings: carryF, unresolved: carryU, done: carryN };
+    const st = STATE[r] || {};
+    const o = st.output || {};
     carryF += (o.findings || []).length;
     if ((o.unresolved || []).length) carryU = o.unresolved.length;
+    if (st.state === "done") carryN += 1;
   });
   const box = $("roles");
   if (box.children.length !== ROLES.length) {
@@ -335,7 +337,8 @@ function renderRoles() {
     if (st.sources && st.sources.length) io.push("读到的来源：" + st.sources.slice(0, 6).map(esc).join("、") + (st.sources.length > 6 ? " 等 " + st.sources.length + " 份" : ""));
     if (st.fragments != null) io.push("后端递给它查阅的证据片段：" + st.fragments + " 段");
     if (r === ROLES[0]) io.push("它是第一个角色，上游只有本题的可见资料，没有前序结论");
-    else io.push("前序 " + ROLES.indexOf(r) + " 个角色已经交出 " + UP[r].findings + " 条结论，其中 " +
+    else if (!UP[r].done) io.push("前序角色还没有已完成的结论，本步要等" + ROLE_CN[ROLES[ROLES.indexOf(r) - 1]] + "结束");
+    else io.push("前序 " + UP[r].done + " 个已完成的角色交出 " + UP[r].findings + " 条结论，其中 " +
       UP[r].unresolved + " 条仍未解决，这些都会带进本步");
     const outCount = st.output ? ((st.output.findings || []).length || (st.output.answer ? 1 : 0)) : 0;
     const outCite = st.output ? ((st.output.citations || []).length +
