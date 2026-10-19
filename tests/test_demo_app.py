@@ -1,5 +1,10 @@
 """The /app demo surface: self-contained page, verified demo config, replay library, live role events."""
 import json
+import os
+import shutil
+import subprocess
+import tempfile
+import pytest
 import time
 
 from oncofusion.api import create_app
@@ -62,6 +67,22 @@ def test_library_item_id_cannot_escape_the_allowlist(client, tmp_path, monkeypat
                     "nope:v1_fast:mtb-X-q0"):
         assert client.get("/v1/library/item", params={"item_id": item_id}).status_code == 404, item_id
     assert "secret-case" not in client.get("/v1/library").json()["items"][0]["id"]
+
+
+def test_demo_page_script_parses_as_javascript(client):
+    """A single unescaped quote silently kills the whole inline script: parse it for real."""
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("node is not installed in this environment")
+    script = client.get("/app").text.split("<script>", 1)[1].split("</script>", 1)[0]
+    with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False, encoding="utf-8") as handle:
+        handle.write(script)
+        path = handle.name
+    try:
+        check = subprocess.run([node, "--check", path], capture_output=True, text=True)
+    finally:
+        os.unlink(path)
+    assert check.returncode == 0, check.stderr[:600]
 
 
 def test_demo_page_is_self_contained(client):
