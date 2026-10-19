@@ -5,7 +5,7 @@ import json
 import pytest
 
 from oncofusion.engine import Engine
-from oncofusion.evidence import fragment_documents, resolve_fragment_citations
+from oncofusion.evidence import fragment_documents, fragment_spans, resolve_fragment_citations
 from oncofusion.examples import examples
 from oncofusion.profiles import v1_config, v1_fast_config
 from oncofusion.providers import MockProvider, ModelReply, ProviderError
@@ -35,15 +35,74 @@ def capture(provider=None):
 
 
 def test_fragment_ids_are_deterministic_and_bounded():
-    listed, index = fragment_documents(docs(), 200, 4)
-    again, _ = fragment_documents(docs(), 200, 4)
+    """Ids number positions in the whole document; the sent subset is stable and ordered."""
+    listed, index, coverage = fragment_documents(docs(), 200, 4)
+    again, _, _ = fragment_documents(docs(), 200, 4)
     assert listed == again
-    assert [f["evidence_id"] for f in listed] == ["d1:f01", "d1:f02", "d1:f03", "d1:f04"]
+    numbers = [int(f["evidence_id"].rsplit("f", 1)[1]) for f in listed]
+    assert numbers == sorted(numbers)
+    assert len(listed) <= 4
     assert set(index) == {f["evidence_id"] for f in listed}
+    assert coverage["candidates"] >= coverage["sent"]
+    assert coverage["documents"]["d1"]["candidates"] == max(numbers)
+    # the newest record of the document is part of the candidate numbering and is sent
+    assert max(numbers) == coverage["documents"]["d1"]["candidates"]
+
+
+def test_newlines_advance_one_character_so_records_are_not_clipped():
+    """A record boundary consumes exactly one character, so no record loses its first letter."""
+    text = "AGE: 52.0, first record\nAGE: 53.0, second record\nAGE: 54.0, third record\n"
+    doc = [Document(id="d9", origin_id="d9", kind="clinical", text=text, available_stage=1)]
+    spans = fragment_spans(text, 26)
+    assert "".join(text[s:e] for s, e in spans) == text
+    assert [text[s:s + 5] for s, _ in spans] == ["AGE: "] * len(spans)
+    assert spans[-1][1] == len(text)
+    listed, index, coverage = fragment_documents(doc, 26, 8, "AGE 53")
+    assert coverage["chars_sent"] == len(text) and not coverage["tail_dropped"]
+    assert "".join(f["text"] for f in listed) == text
+    for fragment in listed:
+        assert not fragment["text"].lstrip().startswith("GE"), fragment["text"][:12]
+        ref, s, e = index[fragment["evidence_id"]]
+        assert ref.text[s:e] == fragment["text"]
+    over_long = "AGE: 52.0, " + "word " * 40 + "\nAGE: 53.0, next\n"
+    long_doc = [Document(id="d10", origin_id="d10", kind="clinical", text=over_long, available_stage=1)]
+    cut_spans = fragment_spans(over_long, 48)
+    for s, _ in cut_spans[1:]:
+        assert over_long[s - 1] in " \n", repr(over_long[max(0, s - 8):s + 8])
+    sent = fragment_documents(long_doc, 48, 8, "AGE 53")[0]
+    assert "".join(f["text"] for f in sent) == over_long
+    assert any("AGE: 53.0, next" in f["text"] for f in sent)
+
+
+def test_candidates_cover_the_whole_document_and_selection_respects_the_budget():
+    text = "\n".join("AGE: %.2f, record number %d with some body text" % (50 + i / 10, i) for i in range(60))
+    doc = [Document(id="d8", origin_id="d8", kind="clinical", text=text, available_stage=1)]
+    _, _, full = fragment_documents(doc, 600, 1000, "AGE 55")
+    assert full["chars_sent"] == len(text) and not full["tail_dropped"]
+    listed, index, cov = fragment_documents(doc, 600, 8, "recurrence risk of AGE 55.9", budget=2400)
+    assert cov["chars_sent"] <= 2400 + 600
+    assert cov["documents"]["d8"]["sent"] <= 8
+    # forced spans keep the last record even when the question is about something else
+    assert any("record number 59" in f["text"] for f in listed)
+    assert all(f["evidence_id"] in index for f in listed)
+
+
+def test_a_fragment_that_was_not_sent_cannot_be_cited():
+    text = "\n".join("AGE: %.2f, record %d" % (50 + i / 10, i) for i in range(60))
+    doc = [Document(id="d7", origin_id="d7", kind="clinical", text=text, available_stage=1)]
+    listed, index, cov = fragment_documents(doc, 600, 2, "record 30", budget=1200)
+    missing = "%s:f05" % doc[0].id
+    assert missing not in index
+    try:
+        resolve_fragment_citations([FragmentCitation(evidence_id=missing)], index)
+    except ValueError as error:
+        assert "was not supplied for this stage" in str(error)
+    else:
+        raise AssertionError("an unsent fragment id must not resolve")
 
 
 def test_resolution_backfills_the_exact_source_span():
-    listed, index = fragment_documents(docs(), 200, 4)
+    listed, index, _ = fragment_documents(docs(), 200, 4)
     citation = resolve_fragment_citations([FragmentCitation(evidence_id="d1:f02")], index)[0]
     text = docs()[0].text
     assert citation.document_id == "d1"
@@ -54,7 +113,7 @@ def test_resolution_backfills_the_exact_source_span():
 
 @pytest.mark.parametrize("evidence_id", ["d1:f99", "other-case:f01", "d1-02"])
 def test_resolution_rejects_unknown_or_foreign_fragment_ids(evidence_id):
-    _, index = fragment_documents(docs(), 200, 4)
+    _, index, _ = fragment_documents(docs(), 200, 4)
     with pytest.raises(ValueError):
         resolve_fragment_citations([FragmentCitation(evidence_id=evidence_id)], index)
 
@@ -186,5 +245,6 @@ def test_cross_role_recite_of_a_board_handle_still_resolves():
     assert recited, "the scripted provider never saw a board handle"
     assert result.status == "completed"
     spans = {(c.document_id, c.start, c.end) for r in result.reports for f in r.output.findings for c in f.citations}
-    assert spans and all(c.quote == long_case.documents[0].text[c.start:c.end]
+    by_id = {d.id: d.text for d in long_case.documents}
+    assert spans and all(c.quote == by_id[c.document_id][c.start:c.end]
                          for r in result.reports for f in r.output.findings for c in f.citations)

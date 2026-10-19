@@ -103,6 +103,9 @@ class RunConfig(StrictModel):
     citation_mode: Literal["quote", "fragment"] = "quote"
     fragment_chars: int = Field(default=600, ge=120, le=4000)
     max_fragments_per_document: int = Field(default=8, ge=1, le=50)
+    # Characters of fragment text a single stage may receive; the planner spends this on the
+    # question-selected spans, so a long record no longer gets cut off the tail of a document.
+    fragment_budget: int = Field(default=24_000, ge=2_000, le=400_000)
     findings_limit: int = Field(default=5, ge=1, le=30)
     schema_retries: int = Field(default=0, ge=0, le=2)
     top_k: int = Field(default=6, ge=1, le=30)

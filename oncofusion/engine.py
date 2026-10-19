@@ -139,11 +139,14 @@ class Engine:
             flat = [f for r in current_reports for f in r.output.findings]
             if config.ablations.source_deduplication:
                 flat = deduplicate_findings(flat, docs)
+            stage_query = " ".join(filter(None, [visible.question or "",
+                                                  *[str(v) for v in visible.entities.model_dump().values() if v]]))
             if config.citation_mode == "fragment":
                 # The board carries fragment handles, not the resolved quote text again.
                 reflection_now = role == "verifier" and not config.ablations.external_verification
-                _, index_now = ([], {}) if reflection_now else fragment_documents(
-                    available, config.fragment_chars, config.max_fragments_per_document)
+                _, index_now, _ = ([], {}, {}) if reflection_now else fragment_documents(
+                    available, config.fragment_chars, config.max_fragments_per_document,
+                    stage_query, config.fragment_budget)
                 handle = {(d.id, s, e): eid for eid, (d, s, e) in index_now.items()}
                 board = [{**f.model_dump(mode="json"), "citations": [
                     {"evidence_id": handle[(c.document_id, c.start, c.end)]}
@@ -155,10 +158,11 @@ class Engine:
             if not config.ablations.structured_board:
                 board = "\n".join(json.dumps(f, ensure_ascii=False) for f in board)
             reflection = role == "verifier" and not config.ablations.external_verification
-            fragment_view, fragment_index = ([], {})
+            fragment_view, fragment_index, fragment_coverage = ([], {}, {})
             if config.citation_mode == "fragment" and not reflection:
-                fragment_view, fragment_index = fragment_documents(
-                    available, config.fragment_chars, config.max_fragments_per_document)
+                fragment_view, fragment_index, fragment_coverage = fragment_documents(
+                    available, config.fragment_chars, config.max_fragments_per_document,
+                    stage_query, config.fragment_budget)
             source_roster = []
             source_characters = {}
             for d in ([] if reflection else available):
@@ -178,7 +182,11 @@ class Engine:
                        "signals": {} if reflection else signals, "board": board,
                        "unresolved": unresolved if config.ablations.structured_board else json.dumps(unresolved, ensure_ascii=False)}
             if config.citation_mode == "fragment":
+                # Three distinct things: the original source roster, this stage's visible
+                # documents, and the spans actually handed to the model.
                 payload["evidence"] = fragment_view
+                payload["evidence_ids"] = [f["evidence_id"] for f in fragment_view]
+                payload["evidence_coverage"] = fragment_coverage
                 payload["source_characters"] = source_characters
             if repair_context is not None:
                 payload["repair"] = repair_context
@@ -228,7 +236,12 @@ class Engine:
             usage.calls += 1
             emit("agent_started", role, executor=executor,
                  payload_sha256=hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest(),
-                 source_ids=[d.id for d in available], token_reservation=reserved)
+                 source_ids=[d.id for d in available], token_reservation=reserved,
+                 evidence_ids=[f["evidence_id"] for f in fragment_view],
+                 evidence_coverage=fragment_coverage,
+                 board_findings=len(board) if isinstance(board, list) else 0,
+                 unresolved_items=sum(len(entry["items"]) for entry in unresolved),
+                 unresolved_by_role={entry["role"]: len(entry["items"]) for entry in unresolved})
             call_started = time.monotonic()
             try:
                 reply = self.provider.complete(system, payload, config.max_output_tokens, config.temperature, config.seed)

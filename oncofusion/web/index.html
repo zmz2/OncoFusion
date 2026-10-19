@@ -227,7 +227,8 @@ function documentTable(docs) {
     return "<tr><td>" + esc(d.id) + "</td><td>" + esc(KIND_CN[d.kind] || d.kind) + "</td><td>" + text.length +
       " 字符</td><td>" + esc((d.title || "（无标题）").slice(0, 60)) + "</td><td>" +
       "<details><summary>看正文</summary><div class=quote>" + esc(text.slice(0, 2400)) +
-      (text.length > 2400 ? "\n…（截断显示，模型读全文）" : "") + "</div></details></td></tr>";
+      (text.length > 2400 ? "\n…（本页只显示前 2400 字符；模型实际收到哪些片段见下方角色卡的证据覆盖）" : "") +
+      "</div></details></td></tr>";
   });
   return "<table><tr><th>来源 id</th><th>类别</th><th>长度</th><th>标题</th><th></th></tr>" + rows.join("") + "</table>";
 }
@@ -497,10 +498,24 @@ function applyEvent(kind, data, runId) {
   if (!data) return;
   const role = data.role, d = data.details || {};
   const st = role ? (STATE[role] = STATE[role] || {}) : null;
-  if (kind === "agent_started" && st) { st.state = "running"; st.sources = d.source_ids || []; }
+  if (kind === "agent_started" && st) {
+    st.state = "running"; st.sources = d.source_ids || [];
+    st.evidenceIds = d.evidence_ids || [];
+    st.coverage = d.evidence_coverage || null;
+    st.boardFindings = d.board_findings != null ? d.board_findings : null;
+    st.unresolvedItems = d.unresolved_items != null ? d.unresolved_items : null;
+    logEvent(ROLE_CN[role] + " 开始：可见来源 " + (d.source_ids || []).length + " 份，实际送入 " +
+      (d.evidence_ids || []).length + " 段" + (d.evidence_coverage && d.evidence_coverage.tail_dropped ?
+        "（候选 " + d.evidence_coverage.candidates + " 段，超出预算的部分未送入）" : ""));
+  }
   else if (kind === "retrieval_completed" && st) { st.retrieved = (d.ranked_ids || []).length; }
   else if (kind === "model_usage" && st) {
-    st.in = d.input_tokens; st.out = d.output_tokens; st.sec = d.seconds; st.attempts = d.attempts; st.fragments = d.fragments;
+    st.in = d.input_tokens; st.out = d.output_tokens; st.sec = d.seconds; st.attempts = d.attempts;
+    st.fragments = d.evidence_fragments != null ? d.evidence_fragments : d.fragments;
+    st.calls = (st.calls || 0) + 1;
+    st.in = (st.in || 0) + (d.input_tokens || 0);
+    st.out = (st.out || 0) + (d.output_tokens || 0);
+    st.sec = (st.sec || 0) + (d.seconds || 0);
     if (st.sec != null) logEvent(ROLE_CN[role] + " 模型返回，耗时 " + st.sec.toFixed(0) + "s（输入 " + st.in + " / 输出 " + st.out + " token）");
   } else if (kind === "schema_repair_requested" && st) { st.repair = true; logEvent(ROLE_CN[role] + " 输出未通过校验，按统一设置修复一次"); }
   else if (kind === "invalid_model_output" && st) { st.state = "running"; }

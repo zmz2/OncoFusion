@@ -195,26 +195,153 @@ def pathology_fields(documents: list[Document]) -> list[dict]:
     return rows
 
 
-def fragment_documents(documents: list[Document], chars: int, per_document: int) -> tuple[list[dict], dict]:
-    """Number source spans deterministically so roles cite an id and the server resolves the span."""
+_WORD = re.compile(r"[A-Za-z][A-Za-z0-9\-\']{2,}")
+_STOPWORDS = {"the", "and", "that", "with", "from", "will", "have", "has", "had", "not", "for",
+              "are", "was", "were", "what", "which", "when", "does", "did", "patient", "patients",
+              "this", "than", "then", "into", "about", "after", "before", "per"}
+# A record that carries one of these is a candidate the specialist roles cannot do without.
+# Deliberately excludes plain "AGE:" lines: in MTBBench timelines every record has one, and
+# forcing all of them degenerates back into sending only the first records of the document.
+KEY_FIELD = re.compile(
+    r"MUTATION|AMPLIFIC|DELETION|FUSION|VARIANT|CANCER|ONCOTREE|SUBTYPE|GRADE|STAGE|"
+    r"SPECIMEN|BIOPSY|HISTOLOG|DRUG|TREATMENT|THERAPY|MEDICAT|EXPOSURE", re.I)
+NEWEST_EVENT = re.compile(r"(?:AGE|DAY)[\s:]+(\d+(?:\.\d+)?)")
+_WORD = re.compile(r"[A-Za-z][A-Za-z0-9\-\']{2,}")
+_STOPWORDS = {"the", "and", "that", "with", "from", "will", "have", "has", "had", "not", "for",
+              "are", "was", "were", "what", "which", "when", "does", "did", "patient", "patients",
+              "this", "than", "then", "into", "about", "after", "before", "per"}
+
+
+def _question_terms(query: str) -> set[str]:
+    return {t.lower() for t in _WORD.findall(query or "")} - _STOPWORDS
+
+
+def fragment_spans(text: str, chars: int) -> list[tuple[int, int]]:
+    """Record-aligned spans covering the whole text.
+
+    A span ends after a completed line and the newline advances exactly one character, so the
+    next span starts on the first letter of the next record (a two-character stride used to clip
+    the leading "A" off the following "AGE:"). Only a single record longer than the span budget
+    is split, and then only at a sentence or clause boundary, never inside a word.
+    """
+    spans: list[tuple[int, int]] = []
+    start = 0
+    while start < len(text):
+        stop = min(len(text), start + chars)
+        if stop < len(text):
+            cut = text.rfind("\n", start, stop)
+            if cut >= start:
+                stop = cut + 1
+            else:
+                cut = max((text.rfind(sep, start, stop) for sep in (". ", "; ", ", ", " ")), default=-1)
+                stop = cut + 2 if text[cut:cut + 2] in (". ", "; ") and cut > start else cut + 1
+                if cut <= start:
+                    stop = min(len(text), start + chars)
+        if stop <= start:
+            stop = min(len(text), start + chars)
+        spans.append((start, stop))
+        start = stop
+    return spans
+
+
+def _must_send(text: str, spans: list[tuple[int, int]]) -> set[int]:
+    """First record, last record, and the record holding the newest AGE/DAY observation."""
+    forced = {0, len(spans) - 1}
+    best_value, best_index = None, None
+    for i, (s, e) in enumerate(spans):
+        for match in NEWEST_EVENT.finditer(text[s:e]):
+            value = float(match[1])
+            if best_value is None or value >= best_value:
+                best_value, best_index = value, i
+    if best_index is not None:
+        forced.add(best_index)
+    return forced
+
+
+def fragment_documents(documents: list[Document], chars: int, per_document: int,
+                       query: str = "", budget: int | None = None):
+    """Plan this stage's evidence: number every span, send a selected subset, report coverage.
+
+    Candidates span the full text of every stage-visible document. Each document gets a share of
+    the character budget and always contributes its first record, its last record and the newest
+    dated observation, so the clinical tail that used to be cut off is never what gets dropped.
+    Leftover budget is spent on molecular/pathology key fields first, then on question overlap.
+    Only sent ids resolve, so citing evidence the model never received still fails visibly.
+    """
+    if not documents:
+        return [], {}, {"documents": {}, "candidates": 0, "sent": 0, "chars_total": 0,
+                        "chars_sent": 0, "budget_characters": 0, "fragment_characters": chars,
+                        "fragments_per_document": per_document, "tail_dropped": False}
+    budget = budget if budget else max(24_000, len(documents) * per_document * chars)
+    share = max(chars, budget // len(documents))
+    terms = _question_terms(query)
+
+    planned = []
+    for doc in documents:
+        spans = fragment_spans(doc.text, chars)
+        must = _must_send(doc.text, spans)
+        key = {i for i, (s, e) in enumerate(spans) if KEY_FIELD.search(doc.text[s:e])}
+        scored = []
+        for i, (s, e) in enumerate(spans):
+            overlap = len(terms & {t.lower() for t in _WORD.findall(doc.text[s:e])})
+            tier = 0 if i in must else (1 if i in key else 2)
+            scored.append((tier, -overlap, i, s, e))
+        planned.append((doc, spans, must, sorted(scored, key=lambda c: (c[0], c[1], c[2]))))
+
+    chosen: dict[str, list[int]] = {doc.id: [] for doc, _, _, _ in planned}
+    spent = 0
+    # first pass: every visible document must be represented inside its own share
+    for doc, spans, must, ranked in planned:
+        doc_spent = 0
+        for tier, _, i, s, e in sorted(ranked, key=lambda c: (0 if c[2] in must else 1, c[2])):
+            if i not in must:
+                continue
+            if chosen[doc.id] and spent + (e - s) > budget and doc_spent + (e - s) > share:
+                break
+            chosen[doc.id].append(i)
+            doc_spent += e - s
+            spent += e - s
+    # second pass: spend what is left on key fields, then on question overlap
+    leftovers = [(tier, overlap, i, doc, s, e) for doc, spans, must, ranked in planned
+                 for tier, overlap, i, s, e in ranked if i not in chosen[doc.id]]
+    for tier, overlap, i, doc, s, e in sorted(leftovers, key=lambda c: (c[0], c[1], c[3].id, c[2])):
+        if spent + (e - s) > budget or len(chosen[doc.id]) >= per_document:
+            continue
+        chosen[doc.id].append(i)
+        spent += e - s
+
     listed: list[dict] = []
     index: dict[str, tuple[Document, int, int]] = {}
-    for doc in documents:
-        text = doc.text
-        start, number, kept = 0, 1, 0
-        while start < len(text) and kept < per_document:
-            stop = min(len(text), start + chars)
-            if stop < len(text):
-                cut = max(text.rfind(sep, start, stop) for sep in (". ", "\n", "; "))
-                stop = cut + 2 if cut > start else stop
-            evidence_id = f"{doc.id}:f{number:02d}"
+    coverage: dict[str, dict] = {}
+    for doc, spans, must, _ in planned:
+        picked = sorted(set(chosen[doc.id]))
+        sent_ids = []
+        for i in picked:
+            s, e = spans[i]
+            evidence_id = "%s:f%02d" % (doc.id, i + 1)
             listed.append({"evidence_id": evidence_id, "document_id": doc.id, "kind": doc.kind,
-                           "stage": doc.available_stage, "text": text[start:stop]})
-            index[evidence_id] = (doc, start, stop)
-            kept += 1
-            number += 1
-            start = stop
-    return listed, index
+                           "stage": doc.available_stage, "text": doc.text[s:e],
+                           "forced": bool(i in must), "position": i + 1, "record_span": [s, e]})
+            index[evidence_id] = (doc, s, e)
+            sent_ids.append(evidence_id)
+        coverage[doc.id] = {"candidates": len(spans), "sent": len(sent_ids),
+                            "chars_total": len(doc.text),
+                            "chars_sent": sum(spans[i][1] - spans[i][0] for i in picked),
+                            "key_records": sum(1 for i in picked if i in must),
+                            "share_characters": share, "evidence_ids": sent_ids}
+    listed.sort(key=lambda f: (f["document_id"], f["position"]))
+    return listed, index, {
+        "documents": coverage,
+        "candidates": sum(v["candidates"] for v in coverage.values()),
+        "sent": sum(v["sent"] for v in coverage.values()),
+        "chars_total": sum(v["chars_total"] for v in coverage.values()),
+        "chars_sent": sum(v["chars_sent"] for v in coverage.values()),
+        "budget_characters": budget,
+        "fragment_characters": chars,
+        "fragments_per_document": per_document,
+        "documents_without_evidence": [d for d, v in coverage.items() if not v["sent"]],
+        "tail_dropped": any(v["sent"] < v["candidates"] for v in coverage.values()),
+    }
 
 
 def resolve_fragment_citations(citations: list[FragmentCitation], index: dict) -> list[Citation]:

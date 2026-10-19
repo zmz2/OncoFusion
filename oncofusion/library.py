@@ -47,27 +47,53 @@ def _summary(study: str, treatment: str, label: str, data: dict, root_project: P
     decision = data.get("decision") or {}
     gold = _labels(root_project, study).get(data["case_id"], {})
     per_role = {}
+    started = {}
     for event in data.get("trace", []):
+        details = event.get("details", {})
         if event.get("kind") == "model_usage":
-            details = event.get("details", {})
             per_role[event.get("role")] = {"seconds": details.get("seconds"),
                                            "input_tokens": details.get("input_tokens"),
-                                           "output_tokens": details.get("output_tokens")}
-    roles = [{"role": report["role"], "executor": report["executor"],
-              "findings": len(report["output"]["findings"]),
-              "citations": sum(len(f["citations"]) for f in report["output"]["findings"]),
-              "unresolved": report["output"]["unresolved"],
-              "seconds": per_role.get(report["role"], {}).get("seconds"),
-              "input_tokens": per_role.get(report["role"], {}).get("input_tokens"),
-              "output_tokens": per_role.get(report["role"], {}).get("output_tokens")}
-             for report in data.get("reports", [])]
+                                           "output_tokens": details.get("output_tokens"),
+                                           "evidence_fragments": details.get("evidence_fragments")}
+        elif event.get("kind") == "agent_started":
+            started[event.get("role")] = {
+                "evidence_ids": details.get("evidence_ids"),
+                "evidence_coverage": details.get("evidence_coverage"),
+                "board_findings": details.get("board_findings"),
+                "unresolved_items": details.get("unresolved_items"),
+                "source_ids": details.get("source_ids")}
+    roles = []
+    for report in data.get("reports", []):
+        role_usage = per_role.get(report["role"], {})
+        hand = started.get(report["role"], {})
+        roles.append({"role": report["role"], "executor": report["executor"],
+                      "findings": len(report["output"]["findings"]),
+                      "citations": sum(len(f["citations"]) for f in report["output"]["findings"]),
+                      "unresolved": report["output"]["unresolved"],
+                      "seconds": role_usage.get("seconds"),
+                      "input_tokens": role_usage.get("input_tokens"),
+                      "output_tokens": role_usage.get("output_tokens"),
+                      "evidence_fragments": role_usage.get("evidence_fragments"),
+                      "evidence_ids": hand.get("evidence_ids"),
+                      "evidence_coverage": hand.get("evidence_coverage"),
+                      "board_findings": hand.get("board_findings"),
+                      "unresolved_items": hand.get("unresolved_items"),
+                      "source_ids": hand.get("source_ids")})
+    dec_usage = per_role.get("decision", {})
+    hand = started.get("decision", {})
     decision_row = {"role": "decision", "executor": "decision",
                     "findings": 1 if decision.get("answer") else 0,
                     "citations": len(decision.get("citations") or []),
-                    "unresolved": [],
-                    "seconds": per_role.get("decision", {}).get("seconds"),
-                    "input_tokens": per_role.get("decision", {}).get("input_tokens"),
-                    "output_tokens": per_role.get("decision", {}).get("output_tokens")}
+                    "unresolved": decision.get("unresolved") or [],
+                    "seconds": dec_usage.get("seconds"),
+                    "input_tokens": dec_usage.get("input_tokens"),
+                    "output_tokens": dec_usage.get("output_tokens"),
+                    "evidence_fragments": dec_usage.get("evidence_fragments"),
+                    "evidence_ids": hand.get("evidence_ids"),
+                    "evidence_coverage": hand.get("evidence_coverage"),
+                    "board_findings": hand.get("board_findings"),
+                    "unresolved_items": hand.get("unresolved_items"),
+                    "source_ids": hand.get("source_ids")}
     roles = roles + [decision_row]
     return {"id": f"{study}:{treatment}:{data['case_id']}", "study": study, "arm": treatment,
             "dataset_label": label, "case_id": data["case_id"], "task": data.get("config", {}).get("mode"),
@@ -135,7 +161,9 @@ def get_item(item_id: str, root: Path | None = None, project: Path | None = None
         trace.append({"kind": event["kind"], "role": event.get("role"),
                       "seconds": details.get("seconds"), "input_tokens": details.get("input_tokens"),
                       "output_tokens": details.get("output_tokens"),
-                      "attempts": details.get("attempts"), "fragments": details.get("evidence_fragments"),
+                      "attempts": details.get("attempts"),
+                      "evidence_fragments": details.get("evidence_fragments"),
+                      "fragments": details.get("evidence_fragments"),
                       "reservation": details.get("token_reservation"), "reason": details.get("reason")})
     detail.update({"case": case, "reports": data.get("reports", []), "decision": data.get("decision"),
                    "config": data.get("config", {}), "fingerprint": data.get("fingerprint"),
