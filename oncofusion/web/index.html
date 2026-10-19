@@ -314,7 +314,7 @@ function outputBlock(output) {
   const html = [];
   (output.findings || []).forEach((f) => {
     html.push("<div class=finding><span class=\"rel " + esc(f.relation) + "\">" + esc(REL_CN[f.relation] || f.relation) +
-      "</span>" + esc(f.statement) + (f.citations || []).map(citationBlock).join("") + "</div>");
+      "</span>" + claimChips(f) + esc(f.statement) + (f.citations || []).map(citationBlock).join("") + "</div>");
   });
   if (output.answer) html.push("<div class=finding><span class=\"rel\">" + esc(REL_CN[output.answer] || output.answer) +
     "</span><b>本步结论</b> " + esc(output.explanation || "") + "</div>");
@@ -381,6 +381,21 @@ function renderRoles() {
 }
 
 const VERDICT_CN = {confirmed: "已确认", corrected: "已更正", rejected: "已否定", insufficient: "证据不足"};
+const SCOPE_CN = {temporal: "时间与事件", molecular: "分子与变异", pathologic: "病理与癌种",
+  exposure: "既往用药", relationship: "药物关系", source: "资料来源", verification: "核验",
+  outcome_prediction: "结局推断"};
+const LEVEL_CN = {measured: "实测记录", curated: "整理库", literature: "文献", inferred: "推断", absent: "无支撑"};
+const MATERIAL_CN = {present: "有资料", not_applicable: "本题不涉及", unknown: "资料缺失"};
+
+function claimChips(f) {
+  const chips = [];
+  if (f.scope) chips.push("<span class=pill>层面：" + esc(SCOPE_CN[f.scope] || f.scope) + "</span>");
+  if (f.evidence_level) chips.push("<span class=pill>依据：" + esc(LEVEL_CN[f.evidence_level] || f.evidence_level) + "</span>");
+  if (f.material_status && f.material_status !== "present") {
+    chips.push("<span class="pill warn">资料：" + esc(MATERIAL_CN[f.material_status] || f.material_status) + "</span>");
+  }
+  return chips.length ? "<div class=hint>" + chips.join(" ") + "</div>" : "";
+}
 
 function renderClaims() {
   const rows = [];
@@ -388,6 +403,7 @@ function renderClaims() {
     const o = (STATE[r] || {}).output || {};
     (o.findings || []).forEach((f) => {
       if (f.claim_id) rows.push({id: f.claim_id, author: f.author_role || ROLE_CN[r], statement: f.statement,
+                                 scope: f.scope, level: f.evidence_level, material: f.material_status,
                                  used: f.used_claim_ids || []});
     });
   });
@@ -409,7 +425,8 @@ function renderClaims() {
     const state = adopted.indexOf(c.id) >= 0 ? "<span class=\"pill ok\">决策采用</span>" :
       (excluded.indexOf(c.id) >= 0 ? "<span class=\"pill bad\">决策排除</span>" : "<span class=hint>决策未点名</span>");
     return "<tr><td><b>" + esc(c.id) + "</b><br><span class=hint>" + esc(c.author) + "</span></td>" +
-      "<td>" + esc(c.statement.slice(0, 220)) + "</td>" +
+      "<td>" + (c.scope ? "<span class=pill>" + esc(SCOPE_CN[c.scope] || c.scope) + "</span>" : "") +
+        esc(c.statement.slice(0, 220)) + "</td>" +
       "<td>" + (c.used.length ? c.used.map((u) => "<span class=pill>" + esc(u) + "</span>").join("") : "<span class=hint>未声明</span>") + "</td>" +
       "<td>" + (v ? "<span class=\"pill " + (v.verdict === "rejected" ? "bad" : (v.verdict === "insufficient" ? "warn" : "ok")) +
         "\">" + (VERDICT_CN[v.verdict] || v.verdict) + "</span>" + (v.note ? "<br><span class=hint>" + esc(v.note.slice(0, 160)) + "</span>" : "")

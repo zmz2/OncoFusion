@@ -30,11 +30,11 @@ Windows PowerShell 激活：`.venv\Scripts\Activate.ps1`；环境变量用 `$env
 七 Agent 真实运行演示页：单文件、无构建、只用现有 `/v1` 接口（页面内联脚本，不加载外部资源）。
 
 ```bash
-# 服务器侧（server21）：真实 API 环境 + 回放索引目录 + 本地令牌
+# 服务器侧（server21）：真实 API 环境 + 回放索引目录 + 本地令牌；REQUIRE_REAL 让缺环境时直接启动失败
 cd ~/BioOncoFusion
 set -a; . ~/.config/oncofusion/real-api.env; set +a
 export ONCOFUSION_API_TOKEN="$(cat /path/to/demo-token)" ONCOFUSION_RESULTS_DIR=results/v1 \
-       ONCOFUSION_DB=runtime/demo.sqlite3
+       ONCOFUSION_DB=runtime/demo.sqlite3 ONCOFUSION_DEMO_REQUIRE_REAL=1
 .venv/bin/python -m oncofusion serve --host 127.0.0.1 --port 8180
 
 # 使用机器侧：SSH 转发后直接打开
@@ -50,7 +50,17 @@ ssh -N -o ServerAliveInterval=20 -L 18180:127.0.0.1:8180 server21-direct
 PR 目前无法自动创建：本机可用凭据只有 zmz2 的 **SSH 身份**（keychain 无 HTTPS 令牌、`gh` 未登录），
 分支可推送但 GitHub 的 PR 只能经 HTTPS API/CLI 建；需 `gh auth login` 或 fine-grained 令牌后代开。
 
-页面完成一条闭环：选择输入（内置示例 / MTBBench 与 CIViC-Fact 真实开发集样例 / 上传 JSON 或 JSONL 并选其中一条）→ `/v1/cases/inspect` 输入检查（输入面板给出任务、题号、原题逐字以及每份可见资料的类别、长度和正文）→ 以 `/v1/configs/demo` 返回的 v1_fast 配置发起真实运行（不会落入历史默认预设）→ 七角色卡片按固定顺序逐个亮起，每张写清该角色的职责、后端递给它的证据片段数、前序已完成角色交来的结论与未解决项、本步产出的结论数与原文引用数、移交下去的未解决项，以及逐角色 token 和秒→ 关系图给出「来源被哪些角色引用」和「角色之间传递了什么」→ 最终答案与解释，引用可展开对照模型给出的片段与原文偏移→ 失败时给出原因并保留已完成步骤。另有 62 条已完成真实结果的回放列表、中文「数据集结果」小表和逐角色平均耗时（含综合决策）；刷新页面后可凭 run_id 重新查询任务与结果。
+`/v1/configs/demo` 返回课堂配置 `v1_class`（七角色、片段引用、供应商输出上限 5000、统一一次结构修复，
+外加 claims-v1 协作协议），并附上本机实际使用的 `workflow_backend` 与 `graph_installed`，
+所以核心安装（native）与装了 LangGraph 的安装都能自证。设置 `ONCOFUSION_DEMO_REQUIRE_REAL=1` 后，
+provider 落成 mock 时进程直接拒绝启动；页面徽章取 `/healthz` 与每条结果自带的 `simulated`，
+模拟任务不会再被写成"真实运行"。
+
+页面完成一条闭环：选择输入（内置示例 / MTBBench 与 CIViC-Fact 真实开发集样例 / 上传 JSON 或 JSONL 并选其中一条）→ `/v1/cases/inspect` 输入检查（输入面板给出任务、题号、原题逐字以及每份可见资料的类别、长度和正文）→ 以 `/v1/configs/demo` 返回的 v1_fast 配置发起真实运行（不会落入历史默认预设）→ 七角色卡片按固定顺序逐个亮起，每张写清该角色的职责、后端递给它的证据片段数、前序已完成角色交来的结论与未解决项、本步产出的结论数与原文引用数、移交下去的未解决项，以及逐角色 token 和秒→ 「执行顺序」与「主张与核验关系」分开展示：前者是固定七步流水线和每步实际送入的证据覆盖
+（候选多少段、送入多少段、原文多少字符、送入多少字符），后者按后端记录的主张 ID 画出作者角色、
+该主张声明依据的前序主张、核验方逐条给出的 confirmed／corrected／rejected／insufficient，
+以及决策采用与排除了哪些主张；早于 claims-v1 的历史结果没有保存这些依赖，那里直接写"未记录"→ 最终答案与解释，引用可展开对照模型给出的片段与原文偏移→ 失败时给出原因并保留已完成步骤。另有已完成真实结果的回放列表（失败记录留在统计分母里、默认不在回放列表出现，
+`/v1/library?include_failed=true` 可单独查看）、中文「数据集结果」小表和逐角色平均耗时（含综合决策）；刷新页面后可凭 run_id 重新查询任务与结果。
 
 模型密钥只存在服务器环境变量与本机演示令牌中，页面不显示密钥；`simulated` 标记区分真实与模拟后端。
 
@@ -111,6 +121,11 @@ python -m oncofusion demo --profile v1 --out results/real_demo.json --allow-remo
 ```
 
 支持 `max_completion_tokens`、关闭供应商不支持的 `seed` / `temperature`、超时、429/5xx 有限重试、JSON 校验与有界结构修复。真实模式报错会显式失败，模型类型保持原样。价格从环境变量配置；未提供价格时成本字段保留不完整标识。
+
+## 课堂展示验收
+
+`results/CLASS_DEMO_ACCEPTANCE.md` 记录当前提交、唯一启动方式、真实与回放入口、三个课堂案例、
+关键修复证据、实际结果与剩余事项。逐条引用的语义核对在 `results/SEMANTIC_REVIEW_CLASS6.md`。
 
 ## 数据与结果
 
