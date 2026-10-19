@@ -274,6 +274,7 @@ class Engine:
                     if visible.task == "verification" and output.answer != "NEI" and not output.citations:
                         raise ValueError("asserted verification answers require citations")
                     decision = output
+                    emit("agent_reported", role, output=output.model_dump(mode="json"))
                 else:
                     # Reflection can cite only earlier visible source excerpts; mechanical integrity always applies.
                     citation_docs = docs if reflection else available
@@ -287,6 +288,7 @@ class Engine:
                         if finding.relation != "NEI" and not finding.citations:
                             raise ValueError("asserted findings require citations")
                     reports.append(AgentReport(role=role, executor=executor, output=output))
+                    emit("agent_reported", role, output=output.model_dump(mode="json"))
             except (ValidationError, ValueError) as exc:
                 errors = exc.errors(include_input=False, include_url=False) if isinstance(exc, ValidationError) else [{"msg": str(exc)}]
                 repair = {"previous_output": reply.content[:65536], "validation_errors": errors,

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OncoFusion · 七 Agent 证据整合演示</title>
+<style>
+:root { --bg:#0f1418; --panel:#161d24; --panel2:#1d262f; --line:#2a3743; --text:#e6edf3;
+        --dim:#9fb0c0; --ok:#3fb37f; --warn:#e0a33c; --bad:#e0655f; --run:#4aa3df; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:14px/1.55 -apple-system,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif; }
+header { padding:14px 18px; border-bottom:1px solid var(--line); display:flex; gap:12px; align-items:center; flex-wrap:wrap; background:var(--panel); position:sticky; top:0; z-index:5; }
+h1 { font-size:16px; margin:0 8px 0 0; letter-spacing:.3px; }
+.badge { font-size:12px; padding:2px 9px; border-radius:999px; border:1px solid var(--line); color:var(--dim); }
+.badge.real { color:#bdf0d4; border-color:#2c6b4f; background:#16291f; }
+.badge.sim  { color:#f2d9a8; border-color:#6b5a2c; background:#28231a; }
+.badge.live { color:#bfe3fb; border-color:#2c5d7a; background:#16252d; }
+main { display:grid; grid-template-columns:330px 1fr 380px; gap:14px; padding:14px 18px; align-items:start; }
+section { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px; }
+h2 { font-size:13px; margin:0 0 10px; color:var(--dim); text-transform:uppercase; letter-spacing:.7px; }
+label { display:block; font-size:12px; color:var(--dim); margin:8px 0 3px; }
+input, select, button { font:inherit; color:inherit; background:var(--panel2); border:1px solid var(--line); border-radius:7px; padding:7px 9px; width:100%; }
+button { cursor:pointer; background:#243343; }
+button:hover:not(:disabled) { background:#2d4053; }
+button:disabled { opacity:.5; cursor:not-allowed; }
+button.primary { background:#1f4d3a; border-color:#2c6b4f; }
+.row { display:flex; gap:8px; }
+.hint { font-size:12px; color:var(--dim); margin-top:6px; }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(232px,1fr)); gap:10px; }
+.card { background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:10px; min-height:92px; }
+.card h3 { margin:0 0 4px; font-size:13px; }
+.card .meta { font-size:11px; color:var(--dim); }
+.card[data-state=running] { border-color:var(--run); box-shadow:0 0 0 1px #1d3b4c inset; }
+.card[data-state=done] { border-color:#2c6b4f; }
+.card[data-state=failed] { border-color:var(--bad); }
+.dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#40505e; margin-right:6px; }
+.card[data-state=running] .dot { background:var(--run); animation:pulse 1.1s infinite; }
+.card[data-state=done] .dot { background:var(--ok); }
+.card[data-state=failed] .dot { background:var(--bad); }
+@keyframes pulse { 50% { opacity:.25; } }
+.finding { border-top:1px dashed var(--line); margin-top:7px; padding-top:6px; font-size:12.5px; }
+.rel { font-size:11px; padding:1px 6px; border-radius:999px; border:1px solid var(--line); color:var(--dim); margin-right:6px; }
+details { margin-top:5px; }
+summary { cursor:pointer; font-size:11.5px; color:var(--run); }
+.quote { font-size:11.5px; color:var(--dim); border-left:2px solid var(--line); padding-left:7px; margin-top:4px; white-space:pre-wrap; }
+.kv { display:flex; justify-content:space-between; font-size:12px; border-top:1px solid var(--line); padding:4px 0; }
+table { width:100%; border-collapse:collapse; font-size:12px; }
+th, td { border-bottom:1px solid var(--line); padding:5px 6px; text-align:left; }
+.list { max-height:340px; overflow:auto; }
+.item { border-top:1px solid var(--line); padding:7px 4px; cursor:pointer; font-size:12.5px; }
+.item:hover { background:var(--panel2); }
+.item.sel { background:#1d2d3b; }
+.item .sub { color:var(--dim); font-size:11px; }
+#statusline { font-size:12.5px; color:var(--dim); }
+.banner { border-radius:8px; padding:8px 10px; font-size:12.5px; margin-bottom:10px; border:1px solid var(--line); }
+.banner.err { border-color:var(--bad); background:#2a191b; }
+footer { padding:10px 18px 26px; color:var(--dim); font-size:11.5px; }
+@media (max-width:1180px) { main { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>OncoFusion</h1>
+  <span class="badge" id="b-provider">provider …</span>
+  <span class="badge" id="b-model">model …</span>
+  <span class="badge" id="b-mode">运行模式 …</span>
+  <span class="badge" id="b-config">配置 …</span>
+  <div class="row" style="margin-left:auto;width:auto">
+    <input id="token" type="password" placeholder="Bearer 令牌（仅存本浏览器）" style="width:200px">
+    <button id="tab-demo" style="width:auto">演示</button>
+    <button id="tab-data" style="width:auto">数据集结果</button>
+  </div>
+</header>
+
+<main id="view-demo">
+  <section>
+    <h2>1 · 选择输入</h2>
+    <label>来源</label>
+    <select id="source-kind">
+      <option value="builtin">内置示例（合成，离线可跑）</option>
+      <option value="mtb">MTBBench 真实开发集样例</option>
+      <option value="civic">CIViC-Fact 真实开发集样例</option>
+      <option value="upload">上传 JSON / JSONL（符合协议）</option>
+    </select>
+    <label id="ref-label">示例</label>
+    <select id="source-ref"></select>
+    <label id="jsonl-label" style="display:none">JSONL：选择其中一条运行</label>
+    <select id="jsonl-index" style="display:none"></select>
+    <input id="file" type="file" accept=".json,.jsonl,application/json" style="display:none">
+    <button id="btn-pick" style="margin-top:8px" disabled>读取所选文件</button>
+    <div id="insight" class="hint">未选择输入。</div>
+    <button id="btn-inspect" class="primary" disabled>输入检查</button>
+    <div id="inspect" class="hint"></div>
+    <label style="margin-top:12px">运行</label>
+    <div class="row">
+      <button id="btn-run" class="primary" disabled>发起真实 API 运行</button>
+      <button id="btn-cancel" disabled>取消排队</button>
+    </div>
+    <div id="statusline" style="margin-top:8px">空闲。</div>
+  </section>
+
+  <section>
+    <div id="demo-banner"></div>
+    <h2>3 · 七 Agent 协作过程（后端事件驱动）</h2>
+    <div class="cards" id="roles"></div>
+    <h2 style="margin-top:14px">4 · 最终结果</h2>
+    <div id="answer"></div>
+  </section>
+
+  <section>
+    <h2>2 · 当前任务</h2>
+    <div id="taskinfo"></div>
+    <h2 style="margin-top:14px">5 · 历史真实结果回放</h2>
+    <div class="list" id="history"></div>
+  </section>
+</main>
+
+<main id="view-data" style="display:none;grid-template-columns:1fr">
+  <section>
+    <h2>小规模真实数据集结果</h2>
+    <div id="dataset"></div>
+    <div id="dataset-note" class="hint"></div>
+  </section>
+</main>
+
+<footer>研究用途：仅整合与核验既有证据；这两套数据的标注不评估最佳治疗方案。令牌只存在本浏览器与服务器环境变量。</footer>
+<script>
+const ROLES = ["literature", "timeline", "genomics", "pathology", "drug", "verifier", "decision"];
+const ROLE_CN = { literature:"文献证据", timeline:"病例时间线", genomics:"基因与通路",
+  pathology:"病理与癌种语境", drug:"药物关系", verifier:"主张核验", decision:"综合决策" };
+const S = { token: localStorage.getItem("of.token") || "", demo: null, examples: [], library: [],
+  item: null, case: null, runId: null, cursor: -1, idem: null, streaming: false };
+const $ = (id) => document.getElementById(id);
+const esc = (t) => String(t == null ? "" : t).replace(/[&<>"]/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+
+async function api(path, opts = {}) {
+  const headers = Object.assign({}, opts.headers || {});
+  if (S.token) headers["Authorization"] = "Bearer " + S.token;
+  if (opts.json !== undefined) { headers["Content-Type"] = "application/json"; opts.body = JSON.stringify(opts.json); }
+  const res = await fetch(path, Object.assign({ method: opts.method || "GET" }, opts, { headers }));
+  if (!res.ok) {
+    let detail = "";
+    try { detail = JSON.stringify(await res.json()).slice(0, 260); } catch (e) { detail = await res.text().catch(() => ""); }
+    throw new Error(res.status + " " + detail);
+  }
+  return res.json();
+}
+
+function status(text, cls) { $("statusline").textContent = text; $("statusline").className = cls || ""; }
+
+function renderRoles(state, data) {
+  let box = $("roles");
+  if (!box.children.length) {
+    box.innerHTML = ROLES.map((r) => `<div class="card" id="card-${r}" data-state="idle">
+      <h3><span class="dot"></span>${ROLE_CN[r]} <span class="meta">${r}</span></h3>
+      <div class="body hint">等待中</div></div>`).join("");
+  }
+  if (!state) return;
+  for (const r of ROLES) {
+    const card = $("card-" + r);
+    if (!card || !state[r]) continue;
+    const st = state[r];
+    card.dataset.state = st.state || "idle";
+    const meta = [];
+    if (st.in != null) meta.push("in " + st.in);
+    if (st.out != null) meta.push("out " + st.out);
+    if (st.sec != null) meta.push(st.sec.toFixed(0) + "s");
+    if (st.attempts > 1) meta.push("retry " + st.attempts);
+    if (st.repair) meta.push("schema 修复 1 次");
+    let html = (st.state || "idle") + (meta.length ? " · " + meta.join(" · ") : "");
+    if (st.output) {
+      const items = (st.output.findings || []).map((f) => `<div class="finding"><span class="rel">${esc(f.relation)}</span>${esc(f.statement)}
+        ${(f.citations || []).map((c) => `<details><summary>引用 ${esc(c.document_id)}${c.start != null ? " @" + c.start + "-" + c.end : ""}</summary>
+          <div class="quote">${esc(c.quote)}</div></details>`).join("")}</div>`).join("");
+      html += "<div>" + (items || "<span class=hint>无发现</span>") + "</div>";
+      if ((st.output.unresolved || []).length) html += `<details><summary>未解决 ${st.output.unresolved.length}</summary><div class=quote>${esc(st.output.unresolved.join("\n"))}</div></details>`;
+      if (st.output.answer) html += `<div class="finding"><span class="rel">答案 ${esc(st.output.answer)}</span>${esc(st.output.explanation || "")}</div>`;
+    }
+    card.querySelector(".body").innerHTML = html;
+  }
+}
+
+function showAnswer(run, item) {
+  const result = run ? run.result : (item ? { decision: item.decision, reports: item.reports, usage: item.usage_full } : null);
+  const box = $("answer");
+  if (!result) { box.innerHTML = `<div class="hint">尚无结果。${run ? "当前状态 " + esc(run.status) : ""}</div>`; return; }
+  const d = result.decision, u = result.usage || item && item.usage_full || {};
+  const citations = (d && d.citations) || [];
+  const docs = (item && item.case && item.case.documents) || S.caseDocuments || [];
+  const kinds = {};
+  docs.forEach((x) => { kinds[x.kind] = (kinds[x.kind] || 0) + 1; });
+  const unresolved = new Set((result.reports || []).flatMap((r) => r.output.unresolved || []));
+  box.innerHTML = `
+    <div class="kv"><span>答案</span><b>${d ? esc(d.answer) : "（未完成）"}</b></div>
+    <div class="kv"><span>调用 / token</span><b>${u.calls || "-"} 次 · in ${u.input_tokens || "-"} / out ${u.output_tokens || "-"}</b></div>
+    <div class="kv"><span>耗时</span><b>${run ? (run.duration_seconds != null ? run.duration_seconds.toFixed(1) + "s" : esc(run.status)) : (item ? item.seconds + "s" : "-")}</b></div>
+    <div class="kv"><span>可见资料类别</span><b>${esc(JSON.stringify(kinds))}</b></div>
+    <div class="finding"><span class="rel">解释</span>${esc(d && d.explanation || "无")}</div>
+    <details open><summary>引用（${citations.length}）：点击展开原始片段</summary>
+      ${citations.map((c) => { const doc = docs.find((x) => x.id === c.document_id) || {}; const raw = (doc.text || "").slice(c.start || 0, c.end || 0);
+        return `<div class="finding"><b>${esc(c.document_id)}</b> <span class="meta">${esc(doc.kind || "")} ${c.start != null ? "@" + c.start + "-" + c.end : ""}</span>
+          <div class="quote">引用文本：${esc(c.quote)}</div>
+          <div class="quote">原文片段：${esc(raw || "（该来源不在本次可见资料中）")}</div></div>`; }).join("") || "<div class=hint>无引用</div>"}
+    </details>
+    <details><summary>证据不足 / 未解决（${unresolved.size}）</summary><div class="quote">${esc([...unresolved].join("\n") || "无")}</div></details>
+    ${run && run.error ? `<div class="banner err">失败原因：${esc(run.error)}（已完成步骤保留在上方卡片）</div>` : ""}`;
+}
+
+function taskPanel(run, item) {
+  const src = run || item || {};
+  $("taskinfo").innerHTML = run
+    ? `<div class="kv"><span>模式</span><b>真实运行中</b></div>
+       <div class="kv"><span>run_id</span><b>${esc(run.run_id || S.runId)}</b></div>
+       <div class="kv"><span>状态</span><b>${esc(run.status)}</b></div>
+       ${S.runId ? `<div class="kv"><span>事件游标</span><b>${S.cursor}</b></div>` : ""}`
+    : item
+    ? `<div class="kv"><span>模式</span><b>历史真实结果回放</b></div>
+       <div class="kv"><span>样本</span><b>${esc(item.case_id)}</b></div>
+       <div class="kv"><span>臂 / 状态</span><b>${esc(item.arm)} · ${esc(item.status)}</b></div>
+       <div class="kv"><span>答案 / 标签</span><b>${esc(item.answer)} / ${esc(item.gold_label)}</b></div>`
+    : `<div class="hint">尚未发起运行，也未选择历史结果。</div>`;
+  if (run) $("b-mode").textContent = "真实运行中";
+  else if (item) $("b-mode").textContent = "历史回放";
+}
+
+const STATE = {};
+function resetState() { for (const k in STATE) delete STATE[k]; ROLES.forEach((r) => STATE[r] = { state: "idle" }); renderRoles(STATE); }
+
+async function loadRunList() {
+  try {
+    const runs = await api("/v1/runs?limit=8");
+    $("taskinfo").insertAdjacentHTML("beforeend",
+      `<div class="hint">服务器最近任务：${runs.map((r) => `<div class="item" data-run="${esc(r.run_id)}">${esc(r.status)} · ${esc(r.case_id)}</div>`).join("") || "无"}</div>`);
+    document.querySelectorAll("[data-run]").forEach((el) => el.onclick = () => resume(el.dataset.run));
+  } catch (e) { /* history is optional */ }
+}
+
+async function resume(runId) {
+  S.runId = runId; localStorage.setItem("of.run", runId);
+  const run = await api("/v1/runs/" + runId);
+  taskPanel(run);
+  if (run.result) {
+    (run.result.reports || []).forEach((r) => Object.assign(STATE[r.role] = STATE[r.role] || {}, { state: "done", output: r.output }));
+    renderRoles(STATE);
+  }
+  showAnswer(run);
+  const terminal = ["succeeded", "failed", "interrupted", "cancelled", "budget_exhausted"];
+  if (!terminal.includes(run.status)) attach(runId);
+  else status("任务 " + runId + " 已是终态：" + run.status);
+}
+
+async function attach(runId) {
+  if (S.streaming) return;
+  S.streaming = true;
+  try {
+    const res = await fetch(`/v1/runs/${runId}/stream?after=${S.cursor}`, { headers: S.token ? { Authorization: "Bearer " + S.token } : {} });
+    if (!res.ok || !res.body) throw new Error("stream " + res.status);
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = "";
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      let idx;
+      while ((idx = buf.indexOf("\n\n")) >= 0) {
+        const frame = buf.slice(0, idx); buf = buf.slice(idx + 2);
+        handleFrame(frame, runId);
+      }
+    }
+  } catch (e) { status("事件流中断：" + e.message + "（可重新打开，任务仍在服务器执行）"); }
+  S.streaming = false;
+}
+
+function handleFrame(frame, runId) {
+  let kind = "", data = null;
+  for (const line of frame.split("\n")) {
+    if (line.startsWith("id: ")) S.cursor = parseInt(line.slice(4), 10);
+    else if (line.startsWith("event: ")) kind = line.slice(7);
+    else if (line.startsWith("data: ")) { try { data = JSON.parse(line.slice(6)); } catch (e) {} }
+  }
+  if (kind === "done") { finish(runId); return; }
+  if (!data) return;
+  const role = data.role, d = data.details || {}, st = STATE[role] = STATE[role] || {};
+  if (kind === "agent_started") { st.state = "running"; }
+  else if (kind === "model_usage") { st.in = d.input_tokens; st.out = d.output_tokens; st.sec = d.seconds; st.attempts = d.attempts; }
+  else if (kind === "schema_repair_requested") { st.repair = true; }
+  else if (kind === "invalid_model_output") { st.state = "running"; st.note = "输出未通过校验"; }
+  else if (kind === "agent_reported") { st.state = "done"; st.output = d.output; }
+  else if (kind === "budget_exhausted") { st.state = "failed"; st.note = d.reason; }
+  renderRoles(STATE);
+}
+
+async function finish(runId) {
+  const run = await api("/v1/runs/" + runId);
+  taskPanel(run);
+  if (run.result) (run.result.reports || []).forEach((r) => Object.assign(STATE[r.role] = STATE[r.role] || {}, { state: "done", output: r.output }));
+  else ROLES.forEach((r) => { if (STATE[r] && STATE[r].state === "running") STATE[r].state = "failed"; });
+  renderRoles(STATE);
+  showAnswer(run);
+  status("任务 " + runId + " 结束：" + run.status + (run.error ? " · " + run.error : ""));
+}
+
+async function startRun() {
+  if (!S.case) return;
+  const body = { case: S.case, config: S.demo.config, allow_remote_processing: true };
+  if (!S.idem) S.idem = "demo:" + (crypto.randomUUID ? crypto.randomUUID() : Date.now());
+  resetState(); $("answer").innerHTML = "";
+  status("提交中…");
+  try {
+    const res = await api("/v1/runs", { method: "POST", json: body, headers: { "Idempotency-Key": S.idem } });
+    S.runId = res.run_id; S.cursor = -1; localStorage.setItem("of.run", res.run_id);
+    taskPanel({ run_id: res.run_id, status: res.status });
+    status("任务已创建：" + res.run_id + "（" + res.status + "）");
+    $("btn-cancel").disabled = false;
+    attach(res.run_id);
+  } catch (e) { status("提交失败：" + e.message, "banner err"); }
+}
+
+async function inspectInput() {
+  if (!S.case) return;
+  try {
+    const r = await api("/v1/cases/inspect", { method: "POST", json: S.case });
+    const covered = Object.entries(r.explicit_role_inputs).filter(([, v]) => v).map(([k]) => ROLE_CN[k] || k);
+    $("inspect").innerHTML = `<div class="hint">任务 <b>${esc(r.task)}</b> · 可见资料 ${r.visible_document_count} 份 · 不同文献候选 ${r.distinct_literature_candidates}<br>
+      有明确输入的角色：${esc(covered.join("、") || "无")}<br>
+      ${r.roles_without_explicit_inputs.length ? "缺明确输入：" + esc(r.roles_without_explicit_inputs.join("、")) : ""}
+      ${r.warnings.length ? "<br>提示：" + esc(r.warnings.join("；")) : ""}</div>`;
+    $("btn-run").disabled = false;
+  } catch (e) { $("inspect").innerHTML = `<div class="banner err">输入检查失败：${esc(e.message)}</div>`; }
+}
+
+function setCase(obj, docs, note) {
+  S.case = obj; S.caseDocuments = docs || obj.documents || [];
+  const kinds = {};
+  (S.caseDocuments || []).forEach((d) => { kinds[d.kind] = (kinds[d.kind] || 0) + 1; });
+  $("insight").innerHTML = `<div class="hint">${esc(note || "")} 任务 <b>${esc(obj.task)}</b> · 资料 ${S.caseDocuments.length} 份（${esc(JSON.stringify(kinds))}）<br>
+    <b>问题：</b>${esc((obj.question || "").slice(0, 260))}</div>`;
+  $("btn-inspect").disabled = false; $("btn-run").disabled = true; $("inspect").innerHTML = "";
+  S.idem = null;
+}
+
+async function loadSources() {
+  S.examples = await api("/v1/examples");
+  $("source-ref").innerHTML = S.examples.map((e) => `<option value="${esc(e.id)}">${esc(e.id)} · ${esc(e.task)}</option>`).join("");
+  const lib = await api("/v1/library");
+  S.library = lib.items;
+  renderHistory();
+}
+
+function renderHistory() {
+  $("history").innerHTML = S.library.map((i) => `<div class="item" data-id="${esc(i.id)}">
+    <div>${esc(i.case_id)} <span class="sub">${esc(i.arm)} · ${esc(i.status)} · ${esc(i.answer)}/${esc(i.gold_label)} · ${i.seconds}s</span></div>
+    <div class="sub">${esc((i.question || "").slice(0, 90))}</div></div>`).join("");
+  document.querySelectorAll("#history [data-id]").forEach((el) => el.onclick = async () => {
+    document.querySelectorAll("#history .item").forEach((x) => x.classList.remove("sel"));
+    el.classList.add("sel");
+    const item = await api("/v1/library/item?item_id=" + encodeURIComponent(el.dataset.id));
+    S.item = item; resetState();
+    item.reports.forEach((r) => Object.assign(STATE[r.role] = STATE[r.role] || {}, { state: "done", output: r.output }));
+    if (item.decision) Object.assign(STATE.decision = STATE.decision || {}, { state: "done", output: item.decision });
+    const usage = item.trace.filter((t) => t.kind === "model_usage");
+    usage.forEach((t, idx) => { const st = STATE[t.role] = STATE[t.role] || {}; st.in = t.input_tokens; st.out = t.output_tokens; st.sec = t.seconds; st.attempts = t.attempts; });
+    renderRoles(STATE);
+    taskPanel(null, item); showAnswer(null, item);
+    $("b-mode").textContent = "历史回放（真实 API）";
+    setCase(item.case, item.case.documents, "已载入该历史样本的输入，可直接重新发起真实运行。");
+  });
+}
+
+async function loadDataset() {
+  const d = await api("/v1/datasets/summary");
+  $("dataset").innerHTML = `<table><tr><th>数据集</th><th>系统</th><th>例数</th><th>完成率</th><th>准确率</th><th>调用/例</th><th>token/例</th><th>p50 秒</th><th>模式</th></tr>` +
+    d.arms.map((a) => `<tr><td>${esc(a.dataset_label)}</td><td>${esc(a.arm)}</td><td>${a.cases}</td><td>${a.completion_rate}</td>
+      <td><b>${a.accuracy}</b></td><td>${a.calls_per_case}</td><td>${a.tokens_per_case}</td><td>${a.seconds_p50}</td>
+      <td>${a.simulated ? "模拟" : "真实"}</td></tr>`).join("") + "</table>";
+  $("dataset-note").textContent = d.note;
+}
+
+$("token").value = S.token;
+$("token").onchange = async () => { S.token = $("token").value; localStorage.setItem("of.token", S.token); await boot(); };
+$("source-kind").onchange = (e) => {
+  const v = e.target.value;
+  $("jsonl-label").style.display = $("jsonl-index").style.display = "none";
+  $("btn-pick").disabled = true; $("file").style.display = v === "upload" ? "block" : "none";
+  if (v === "builtin") { $("ref-label").textContent = "示例"; $("source-ref").style.display = "block"; $("source-ref").onchange = () => selectBuiltin(); }
+  else if (v === "mtb" || v === "civic") {
+    const study = v === "mtb" ? "real_fast2_mtb" : "real_fast2_civic";
+    $("ref-label").textContent = "数据集样例（来自已完成真实运行）";
+    $("source-ref").style.display = "block";
+    $("source-ref").innerHTML = S.library.filter((i) => i.study === study && i.arm === "v1_fast")
+      .map((i) => `<option value="${esc(i.case_id)}">${esc(i.case_id)} · ${esc((i.question || "").slice(0, 40))}</option>`).join("");
+    $("source-ref").onchange = () => selectDataset(study, $("source-ref").value);
+  } else { $("source-ref").style.display = "none"; $("btn-pick").disabled = false; }
+};
+$("btn-pick").onclick = () => $("file").click();
+$("file").onchange = async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  const text = await f.text();
+  if (f.name.endsWith(".jsonl") || (!f.name.endsWith(".json") && text.trim().startsWith("{"))) {
+    const lines = text.split("\n").filter((l) => l.trim());
+    S.jsonl = lines.map((l) => JSON.parse(l));
+    $("jsonl-label").style.display = "block"; $("jsonl-index").style.display = "block";
+    $("jsonl-index").innerHTML = S.jsonl.map((r, i) => `<option value="${i}">#${i + 1} ${esc(r.id || "")}</option>`).join("");
+    $("jsonl-index").onchange = () => pickJsonl();
+    pickJsonl();
+  } else { setCase(JSON.parse(text), null, "已读取上传的单个 JSON 病例。"); }
+};
+function pickJsonl() { setCase(S.jsonl[parseInt($("jsonl-index").value, 10)], null, "已选择 JSONL 中的一条运行（批量评测后置）。"); }
+
+async function selectBuiltin() {
+  const c = await api("/v1/examples/" + encodeURIComponent($("source-ref").value));
+  setCase(c, c.documents, "已读取内置示例。");
+}
+async function selectDataset(study, caseId) {
+  const item = await api("/v1/library/item?item_id=" + encodeURIComponent(study + ":v1_fast:" + caseId));
+  setCase(item.case, item.case.documents, "已读取数据集样例。");
+}
+
+$("btn-inspect").onclick = inspectInput;
+$("btn-run").onclick = startRun;
+$("btn-cancel").onclick = async () => { if (S.runId) { try { await api("/v1/runs/" + S.runId + "/cancel", { method: "POST", json: {} }); status("已取消排队"); } catch (e) { status("取消失败：" + e.message); } } };
+$("tab-demo").onclick = () => { $("view-demo").style.display = ""; $("view-data").style.display = "none"; };
+$("tab-data").onclick = () => { $("view-demo").style.display = "none"; $("view-data").style.display = ""; loadDataset(); };
+
+async function boot() {
+  resetState();
+  const health = await fetch("/healthz").then((r) => r.json());
+  $("b-provider").textContent = "provider " + health.provider;
+  $("b-mode").textContent = health.simulated ? "模拟后端" : "真实 API";
+  $("b-mode").className = "badge " + (health.simulated ? "sim" : "real");
+  try {
+    const demo = await api("/v1/configs/demo");
+    S.demo = demo;
+    $("b-config").textContent = "配置 " + demo.name + "（七角色 · 片段引用 · 输出上限 " + demo.config.max_output_tokens + " · 统一一次修复）";
+    const caps = await api("/v1/capabilities");
+    $("b-model").textContent = "model " + caps.model;
+    await loadSources();
+    if (S.token) loadRunList();
+    const last = localStorage.getItem("of.run");
+    if (last) { try { await resume(last); } catch (e) {} }
+  } catch (e) { status("需要有效令牌才能读取演示配置：" + e.message); }
+}
+boot();
+</script>
+</body>
+</html>

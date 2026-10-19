@@ -25,6 +25,29 @@ Windows PowerShell 激活：`.venv\Scripts\Activate.ps1`；环境变量用 `$env
 
 本地 API 文档：`http://127.0.0.1:8000/docs`。`.env.example` 是变量清单，程序读取已导出的环境变量，配置文件不会自动加载。
 
+## 演示网页 /app
+
+七 Agent 真实运行演示页：单文件、无构建、只用现有 `/v1` 接口（页面内联脚本，不加载外部资源）。
+
+```bash
+# 服务器侧（server21）：真实 API 环境 + 回放索引目录 + 本地令牌
+cd ~/BioOncoFusion
+set -a; . ~/.config/oncofusion/real-api.env; set +a
+export ONCOFUSION_API_TOKEN="$(cat /path/to/demo-token)" ONCOFUSION_RESULTS_DIR=results/v1 \
+       ONCOFUSION_DB=runtime/demo.sqlite3
+.venv/bin/python -m oncofusion serve --host 127.0.0.1 --port 8180
+
+# 使用机器侧：SSH 转发后直接打开
+ssh -N -o ServerAliveInterval=20 -L 18180:127.0.0.1:8180 server21-direct
+# 浏览器访问 http://127.0.0.1:18180/app ，粘贴本机保存的演示令牌
+```
+
+停止：转发端 Ctrl-C；服务器端按启动时记录的 PID 精确结束（共享主机上不要按名字批量 kill）。
+
+页面完成一条闭环：选择输入（内置示例 / MTBBench 与 CIViC-Fact 真实开发集样例 / 上传 JSON 或 JSONL 并选其中一条）→ `/v1/cases/inspect` 输入检查 → 以 `/v1/configs/demo` 返回的 v1_fast 配置发起真实运行（不会落入历史默认预设）→ 事件驱动的七角色卡片显示每个 Agent 的运行状态、结构化发现、引用、未解决项与逐角色 token/秒 → 最终答案与解释，引用可展开看到原文片段与字符偏移 → 失败时给出原因并保留已完成步骤。另有 62 条已完成真实结果的回放列表和「数据集结果」小表；刷新页面后可凭 run_id 重新查询任务与结果。
+
+模型密钥只存在服务器环境变量与本机演示令牌中，页面不显示密钥；`simulated` 标记区分真实与模拟后端。
+
 ## 第一版评测与输入
 
 MTBBench纵向文本问答为病例整合主任务；CIViC-Fact为主张核验与段落检索组件任务。三者分别报告。数据没有逐患者最佳治疗标签，因此性能结论落在证据整合而非治疗推荐。

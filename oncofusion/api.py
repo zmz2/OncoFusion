@@ -13,15 +13,16 @@ from pathlib import Path
 
 from fastapi import APIRouter, Depends, FastAPI, File, Header, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import ValidationError
 
-from . import __version__
+from . import __version__, library
 from .agent_design import catalog as agent_catalog
 from .workflow import specification, dependency_identity
-from .profiles import profile_catalog, inspect_case, integration_example, v1_config
+from .profiles import (profile_catalog, inspect_case, integration_example, v1_config,
+                     v1_fast_config)
 from .config import presets
 from .engine import Engine
 from .evidence import evidence_graph, visible_case
@@ -89,6 +90,36 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
     @app.get("/healthz")
     def health():
         return {"status": "ok", "version": __version__, "provider": provider.name, "simulated": provider.simulated}
+
+    @app.get("/app", include_in_schema=False)
+    def demo_page():
+        page = Path(__file__).resolve().parent / "web" / "index.html"
+        if not page.is_file():
+            raise HTTPException(503, "demo page is not installed")
+        return HTMLResponse(page.read_text(encoding="utf-8"))
+
+    @router.get("/configs/demo")
+    def demo_config():
+        """The configuration the demo must submit, so callers never fall back to legacy presets."""
+        return {"name": "v1_fast", "config": v1_fast_config().model_dump(),
+                "note": "seven roles, evidence-fragment handles resolved by the server, "
+                        "vendor output ceiling, one schema repair for every system"}
+
+    @router.get("/library")
+    def library_list():
+        return {"items": library.list_items(),
+                "note": "only the allowlisted completed-run sets are reachable; ids are opaque"}
+
+    @router.get("/library/item")
+    def library_item(item_id: str = Query(min_length=1, max_length=200)):
+        detail = library.get_item(item_id)
+        if detail is None:
+            raise HTTPException(404, "library item not found")
+        return detail
+
+    @router.get("/datasets/summary")
+    def datasets_summary():
+        return library.dataset_summary()
 
     @router.get("/capabilities")
     def capabilities():
