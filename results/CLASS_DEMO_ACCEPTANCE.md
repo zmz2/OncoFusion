@@ -1,7 +1,7 @@
 # 课堂展示验收（claims-v1）
 
-基准提交 `1152b5e`，分支 `codex/v1-fast-real-api-20261019`。
-本文件由 `scripts/class_demo_report.py` 从磁盘上的结果行生成，不手写数字。
+审查基准 `56492fd`，分支 `codex/v1-fast-real-api-20261019`；本文件生成时的 HEAD 是 `3fde06a`。
+数字全部由 `scripts/class_demo_report.py` 从磁盘上的结果行读出，不手写；本句之后的叙述文字同样来自该脚本。
 
 ## 启动与入口
 

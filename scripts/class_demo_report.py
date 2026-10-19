@@ -112,8 +112,10 @@ def main() -> int:
     summary = dataset_summary()
     arms = {a["study"]: a for a in summary["arms"] if a["study"] in wanted}
     lines = ["# 课堂展示验收（claims-v1）", "",
-             "基准提交 `%s`，分支 `codex/v1-fast-real-api-20261019`。" % sha(),
-             "本文件由 `scripts/class_demo_report.py` 从磁盘上的结果行生成，不手写数字。", "",
+             "审查基准 `56492fd`，分支 `codex/v1-fast-real-api-20261019`；"
+             "本文件生成时的 HEAD 是 `%s`。" % sha(),
+             "数字全部由 `scripts/class_demo_report.py` 从磁盘上的结果行读出，不手写；"
+             "本句之后的叙述文字同样来自该脚本。", "",
              "## 启动与入口", "",
              "```bash",
              "cd ~/BioOncoFusion",
