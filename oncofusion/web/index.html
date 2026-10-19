@@ -266,6 +266,17 @@ function setCase(obj, origin) {
   renderInput();
 }
 
+function stashCase() {
+  try { localStorage.setItem("of.case", JSON.stringify(S.current)); } catch (e) {}
+}
+
+function unstashCase() {
+  if (S.current) return;
+  const raw = localStorage.getItem("of.case");
+  if (!raw) return;
+  try { S.current = JSON.parse(raw); renderInput(); inspectInput(); } catch (e) {}
+}
+
 function resetState() {
   ROLES.forEach((r) => { STATE[r] = { state: "idle", in: null, out: null, sec: null, sources: [], fragments: null, output: null }; });
   $("timeline").innerHTML = "";
@@ -286,11 +297,13 @@ function renderFlow() {
 function citationBlock(c) {
   const docs = ((S.current || {}).case || {}).documents || [];
   const doc = docs.filter((d) => d.id === c.document_id)[0] || {};
-  const raw = (doc.text || "").slice(c.start || 0, c.end || 0);
+  const raw = doc.text ? (doc.text.slice(c.start || 0, c.end || 0)) : null;
   return "<details><summary>引用 " + esc(c.document_id) + " " + (doc.kind ? "· " + esc(KIND_CN[doc.kind] || doc.kind) : "") +
     (c.start != null ? " · 偏移 " + c.start + "-" + c.end : "") + "</summary>" +
     "<div class=quote>模型给出的片段：" + esc(c.quote) + "</div>" +
-    "<div class=quote>原文对应：" + esc(raw || "（该来源不在当前输入中）") + "</div></details>";
+    "<div class=quote>原文对应：" + (raw === null
+      ? esc(c.quote || "（该来源不在当前输入中）") + "<span class=hint>（正文未随本页加载，这里是后端回填的片段）</span>"
+      : esc(raw)) + "</div></details>";
 }
 
 function outputBlock(output) {
@@ -346,7 +359,8 @@ function renderRoles() {
     const outUn = st.output ? (st.output.unresolved || []).length : 0;
     if (st.output) io.push("本步产出：" + outCount + " 条结论" +
       (outCite ? "，挂上 " + outCite + " 条原文引用" : "") +
-      (outUn ? "，留下 " + outUn + " 条未解决项交给下一步" : ""));
+      (outUn ? (r === ROLES[ROLES.length - 1] ? "，最终仍有 " + outUn + " 条未解决"
+        : "，留下 " + outUn + " 条未解决项交给下一步") : ""));
     card.querySelector(".body").innerHTML =
       (duty ? "<div class=duty>职责：" + esc(duty) + "</div>" : "") +
       "<div class=hint>" + ({ idle: "等待上游", running: "正在调用模型并生成结构化结论", done: "已完成", failed: "未完成" }[st.state] || "") +
@@ -359,16 +373,26 @@ function renderRoles() {
 
 function buildGraph() {
   const docs = (((S.current || {}).case) || {}).documents || [];
+  const citesOf = (r) => {
+    const o = (STATE[r] || {}).output || {};
+    return (o.findings || []).reduce((acc, f) => acc.concat(f.citations || []), []).concat(o.citations || []);
+  };
+  const usersOf = (id) => ROLES.filter((r) => citesOf(r).some((c) => c.document_id === id));
   const rows = [];
+  const known = {};
   docs.forEach((d) => {
-    const users = ROLES.filter((r) => {
-      const o = (STATE[r] || {}).output || {};
-      const cited = (o.findings || []).reduce((acc, f) => acc.concat(f.citations || []), []).concat(o.citations || []);
-      return cited.some((c) => c.document_id === d.id);
-    });
+    known[d.id] = 1;
+    const users = usersOf(d.id);
     if (users.length) rows.push("<tr><td>" + esc(d.id) + "<br><span class=hint>" + esc(KIND_CN[d.kind] || d.kind) + "</span></td><td>" +
       users.map((u) => "<span class=\"pill ok\">" + ROLE_CN[u] + "</span>").join("") + "</tr>");
   });
+  const loose = {};
+  ROLES.forEach((r) => citesOf(r).forEach((c) => {
+    if (c.document_id && !known[c.document_id]) loose[c.document_id] = 1;
+  }));
+  Object.keys(loose).forEach((id) => rows.push("<tr><td>" + esc(id) +
+    "<br><span class=hint>正文未随本页加载</span></td><td>" +
+    usersOf(id).map((u) => "<span class=\"pill ok\">" + ROLE_CN[u] + "</span>").join("") + "</tr>"));
   const handoff = ROLES.slice(0, 6).map((r, i) => {
     const st = STATE[r] || {};
     const next = ROLES[i + 1];
@@ -522,6 +546,7 @@ async function startRun() {
     const res = await api("/v1/runs", { method: "POST", json: body, headers: { "Idempotency-Key": S.idem } });
     S.runId = res.run_id; S.cursor = -1;
     localStorage.setItem("of.run", res.run_id);
+    stashCase();
     taskPanel("<div class=kv><span>模式</span><b>真实运行中</b></div>" +
       "<div class=kv><span>run_id</span><b>" + esc(res.run_id) + "</b></div>" +
       "<div class=kv><span>状态</span><b>" + esc(res.status) + "</b></div>" +
@@ -543,7 +568,7 @@ async function inspectInput() {
     $("inspect").innerHTML = "<div>有明确输入的角色：" + (covered || "无") + "</div>" +
       (missing ? "<div style=margin-top:4px>缺明确输入的角色（仍会执行，但结论要标注依据不足）：" + missing + "</div>" : "") +
       "<div style=margin-top:4px>不同文献候选：" + r.distinct_literature_candidates + " · 来源字符合计 " + r.source_bytes + "</div>" +
-      (r.warnings.length ? "<div style=margin-top:4px>" + r.warnings.map((w) => "<span class=pill>warn>" + esc(w) + "</span>").join("") + "</div>" : "");
+      (r.warnings.length ? "<div style=margin-top:4px>" + r.warnings.map((x) => "<span class=\"pill warn\">" + esc(x) + "</span>").join("") + "</div>" : "");
     $("btn-run").disabled = false;
   } catch (e) { $("inspect").innerHTML = "<span class=\"pill bad\">输入检查失败：" + esc(e.message) + "</span>"; }
 }
@@ -611,6 +636,7 @@ async function loadQueue() {
 async function resume(runId) {
   const run = await api("/v1/runs/" + runId);
   S.runId = runId; S.cursor = -1;
+  unstashCase();
   resetState();
   await finish(runId);
   if (["queued", "running"].indexOf(run.status) >= 0) watch(runId);
@@ -655,7 +681,8 @@ async function loadSources() {
   fillRefs();
 }
 
-function fillRefs() {
+function fillRefs(autoLoad) {
+  const load = autoLoad !== false && S.autoSelect !== false;
   const kind = $("source-kind").value;
   $("jsonl-label").style.display = $("jsonl-index").style.display = "none";
   $("ref-label").style.display = kind === "upload" ? "none" : "block";
@@ -665,14 +692,14 @@ function fillRefs() {
   if (kind === "builtin") {
     $("source-ref").innerHTML = S.examples.map((e) => "<option value=\"" + esc(e.id) + "\">" + esc(e.id) + " · " +
       esc(TASK_CN[e.task] || e.task) + "</option>").join("");
-    loadRef();
+    if (load) loadRef();
   } else if (kind === "mtb" || kind === "civic") {
     const study = kind === "mtb" ? "real_fast2_mtb" : "real_fast2_civic";
     const rows = S.library.filter((i) => i.study === study && i.arm === "v1_fast");
     $("source-ref").innerHTML = rows.map((i) => "<option value=\"" + esc(i.case_id) + "\">" + esc(i.case_id) +
       " · " + esc(String(i.question || "").replace(/\s+/g, " ").slice(0, 46)) + "</option>").join("");
-    loadRef();
-  } else {
+    if (load) loadRef();
+  } else if (load) {
     $("source-ref").innerHTML = "";
     S.current = null;
     renderInput();
@@ -721,6 +748,7 @@ $("tab-data").onclick = async () => { $("view-demo").style.display = "none"; $("
 $("token").onchange = async () => { S.token = $("token").value; localStorage.setItem("of.token", S.token); await boot(); };
 
 async function boot() {
+  S.autoSelect = false;
   $("token").value = S.token;
   resetState();
   const health = await fetch("/healthz").then((r) => r.json());
@@ -738,9 +766,16 @@ async function boot() {
     await loadSources();
     await loadQueue();
     const last = localStorage.getItem("of.run");
-    if (last) { try { await resume(last); } catch (e) {} }
+    let resumed = false;
+    if (last) { try { await resume(last); resumed = true; } catch (e) {} }
     if (!$("source-kind").value) $("source-kind").value = "mtb";
-    await fillRefs();
+    S.autoSelect = !resumed;
+    fillRefs();
+    S.autoSelect = true;
+    if (resumed && !S.current) {
+      $("inputbox").innerHTML = "<div class=hint>这个任务的输入没有随本页保存，所以输入面板是空的；" +
+        "引用块显示的是后端回填的片段。选回同一病例即可对照原文。</div>";
+    }
   } catch (e) { status("读取演示配置失败（可能需要令牌）：" + e.message); }
 }
 boot();
