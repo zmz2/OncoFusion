@@ -119,15 +119,26 @@ class MockProvider:
             if not evidence:
                 return out.model_dump_json()
             ids = [item["evidence_id"] for item in evidence]
+            roster = payload.get("claim_roster") or []
             if isinstance(out, DecisionOutput):
                 body = {"answer": out.answer, "explanation": out.explanation,
                         "unresolved": out.unresolved, "confidence": out.confidence,
                         "citations": [{"evidence_id": e} for e in ids[:2]]}
+                if roster:
+                    body["adopted_claim_ids"] = [entry["claim_id"] for entry in roster[:2]]
+                    body["rejected_claim_ids"] = [entry["claim_id"] for entry in roster[2:3]]
             else:
                 body = {"findings": [{"statement": f.statement, "relation": f.relation,
                                       "citations": [{"evidence_id": e} for e in ids[:1]]}
                                       for f in out.findings],
                         "unresolved": out.unresolved, "requery": out.requery}
+                if roster and body["findings"]:
+                    # The simulator only ever leans on the first earlier claim, but it must name it.
+                    body["findings"][0]["used_claim_ids"] = [roster[0]["claim_id"]]
+                if roster and payload["role"] == "verifier":
+                    body["verdicts"] = [{"target_claim_id": entry["claim_id"], "verdict": "confirmed",
+                                         "note": "simulated source check, not a biomedical judgement",
+                                         "citations": [{"evidence_id": ids[0]}]} for entry in roster]
             return json.dumps(body, ensure_ascii=False)
 
         content = render()

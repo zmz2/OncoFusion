@@ -53,6 +53,9 @@ class StudyPlan(StrictModel):
     split: Literal["dev", "test", "train"] = "dev"
     seeds: list[int] = Field(default_factory=lambda: [0, 1, 2], min_length=1, max_length=20)
     group_limit: int | None = Field(default=None, ge=1)
+    # Pin the exact cases a run must cover (classroom demos, defect reproductions). Empty keeps
+    # the task/split/group sampling behaviour every existing plan relies on.
+    case_ids: list[str] = Field(default_factory=list, max_length=64)
     treatments: list[Treatment] = Field(min_length=1, max_length=200)
     reference: str = "full"
     bootstrap_repeats: int = Field(default=2000, ge=100, le=10000)
@@ -97,6 +100,15 @@ def select_cases(cases: list[CaseInput], gold: list[GoldRecord], plan: StudyPlan
     if len(labels) != len(gold) or set(labels) != {c.id for c in cases}:
         raise ValueError("case/gold mismatch")
     chosen = [c for c in cases if c.task == plan.task and labels[c.id].split == plan.split]
+    if plan.case_ids:
+        wanted = list(dict.fromkeys(plan.case_ids))
+        missing = [c for c in wanted if c not in {x.id for x in chosen}]
+        if missing:
+            raise ValueError("plan case_ids are not in this task/split: " + ", ".join(missing))
+        wanted_set = set(wanted)
+        chosen = [c for c in chosen if c.id in wanted_set]
+        order = {c: i for i, c in enumerate(wanted)}
+        chosen.sort(key=lambda c: order[c.id])
     groups = sorted({labels[c.id].group_id for c in chosen},
                     key=lambda x: hashlib.sha256(x.encode()).digest())
     if plan.group_limit:

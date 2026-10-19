@@ -14,8 +14,45 @@ from .workflow import dependency_identity, execute as execute_workflow
 from .evidence import (fragment_documents, resolve_fragment_citations, canonical_variant, check_citations, deduplicate_documents,
                        deduplicate_findings, entity_compatibility, pathology_fields, polarity, retrieve, variant_mentions, visible_case)
 from .providers import Provider, ProviderError, provider_identity
-from .schemas import (Finding, FragmentAnalysisOutput, FragmentDecisionOutput, AgentReport, AnalysisOutput, CaseInput, DecisionOutput,
-                      ROLES, RunConfig, RunResult, TraceEvent, Usage)
+from .schemas import (ClaimVerdict, Finding, FragmentAnalysisOutput, FragmentDecisionOutput, FragmentVerificationOutput,
+                      AgentReport, AnalysisOutput, CaseInput, DecisionOutput, ROLES, RunConfig, RunResult, TraceEvent, Usage)
+
+CLAIM_RULES = (
+    "Collaboration protocol claims-v1: each of your findings is an addressable claim. The server "
+    "assigns claim_id and author_role, so state exactly one checkable thing per finding. List in "
+    "used_claim_ids only the claim ids you actually built on; never invent an id. If the material "
+    "your role needs is absent from the visible inputs, emit one finding whose statement starts with "
+    "'not_applicable:' (this case has no such modality) or 'unknown:' (the data is missing), with "
+    "relation NEI and no citations. Do not restate the final survival, recurrence or efficacy verdict: "
+    "report your own layer and leave the outcome to the decision role."
+)
+TASK_FRAMING = {
+    "mcq": "Task type: prediction. The question asks about an outcome after the information cutoff, "
+           "and that outcome is not visible to you and must never be assumed or looked up. Reason from "
+           "documented history, current status and disease biology, keep the uncertainty explicit, and "
+           "treat the verifier's job as checking the historical premises your prediction rests on.",
+    "verification": "Task type: given-evidence stance check. Judge the claim as written using only the "
+                    "supplied literature; the claim itself is the object of study, not a premise.",
+    "synthesis": "Task type: multi-source synthesis. Combine the sources provided for this case and mark "
+                 "explicitly what no source supports.",
+}
+ROLE_OUTPUT = {
+    "timeline": "Output contract: dated events with ordering, negation and assertion status; prior "
+                "treatment versus current status; what has not yet happened.",
+    "genomics": "Output contract: the genes and variants actually observed, transcript/assay and "
+                "somatic-versus-germline status when visible, and the evidence level of each statement.",
+    "pathology": "Output contract: cancer type, histology, primary and sampled site, stage or grade, "
+                 "specimen availability, and whether the molecular finding sits in that disease context.",
+    "drug": "Output contract: drug exposures recorded for this patient, and separately molecular-drug "
+            "relationships with direction (sensitivity or resistance) and evidence level. Never a "
+            "treatment recommendation.",
+    "literature": "Output contract: the source packet - which documents were used, what each one directly "
+                  "measures, and its applicability limits.",
+    "verifier": "Output contract: one verdict per claim id in payload.claim_roster - confirmed, corrected, "
+                "rejected or insufficient - each backed by the source spans you checked.",
+    "decision": "Output contract: name the claim ids you adopted and the claim ids you excluded, then answer "
+                "with source-grounded citations.",
+}
 
 DUTIES = {
     "timeline": "Organize visible events by time. Separate prior treatment from current status.",
@@ -26,6 +63,38 @@ DUTIES = {
     "verifier": "Check candidate claims against original source text, entity scope and direction. Request one focused search when needed.",
     "decision": "Integrate evidence and unresolved conflicts; answer the specified research task with source-grounded citations.",
 }
+
+
+def build_analysis_output(wire, fragment_index, role: str, claims_on: bool, known_claims: dict[str, str]) -> AnalysisOutput:
+    """Turn one wire response into findings with server-assigned claim ids and resolved spans.
+
+    A claim id may only reference claims produced by an earlier role, so an invented or
+    same-response id fails the run instead of quietly rewriting the collaboration record.
+    """
+    findings = []
+    for position, entry in enumerate(wire.findings, 1):
+        used = list(getattr(entry, "used_claim_ids", [])) if claims_on else []
+        stray = sorted({c for c in used if c not in known_claims}) if claims_on else []
+        if stray:
+            raise ValueError("finding references claim ids no earlier role produced: " + ", ".join(stray))
+        claim_id = "%s-%02d" % (role, position) if claims_on else ""
+        findings.append(Finding(statement=entry.statement, relation=entry.relation,
+                                citations=resolve_fragment_citations(entry.citations, fragment_index),
+                                claim_id=claim_id, author_role=role if claims_on else "",
+                                used_claim_ids=used))
+        if claim_id:
+            known_claims[claim_id] = role
+    verdicts = []
+    for verdict in getattr(wire, "verdicts", []):
+        if claims_on and verdict.target_claim_id not in known_claims:
+            raise ValueError("verdict targets an unknown claim id: " + verdict.target_claim_id)
+        verdicts.append(ClaimVerdict(target_claim_id=verdict.target_claim_id, verdict=verdict.verdict,
+                                     note=verdict.note,
+                                     citations=resolve_fragment_citations(verdict.citations, fragment_index)))
+    return AnalysisOutput(findings=findings, unresolved=list(wire.unresolved),
+                          requery=wire.requery, verdicts=verdicts)
+
+
 
 
 @lru_cache(maxsize=1)
@@ -130,6 +199,9 @@ class Engine:
             emit("tool_completed", role, source_ids=[d.id for d in selected], query=query or "",
                  signals=json.loads(json.dumps(signals)))
 
+        claims_on = config.interaction_protocol == "claims-v1"
+        known_claims: dict[str, str] = {}
+
         def model(role, repair_attempt=0, repair_context=None):
             nonlocal decision, last_reservation
             available = selected
@@ -188,6 +260,10 @@ class Engine:
                 payload["evidence_ids"] = [f["evidence_id"] for f in fragment_view]
                 payload["evidence_coverage"] = fragment_coverage
                 payload["source_characters"] = source_characters
+            if claims_on:
+                payload["claim_roster"] = [{"claim_id": f.claim_id, "author_role": f.author_role,
+                                            "relation": f.relation, "statement": f.statement}
+                                           for report in reports for f in report.output.findings if f.claim_id]
             if repair_context is not None:
                 payload["repair"] = repair_context
             executor = "generalist" if role in config.delegated_roles or config.mode not in ("multi", "fixed_five") else role
@@ -197,7 +273,12 @@ class Engine:
             wire_schema = schema
             wire_key = "Finding"
             if config.citation_mode == "fragment":
-                wire_schema = FragmentDecisionOutput if role == "decision" else FragmentAnalysisOutput
+                if role == "decision":
+                    wire_schema = FragmentDecisionOutput
+                elif role == "verifier" and claims_on and not reflection:
+                    wire_schema = FragmentVerificationOutput
+                else:
+                    wire_schema = FragmentAnalysisOutput
                 wire_key = "FragmentFinding"
             output_schema = wire_schema.model_json_schema()
             if visible.task == "verification" and role != "decision":
@@ -224,6 +305,11 @@ class Engine:
                     system += " SUPPORTS means the entire claim is evidenced as written. REVISIONS means partial support with a necessary claim correction; it is not equivalent to REFUTES. NEI means missing, irrelevant or insufficient evidence. Infer corrections only from visible evidence; gold revised claims are never available."
             if visible.task == "mcq" and role == "decision":
                 system += " The answer must be exactly one option key."
+            if claims_on:
+                system += " " + TASK_FRAMING.get(visible.task, TASK_FRAMING["synthesis"])
+                system += " " + CLAIM_RULES
+                if role == executor or role in ROLE_OUTPUT:
+                    system += " " + ROLE_OUTPUT.get(role, "")
             if repair_attempt:
                 system += " A prior response failed validation. Reconstruct valid JSON from the original sources; use exact unique quotes and valid task labels. Empty or insufficient evidence may yield NEI with no citations."
             # Conservative UTF-8-byte upper bound, deliberately distinct from reported tokens.
@@ -266,16 +352,20 @@ class Engine:
                 wire = wire_schema.model_validate_json(reply.content)
                 if config.citation_mode == "fragment":
                     if role == "decision":
+                        adopted = list(getattr(wire, "adopted_claim_ids", [])) if claims_on else []
+                        excluded = list(getattr(wire, "rejected_claim_ids", [])) if claims_on else []
+                        stray = sorted({c for c in adopted + excluded if c not in known_claims}) if claims_on else []
+                        if stray:
+                            raise ValueError("decision names claim ids no role produced: " + ", ".join(stray))
                         output = DecisionOutput(
                             answer=wire.answer, explanation=wire.explanation,
                             unresolved=wire.unresolved, confidence=wire.confidence,
-                            citations=resolve_fragment_citations(wire.citations, fragment_index))
+                            citations=resolve_fragment_citations(wire.citations, fragment_index),
+                            adopted_claim_ids=adopted, rejected_claim_ids=excluded)
                     else:
-                        output = AnalysisOutput(
-                            findings=[Finding(statement=f.statement, relation=f.relation,
-                                              citations=resolve_fragment_citations(
-                                                  f.citations, fragment_index)) for f in wire.findings],
-                            unresolved=wire.unresolved, requery=wire.requery)
+                        output = build_analysis_output(wire, fragment_index, role, claims_on, known_claims)
+                        if role == "verifier" and claims_on and not reflection and not output.verdicts:
+                            raise ValueError("claims-v1 verifier must answer at least one claim")
                 else:
                     output = wire
                 if role == "decision":
@@ -357,7 +447,9 @@ class Engine:
             model("verifier")
 
         emit("run_started", visible_ids=[d.id for d in docs], fingerprint=fingerprint,
-             simulated=self.provider.simulated, version=__version__)
+             simulated=self.provider.simulated, version=__version__,
+             interaction_protocol=config.interaction_protocol,
+             citation_mode=config.citation_mode)
         try:
             execute_workflow(config, analyze, single, needs_requery, requery, lambda: model("decision"))
         except BudgetExceeded as exc:

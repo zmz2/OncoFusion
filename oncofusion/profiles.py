@@ -24,6 +24,12 @@ def v1_fast_config(backend: str = "langgraph") -> RunConfig:
                      findings_limit=3, ablations=Ablations(targeted_requery=False))
 
 
+def v1_class_config(backend: str = "langgraph") -> RunConfig:
+    """v1_fast plus the claims-v1 collaboration protocol: same seven roles, same isolation."""
+    config = v1_fast_config(backend)
+    return config.model_copy(update={"interaction_protocol": "claims-v1"})
+
+
 def inspect_case(case: CaseInput) -> dict:
     visible = visible_case(case)
     docs = visible.documents

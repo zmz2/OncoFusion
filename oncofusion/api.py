@@ -21,7 +21,7 @@ from pydantic import ValidationError
 from . import __version__, library
 from .agent_design import catalog as agent_catalog
 from .workflow import specification, dependency_identity
-from .profiles import (profile_catalog, inspect_case, integration_example, v1_config,
+from .profiles import (profile_catalog, inspect_case, integration_example, v1_class_config, v1_config,
                      v1_fast_config)
 from .config import presets
 from .engine import Engine
@@ -101,9 +101,11 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
     @router.get("/configs/demo")
     def demo_config():
         """The configuration the demo must submit, so callers never fall back to legacy presets."""
-        return {"name": "v1_fast", "config": v1_fast_config().model_dump(),
-                "note": "seven roles, evidence-fragment handles resolved by the server, "
-                        "vendor output ceiling, one schema repair for every system"}
+        return {"name": "v1_class", "config": v1_class_config().model_dump(),
+                "note": "seven roles in the fixed order, evidence-fragment handles resolved by the "
+                        "server, vendor output ceiling, one schema repair for every system, and the "
+                        "claims-v1 collaboration protocol (claim ids, per-claim verdicts, adopted and "
+                        "excluded claims)"}
 
     @router.get("/library")
     def library_list():

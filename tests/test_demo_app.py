@@ -67,11 +67,12 @@ def test_demo_page_script_is_syntactically_balanced(client):
 
 def test_demo_config_is_the_verified_fast_profile(client):
     demo = client.get("/v1/configs/demo").json()
-    assert demo["name"] == "v1_fast"
+    assert demo["name"] == "v1_class"
     config = demo["config"]
     assert config["citation_mode"] == "fragment" and config["max_output_tokens"] == 5000
     assert config["schema_retries"] == 1 and config["findings_limit"] == 3
     assert config["ablations"]["targeted_requery"] is False
+    assert config["interaction_protocol"] == "claims-v1"
 
 
 def test_run_events_report_every_role_output(client, case):
@@ -87,6 +88,16 @@ def test_run_events_report_every_role_output(client, case):
     assert [e["role"] for e in reported] == ["literature", "timeline", "genomics", "pathology", "drug",
                                              "verifier", "decision"]
     assert all(e["details"].get("output") for e in reported)
+    # claims-v1 must be visible in the event log, not only in the final answer
+    outputs = {e["role"]: e["details"]["output"] for e in reported}
+    assert [f["claim_id"] for f in outputs["literature"]["findings"]]
+    assert all(f["author_role"] == "timeline" for f in outputs["timeline"]["findings"])
+    assert outputs["verifier"]["verdicts"], "the verifier must answer claims individually"
+    assert {v["target_claim_id"] for v in outputs["verifier"]["verdicts"]} <= {
+        f["claim_id"] for r in outputs.values() for f in r.get("findings", []) if "claim_id" in f}
+    assert set(outputs["decision"]["adopted_claim_ids"]) <= {
+        f["claim_id"] for role, out in outputs.items() if role != "decision"
+        for f in out["findings"]}
     usage = [e for e in events if e["kind"] == "model_usage"]
     assert all(isinstance(e["details"].get("seconds"), (int, float)) for e in usage)
     stream = client.get(f"/v1/runs/{run_id}/stream", params={"after": events[-1]["sequence"]})
