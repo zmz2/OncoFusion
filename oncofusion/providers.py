@@ -11,7 +11,7 @@ from urllib.parse import urlsplit
 
 import httpx
 from .evidence import polarity, quote_document, tokens
-from .schemas import AnalysisOutput, DecisionOutput, Document, Finding
+from .schemas import AnalysisOutput, Citation, DecisionOutput, Document, Finding
 
 
 class ProviderError(RuntimeError):
@@ -108,7 +108,14 @@ class MockProvider:
                 board = payload["board"]
                 if isinstance(board, str):
                     board = [json.loads(line) for line in board.splitlines() if line]
-                findings = [Finding.model_validate(f) for f in board]
+                findings = []
+                for entry in board:
+                    quotes = [Citation.model_validate(c) for c in entry.get("citations", []) if c.get("quote")]
+                    # A fragment-mode board hands over span references without the text, and the
+                    # reflection verifier receives no source view: the simulator downgrades such a
+                    # claim to NEI rather than inventing a quote it cannot see.
+                    relation = entry["relation"] if quotes or not entry.get("citations") else "NEI"
+                    findings.append(Finding(statement=entry["statement"], relation=relation, citations=quotes))
             if payload["role"] == "verifier":
                 relevant = [f for f in findings if f.relation != "NEI"][:20]
             unresolved = [] if relevant else ["No matching evidence in the provided source view."]
@@ -132,10 +139,22 @@ class MockProvider:
                                       "citations": [{"evidence_id": e} for e in ids[:1]]}
                                       for f in out.findings],
                         "unresolved": out.unresolved, "requery": out.requery}
+                if "claim_roster" in payload:
+                    # The simulator stays inside the role's own layer so the scope contract is
+                    # exercised offline as well as against the real model.
+                    scope = {"timeline": "temporal", "genomics": "molecular", "pathology": "pathologic",
+                             "drug": "exposure", "literature": "source", "verifier": "verification"}[payload["role"]]
+                    for finding in body["findings"]:
+                        finding.update({"scope": scope,
+                                        "evidence_level": "measured" if ids else "absent",
+                                        "material_status": "present" if ids else "unknown"})
+                        if not ids:
+                            finding["citations"] = []
+                            finding["relation"] = "NEI"
                 if roster and body["findings"]:
                     # The simulator only ever leans on the first earlier claim, but it must name it.
                     body["findings"][0]["used_claim_ids"] = [roster[0]["claim_id"]]
-                if roster and payload["role"] == "verifier":
+                if roster and ids and payload["role"] == "verifier":
                     body["verdicts"] = [{"target_claim_id": entry["claim_id"], "verdict": "confirmed",
                                          "note": "simulated source check, not a biomedical judgement",
                                          "citations": [{"evidence_id": ids[0]}]} for entry in roster]

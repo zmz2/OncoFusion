@@ -14,8 +14,10 @@ from .workflow import dependency_identity, execute as execute_workflow
 from .evidence import (fragment_documents, resolve_fragment_citations, canonical_variant, check_citations, deduplicate_documents,
                        deduplicate_findings, entity_compatibility, pathology_fields, polarity, retrieve, variant_mentions, visible_case)
 from .providers import Provider, ProviderError, provider_identity
-from .schemas import (ClaimVerdict, Finding, FragmentAnalysisOutput, FragmentDecisionOutput, FragmentVerificationOutput,
-                      AgentReport, AnalysisOutput, CaseInput, DecisionOutput, ROLES, RunConfig, RunResult, TraceEvent, Usage)
+from .schemas import (ClaimAnalysisOutput, ClaimDecisionOutput, ClaimVerdict, ClaimVerificationOutput,
+                      Finding, FragmentAnalysisOutput, FragmentDecisionOutput,
+                      AgentReport, AnalysisOutput, CaseInput, DecisionOutput, ROLES, RunConfig, RunResult,
+                      TraceEvent, Usage)
 
 CLAIM_RULES = (
     "Collaboration protocol claims-v1: each of your findings is an addressable claim. The server "
@@ -36,6 +38,23 @@ TASK_FRAMING = {
     "synthesis": "Task type: multi-source synthesis. Combine the sources provided for this case and mark "
                  "explicitly what no source supports.",
 }
+# Which layer each specialist may speak from. Out-of-scope claims are rejected rather than
+# tolerated, which is what kept every role restating the survival question.
+ROLE_SCOPES = {
+    "timeline": {"temporal"},
+    "genomics": {"molecular"},
+    "pathology": {"pathologic"},
+    "drug": {"exposure", "relationship"},
+    "literature": {"source"},
+    "verifier": {"verification", "source"},
+}
+CLAIM_OUTPUT_RULE = (
+    "Each finding must also state its scope (the layer you report from), its evidence level "
+    "(measured, curated, literature, inferred or absent) and whether the material for your role "
+    "exists (present, not_applicable or unknown). Stay inside your own scope: the outcome question "
+    "belongs to the decision role. A not_applicable or unknown finding must carry no citations and "
+    "relation NEI."
+)
 ROLE_OUTPUT = {
     "timeline": "Output contract: dated events with ordering, negation and assertion status; prior "
                 "treatment versus current status; what has not yet happened.",
@@ -65,12 +84,19 @@ DUTIES = {
 }
 
 
-def build_analysis_output(wire, fragment_index, role: str, claims_on: bool, known_claims: dict[str, str]) -> AnalysisOutput:
+def build_analysis_output(wire, fragment_index, role: str, claims_on: bool, known_claims: dict[str, str],
+                          findings_limit: int = 30, allowed_scopes: frozenset | set = frozenset(),
+                          emit=None) -> AnalysisOutput:
     """Turn one wire response into findings with server-assigned claim ids and resolved spans.
 
     A claim id may only reference claims produced by an earlier role, so an invented or
     same-response id fails the run instead of quietly rewriting the collaboration record.
     """
+    if len(wire.findings) > findings_limit:
+        dropped = len(wire.findings) - findings_limit
+        if emit is not None:
+            emit("findings_capped", role, reported=len(wire.findings), kept=findings_limit, dropped=dropped)
+        wire = wire.model_copy(update={"findings": wire.findings[:findings_limit]})
     findings = []
     for position, entry in enumerate(wire.findings, 1):
         used = list(getattr(entry, "used_claim_ids", [])) if claims_on else []
@@ -78,10 +104,20 @@ def build_analysis_output(wire, fragment_index, role: str, claims_on: bool, know
         if stray:
             raise ValueError("finding references claim ids no earlier role produced: " + ", ".join(stray))
         claim_id = "%s-%02d" % (role, position) if claims_on else ""
+        scope = getattr(entry, "scope", "")
+        level = getattr(entry, "evidence_level", "")
+        status = getattr(entry, "material_status", "")
+        if claims_on and allowed_scopes:
+            if scope not in allowed_scopes:
+                raise ValueError("claim scope %r is outside this role's permitted scopes %s"
+                                 % (scope, ", ".join(sorted(allowed_scopes))))
+            if status in ("not_applicable", "unknown") and (entry.citations or entry.relation != "NEI"):
+                raise ValueError("a missing-material claim cannot cite evidence or assert support")
         findings.append(Finding(statement=entry.statement, relation=entry.relation,
                                 citations=resolve_fragment_citations(entry.citations, fragment_index),
                                 claim_id=claim_id, author_role=role if claims_on else "",
-                                used_claim_ids=used))
+                                used_claim_ids=used, scope=scope, evidence_level=level,
+                                material_status=status))
         if claim_id:
             known_claims[claim_id] = role
     verdicts = []
@@ -265,7 +301,8 @@ class Engine:
                 payload["source_characters"] = source_characters
             if claims_on:
                 payload["claim_roster"] = [{"claim_id": f.claim_id, "author_role": f.author_role,
-                                            "relation": f.relation, "statement": f.statement}
+                                            "relation": f.relation, "scope": f.scope,
+                                            "statement": f.statement[:180]}
                                            for report in reports for f in report.output.findings if f.claim_id]
             if repair_context is not None:
                 payload["repair"] = repair_context
@@ -274,15 +311,20 @@ class Engine:
             duty = role_duty if executor == role else "Analyze the supplied evidence as a generalist and complete the assigned output schema."
             schema = DecisionOutput if role == "decision" else AnalysisOutput
             wire_schema = schema
+            allowed_scopes = ROLE_SCOPES.get(role, set())
             wire_key = "Finding"
             if config.citation_mode == "fragment":
                 if role == "decision":
                     wire_schema = FragmentDecisionOutput
                 elif role == "verifier" and claims_on and not reflection:
-                    wire_schema = FragmentVerificationOutput
+                    wire_schema = ClaimVerificationOutput
+                elif role == "decision" and claims_on:
+                    wire_schema = ClaimDecisionOutput
+                elif claims_on:
+                    wire_schema = ClaimAnalysisOutput
                 else:
                     wire_schema = FragmentAnalysisOutput
-                wire_key = "FragmentFinding"
+                wire_key = "ClaimFinding" if claims_on else "FragmentFinding"
             output_schema = wire_schema.model_json_schema()
             if visible.task == "verification" and role != "decision":
                 output_schema["$defs"][wire_key]["properties"]["relation"]["enum"] = list(visible.verification_labels)
@@ -310,7 +352,9 @@ class Engine:
                 system += " The answer must be exactly one option key."
             if claims_on:
                 system += " " + TASK_FRAMING.get(visible.task, TASK_FRAMING["synthesis"])
-                system += " " + CLAIM_RULES
+                system += " " + CLAIM_RULES + " " + CLAIM_OUTPUT_RULE
+                if allowed_scopes:
+                    system += " Your permitted scopes are: " + ", ".join(sorted(allowed_scopes)) + "."
                 if role == executor or role in ROLE_OUTPUT:
                     system += " " + ROLE_OUTPUT.get(role, "")
             if repair_attempt:
@@ -366,7 +410,8 @@ class Engine:
                             citations=resolve_fragment_citations(wire.citations, fragment_index),
                             adopted_claim_ids=adopted, rejected_claim_ids=excluded)
                     else:
-                        output = build_analysis_output(wire, fragment_index, role, claims_on, known_claims)
+                        output = build_analysis_output(wire, fragment_index, role, claims_on, known_claims,
+                                                   config.findings_limit, allowed_scopes, emit)
                         if role == "verifier" and claims_on and not reflection and not output.verdicts:
                             raise ValueError("claims-v1 verifier must answer at least one claim")
                 else:

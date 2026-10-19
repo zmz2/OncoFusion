@@ -149,6 +149,9 @@ class Finding(StrictModel):
     claim_id: str = ""
     author_role: str = ""
     used_claim_ids: list[str] = Field(default_factory=list, max_length=30)
+    scope: str = ""
+    evidence_level: str = ""
+    material_status: str = ""
 
 
 class ClaimVerdict(StrictModel):
@@ -187,21 +190,6 @@ class FragmentFinding(StrictModel):
     used_claim_ids: list[Identifier] = Field(default_factory=list, max_length=30)
 
 
-class FragmentClaimVerdict(StrictModel):
-    target_claim_id: Identifier
-    verdict: Literal["confirmed", "corrected", "rejected", "insufficient"]
-    note: str = Field(default="", max_length=2000)
-    citations: list[FragmentCitation] = Field(default_factory=list, max_length=4)
-
-
-class FragmentVerificationOutput(StrictModel):
-    """Verifier output under claims-v1: one answer per earlier claim, not a free-running summary."""
-    findings: list[FragmentFinding] = Field(default_factory=list, max_length=30)
-    verdicts: list[FragmentClaimVerdict] = Field(default_factory=list, max_length=60)
-    unresolved: list[str] = Field(default_factory=list, max_length=20)
-    requery: str = Field(default="", max_length=1000)
-
-
 class FragmentAnalysisOutput(StrictModel):
     findings: list[FragmentFinding] = Field(default_factory=list, max_length=30)
     unresolved: list[str] = Field(default_factory=list, max_length=20)
@@ -209,6 +197,57 @@ class FragmentAnalysisOutput(StrictModel):
 
 
 class FragmentDecisionOutput(StrictModel):
+    answer: str = Field(min_length=1, max_length=6000)
+    explanation: str = Field(min_length=1, max_length=8000)
+    citations: list[FragmentCitation] = Field(default_factory=list, max_length=30)
+    unresolved: list[str] = Field(default_factory=list, max_length=20)
+    confidence: float | None = Field(default=None, ge=0, le=1)
+    adopted_claim_ids: list[Identifier] = Field(default_factory=list, max_length=60)
+    rejected_claim_ids: list[Identifier] = Field(default_factory=list, max_length=60)
+
+
+# claims-v1 findings declare which layer they speak from, so a genomics role cannot answer the
+# survival question and a drug role cannot hide that the patient was never exposed to the drug.
+CLAIM_SCOPE = Literal["temporal", "molecular", "pathologic", "exposure", "relationship", "source",
+                      "verification", "outcome_prediction"]
+EVIDENCE_LEVEL = Literal["measured", "curated", "literature", "inferred", "absent"]
+MATERIAL_STATUS = Literal["present", "not_applicable", "unknown"]
+
+
+class ClaimFinding(StrictModel):
+    statement: str = Field(min_length=1, max_length=4000)
+    relation: Label = "NEI"
+    citations: list[FragmentCitation] = Field(default_factory=list, max_length=30)
+    used_claim_ids: list[Identifier] = Field(default_factory=list, max_length=30)
+    scope: CLAIM_SCOPE
+    evidence_level: EVIDENCE_LEVEL
+    material_status: MATERIAL_STATUS
+
+
+class ClaimAnalysisOutput(StrictModel):
+    findings: list[ClaimFinding] = Field(default_factory=list, max_length=30)
+    # A reflection verifier receives no source view and answers in this shape, so the verdict list
+    # is allowed to be present and empty here as well.
+    verdicts: list[ClaimVerdictEntry] = Field(default_factory=list, max_length=60)
+    unresolved: list[str] = Field(default_factory=list, max_length=20)
+    requery: str = Field(default="", max_length=1000)
+
+
+class ClaimVerdictEntry(StrictModel):
+    target_claim_id: Identifier
+    verdict: Literal["confirmed", "corrected", "rejected", "insufficient"]
+    note: str = Field(default="", max_length=2000)
+    citations: list[FragmentCitation] = Field(default_factory=list, max_length=4)
+
+
+class ClaimVerificationOutput(StrictModel):
+    findings: list[ClaimFinding] = Field(default_factory=list, max_length=30)
+    verdicts: list[ClaimVerdictEntry] = Field(default_factory=list, max_length=60)
+    unresolved: list[str] = Field(default_factory=list, max_length=20)
+    requery: str = Field(default="", max_length=1000)
+
+
+class ClaimDecisionOutput(StrictModel):
     answer: str = Field(min_length=1, max_length=6000)
     explanation: str = Field(min_length=1, max_length=8000)
     citations: list[FragmentCitation] = Field(default_factory=list, max_length=30)

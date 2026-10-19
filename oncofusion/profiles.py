@@ -34,7 +34,10 @@ def v1_fast_config(backend: str = None) -> RunConfig:
 def v1_class_config(backend: str = None) -> RunConfig:
     """v1_fast plus the claims-v1 collaboration protocol: same seven roles, same isolation."""
     config = v1_fast_config(backend)
-    return config.model_copy(update={"interaction_protocol": "claims-v1"})
+    # claims-v1 carries a claim roster, so the same seven calls need a wider sum budget while the
+    # per-stage evidence budget shrinks: 39 spans per stage exhausted the preflight at role five.
+    return config.model_copy(update={"interaction_protocol": "claims-v1",
+                                     "fragment_budget": 12_000, "max_total_tokens": 260_000})
 
 
 def inspect_case(case: CaseInput) -> dict:

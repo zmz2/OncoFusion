@@ -12,13 +12,16 @@ import time
 from pathlib import Path
 
 # name -> (dataset label, study directory name, treatment)
-ARMS = (("real_class6_mtb", "v1_class", "MTBBench dev 课堂样例（4 问 · 3 位患者）"),
+ARMS = (("real_class6b_mtb", "v1_class", "MTBBench dev 课堂样例 · 角色分层版（4 问 · 3 位患者）"),
+        ("real_class6b_civic", "v1_class", "CIViC-Fact dev 课堂样例 · 角色分层版（2 条主张 · 2 篇文献）"),
+        ("real_class6_mtb", "v1_class", "MTBBench dev 课堂样例（4 问 · 3 位患者）"),
         ("real_class6_civic", "v1_class", "CIViC-Fact dev 课堂样例（2 条主张 · 2 篇文献）"),
         ("real_fast2_mtb", "v1_fast", "MTBBench dev (3 patient groups, 21 questions)"),
         ("real_fast2_mtb_control", "single_tools", "MTBBench dev (single-tool control)"),
         ("real_fast2_civic", "v1_fast", "CIViC-Fact dev (3 article groups, 10 claims)"),
         ("real_fast2_civic_control", "single_tools", "CIViC-Fact dev (single-tool control)"))
-DATASET_FILES = {"real_class6_mtb": "data/mtbbench", "real_class6_civic": "data/civicfact-pmidids",
+DATASET_FILES = {"real_class6b_mtb": "data/mtbbench", "real_class6b_civic": "data/civicfact-pmidids",
+                 "real_class6_mtb": "data/mtbbench", "real_class6_civic": "data/civicfact-pmidids",
                  "real_fast2_mtb": "data/mtbbench", "real_fast2_mtb_control": "data/mtbbench",
                  "real_fast2_civic": "data/civicfact-pmidids",
                  "real_fast2_civic_control": "data/civicfact-pmidids"}
