@@ -27,7 +27,10 @@ def pump(src, dst):
 def handle(client, upstream_addr, token):
     upstream = None
     try:
+        # Connect fast or give up, then block on reads: a single 20 s socket timeout also applies
+        # to recv, which killed every SSE stream that stayed quiet during a long model call.
         upstream = socket.create_connection(upstream_addr, timeout=20)
+        upstream.settimeout(None)
         buf = b""
         while BLANK not in buf:
             chunk = client.recv(65536)

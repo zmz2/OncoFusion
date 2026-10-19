@@ -12,15 +12,18 @@ import time
 from pathlib import Path
 
 # name -> (dataset label, study directory name, treatment)
-ARMS = (("real_class6b_mtb", "v1_class", "MTBBench dev 课堂样例 · 角色分层版（4 问 · 3 位患者）"),
-        ("real_class6b_civic", "v1_class", "CIViC-Fact dev 课堂样例 · 角色分层版（2 条主张 · 2 篇文献）"),
+ARMS = (("real_class6c_mtb", "v1_class", "MTBBench dev 课堂样例 · 现行配置（4 问 · 3 位患者）"),
+        ("real_class6c_civic", "v1_class", "CIViC-Fact dev 课堂样例 · 现行配置（2 条主张 · 2 篇文献）"),
+        ("real_class6b_mtb", "v1_class", "MTBBench dev 课堂样例 · 旧预算快照（4 问 · 已停用）"),
+        ("real_class6b_civic", "v1_class", "CIViC-Fact dev 课堂样例 · 旧预算快照（2 条主张 · 已停用）"),
         ("real_class6_mtb", "v1_class", "MTBBench dev 课堂样例（4 问 · 3 位患者）"),
         ("real_class6_civic", "v1_class", "CIViC-Fact dev 课堂样例（2 条主张 · 2 篇文献）"),
         ("real_fast2_mtb", "v1_fast", "MTBBench dev (3 patient groups, 21 questions)"),
         ("real_fast2_mtb_control", "single_tools", "MTBBench dev (single-tool control)"),
         ("real_fast2_civic", "v1_fast", "CIViC-Fact dev (3 article groups, 10 claims)"),
         ("real_fast2_civic_control", "single_tools", "CIViC-Fact dev (single-tool control)"))
-DATASET_FILES = {"real_class6b_mtb": "data/mtbbench", "real_class6b_civic": "data/civicfact-pmidids",
+DATASET_FILES = {"real_class6c_mtb": "data/mtbbench", "real_class6c_civic": "data/civicfact-pmidids",
+                 "real_class6b_mtb": "data/mtbbench", "real_class6b_civic": "data/civicfact-pmidids",
                  "real_class6_mtb": "data/mtbbench", "real_class6_civic": "data/civicfact-pmidids",
                  "real_fast2_mtb": "data/mtbbench", "real_fast2_mtb_control": "data/mtbbench",
                  "real_fast2_civic": "data/civicfact-pmidids",
@@ -244,6 +247,13 @@ def get_item(item_id: str, root: Path | None = None, project: Path | None = None
                       "attempts": details.get("attempts"),
                       "evidence_fragments": details.get("evidence_fragments"),
                       "fragments": details.get("evidence_fragments"),
+                      # The replay page draws what each node was actually handed, so the same
+                      # per-node recording the reports use has to survive this normalisation too.
+                      "evidence_ids": details.get("evidence_ids"),
+                      "evidence_coverage": details.get("evidence_coverage"),
+                      "board_findings": details.get("board_findings"),
+                      "unresolved_items": details.get("unresolved_items"),
+                      "source_ids": details.get("source_ids"),
                       "reservation": details.get("token_reservation"), "reason": details.get("reason")})
     detail.update({"case": case, "reports": data.get("reports", []), "decision": data.get("decision"),
                    "config": data.get("config", {}), "fingerprint": data.get("fingerprint"),

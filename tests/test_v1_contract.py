@@ -13,7 +13,8 @@ from oncofusion.engine import Engine
 from oncofusion.evaluation import evaluate, load_evaluation
 from oncofusion.examples import examples
 from oncofusion.experiments import StudyPlan, select_cases
-from oncofusion.profiles import (coverage_report, inspect_case, integration_example, profile_catalog, v1_config, available_backend)
+from oncofusion.profiles import (coverage_report, inspect_case, integration_example, profile_catalog,
+                                 v1_config, v1_fast_config, v1_class_config, available_backend)
 from oncofusion.providers import MockProvider, ModelReply, OpenAICompatibleProvider, ProviderError
 from oncofusion.schemas import CaseInput, Document, RunConfig
 from oncofusion.upstream_tools import TOOL_VERSION, SourcePlan, ToolRequest, ToolUniverseSources, attach_snapshot
@@ -250,6 +251,24 @@ def test_v1_long_input_has_headroom_and_all_controls_share_the_declared_cap():
     assert old.status == 'budget_exhausted'
     assert result.status == 'completed' and result.usage.calls == 7
     assert config.max_total_tokens == 200000
+    # Every arm inside one study must share the declared ceiling (that is what makes a paired
+    # comparison fair), and a plan whose `reference` names a known profile has to carry that
+    # profile's ceiling: the 6b classroom plans were copied by hand and silently kept 200000
+    # while the demo served v1_class at 260000, so two MTB cases died at the token preflight.
+    ceilings = {"v1": v1_config("native"), "v1_fast": v1_fast_config("native"),
+                "v1_class": v1_class_config("native")}
+    # Plans whose runs are already on disk stay frozen: they document the protocol those rows were
+    # produced under, and rewriting them would make recorded results unreadable. Any other plan has
+    # to carry its profile's ceiling; scripts/make_class_plan.py writes plans from the profile and
+    # asserts that equality, so a profile edit cannot leave a live plan behind.
+    frozen = {"v1_class6b_mtb.json", "v1_class6b_civic.json",
+              "v1_class_dev6_mtb.json", "v1_class_dev6_civic.json"}
     for path in (ROOT/'experiments').glob('v1_*.json'):
         plan = json.loads(path.read_text())
-        assert all(t['overrides']['max_total_tokens'] == config.max_total_tokens for t in plan['treatments'])
+        caps = {t['overrides'].get('max_total_tokens') for t in plan['treatments']}
+        assert caps == {max(caps)}, (path.name, caps)
+        reference = plan.get('reference')
+        if path.name in frozen:
+            assert reference == 'v1_class' and caps == {200000}, (path.name, caps, reference)
+        elif reference in ceilings:
+            assert caps == {ceilings[reference].max_total_tokens}, (path.name, caps, reference)

@@ -37,7 +37,13 @@ def build_case_file(case_id="mtb-X-q0"):
                       "output_tokens": 20, "estimated_tokens": False, "cost_usd": None},
             "trace": [{"kind": "model_usage", "role": "literature",
                        "details": {"input_tokens": 10, "output_tokens": 3, "attempts": 1,
-                                   "estimated": False, "seconds": 1.5, "evidence_fragments": 2}}],
+                                   "estimated": False, "seconds": 1.5, "evidence_fragments": 2}},
+                      {"kind": "agent_started", "role": "literature",
+                       "details": {"evidence_ids": ["d1:f01", "d1:f02"],
+                                   "evidence_coverage": {"candidates": 9, "sent": 2, "chars_total": 900,
+                                                         "chars_sent": 200, "tail_dropped": True,
+                                                         "documents_without_evidence": []},
+                                   "board_findings": 0, "unresolved_items": 0, "source_ids": ["d1"]}}],
             "visible_document_ids": ["d1"], "duration_seconds": 12.5}
 
 
@@ -162,6 +168,12 @@ def test_library_replay_is_allowlisted(client, tmp_path, monkeypatch):
     detail = client.get("/v1/library/item", params={"item_id": items[0]["id"]}).json()
     assert detail["reports"][0]["role"] == "literature"
     assert detail["trace"][0]["seconds"] == 1.5
+    started = next(t for t in detail["trace"] if t["kind"] == "agent_started")
+    assert started["evidence_ids"] == ["d1:f01", "d1:f02"], "the page draws each node's sent spans from here"
+    assert started["evidence_coverage"]["candidates"] == 9
+    assert started["evidence_coverage"]["sent"] == 2 and started["evidence_coverage"]["tail_dropped"]
+    node = next(r for r in detail["roles"] if r["role"] == "literature")
+    assert node["evidence_coverage"]["chars_sent"] == 200 and node["source_ids"] == ["d1"]
     summary = client.get("/v1/datasets/summary").json()
     assert summary["arms"][0]["cases"] == 3, "failed runs must stay in the denominator"
     assert summary["arms"][0]["completion_rate"] == round(1 / 3, 3)

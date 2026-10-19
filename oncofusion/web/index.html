@@ -380,7 +380,21 @@ function renderRoles() {
   renderFlow();
 }
 
-const CLASS_NOTES = {};
+const CLASS_NOTES = {
+  "mtb-P-0027883-q7":
+    "53 岁胰腺导管腺癌，问未来 12 个月是否还活着。七个角色各交自己那一层：时间线到 52.859 岁的最新 CT（有癌、未进展）；"
+    + "基因给 KRAS p.G12V、TP53 p.C275Y、FLT4 p.V1069I 与 SMAD4/CDKN2A 等拷贝数缺失；病理给原发胰导管腺癌与分期；"
+    + "用药只记到 50.070 岁的卡培他滨暴露。46 段候选送进 26 段（约 54%），差额在卡片上写明。"
+    + "6 条写 unknown 的主张不带引用，核验有 1 条判「证据不足」，决策采用 4 条主张答 A（与标签一致），解释里明说「支持但不证明」。",
+  "civic-60a33dc8-2af3-4b38-9a5c-951b40aafd27":
+    "要核验的是「MTOR F2108L 皮肤癌对丝氨酸/苏氨酸激酶抑制剂耐药」，但这一例只拿得到一篇 BCR-ABL/慢性髓系白血病文献。"
+    + "9 条主张里 7 条被各角色自己写成 unknown（不编造证据），文献角色直接指出来源与本题无关；"
+    + "决策排除 7 条、采用 2 条，答案 NEI（证据不足）与标签一致。这一例演示没有证据时系统怎么收口。",
+  "mtb-P-0006191-q0":
+    "56.1 岁肺腺癌，问未来 12 个月是否复发。输入小：8 段候选全部送入（覆盖 100%），最新记录是 56.082 岁的 CT「无癌、未进展」。"
+    + "系统据此答 B（不复发），标签是 A，答错了；未解决项写的是「56.082 之后没有任何复发或随访记录」，"
+    + "也就是它只能按过去事实外推。这一例用来说明预测题的诚实边界，而不是成功率。"
+};
 function caseKey() { return ((S.current || {}).case || {}).id || ""; }
 const VERDICT_CN = {confirmed: "已确认", corrected: "已更正", rejected: "已否定", insufficient: "证据不足"};
 const SCOPE_CN = {temporal: "时间与事件", molecular: "分子与变异", pathologic: "病理与癌种",
@@ -726,18 +740,30 @@ async function openLibraryItem(id) {
   status("回放：" + id + "；点“发起真实 API 运行”可用同一输入重新跑一次。");
 }
 
-const CLASSROOM_CASES = ["mtb-P-0027883-q7", "mtb-P-0022916-q2",
-  "civic-60a33dc8-2af3-4b38-9a5c-951b40aafd27"];
+const CLASSROOM_CASES = [
+  ["mtb-P-0027883-q7", "课堂 · 长时间线 + 真实分子（预测题）"],
+  ["civic-60a33dc8-2af3-4b38-9a5c-951b40aafd27", "课堂 · 单文献核验（证据不足）"],
+  ["mtb-P-0006191-q0", "课堂 · 全覆盖小输入（答错样例）"]];
 
 function classroomPins() {
-  const pool = (S.library || []).filter((i) => i.study.indexOf("real_class6b") === 0 && i.status === "completed");
+  // Prefer the study recorded under the profile the demo serves, and only then the older snapshot.
+  const prefers = ["real_class6c", "real_class6b"];
   const pins = [];
-  CLASSROOM_CASES.forEach((caseId) => {
-    const hit = pool.filter((i) => i.case_id === caseId)[0];
-    if (hit) pins.push([caseId.indexOf("civic") === 0 ? "课堂 · CIViC 单文献核验" : "课堂 · MTB 多来源整合", hit.id]);
+  CLASSROOM_CASES.forEach(function (pair) {
+    prefers.some(function (study) {
+      const hit = (S.library || []).filter(function (i) {
+        return i.study.indexOf(study) === 0 && i.case_id === pair[0] && i.status === "completed";
+      })[0];
+      if (hit) { pins.push([pair[1], hit.id]); return true; }
+      return false;
+    });
   });
-  pool.forEach((i) => {
-    if (pins.length < 3) pins.push(["课堂 · " + i.dataset_label.slice(0, 12), i.id]);
+  const taken = pins.map(function (p) { return p[1]; });
+  (S.library || []).forEach(function (i) {
+    if (pins.length < 3 && i.status === "completed" && i.study.indexOf("real_class6") === 0
+        && taken.indexOf(i.id) < 0) {
+      pins.push(["课堂 · " + i.dataset_label.slice(0, 12), i.id]);
+    }
   });
   return pins;
 }

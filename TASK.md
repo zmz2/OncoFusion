@@ -275,3 +275,25 @@ single_tools 0.5238、1 调用、13,710 token/例。CIViC-Fact dev 3 组 10 例�
 4. 交付前只跑一轮固定 6 例真实质量检查（覆盖真实分子资料、长时间线、单文献核验、冲突与不足），
    选 3 个可直接回放的课堂案例；既有结果作为历史保留，输入或协议改变的新结果另目录存放。
    成绩按试运行表述，样本数与来源组数一并给出。
+
+### 10.1 本轮实测结果（2026-10-19 晚，真实 API，seed 0，一轮）
+
+- 六例全部完成（`results/v1/real_class6c_mtb`、`real_class6c_civic`）：每例 7 次调用、零 HTTP 重试、
+  零结构修复。MTBBench 4 问（3 位患者）3/4 与标签一致；CIViC-Fact 2 条主张（2 篇文献）1/2 与标签一致。
+  两臂在同一时间窗内跑完，只作试运行表述。
+- 课堂三例：`mtb-P-0027883-q7`（候选 46 段送入 26 段，答对）、`civic-60a33dc8…`（来源不对题，
+  9 条主张里 7 条写 unknown 且无引用，决策排除 7 条，答 NEI 与标签一致）、
+  `mtb-P-0006191-q0`（8 段候选全部送入，答错：以“最新 CT 无癌”外推为不复发，标签是复发）。
+- 输入截尾已量化：`scripts/fragment_truncation_audit.py` 重放 56492fd 的前缀走法，
+  183 例里 126 例有文档截尾、1051 份文档里 181 份被截，看不见的原文 310,902 / 1,980,042 字符（15.7%）；
+  本轮 4 个 MTB 课堂样例单独重放为 22.9%。
+- 修掉两处本轮新发现的缺陷：实验计划手抄 overrides 导致上限停在 200,000（demo 服务的是 `v1_class` 的 260,000），
+  两例 MTB 卡在 token 预检 → 计划改由 `scripts/make_class_plan.py` 从 profile 生成并断言相等，
+  `tests/test_v1_contract.py` 检查计划上限与 profile 一致；`library.get_item` 的 trace 归一化丢了
+  `evidence_ids`／`evidence_coverage`，回放页显示不出记录里的覆盖 → 补回字段并加回归。
+- 语义核对为 AI 辅助（`results/SEMANTIC_CHECK_CLASS6_AI.md`）：6 例的引用偏移全部逐字命中，
+  但其中 4 条主张只能判“部分支持”，因为逐字命中只保证片段来源正确、不保证该句点名的每个字段都在其中；
+  核验分两轮，同一主张可能留下 insufficient 与 confirmed 两条结论；一条核验意见把 genomics 主张写成了
+  “pathologic layer”，属措辞问题，记在剩余事项。
+- 仍开放：合入 `main` 由项目所有者决定；PR 仍需 HTTPS 凭据才能由我创建；31 例单次验收与必要的
+  单 Agent 对照只在功能定稿后再跑，本轮没有自动扩量。

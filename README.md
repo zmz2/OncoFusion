@@ -56,10 +56,13 @@ PR 目前无法自动创建：本机可用凭据只有 zmz2 的 **SSH 身份**�
 provider 落成 mock 时进程直接拒绝启动；页面徽章取 `/healthz` 与每条结果自带的 `simulated`，
 模拟任务不会再被写成"真实运行"。
 
-页面完成一条闭环：选择输入（内置示例 / MTBBench 与 CIViC-Fact 真实开发集样例 / 上传 JSON 或 JSONL 并选其中一条）→ `/v1/cases/inspect` 输入检查（输入面板给出任务、题号、原题逐字以及每份可见资料的类别、长度和正文）→ 以 `/v1/configs/demo` 返回的 v1_fast 配置发起真实运行（不会落入历史默认预设）→ 七角色卡片按固定顺序逐个亮起，每张写清该角色的职责、后端递给它的证据片段数、前序已完成角色交来的结论与未解决项、本步产出的结论数与原文引用数、移交下去的未解决项，以及逐角色 token 和秒→ 「执行顺序」与「主张与核验关系」分开展示：前者是固定七步流水线和每步实际送入的证据覆盖
+页面完成一条闭环：选择输入（内置示例 / MTBBench 与 CIViC-Fact 真实开发集样例 / 上传 JSON 或 JSONL 并选其中一条）→ `/v1/cases/inspect` 输入检查（输入面板给出任务、题号、原题逐字以及每份可见资料的类别、长度和正文）→ 以 `/v1/configs/demo` 返回的 `v1_class` 配置发起真实运行（不会落入历史默认预设）→ 七角色卡片按固定顺序逐个亮起，每张写清该角色的职责、后端递给它的证据片段数、前序已完成角色交来的结论与未解决项、本步产出的结论数与原文引用数、移交下去的未解决项，以及逐角色 token 和秒→ 「执行顺序」与「主张与核验关系」分开展示：前者是固定七步流水线和每步实际送入的证据覆盖
 （候选多少段、送入多少段、原文多少字符、送入多少字符），后者按后端记录的主张 ID 画出作者角色、
 该主张声明依据的前序主张、核验方逐条给出的 confirmed／corrected／rejected／insufficient，
-以及决策采用与排除了哪些主张；早于 claims-v1 的历史结果没有保存这些依赖，那里直接写"未记录"→ 最终答案与解释，引用可展开对照模型给出的片段与原文偏移→ 失败时给出原因并保留已完成步骤。另有已完成真实结果的回放列表（失败记录留在统计分母里、默认不在回放列表出现，
+以及决策采用与排除了哪些主张；早于 claims-v1 的历史结果没有保存这些依赖，那里直接写"未记录"→ 最终答案与解释，引用可展开对照模型给出的片段与原文偏移→ 失败时给出原因并保留已完成步骤。课堂现场用三个置顶按钮（`mtb-P-0027883-q7` 长时间线+真实分子、`civic-60a33dc8…` 单文献且来源不对题、
+`mtb-P-0006191-q0` 全覆盖但答错），默认显示中文要点，模型原始的英文结论与引用片段放在折叠区；
+要点写在 `oncofusion/web/index.html` 的 CLASS_NOTES，数字与 `results/CLASS_DEMO_ACCEPTANCE.md` 同源。
+另有已完成真实结果的回放列表（失败记录留在统计分母里、默认不在回放列表出现，
 `/v1/library?include_failed=true` 可单独查看）、中文「数据集结果」小表和逐角色平均耗时（含综合决策）；刷新页面后可凭 run_id 重新查询任务与结果。
 
 模型密钥只存在服务器环境变量与本机演示令牌中，页面不显示密钥；`simulated` 标记区分真实与模拟后端。
@@ -124,8 +127,21 @@ python -m oncofusion demo --profile v1 --out results/real_demo.json --allow-remo
 
 ## 课堂展示验收
 
-`results/CLASS_DEMO_ACCEPTANCE.md` 记录当前提交、唯一启动方式、真实与回放入口、三个课堂案例、
-关键修复证据、实际结果与剩余事项。逐条引用的语义核对在 `results/SEMANTIC_REVIEW_CLASS6.md`。
+`results/CLASS_DEMO_ACCEPTANCE.md` 由 `scripts/class_demo_report.py` 从磁盘上的结果行生成，
+记录当前提交、唯一启动方式、真实与回放入口、三个课堂案例、逐角色证据覆盖、关键修复证据、实际结果与剩余事项。
+引用偏移的机械定位表在 `results/SEMANTIC_REVIEW_CLASS6.md`，逐条语义判断（AI 辅助，非人工评审）在
+`results/SEMANTIC_CHECK_CLASS6_AI.md`。
+
+本轮固定 6 例真实结果（claims-v1 / `v1_class`，同一时间窗，一轮，seed 0）：
+MTBBench dev 4 问（3 位患者）4/4 完成、3/4 与标签一致、7 次调用无结构修复；
+CIViC-Fact dev 2 条主张（2 篇文献）2/2 完成、1/2 与标签一致。样本量只够当试运行读数。
+被旧实现截掉的输入用 `scripts/fragment_truncation_audit.py` 重放：183 例 MTB 输入里 126 例有文档截尾，
+看不见的原文 310,902 / 1,980,042 字符（15.7%）。
+
+实验计划必须由 `scripts/make_class_plan.py` 从 `profiles.v1_class_config()` 生成，不要手抄 overrides：
+手抄的计划曾把上限停在 200,000，而 demo 服务的是 260,000 的 `v1_class`，两例 MTB 因此卡在 token 预检上。
+`tests/test_v1_contract.py` 现在检查每个计划的 `max_total_tokens` 等于它 `reference` 那份 profile 的值
+（已记录在案的历史计划列在 frozen 名单里，不去改写）。
 
 ## 数据与结果
 
