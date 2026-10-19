@@ -13,7 +13,7 @@ from oncofusion.engine import Engine
 from oncofusion.evaluation import evaluate, load_evaluation
 from oncofusion.examples import examples
 from oncofusion.experiments import StudyPlan, select_cases
-from oncofusion.profiles import coverage_report, inspect_case, integration_example, profile_catalog, v1_config
+from oncofusion.profiles import (coverage_report, inspect_case, integration_example, profile_catalog, v1_config, available_backend)
 from oncofusion.providers import MockProvider, ModelReply, OpenAICompatibleProvider, ProviderError
 from oncofusion.schemas import CaseInput, Document, RunConfig
 from oncofusion.upstream_tools import TOOL_VERSION, SourcePlan, ToolRequest, ToolUniverseSources, attach_snapshot
@@ -33,7 +33,10 @@ def test_v1_fixed_seven_roles_and_no_optional_requery():
     assert result.usage.calls == 7 and result.decision
     assert not any(e.kind == 'requery_requested' for e in result.trace)
     assert specification(config)['max_requeries'] == 0
-    assert profile_catalog()['v1']['config']['workflow_backend'] == 'langgraph'
+    # the catalog advertises the backend this interpreter can actually run, and says whether
+    # LangGraph is installed; the classroom service is the same code path either way.
+    assert profile_catalog()['v1']['config']['workflow_backend'] == available_backend()
+    assert profile_catalog()['v1']['graph_installed'] == (available_backend() == 'langgraph')
 
 
 def test_readiness_distinguishes_component_and_heterogeneous_input():
@@ -91,7 +94,8 @@ def test_missing_graph_is_rejected_before_job_or_case_is_created(client, monkeyp
     def missing(_):
         raise PackageNotFoundError('langgraph')
     monkeypatch.setattr(workflow, 'version', missing)
-    response = client.post('/v1/runs', json={'example_id':'synthetic-support', 'config':v1_config().model_dump()})
+    response = client.post('/v1/runs', json={'example_id':'synthetic-support',
+                                             'config':v1_config('langgraph').model_dump()})
     assert response.status_code == 503
     assert client.get('/v1/cases').json() == client.get('/v1/runs').json() == []
 
