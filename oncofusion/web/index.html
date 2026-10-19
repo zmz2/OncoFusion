@@ -431,14 +431,21 @@ function taskPanel(text) { $("taskinfo").innerHTML = text; }
 async function attach(runId) {
   if (S.streaming) return;
   S.streaming = true;
+  // A role can take 3 minutes without emitting a frame, so the stall limit has to sit
+  // above that; when it trips, watch() catches up by polling the event log.
+  const STALL_MS = 90000;
+  let ctrl = new AbortController();
+  let timer = setTimeout(() => ctrl.abort(), STALL_MS);
+  const arm = () => { clearTimeout(timer); timer = setTimeout(() => ctrl.abort(), STALL_MS); };
   try {
     const res = await fetch("/v1/runs/" + runId + "/stream?after=" + S.cursor,
-      { headers: S.token ? { Authorization: "Bearer " + S.token } : {} });
+      { headers: S.token ? { Authorization: "Bearer " + S.token } : {}, signal: ctrl.signal });
     if (!res.ok || !res.body) throw new Error("stream " + res.status);
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buf = "";
     while (true) {
+      arm();
       const chunk = await reader.read();
       if (chunk.done) break;
       buf += decoder.decode(chunk.value, { stream: true });
@@ -452,6 +459,8 @@ async function attach(runId) {
   } catch (e) {
     status("事件流中断：" + e.message + "（任务仍在服务器执行，改用轮询补取）");
   }
+  clearTimeout(timer);
+  try { ctrl.abort(); } catch (e) {}
   S.streaming = false;
 }
 
@@ -468,7 +477,7 @@ async function watch(runId) {
     if (run && ["queued", "running"].indexOf(run.status) < 0) {
       await finish(runId); S.watching = false; return;
     }
-    await new Promise((r) => setTimeout(r, 4000));
+    await new Promise((r) => setTimeout(r, 5000));
   }
   S.watching = false;
 }
