@@ -81,6 +81,31 @@ jobs:
           Path('results/container.json').write_text(json.dumps(report,indent=2))
           print(json.dumps(report))
           PY
+      - name: Demo page and classroom configuration contract
+        run: |
+          python - <<'PY'
+          import json, urllib.request
+          auth = {'Authorization': 'Bearer ci-only-not-a-real-credential'}
+
+          def get(path, headers=None):
+              req = urllib.request.Request('http://127.0.0.1:8000' + path, headers=headers or {})
+              with urllib.request.urlopen(req, timeout=15) as response:
+                  return response.status, response.read()
+
+          status, body = get('/app')
+          page = body.decode('utf-8')
+          assert status == 200 and '主张与核验关系' in page and '执行顺序' in page, 'demo page contract'
+          status, body = get('/v1/configs/demo', auth)
+          demo = json.loads(body)
+          assert demo['name'] == 'v1_class', demo['name']
+          assert demo['config']['interaction_protocol'] == 'claims-v1'
+          assert demo['graph_installed'] is True and demo['workflow_backend'] == 'langgraph', demo
+          status, body = get('/v1/library', auth)
+          assert isinstance(json.loads(body)['items'], list)
+          print(json.dumps({'demo_page': 'served', 'config': demo['name'],
+                            'protocol': demo['config']['interaction_protocol'],
+                            'backend': demo['workflow_backend']}))
+          PY
       - name: Container logs on failure
         if: failure()
         run: docker logs oncofusion-ci || true

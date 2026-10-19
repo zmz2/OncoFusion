@@ -39,6 +39,11 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
     if not 1 <= max_workers <= 32 or not max_workers <= max_pending <= 1024:
         raise ValueError("require 1 <= max_workers <= max_pending <= 1024 (workers <= 32)")
     provider = provider or provider_from_env()
+    if provider.simulated and os.getenv("ONCOFUSION_DEMO_REQUIRE_REAL") == "1":
+        # The demo page labels runs "真实 API" from provider and result.simulated. Refusing to boot
+        # on a simulated backend is what keeps a mis-configured restart from passing off mock runs.
+        raise RuntimeError("ONCOFUSION_DEMO_REQUIRE_REAL=1 but the configured provider is simulated; "
+                          "load the real API environment before serving the demo")
     store = Store(db_path or os.getenv("ONCOFUSION_DB", "runtime/oncofusion.sqlite3"))
     token = api_token if api_token is not None else os.getenv("ONCOFUSION_API_TOKEN", "")
     slots = threading.BoundedSemaphore(max_pending)
@@ -102,15 +107,26 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
     def demo_config():
         """The configuration the demo must submit, so callers never fall back to legacy presets."""
         return {"name": "v1_class", "config": v1_class_config().model_dump(),
+                "workflow_backend": v1_class_config().workflow_backend,
+                "graph_installed": library.graph_installed(),
                 "note": "seven roles in the fixed order, evidence-fragment handles resolved by the "
                         "server, vendor output ceiling, one schema repair for every system, and the "
                         "claims-v1 collaboration protocol (claim ids, per-claim verdicts, adopted and "
                         "excluded claims)"}
 
     @router.get("/library")
-    def library_list():
-        return {"items": library.list_items(),
-                "note": "only the allowlisted completed-run sets are reachable; ids are opaque"}
+    def library_list(include_failed: bool = False):
+        """Replayable rows come from allowlisted study directories only, and ids stay opaque.
+
+        Failed rows are counted but hidden by default: they belong in the statistics denominator,
+        while the replay list should not offer a card that has no result to show.
+        """
+        rows = library.list_items()
+        failed = sum(1 for row in rows if row["status"] not in ("completed", "succeeded"))
+        items = rows if include_failed else [row for row in rows if row["status"] in ("completed", "succeeded")]
+        return {"items": items, "failed_rows": failed,
+                "note": "only the allowlisted study sets are reachable; ids are opaque; "
+                        "pass include_failed=true to list runs that failed or exhausted the budget"}
 
     @router.get("/library/item")
     def library_item(item_id: str = Query(min_length=1, max_length=200)):
@@ -316,6 +332,7 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
 
         async def stream():
             cursor = max(after, last_event_id if last_event_id is not None else -1)
+            idle = 0
             while True:
                 events = store.events(run_id, cursor)
                 for event in events:
@@ -324,6 +341,12 @@ def create_app(db_path: str | Path | None = None, provider: Provider | None = No
                 if not events and store.run(run_id)["status"] in TERMINAL:
                     yield "event: done\ndata: {}\n\n"
                     break
+                if not events:
+                    # A role can run for minutes without emitting a frame; comment frames keep
+                    # intermediates from treating that silence as a dead connection.
+                    idle += 1
+                    if idle % 150 == 0:
+                        yield ": ping\n\n"
                 await asyncio.sleep(.1)
         return StreamingResponse(stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
 

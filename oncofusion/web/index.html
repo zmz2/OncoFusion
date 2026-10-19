@@ -135,6 +135,8 @@ footer { padding:10px 18px 26px; color:var(--dim); font-size:11.5px; }
       <h2>4 · 最终结果与证据关系</h2>
       <div id="answer" class="hint">尚无结果。</div>
       <div id="graph" style="margin-top:10px"></div>
+      <h3 style="font-size:14px;margin-top:14px">主张与核验关系（按后端记录的主张 ID）</h3>
+      <div id="claims" class="hint">尚未载入结果。</div>
     </section>
 
     <section>
@@ -350,10 +352,16 @@ function renderRoles() {
     const io = [];
     if (st.sources && st.sources.length) io.push("读到的来源：" + st.sources.slice(0, 6).map(esc).join("、") + (st.sources.length > 6 ? " 等 " + st.sources.length + " 份" : ""));
     if (st.fragments != null) io.push("后端递给它查阅的证据片段：" + st.fragments + " 段");
+    if (st.coverage) io.push("证据覆盖：候选 " + st.coverage.candidates + " 段 / 送入 " + st.coverage.sent +
+      " 段，原文 " + st.coverage.chars_total + " 字符 / 送入 " + st.coverage.chars_sent + " 字符" +
+      (st.coverage.tail_dropped ? "（超预算的候选未送入，已按问题与关键字段挑选）" : "（全部候选已送入）"));
+    if (st.calls > 1) io.push("本角色实际调用 " + st.calls + " 次（含 1 次结构修复）");
     if (r === ROLES[0]) io.push("它是第一个角色，上游只有本题的可见资料，没有前序结论");
     else if (!UP[r].done) io.push("前序角色还没有已完成的结论，本步要等" + ROLE_CN[ROLES[ROLES.indexOf(r) - 1]] + "结束");
+    else if (st.boardFindings != null) io.push("按送入内容统计：前序结论 " + st.boardFindings +
+      " 条，其中未解决项 " + (st.unresolvedItems != null ? st.unresolvedItems : "未记录") + " 条随本步一起送入");
     else io.push("前序 " + UP[r].done + " 个已完成的角色交出 " + UP[r].findings + " 条结论，其中 " +
-      UP[r].unresolved + " 条仍未解决，这些都会带进本步");
+      UP[r].unresolved + " 条仍未解决，这些都会带进本步（旧记录未保存送入统计，按已完成角色的输出推算）");
     const outCount = st.output ? ((st.output.findings || []).length || (st.output.answer ? 1 : 0)) : 0;
     const outCite = st.output ? ((st.output.citations || []).length +
       (st.output.findings || []).reduce((a, f) => a + (f.citations || []).length, 0)) : 0;
@@ -370,6 +378,50 @@ function renderRoles() {
       outputBlock(st.output);
   });
   renderFlow();
+}
+
+const VERDICT_CN = {confirmed: "已确认", corrected: "已更正", rejected: "已否定", insufficient: "证据不足"};
+
+function renderClaims() {
+  const rows = [];
+  ROLES.forEach((r) => {
+    const o = (STATE[r] || {}).output || {};
+    (o.findings || []).forEach((f) => {
+      if (f.claim_id) rows.push({id: f.claim_id, author: f.author_role || ROLE_CN[r], statement: f.statement,
+                                 used: f.used_claim_ids || []});
+    });
+  });
+  const verdicts = {};
+  ROLES.forEach((r) => {
+    const o = (STATE[r] || {}).output || {};
+    (o.verdicts || []).forEach((v) => { verdicts[v.target_claim_id] = v; });
+  });
+  const dec = ((STATE.decision || {}).output) || {};
+  const adopted = dec.adopted_claim_ids || [];
+  const excluded = dec.rejected_claim_ids || [];
+  if (!rows.length) {
+    $("claims").innerHTML = "<div class=hint>这条记录跑在 claims-v1 之前的旧协议上，后端当时没有保存主张 ID、" +
+      "引用关系与逐主张核验结论，所以这里显示未记录；执行顺序与逐角色卡片仍然可读。</div>";
+    return;
+  }
+  const table = rows.map((c) => {
+    const v = verdicts[c.id];
+    const state = adopted.indexOf(c.id) >= 0 ? "<span class=\"pill ok\">决策采用</span>" :
+      (excluded.indexOf(c.id) >= 0 ? "<span class=\"pill bad\">决策排除</span>" : "<span class=hint>决策未点名</span>");
+    return "<tr><td><b>" + esc(c.id) + "</b><br><span class=hint>" + esc(c.author) + "</span></td>" +
+      "<td>" + esc(c.statement.slice(0, 220)) + "</td>" +
+      "<td>" + (c.used.length ? c.used.map((u) => "<span class=pill>" + esc(u) + "</span>").join("") : "<span class=hint>未声明</span>") + "</td>" +
+      "<td>" + (v ? "<span class=\"pill " + (v.verdict === "rejected" ? "bad" : (v.verdict === "insufficient" ? "warn" : "ok")) +
+        "\">" + (VERDICT_CN[v.verdict] || v.verdict) + "</span>" + (v.note ? "<br><span class=hint>" + esc(v.note.slice(0, 160)) + "</span>" : "")
+        : "<span class=hint>核验未点名</span>") + "</td><td>" + state + "</td></tr>";
+  }).join("");
+  const edges = [];
+  rows.forEach((c) => c.used.forEach((u) => edges.push(esc(u) + " → " + esc(c.id))));
+  Object.keys(verdicts).forEach((k) => edges.push("核验 " + esc(k) + " : " + (VERDICT_CN[verdicts[k].verdict] || verdicts[k].verdict)));
+  $("claims").innerHTML = "<table><tr><th>主张 ID / 作者</th><th>主张内容</th><th>它声明依据的主张</th>" +
+    "<th>核验结论</th><th>决策处理</th></tr>" + table + "</table>" +
+    "<div class=hint style=margin-top:6px>关系边：" + (edges.join(" · ") || "没有记录到跨主张引用") +
+    "</div><div class=hint>主张 ID 由后端按角色与顺序分配，模型只能引用已存在的 ID；引用不存在的 ID 会让本次运行失败并留下记录。</div>";
 }
 
 function buildGraph() {
@@ -403,7 +455,8 @@ function buildGraph() {
   });
   $("graph").innerHTML = "<h3 style=font-size:13px>来源被哪些角色引用</h3><table><tr><th>来源</th><th>引用它的角色</th></tr>" +
     (rows.join("") || "<tr><td colspan=2 class=hint>尚无引用关系</td></tr>") + "</table>" +
-    "<h3 style=font-size:13px;margin-top:10px>角色之间传递了什么</h3><table>" + handoff.join("") + "</table>";
+    "<h3 style=font-size:13px;margin-top:10px>执行顺序上的传递（固定七步，不代表主张引用）</h3><table>" +
+    handoff.join("") + "</table>";
 }
 
 function showAnswer() {
@@ -527,6 +580,7 @@ function applyEvent(kind, data, runId) {
     logEvent("预算耗尽：" + (d.reason || ""));
   } else if (kind === "run_completed") { logEvent("任务结束：" + (d.status || "")); }
   renderRoles();
+  renderClaims();
   showAnswer();
 }
 
@@ -547,7 +601,7 @@ async function finish(runId) {
   } else {
     ROLES.forEach((r) => { if (STATE[r] && STATE[r].state === "running") STATE[r].state = "failed"; });
   }
-  renderRoles(); showAnswer(); buildGraph();
+  renderRoles(); showAnswer(); buildGraph(); renderClaims();
   taskPanel("<div class=kv><span>模式</span><b>真实运行</b></div>" +
     "<div class=kv><span>run_id</span><b>" + esc(runId) + "</b></div>" +
     "<div class=kv><span>服务器状态</span><b>" + esc(run.status) + "</b></div>" +
@@ -555,7 +609,12 @@ async function finish(runId) {
     (result && result.usage ? "<div class=kv><span>用量</span><b>" + result.usage.calls + " 次调用 · in " +
       result.usage.input_tokens + " / out " + result.usage.output_tokens + " token · 估算用量 " +
       (result.usage.estimated_tokens ? "有" : "无") + "</b></div>" : ""));
-  status("任务 " + runId + " 结束：" + run.status + (run.error ? " · " + run.error : ""));
+  if (run.result) {
+    $("b-mode").textContent = run.result.simulated ? "这条记录来自模拟后端" : "这条记录来自真实 API";
+    $("b-mode").className = "badge " + (run.result.simulated ? "sim" : "real");
+  }
+  status("任务 " + runId + " 结束：" + run.status + (run.error ? " · " + run.error : "") +
+    (run.result ? " · " + (run.result.simulated ? "模拟" : "真实") + run.result.duration_seconds.toFixed(0) + "s" : ""));
   loadQueue();
 }
 
@@ -613,9 +672,20 @@ async function openLibraryItem(id) {
   if (item.decision) Object.assign(STATE.decision = STATE.decision || {}, { state: "done", output: item.decision });
   item.trace.filter((t) => t.kind === "model_usage").forEach((t) => {
     const st = STATE[t.role] = STATE[t.role] || {};
-    st.in = t.input_tokens; st.out = t.output_tokens; st.sec = t.seconds; st.attempts = t.attempts; st.fragments = t.fragments;
+    st.in = (st.in || 0) + (t.input_tokens || 0); st.out = (st.out || 0) + (t.output_tokens || 0);
+    st.sec = (st.sec || 0) + (t.seconds || 0); st.attempts = t.attempts;
+    st.fragments = t.evidence_fragments != null ? t.evidence_fragments : t.fragments;
+    st.calls = (st.calls || 0) + 1;
   });
-  renderRoles(); showAnswer(); buildGraph();
+  item.trace.filter((t) => t.kind === "agent_started").forEach((t) => {
+    const st = STATE[t.role] = STATE[t.role] || {};
+    st.evidenceIds = t.evidence_ids || [];
+    st.coverage = t.evidence_coverage || null;
+    st.boardFindings = t.board_findings != null ? t.board_findings : null;
+    st.unresolvedItems = t.unresolved_items != null ? t.unresolved_items : null;
+    st.sources = t.source_ids || st.sources || [];
+  });
+  renderRoles(); showAnswer(); buildGraph(); renderClaims();
   const verdict = item.answer === item.gold_label ? "<span class=\"pill ok\">与标签一致</span>" : "<span class=\"pill bad\">与标签不一致</span>";
   taskPanel("<div class=kv><span>模式</span><b>历史真实结果回放</b></div>" +
     "<div class=kv><span>样本</span><b>" + esc(item.case_id) + "</b></div>" +

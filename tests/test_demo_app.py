@@ -45,6 +45,25 @@ def write_study(root, study="real_fast2_mtb", treatment="v1_fast", case_id="mtb-
     return root
 
 
+def test_library_item_id_cannot_escape_the_allowlist(client, tmp_path, monkeypatch):
+    """Regression for the (study, treatment) whitelist: only an allowlisted pair may resolve."""
+    monkeypatch.chdir(tmp_path)
+    root = tmp_path / "results" / "v1"
+    write_study(root)
+    (root / "unapproved").mkdir()
+    (root / "unapproved" / "v1_fast").mkdir(parents=True)
+    (root / "unapproved" / "v1_fast" / "0").mkdir()
+    (root / "unapproved" / "v1_fast" / "0" / "secret-case.json").write_text('{"case_id": "secret-case"}')
+    monkeypatch.setenv("ONCOFUSION_RESULTS_DIR", str(root))
+    for item_id in ("real_fast2_mtb:../../unapproved/v1_fast:secret-case",
+                    "real_fast2_mtb:unapproved/v1_fast:secret-case",
+                    "real_fast2_mtb:v1_fast:../unapproved/v1_fast/0/secret-case",
+                    "real_fast2_mtb:v1_fast:secret case",
+                    "nope:v1_fast:mtb-X-q0"):
+        assert client.get("/v1/library/item", params={"item_id": item_id}).status_code == 404, item_id
+    assert "secret-case" not in client.get("/v1/library").json()["items"][0]["id"]
+
+
 def test_demo_page_is_self_contained(client):
     page = client.get("/app")
     assert page.status_code == 200 and "text/html" in page.headers["content-type"]
@@ -73,6 +92,9 @@ def test_demo_config_is_the_verified_fast_profile(client):
     assert config["schema_retries"] == 1 and config["findings_limit"] == 3
     assert config["ablations"]["targeted_requery"] is False
     assert config["interaction_protocol"] == "claims-v1"
+    from importlib.util import find_spec
+    expected = "langgraph" if find_spec("langgraph") is not None else "native"
+    assert config["workflow_backend"] == expected == demo["workflow_backend"]
 
 
 def test_run_events_report_every_role_output(client, case):
@@ -109,14 +131,19 @@ def test_library_replay_is_allowlisted(client, tmp_path, monkeypatch):
     root = tmp_path / "results" / "v1"
     write_study(root)
     monkeypatch.setenv("ONCOFUSION_RESULTS_DIR", str(root))
+    done = next((root / "real_fast2_mtb").rglob("mtb-X-q0.json"))
+    (done.parent / "mtb-X-q1.failed.json").write_text(json.dumps({"error": "model transport failed"}))
     items = client.get("/v1/library").json()["items"]
     assert len(items) == 1 and items[0]["case_id"] == "mtb-X-q0"
+    listed = client.get("/v1/library", params={"include_failed": "true"}).json()
+    assert len(listed["items"]) == 3 and listed["failed_rows"] == 2, "both failed rows are counted"
     assert items[0]["simulated"] is False and items[0]["calls"] == 7
     detail = client.get("/v1/library/item", params={"item_id": items[0]["id"]}).json()
     assert detail["reports"][0]["role"] == "literature"
     assert detail["trace"][0]["seconds"] == 1.5
     summary = client.get("/v1/datasets/summary").json()
-    assert summary["arms"][0]["cases"] == 1 and summary["arms"][0]["completion_rate"] == 1.0
+    assert summary["arms"][0]["cases"] == 3, "failed runs must stay in the denominator"
+    assert summary["arms"][0]["completion_rate"] == round(1 / 3, 3)
 
 
 def test_library_rejects_path_like_ids(client, tmp_path, monkeypatch):

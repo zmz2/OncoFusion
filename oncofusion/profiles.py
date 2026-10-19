@@ -10,21 +10,28 @@ from .evidence import deduplicate_documents, visible_case
 from .schemas import Ablations, CaseInput, Document, Entities, ROLES, RunConfig
 
 
-def v1_config(backend: str = 'langgraph') -> RunConfig:
+def available_backend() -> str:
+    """The workflow backend this interpreter can actually run."""
+    return "langgraph" if find_spec("langgraph") is not None else "native"
+
+
+def v1_config(backend: str = None) -> RunConfig:
+    backend = backend or available_backend()
     return RunConfig(workflow_backend=backend, max_total_tokens=200_000, evidence_first=True,
                      specialist_contracts=True, latest_role_board=True,
                      routing='fixed', ablations=Ablations(targeted_requery=False))
 
 
-def v1_fast_config(backend: str = "langgraph") -> RunConfig:
+def v1_fast_config(backend: str = None) -> RunConfig:
     """Same seven roles and isolation as v1, with server-resolved evidence spans instead of re-emitted quotes."""
+    backend = backend or available_backend()
     return RunConfig(workflow_backend=backend, max_total_tokens=200_000, max_output_tokens=5000,
                      schema_retries=1, evidence_first=True, specialist_contracts=True,
                      latest_role_board=True, routing="fixed", citation_mode="fragment",
                      findings_limit=3, ablations=Ablations(targeted_requery=False))
 
 
-def v1_class_config(backend: str = "langgraph") -> RunConfig:
+def v1_class_config(backend: str = None) -> RunConfig:
     """v1_fast plus the claims-v1 collaboration protocol: same seven roles, same isolation."""
     config = v1_fast_config(backend)
     return config.model_copy(update={"interaction_protocol": "claims-v1"})

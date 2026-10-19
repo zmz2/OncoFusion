@@ -126,8 +126,11 @@ class Engine:
         if not self.provider.simulated and case.data_class == "unreviewed":
             raise ValueError("review/deidentify the case before remote model processing")
         config = config or RunConfig()
-        if config.citation_mode == "fragment" and not config.ablations.external_verification:
-            raise ValueError("fragment citation mode requires external_verification")
+        if (config.citation_mode == "fragment" and not config.ablations.external_verification
+                and config.interaction_protocol != "claims-v1"):
+            # Under claims-v1 the handle-to-span check is mechanical and always on, so turning the
+            # semantic verifier off no longer invalidates fragment citations.
+            raise ValueError("legacy fragment citation mode requires external_verification")
         visible = visible_case(case)
         docs = visible.documents
         started = time.monotonic()

@@ -7,17 +7,29 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 from pathlib import Path
 
 # name -> (dataset label, study directory name, treatment)
-ARMS = (("real_fast2_mtb", "v1_fast", "MTBBench dev (3 patient groups, 21 questions)"),
+ARMS = (("real_class6_mtb", "v1_class", "MTBBench dev 课堂样例（4 问 · 3 位患者）"),
+        ("real_class6_civic", "v1_class", "CIViC-Fact dev 课堂样例（2 条主张 · 2 篇文献）"),
+        ("real_fast2_mtb", "v1_fast", "MTBBench dev (3 patient groups, 21 questions)"),
         ("real_fast2_mtb_control", "single_tools", "MTBBench dev (single-tool control)"),
         ("real_fast2_civic", "v1_fast", "CIViC-Fact dev (3 article groups, 10 claims)"),
         ("real_fast2_civic_control", "single_tools", "CIViC-Fact dev (single-tool control)"))
-DATASET_FILES = {"real_fast2_mtb": "data/mtbbench", "real_fast2_mtb_control": "data/mtbbench",
+DATASET_FILES = {"real_class6_mtb": "data/mtbbench", "real_class6_civic": "data/civicfact-pmidids",
+                 "real_fast2_mtb": "data/mtbbench", "real_fast2_mtb_control": "data/mtbbench",
                  "real_fast2_civic": "data/civicfact-pmidids",
                  "real_fast2_civic_control": "data/civicfact-pmidids"}
+
+
+_CASE_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,119}")
+
+
+def graph_installed() -> bool:
+    from importlib.util import find_spec
+    return find_spec("langgraph") is not None
 
 
 def results_root(root: Path | None = None) -> Path:
@@ -28,18 +40,36 @@ def _case_dir(root: Path, study: str, treatment: str) -> Path:
     return root / study / treatment / "0"
 
 
-def _inputs(root_project: Path, study: str) -> dict:
-    folder = root_project / DATASET_FILES[study] / "inputs.jsonl"
+# Each dataset row is re-read once per file signature, not once per replayed result: the 62-item
+# list used to re-parse the full CIViC inputs for every row.
+_json_index: dict[tuple[str, int, int], dict] = {}
+
+
+def _jsonl_by_id(folder: Path, key: str) -> dict:
     if not folder.is_file():
         return {}
-    return {row["id"]: row for row in (json.loads(line) for line in folder.read_text().splitlines() if line.strip())}
+    stat = folder.stat()
+    stamp = (str(folder), stat.st_mtime_ns, stat.st_size)
+    cached = _json_index.get(stamp)
+    if cached is not None:
+        return cached
+    rows = {}
+    for line in folder.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        rows[row[key]] = row
+    _json_index.clear() if len(_json_index) > 8 else None
+    _json_index[stamp] = rows
+    return rows
+
+
+def _inputs(root_project: Path, study: str) -> dict:
+    return _jsonl_by_id(root_project / DATASET_FILES[study] / "inputs.jsonl", "id")
 
 
 def _labels(root_project: Path, study: str) -> dict:
-    folder = root_project / DATASET_FILES[study] / "_gold" / "labels.jsonl"
-    if not folder.is_file():
-        return {}
-    return {row["case_id"]: row for row in (json.loads(line) for line in folder.read_text().splitlines() if line.strip())}
+    return _jsonl_by_id(root_project / DATASET_FILES[study] / "_gold" / "labels.jsonl", "case_id")
 
 
 def _summary(study: str, treatment: str, label: str, data: dict, root_project: Path) -> dict:
@@ -51,10 +81,21 @@ def _summary(study: str, treatment: str, label: str, data: dict, root_project: P
     for event in data.get("trace", []):
         details = event.get("details", {})
         if event.get("kind") == "model_usage":
-            per_role[event.get("role")] = {"seconds": details.get("seconds"),
-                                           "input_tokens": details.get("input_tokens"),
-                                           "output_tokens": details.get("output_tokens"),
-                                           "evidence_fragments": details.get("evidence_fragments")}
+            earlier = per_role.get(event.get("role"))
+            add = {"seconds": details.get("seconds") or 0,
+                   "input_tokens": details.get("input_tokens") or 0,
+                   "output_tokens": details.get("output_tokens") or 0,
+                   "evidence_fragments": details.get("evidence_fragments"),
+                   "attempts": details.get("attempts") or 0,
+                   "calls": 1}
+            if earlier:
+                # A schema repair is a second real call: both must appear in the role total.
+                add["seconds"] = earlier["seconds"] + add["seconds"]
+                add["input_tokens"] = earlier["input_tokens"] + add["input_tokens"]
+                add["output_tokens"] = earlier["output_tokens"] + add["output_tokens"]
+                add["attempts"] = earlier["attempts"] + add["attempts"]
+                add["calls"] = earlier["calls"] + 1
+            per_role[event.get("role")] = add
         elif event.get("kind") == "agent_started":
             started[event.get("role")] = {
                 "evidence_ids": details.get("evidence_ids"),
@@ -111,39 +152,75 @@ def _summary(study: str, treatment: str, label: str, data: dict, root_project: P
 # Replay data is append-only and the demo polls it repeatedly, so a short TTL keeps
 # the pages responsive without freezing what a reviewer can see.
 _LIST_TTL_SECONDS = 30.0
-_list_cache: tuple[float, list[dict]] | None = None
+# Keyed by the results root as well: two studies can be served from one process, and a
+# time-only cache would answer the wrong directory.
+_list_cache: dict[str, tuple[float, list[dict]]] = {}
 
 
-def list_items(root: Path | None = None, project: Path | None = None) -> list[dict]:
+def _failure(study: str, treatment: str, label: str, path: Path) -> dict:
+    """A run that never produced a result row still belongs in the denominator."""
+    case_id = path.name[: -len(".failed.json")]
+    detail = {}
+    try:
+        detail = json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError):
+        detail = {}
+    return {"id": "%s:%s:%s" % (study, treatment, case_id), "study": study, "arm": treatment,
+            "dataset_label": label, "case_id": case_id, "task": detail.get("task", ""),
+            "question": "", "status": "failed", "answer": None, "gold_label": None,
+            "group_id": detail.get("group_id"), "calls": None, "input_tokens": None,
+            "output_tokens": None, "seconds": None, "simulated": bool(detail.get("simulated", False)),
+            "model": detail.get("model"), "citation_count": 0, "roles": [], "failure": detail.get("error")
+            or "no result row; the run was recorded as failed", "case": None, "reports": [],
+            "decision": None, "config": {}, "fingerprint": None, "usage_full": {}, "trace": []}
+
+
+def list_items(root: Path | None = None, project: Path | None = None,
+                include_failed: bool = True) -> list[dict]:
     global _list_cache
     now = time.monotonic()
-    if root is None and _list_cache is not None and now - _list_cache[0] < _LIST_TTL_SECONDS:
-        return _list_cache[1]
     base, project_root = results_root(root), Path(project or Path.cwd())
+    stamp = str(base.resolve())
+    if include_failed:
+        cached = _list_cache.get(stamp)
+        if root is None and cached is not None and now - cached[0] < _LIST_TTL_SECONDS:
+            return cached[1]
     items = []
     for study, treatment, label in ARMS:
         folder = _case_dir(base, study, treatment)
         if not folder.is_dir():
             continue
         for path in sorted(folder.glob("*.json")):
-            if path.name == "summary.json" or path.name.endswith(".failed.json"):
+            if path.name == "summary.json":
+                continue
+            if path.name.endswith(".failed.json"):
+                if include_failed:
+                    items.append(_failure(study, treatment, label, path))
                 continue
             try:
                 data = json.loads(path.read_text())
             except (json.JSONDecodeError, OSError):
                 continue
             items.append(_summary(study, treatment, label, data, project_root))
-    if root is None:
-        _list_cache = (time.monotonic(), items)
+    if root is None and include_failed:
+        if len(_list_cache) > 8:
+            _list_cache.clear()
+        _list_cache[stamp] = (time.monotonic(), items)
     return items
 
 
 def get_item(item_id: str, root: Path | None = None, project: Path | None = None) -> dict | None:
     base, project_root = results_root(root), Path(project or Path.cwd())
     parts = item_id.split(":")
-    if len(parts) != 3 or parts[0] not in {arm[0] for arm in ARMS}:
+    if len(parts) != 3:
         return None
     study, treatment, case_id = parts
+    # The whole (study, treatment) pair must be allowlisted: checking only the study let an
+    # arbitrary treatment segment such as "../../unapproved" resolve outside the published set.
+    if (study, treatment) not in {(arm[0], arm[1]) for arm in ARMS}:
+        return None
+    if not _CASE_ID.fullmatch(case_id):
+        return None
     path = _case_dir(base, study, treatment) / (case_id + ".json")
     allowed = _case_dir(base, study, treatment).resolve()
     if not str(path.resolve()).startswith(str(allowed) + os.sep):
