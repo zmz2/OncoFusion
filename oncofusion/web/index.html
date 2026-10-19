@@ -111,6 +111,7 @@ footer { padding:10px 18px 26px; color:var(--dim); font-size:11.5px; }
     <h2>2 · 当前任务</h2>
     <div id="taskinfo"></div>
     <h2 style="margin-top:14px">5 · 历史真实结果回放</h2>
+    <div id="pinned" class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
     <div class="list" id="history"></div>
   </section>
 </main>
@@ -212,7 +213,7 @@ function taskPanel(run, item) {
     ? `<div class="kv"><span>模式</span><b>真实运行中</b></div>
        <div class="kv"><span>run_id</span><b>${esc(run.run_id || S.runId)}</b></div>
        <div class="kv"><span>状态</span><b>${esc(run.status)}</b></div>
-       ${S.runId ? `<div class="kv"><span>事件游标</span><b>${S.cursor}</b></div>` : ""}`
+       `<div class="kv"><span>事件游标</span><b><span id="curline">${S.cursor}</span></b></div>`
     : item
     ? `<div class="kv"><span>模式</span><b>历史真实结果回放</b></div>
        <div class="kv"><span>样本</span><b>${esc(item.case_id)}</b></div>
@@ -279,6 +280,8 @@ function handleFrame(frame, runId) {
     else if (line.startsWith("event: ")) kind = line.slice(7);
     else if (line.startsWith("data: ")) { try { data = JSON.parse(line.slice(6)); } catch (e) {} }
   }
+  const line = document.getElementById("curline");
+  if (line) line.textContent = String(S.cursor);
   if (kind === "done") { finish(runId); return; }
   if (!data) return;
   const role = data.role, d = data.details || {}, st = STATE[role] = STATE[role] || {};
@@ -348,23 +351,37 @@ async function loadSources() {
   renderHistory();
 }
 
+const PINS = [["MTB 多模态病例整合", "real_fast2_mtb:v1_fast:mtb-P-0027883-q7"],
+              ["CIViC 变异·癌种·药物", "real_fast2_civic:v1_fast:civic-60a33dc8-2af3-4b38-9a5c-951b40aafd27"],
+              ["冲突 / 证据不足", "real_fast2_civic:v1_fast:civic-3e09dc9e-43af-4022-88ec-a31f18cfaf42"],
+              ["错误样例（判定与标签相反）", "real_fast2_mtb:v1_fast:mtb-P-0022916-q2"]];
+
+async function openLibraryItem(id) {
+  const item = await api("/v1/library/item?item_id=" + encodeURIComponent(id));
+  S.item = item; resetState();
+  item.reports.forEach((r) => Object.assign(STATE[r.role] = STATE[r.role] || {}, { state: "done", output: r.output }));
+  if (item.decision) Object.assign(STATE.decision = STATE.decision || {}, { state: "done", output: item.decision });
+  item.trace.filter((t) => t.kind === "model_usage").forEach((t) => {
+    const st = STATE[t.role] = STATE[t.role] || {};
+    st.in = t.input_tokens; st.out = t.output_tokens; st.sec = t.seconds; st.attempts = t.attempts; });
+  renderRoles(STATE);
+  taskPanel(null, item); showAnswer(null, item);
+  $("b-mode").textContent = "历史回放（真实 API）";
+  setCase(item.case, item.case.documents, "已载入该历史样本的输入，可直接重新发起真实运行。");
+  status("回放：" + id);
+}
+
 function renderHistory() {
+  $("pinned").innerHTML = PINS.filter(([, id]) => S.library.some((i) => i.id === id))
+    .map(([name, id]) => `<button style="width:auto" data-pin="${esc(id)}">${esc(name)}</button>`).join("");
+  document.querySelectorAll("[data-pin]").forEach((b) => b.onclick = () => openLibraryItem(b.dataset.pin));
   $("history").innerHTML = S.library.map((i) => `<div class="item" data-id="${esc(i.id)}">
     <div>${esc(i.case_id)} <span class="sub">${esc(i.arm)} · ${esc(i.status)} · ${esc(i.answer)}/${esc(i.gold_label)} · ${i.seconds}s</span></div>
     <div class="sub">${esc((i.question || "").slice(0, 90))}</div></div>`).join("");
   document.querySelectorAll("#history [data-id]").forEach((el) => el.onclick = async () => {
     document.querySelectorAll("#history .item").forEach((x) => x.classList.remove("sel"));
     el.classList.add("sel");
-    const item = await api("/v1/library/item?item_id=" + encodeURIComponent(el.dataset.id));
-    S.item = item; resetState();
-    item.reports.forEach((r) => Object.assign(STATE[r.role] = STATE[r.role] || {}, { state: "done", output: r.output }));
-    if (item.decision) Object.assign(STATE.decision = STATE.decision || {}, { state: "done", output: item.decision });
-    const usage = item.trace.filter((t) => t.kind === "model_usage");
-    usage.forEach((t, idx) => { const st = STATE[t.role] = STATE[t.role] || {}; st.in = t.input_tokens; st.out = t.output_tokens; st.sec = t.seconds; st.attempts = t.attempts; });
-    renderRoles(STATE);
-    taskPanel(null, item); showAnswer(null, item);
-    $("b-mode").textContent = "历史回放（真实 API）";
-    setCase(item.case, item.case.documents, "已载入该历史样本的输入，可直接重新发起真实运行。");
+    await openLibraryItem(el.dataset.id);
   });
 }
 
