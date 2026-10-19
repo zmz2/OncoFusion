@@ -121,3 +121,86 @@ python scripts/review_citations.py export --study results/v1/real_civic_dev --in
 服务保持单ASGI进程，研究成员共享Bearer工作区。生产多用户需要独立授权与队列设计。保持已有API字段兼容；新网页避免省略config而落入历史默认预设。
 
 交付results/REAL_API_ACCEPTANCE.md、DATA_ACCEPTANCE.md、FROZEN_PROTOCOL.md、FINAL_REPORT.md及脚本结果。仅提交脱敏汇总，原病例、论文全文、日志中的患者信息和密钥留本地。下一步的主要工作是实际API与科学验收，不再扩张Agent数量。
+
+## 8. 当前阶段：真实 API 流畅性优先（2026-10-18 起，取代第 5 节的启动顺序）
+
+阶段目标改为**在真实 API 上交付稳定、流畅的七 Agent 后端**。第 3 节的三系统×全 dev 计划与第 5 节的
+11 配置×3 次重复矩阵不再自动接力；`results/v1/ABORTED_*` 保留为历史证据，不并入新协议统计。
+
+### 8.1 供应商实测事实（server21 统一网关，模型 `hc-qwen38-27b-fp8`）
+
+- `GET /v1/models` 只返回这一个模型，不存在“换更快模型”的选项；瓶颈在单调用生成时间。
+- 思考 token 计入 `max_tokens`，且不显式设预算时会填满给定上限：`max_tokens=1500` 实测
+  `reasoning=1499`、正文 0 字符；`max_tokens=400` 同理。采用供应商上限 5000 后
+  `reasoning=1499` 自限、正文 3896 字符、JSON 合法。
+- 单调用 60–450s（池不同：`rtx5090` 与 `legacy`/A40），因此 `ONCOFUSION_TIMEOUT=900`、
+  `ONCOFUSION_RETRIES=0`、`ONCOFUSION_SEND_TEMPERATURE=false`、`ONCOFUSION_SEND_SEED=false`、
+  `ONCOFUSION_JSON_MODE=true`、`ONCOFUSION_TOKEN_PARAMETER=max_tokens`。
+  密钥只从本机 `~/.config/oncofusion/real-api.env`（600，仓库外）读取，不进代码、日志或提交。
+- A40 租约至 2026-10-21 16:56:56，到期后不能把该池计入容量。
+
+### 8.2 v1_fast 配置
+
+`oncofusion/profiles.py:v1_fast_config`，CLI `--profile v1_fast`，`GET /profiles` 增加 `v1_fast` 项。
+保留七角色、来源/阶段隔离、共享证据板与 `/v1` 接口；变化是：
+
+1. **证据片段编号**：后端把可见来源切成确定性的 `<doc_id>:fNN` 片段，角色读片段、输出
+   `{"evidence_id": ...}`，由 `resolve_fragment_citations()` 回填 `document_id/quote/start/end`，
+   再走原有引用完整性校验。未知编号、外部病例编号、未来阶段文档编号都显式失败；
+   片段模式要求 `external_verification`，缺核验时拒绝而不是静默降级。
+2. **输出收紧**：`max_output_tokens=5000`（供应商上限）、`findings_limit=3`、每发现最多 2 条编号引用，
+   角色不再重复抄写原文；`schema_retries=1` 对所有系统统一。
+3. **来源去重复**：片段模式下去掉 `sources` 的正文字段，另给来源花名册与真实字符数，
+   减少同一原文在多角色间反复传输。
+4. 逐角色耗时进入轨迹（`model_usage.seconds`、`evidence_fragments`），供耗时表与预算核算使用。
+
+旧 v1 输入字节未变：同一病例同配置下，HEAD 与工作树的七次 `payload_sha256` 逐个一致。
+
+### 8.3 本阶段执行顺序
+
+1. `experiments/v1_fast_{mtb,civic}_smoke.json`：沿用第 3 节样本（21 例 MTB、10 例 CIViC，各一次），
+   先交付七 Agent 的可靠性与速度：失败率、逐角色耗时、实际 token、重试与 usage 完整性。
+2. 达标后再跑 `experiments/v1_fast_{mtb,civic}_control.json`（`single_tools`，同样 31 例）作对照。
+3. `single_iterative`、三次重复、完整消融与测试集评测全部后置；只有在余量内才在预先固定的 10 例上做
+   一项外部核验消融。小范围并行（`run_study.py --workers`，默认 1、并行与串行逐样本一致）属次优先级，
+   先保证共享状态与预算安全。
+4. 每步产出写入新目录；新旧协议、模拟与真实结果分开，失败与超预算样本保留在分母。
+
+### 8.4 交付物
+
+`results/REAL_API_ACCEPTANCE.md`（供应商协议实测、缺陷与修复、逐角色耗时表、失败分类、token/费用）、
+逐角色耗时表与初步对照（`scripts/real_metrics.py`）、6 个可人工检查案例
+（`scripts/review_citations.py export`）、`DATA_ACCEPTANCE.md` 与冻结协议说明。
+
+### 8.5 本轮实测结果（2026-10-18 16:50，真实 API）
+
+四臂全部完成且 **0 次硬失败、0 次 HTTP 重试、0 例估算 usage**：
+七 Agent MTB 21 例 = 20 completed + 1 `budget_exhausted`、CIViC 10 例全 completed；
+逐角色 p50 149–295s、p95 ≤505s；每例 token：MTB 118,376 / CIViC 34,955（单调用 13,720 / 3,164）。
+
+同例配对：**v1_fast 与 single_tools 准确率相同**（MTB 0.619/0.619，CIViC 0.500/0.500，
+CI 退化 [0,0]，仅 3 个聚类，不作显著性声明）；七 Agent 成本为 8.6×（MTB）、11.1×（CIViC）token。
+结论：当前形状下成本轴主导。下一轮基线已把证据板改为只带 `evidence_id` 句柄
+（同例 payload −7.9%~−19.3%，board 字符约 −50%），压缩后的四臂在 `real_fast2_*` 新目录重跑。
+交付表与失败分类见 `results/REAL_API_ACCEPTANCE.md` 第七节，案例清单
+`results/HUMAN_CHECK_CASES.md`，数据审计 `results/DATA_ACCEPTANCE.md`，
+逐角色表由 `scripts/real_metrics.py` 生成，同例配对由 `scripts/compare_arms.py` 生成。
+
+待办：`without_external_verification` 消融与片段模式不同形（引擎显式要求核验开启），
+只能在 quote 形状下单独报告，不并入本配对表；三次重复、完整消融与测试集仍后置，
+且 CIViC 全 dev（1,044 例）在共享网关上不可行，需要预先固定的抽样协议。
+
+### 8.6 压缩后新基线结论（19:50，同窗四臂，全部真实 API）
+
+七 Agent 后端已达成阶段目标：21+10 例在同窗约 40 分钟跑完，**0 硬失败、0 HTTP 重试、0 估算 usage、
+引用 100% 可机械定位**；逐角色 p50 30–44s、每例 token 101,880（MTB）/ 30,627（CIViC），
+比压缩前分别 −13.9% / −12.4%，且原本唯一触发 200k 预检耗尽的 `mtb-P-0027883-q6` 现在正常完成。
+
+耗时在同窗内大幅下降（每例 1,553s→295s）主要是共享网关时段负载：两窗 literature 首次调用输入 token
+完全相同（8,666.2）而单调用 193s→42s，故跨窗耗时不可比，实验必须同窗跑完对照。
+
+准确率仍不可解释：同窗配对 MTB 0.619 vs 单调用 0.524、CIViC 0.500 vs 0.500，
+但同一批病例在两个时段各有约 2 例答案翻转（single_tools 0.619→0.524），
+n=21/3 个聚类下 ±0.095 属运行间噪声。下一步若继续，只做 seeds=[0,1,2] 的重复主对照（同窗、同预算上限），
+不再扩角色；`without_external_verification` 消融只能在 quote 形状下单独报告。
+外部核验消融、三次重复与完整矩阵仍按剩余资源决定；A40 租约 10-21 16:56:56 到期前需完成真实数据实验窗口。

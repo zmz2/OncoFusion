@@ -7,6 +7,7 @@ from oncofusion.engine import Engine
 from oncofusion.evaluation import (classification_metrics, evaluate, load_evaluation,
                                     paired_cluster_bootstrap, retrieval_metrics, risk_coverage)
 from oncofusion.examples import examples
+from oncofusion.experiments import run_study, standard_plan
 from oncofusion.providers import MockProvider, ProviderError
 from oncofusion.schemas import RunConfig
 
@@ -188,3 +189,54 @@ def test_evaluation_persists_failures_and_mock_flag(tmp_path):
     assert incomplete["failed_or_incomplete"] == 3
     with pytest.raises(ValueError):
         evaluate(cases, gold[:1], Engine(MockProvider()), RunConfig())
+
+
+def _verification_set():
+    cases = [c for c in examples().values() if c.task == "verification"]
+    labels = ["SUPPORTS", "REFUTES", "NEI"]
+    gold = [GoldRecord(case_id=c.id, group_id=c.patient_id, label=labels[i % 3], split="dev")
+            for i, c in enumerate(cases)]
+    return cases, gold
+
+
+def test_parallel_evaluation_matches_sequential(tmp_path):
+    cases, gold = _verification_set()
+    assert len(cases) >= 3
+    serial = evaluate(cases, gold, Engine(MockProvider()), RunConfig(), tmp_path / "serial")
+    parallel = evaluate(cases, gold, Engine(MockProvider()), RunConfig(), tmp_path / "parallel", workers=4)
+    projection = [(r["case_id"], r["status"], r["prediction"], r["fingerprint"]) for r in parallel["rows"]]
+    assert projection == [(r["case_id"], r["status"], r["prediction"], r["fingerprint"]) for r in serial["rows"]]
+    assert parallel["metrics"] == serial["metrics"]
+    assert parallel["count"] == serial["count"]
+    assert parallel["failed_or_incomplete"] == serial["failed_or_incomplete"]
+    assert (tmp_path / "parallel" / (cases[0].id + ".json")).is_file()
+    assert (tmp_path / "serial" / (cases[0].id + ".json")).is_file()
+
+
+def test_parallel_evaluation_records_failures_per_case(tmp_path):
+    cases, gold = _verification_set()
+    class Broken(MockProvider):
+        def complete(self, *args):
+            raise ProviderError("upstream unavailable")
+    report = evaluate(cases, gold, Engine(Broken()), RunConfig(), tmp_path, workers=3)
+    assert report["failed_or_incomplete"] == len(cases)
+    assert all(r["status"] == "failed" for r in report["rows"])
+    assert [r["case_id"] for r in report["rows"]] == [c.id for c in cases]
+
+
+@pytest.mark.parametrize("workers", [0, -1, 65])
+def test_parallel_worker_bounds(workers):
+    cases, gold = _verification_set()
+    with pytest.raises(ValueError):
+        evaluate(cases, gold, Engine(MockProvider()), RunConfig(), workers=workers)
+
+
+def test_parallel_studies_match_sequential(tmp_path):
+    cases, gold = _verification_set()
+    plan = standard_plan("verification", smoke=True)
+    plan.group_limit = None
+    serial = run_study(plan, cases, gold, Engine(MockProvider()), tmp_path / "serial")
+    parallel = run_study(plan, cases, gold, Engine(MockProvider()), tmp_path / "parallel", workers=4)
+    assert serial["identity"] == parallel["identity"]
+    assert serial["table"] == parallel["table"]
+    assert serial["case_count"] == parallel["case_count"]

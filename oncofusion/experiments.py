@@ -122,7 +122,8 @@ def atomic_json(path: Path, obj: dict) -> None:
 
 
 def run_study(plan: StudyPlan, cases: list[CaseInput], gold: list[GoldRecord], engine: Engine,
-              output: Path, resume: bool = False, retry_failed: bool = False) -> dict:
+              output: Path, resume: bool = False, retry_failed: bool = False,
+              workers: int = 1) -> dict:
     cases, gold = select_cases(cases, gold, plan)
     identity = plan_identity(plan, cases, gold, engine)
     identity_file = output / "identity.json"
@@ -146,7 +147,7 @@ def run_study(plan: StudyPlan, cases: list[CaseInput], gold: list[GoldRecord], e
                     continue
             transformed = [perturb(c, treatment.perturbation, seed) for c in cases]
             report = evaluate(transformed, gold, engine, treatment.config(seed), directory, resume=resume,
-                              retry_failed=retry_failed)
+                              retry_failed=retry_failed, workers=workers)
             summaries.append({"treatment": treatment.name, "seed": seed, "report": report})
     result = analyze(plan, summaries)
     result.update({"identity": identity, "simulated": engine.provider.simulated,

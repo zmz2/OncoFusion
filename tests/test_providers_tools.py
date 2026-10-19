@@ -231,3 +231,37 @@ def test_mock_large_output_budget():
     assert len(DecisionOutput.model_validate_json(reply.content).citations) < 30
     with pytest.raises(ProviderError):
         MockProvider().complete("s", payload, 5, 0, 0)
+
+
+def test_thinking_budget_forwarded_only_when_configured():
+    captured = []
+
+    def handler(request):
+        captured.append(json.loads(request.content))
+        return httpx.Response(200, json=envelope())
+
+    real(handler, thinking_token_budget=300).complete("s", {}, 1500, 0, 0)
+    assert captured[0]["thinking_token_budget"] == 300
+    real(handler).complete("s", {}, 1500, 0, 0)
+    assert "thinking_token_budget" not in captured[1]
+
+
+@pytest.mark.parametrize("value", [-1, 8001, "300", 1.5, True])
+def test_thinking_budget_validation(value):
+    with pytest.raises(ValueError):
+        real(lambda request: httpx.Response(200, json=envelope()), thinking_token_budget=value)
+
+
+def test_thinking_budget_from_env_and_identity(monkeypatch):
+    monkeypatch.setenv("ONCOFUSION_PROVIDER", "openai_compatible")
+    monkeypatch.setenv("ONCOFUSION_BASE_URL", "http://127.0.0.1:9/v1")
+    monkeypatch.setenv("ONCOFUSION_MODEL", "m")
+    monkeypatch.setenv("ONCOFUSION_API_KEY", "k")
+    monkeypatch.delenv("ONCOFUSION_THINKING_TOKEN_BUDGET", raising=False)
+    assert provider_from_env().thinking_token_budget is None
+    monkeypatch.setenv("ONCOFUSION_THINKING_TOKEN_BUDGET", "300")
+    provider = provider_from_env()
+    assert provider.thinking_token_budget == 300
+    monkeypatch.setenv("ONCOFUSION_THINKING_TOKEN_BUDGET", "not-a-number")
+    with pytest.raises(ValueError):
+        provider_from_env()

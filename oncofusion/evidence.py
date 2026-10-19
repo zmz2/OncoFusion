@@ -5,7 +5,7 @@ import hashlib
 import math
 import re
 from collections import Counter
-from .schemas import CaseInput, Citation, Document, Entities, Finding
+from .schemas import CaseInput, Citation, Document, Entities, Finding, FragmentCitation
 
 AMINO = dict(zip(
     "Ala Arg Asn Asp Cys Gln Glu Gly His Ile Leu Lys Met Phe Pro Ser Thr Trp Tyr Val".split(),
@@ -193,3 +193,37 @@ def pathology_fields(documents: list[Document]) -> list[dict]:
             if len(rows) >= 100:
                 return rows
     return rows
+
+
+def fragment_documents(documents: list[Document], chars: int, per_document: int) -> tuple[list[dict], dict]:
+    """Number source spans deterministically so roles cite an id and the server resolves the span."""
+    listed: list[dict] = []
+    index: dict[str, tuple[Document, int, int]] = {}
+    for doc in documents:
+        text = doc.text
+        start, number, kept = 0, 1, 0
+        while start < len(text) and kept < per_document:
+            stop = min(len(text), start + chars)
+            if stop < len(text):
+                cut = max(text.rfind(sep, start, stop) for sep in (". ", "\n", "; "))
+                stop = cut + 2 if cut > start else stop
+            evidence_id = f"{doc.id}:f{number:02d}"
+            listed.append({"evidence_id": evidence_id, "document_id": doc.id, "kind": doc.kind,
+                           "stage": doc.available_stage, "text": text[start:stop]})
+            index[evidence_id] = (doc, start, stop)
+            kept += 1
+            number += 1
+            start = stop
+    return listed, index
+
+
+def resolve_fragment_citations(citations: list[FragmentCitation], index: dict) -> list[Citation]:
+    """Turn selected fragment ids into source-checked citations; unknown ids fail the run visibly."""
+    resolved = []
+    for c in citations:
+        entry = index.get(c.evidence_id)
+        if entry is None:
+            raise ValueError("citation refers to an evidence fragment that was not supplied for this stage")
+        doc, start, end = entry
+        resolved.append(Citation(document_id=doc.id, quote=doc.text[start:end], start=start, end=end))
+    return resolved

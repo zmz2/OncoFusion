@@ -51,7 +51,16 @@ class MockProvider:
 
     def complete(self, system: str, payload: dict, max_tokens: int,
                  temperature: float, seed: int) -> ModelReply:
-        docs = [Document.model_validate(d) for d in payload["sources"]]
+        fragments = payload.get("evidence") or []
+        if fragments:
+            # Fragment citation mode exposes numbered spans; the simulator rebuilds each source view.
+            joined: dict[str, str] = {}
+            for item in fragments:
+                joined[item["document_id"]] = joined.get(item["document_id"], "") + item["text"]
+            docs = [Document.model_validate({**entry, "text": joined.get(entry["id"], "") or " "})
+                    for entry in payload["sources"]]
+        else:
+            docs = [Document.model_validate(d) for d in payload["sources"]]
         signals = payload["signals"]
         findings = []
         claim_direction = polarity(payload["question"])
@@ -105,7 +114,23 @@ class MockProvider:
             unresolved = [] if relevant else ["No matching evidence in the provided source view."]
             out = AnalysisOutput(findings=relevant, unresolved=unresolved,
                                  requery=payload["question"] if unresolved and payload["role"] == "verifier" else "")
-        content = out.model_dump_json()
+        def render() -> str:
+            evidence = payload.get("evidence") or []
+            if not evidence:
+                return out.model_dump_json()
+            ids = [item["evidence_id"] for item in evidence]
+            if isinstance(out, DecisionOutput):
+                body = {"answer": out.answer, "explanation": out.explanation,
+                        "unresolved": out.unresolved, "confidence": out.confidence,
+                        "citations": [{"evidence_id": e} for e in ids[:2]]}
+            else:
+                body = {"findings": [{"statement": f.statement, "relation": f.relation,
+                                      "citations": [{"evidence_id": e} for e in ids[:1]]}
+                                      for f in out.findings],
+                        "unresolved": out.unresolved, "requery": out.requery}
+            return json.dumps(body, ensure_ascii=False)
+
+        content = render()
         while len(content) // 4 > max_tokens:
             if isinstance(out, AnalysisOutput) and out.findings:
                 out.findings.pop()
@@ -113,7 +138,7 @@ class MockProvider:
                 out.citations.pop()
             else:
                 raise ProviderError("simulated output exceeds configured output-token limit")
-            content = out.model_dump_json()
+            content = render()
         return ModelReply(content, max(1, len(json.dumps(payload, ensure_ascii=False)) // 4),
                           max(1, len(content) // 4), estimated=True)
 
@@ -127,6 +152,7 @@ class OpenAICompatibleProvider:
     retries: int = 2
     json_mode: bool = True
     token_parameter: str = "max_tokens"
+    thinking_token_budget: int | None = None
     send_temperature: bool = True
     send_seed: bool = True
     input_price: float | None = None
@@ -145,6 +171,9 @@ class OpenAICompatibleProvider:
             raise ValueError("real provider requires a model and API key")
         if self.token_parameter not in ("max_tokens", "max_completion_tokens"):
             raise ValueError("unsupported token parameter")
+        if self.thinking_token_budget is not None and (
+                type(self.thinking_token_budget) is not int or not 0 <= self.thinking_token_budget <= 8000):
+            raise ValueError("thinking_token_budget must be an integer from 0 to 8000")
         if not 0 <= self.retries <= 5 or (not math.isfinite(self.timeout) or self.timeout <= 0):
             raise ValueError("invalid timeout or retry limit")
         if any(p is not None and (not math.isfinite(p) or p < 0) for p in (self.input_price, self.output_price)):
@@ -162,6 +191,8 @@ class OpenAICompatibleProvider:
             body["seed"] = seed
         if self.json_mode:
             body["response_format"] = {"type": "json_object"}
+        if self.thinking_token_budget is not None:
+            body["thinking_token_budget"] = self.thinking_token_budget
         headers = {"Authorization": "Bearer " + self.api_key}
         with httpx.Client(timeout=self.timeout, transport=self.transport, follow_redirects=False) as client:
             for attempt in range(self.retries + 1):
@@ -205,6 +236,16 @@ class OpenAICompatibleProvider:
         raise AssertionError("retry loop must return or raise")
 
 
+def env_int(name: str, default: int | None = None) -> int | None:
+    raw = os.getenv(name)
+    if raw is None or not raw.strip():
+        return default
+    try:
+        return int(raw)
+    except ValueError as exc:
+        raise ValueError(name + " must be an integer") from exc
+
+
 def env_bool(name: str, default: bool) -> bool:
     value = os.getenv(name, str(default)).lower()
     if value not in ("true", "false"):
@@ -217,7 +258,7 @@ def provider_identity(provider: Provider) -> dict:
     identity = {"provider": provider.name, "model": provider.model, "simulated": provider.simulated}
     if isinstance(provider, OpenAICompatibleProvider):
         identity.update({key: getattr(provider, key) for key in
-                         ("base_url", "timeout", "retries", "json_mode", "token_parameter", "send_temperature", "send_seed", "input_price", "output_price")})
+                         ("base_url", "timeout", "retries", "json_mode", "token_parameter", "thinking_token_budget", "send_temperature", "send_seed", "input_price", "output_price")})
     return identity
 
 
@@ -239,4 +280,5 @@ def provider_from_env() -> Provider:
                                     send_temperature=env_bool("ONCOFUSION_SEND_TEMPERATURE", True),
                                     send_seed=env_bool("ONCOFUSION_SEND_SEED", True),
                                     token_parameter=os.getenv("ONCOFUSION_TOKEN_PARAMETER", "max_tokens"),
+                                    thinking_token_budget=env_int("ONCOFUSION_THINKING_TOKEN_BUDGET"),
                                     input_price=prices[0], output_price=prices[1])

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from concurrent.futures import ThreadPoolExecutor
 import random
 import statistics
 from collections import defaultdict
@@ -72,7 +73,8 @@ def risk_coverage(correct: list[bool], confidence: list[float]) -> list[dict]:
 
 
 def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, config: RunConfig,
-             output: Path | None = None, resume: bool = False, retry_failed: bool = False) -> dict:
+             output: Path | None = None, resume: bool = False, retry_failed: bool = False,
+             workers: int = 1) -> dict:
     validate_alignment(cases, gold)
     labels = {g.case_id: g for g in gold}
     if not cases or len(labels) != len(gold) or len({c.id for c in cases}) != len(cases) or set(labels) != {c.id for c in cases}:
@@ -87,7 +89,7 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
     if output:
         output.mkdir(parents=True, exist_ok=True)
     rows = []
-    for case in cases:
+    def run_one(case):
         events = []
         # Only this label-free CaseInput crosses the inference boundary.
         try:
@@ -135,7 +137,14 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
         row["usage_incomplete"] = row.get("usage_incomplete", False) or (
             not engine.provider.simulated and any(e["estimated"] or e["attempts"] > 1 for e in observed_events))
         row["cost_complete"] = prices_known and not row["usage_incomplete"]
-        rows.append(row)
+        return row
+    if workers < 1 or workers > 64:
+        raise ValueError("workers must be between 1 and 64")
+    if workers == 1:
+        rows = [run_one(case) for case in cases]
+    else:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            rows = list(pool.map(run_one, cases))
     metrics = classification_metrics([r["gold"] for r in rows], [r["prediction"] for r in rows], universe)
     group_scores = defaultdict(list)
     for row in rows:

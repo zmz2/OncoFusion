@@ -100,6 +100,10 @@ class RunConfig(StrictModel):
     max_tool_calls: int = Field(default=12, ge=1, le=50)
     max_total_tokens: int = Field(default=120_000, ge=100, le=2_000_000)
     max_output_tokens: int = Field(default=1500, ge=64, le=8000)
+    citation_mode: Literal["quote", "fragment"] = "quote"
+    fragment_chars: int = Field(default=600, ge=120, le=4000)
+    max_fragments_per_document: int = Field(default=8, ge=1, le=50)
+    findings_limit: int = Field(default=5, ge=1, le=30)
     schema_retries: int = Field(default=0, ge=0, le=2)
     top_k: int = Field(default=6, ge=1, le=30)
     candidate_k: int = Field(default=20, ge=1, le=100)
@@ -146,6 +150,30 @@ class DecisionOutput(StrictModel):
     answer: str = Field(min_length=1, max_length=6000)
     explanation: str = Field(min_length=1, max_length=8000)
     citations: list[Citation] = Field(default_factory=list, max_length=30)
+    unresolved: list[str] = Field(default_factory=list, max_length=20)
+    confidence: float | None = Field(default=None, ge=0, le=1)
+
+
+class FragmentCitation(StrictModel):
+    evidence_id: Identifier
+
+
+class FragmentFinding(StrictModel):
+    statement: str = Field(min_length=1, max_length=4000)
+    relation: Label = "NEI"
+    citations: list[FragmentCitation] = Field(default_factory=list, max_length=30)
+
+
+class FragmentAnalysisOutput(StrictModel):
+    findings: list[FragmentFinding] = Field(default_factory=list, max_length=30)
+    unresolved: list[str] = Field(default_factory=list, max_length=20)
+    requery: str = Field(default="", max_length=1000)
+
+
+class FragmentDecisionOutput(StrictModel):
+    answer: str = Field(min_length=1, max_length=6000)
+    explanation: str = Field(min_length=1, max_length=8000)
+    citations: list[FragmentCitation] = Field(default_factory=list, max_length=30)
     unresolved: list[str] = Field(default_factory=list, max_length=20)
     confidence: float | None = Field(default=None, ge=0, le=1)
 

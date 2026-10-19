@@ -16,6 +16,14 @@ def v1_config(backend: str = 'langgraph') -> RunConfig:
                      routing='fixed', ablations=Ablations(targeted_requery=False))
 
 
+def v1_fast_config(backend: str = "langgraph") -> RunConfig:
+    """Same seven roles and isolation as v1, with server-resolved evidence spans instead of re-emitted quotes."""
+    return RunConfig(workflow_backend=backend, max_total_tokens=200_000, max_output_tokens=5000,
+                     schema_retries=1, evidence_first=True, specialist_contracts=True,
+                     latest_role_board=True, routing="fixed", citation_mode="fragment",
+                     findings_limit=3, ablations=Ablations(targeted_requery=False))
+
+
 def inspect_case(case: CaseInput) -> dict:
     visible = visible_case(case)
     docs = visible.documents
@@ -62,7 +70,7 @@ def coverage_report(cases: list[CaseInput]) -> dict:
 
 
 def profile_catalog() -> dict:
-    return {'v1': {
+    catalog = {'v1': {
         'title': 'OncoFusion: multi-agent integration and traceable reasoning over oncology evidence',
         'architecture': 'LangGraph fixed specialist workflow with shared evidence, verifier and coordinator',
         'config': v1_config().model_dump(), 'graph_installed': find_spec('langgraph') is not None,
@@ -76,6 +84,13 @@ def profile_catalog() -> dict:
                           'durable_graph_resume': False, 'multi_user_authorization': False},
         'start_plan': 'experiments/v1_mtb_smoke.json',
     }}
+    fast = dict(catalog['v1'])
+    fast['config'] = v1_fast_config().model_dump()
+    fast['llm_protocol'] = ('same provider/model for all roles; the server resolves cited evidence_id '
+                            'values into source spans, so roles re-emit no quote text')
+    fast['first_release'] = dict(catalog['v1']['first_release'], schema_repair_calls=1)
+    fast['start_plan'] = 'experiments/v1_fast_mtb_smoke.json'
+    return {**catalog, 'v1_fast': fast}
 
 
 def integration_example() -> CaseInput:
