@@ -1,0 +1,333 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-e91039b4-ee6f-455c-9757-293c7f6918df",
+  "patient_id": "article-25349473",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "8f29801de137b03133748995cda6506ca36ed612a55222ce5c450950a5e606da",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 200000,
+    "max_output_tokens": 5000,
+    "schema_retries": 0,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The supplied claim is supported by the visible source. The source states that ponatinib is an approved TKI capable of inhibiting BCR-ABL with the T315I gatekeeper mutation in resistant or relapsed CML, and that in the PACE trial major cytogenetic response occurred in 74% of patients with the T315I mutant. This directly supports a predictive sensitivity/response relationship for ponatinib in CML with BCR::ABL1 and ABL1 T315I. The source does not explicitly use the word “somatic,” but the context of resistant/relapsed CML and baseline BCR-ABL mutations is consistent with an acquired/somatic disease context; no visible evidence contradicts the somatic framing. No unresolved role-report items were provided, and no unsupported efficacy claims were inferred beyond the cited response rate.",
+    "citations": [
+      {
+        "document_id": "pmid-25349473",
+        "start": 0,
+        "end": 180,
+        "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+      },
+      {
+        "document_id": "pmid-25349473",
+        "start": 784,
+        "end": 1051,
+        "quote": "Response rates were similar for those with and without mutant BCR-ABL, with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1771,
+    "output_tokens": 1917,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25349473"
+        ],
+        "fingerprint": "8f29801de137b03133748995cda6506ca36ed612a55222ce5c450950a5e606da",
+        "simulated": false,
+        "version": "0.1.0"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25349473"
+        ],
+        "query": "{\n  \"disease\": \"Chronic Myeloid Leukemia\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BCR::ABL1 Fusion AND ABL1 T315I\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Ponatinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 85,
+              "end": 90,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 327,
+              "end": 332,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 1038,
+              "end": 1043,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25349473": "mixed"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 85,
+              "end": 90,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 327,
+              "end": 332,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 1038,
+              "end": 1043,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25349473": "mixed"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "acb9c28842f0f32af35138b7f6121295cacde41de011baecc9342ab6708fbdc5",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 10794
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1771,
+        "output_tokens": 1917,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The supplied claim is supported by the visible source. The source states that ponatinib is an approved TKI capable of inhibiting BCR-ABL with the T315I gatekeeper mutation in resistant or relapsed CML, and that in the PACE trial major cytogenetic response occurred in 74% of patients with the T315I mutant. This directly supports a predictive sensitivity/response relationship for ponatinib in CML with BCR::ABL1 and ABL1 T315I. The source does not explicitly use the word “somatic,” but the context of resistant/relapsed CML and baseline BCR-ABL mutations is consistent with an acquired/somatic disease context; no visible evidence contradicts the somatic framing. No unresolved role-report items were provided, and no unsupported efficacy claims were inferred beyond the cited response rate.",
+          "citations": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 0,
+              "end": 180,
+              "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 784,
+              "end": 1051,
+              "quote": "Response rates were similar for those with and without mutant BCR-ABL, with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25349473"
+  ],
+  "duration_seconds": 143.24996,
+  "research_only": true
+}

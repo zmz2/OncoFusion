@@ -1,0 +1,281 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-a46b185e-a7f4-425d-bfde-5e25dd8c867f",
+  "patient_id": "article-32348852",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "b37b2b50be9f039ccf8df4161e85333b37f8eea4ff61392ee22e03db85135794",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 200000,
+    "max_output_tokens": 5000,
+    "schema_retries": 0,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The only supplied source concerns breast cancer and an acquired SCP2-NTRK1 fusion. It does not mention MPL, W575T, bone marrow cancer, somatic origin, or oncogenicity. This is evidence insufficiency/irrelevance, not uncertainty about the MPL W575T claim.",
+    "citations": [
+      {
+        "document_id": "pmid-32348852",
+        "start": 0,
+        "end": 143,
+        "quote": "A total of 4854 patients with BC were analyze . . . The sixth patient demonstrated an acquired SCP2-NTRK1 fusion after tamoxifen and letrozole."
+      }
+    ],
+    "unresolved": [
+      "No visible evidence supports or revises MPL W575T somatic oncogenicity in bone marrow cancer."
+    ],
+    "confidence": 0.95
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1294,
+    "output_tokens": 1167,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-32348852"
+        ],
+        "fingerprint": "b37b2b50be9f039ccf8df4161e85333b37f8eea4ff61392ee22e03db85135794",
+        "simulated": false,
+        "version": "0.1.0"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "W575T",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "W575T",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "W575T",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-32348852"
+        ],
+        "query": "{\n  \"disease\": \"bone marrow cancer\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"ONCOGENIC\",\n  \"molecularProfile\": \"MPL W575T\",\n  \"significance\": \"oncogenicity\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-32348852"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-32348852": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "W575T",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-32348852": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-32348852"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-32348852": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "W575T",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-32348852": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "df5db208429b74bc6827de3e53cdcaefd6f213c061a6dcc0ff2481755c4d0594",
+        "source_ids": [
+          "pmid-32348852"
+        ],
+        "token_reservation": 9186
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1294,
+        "output_tokens": 1167,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The only supplied source concerns breast cancer and an acquired SCP2-NTRK1 fusion. It does not mention MPL, W575T, bone marrow cancer, somatic origin, or oncogenicity. This is evidence insufficiency/irrelevance, not uncertainty about the MPL W575T claim.",
+          "citations": [
+            {
+              "document_id": "pmid-32348852",
+              "start": 0,
+              "end": 143,
+              "quote": "A total of 4854 patients with BC were analyze . . . The sixth patient demonstrated an acquired SCP2-NTRK1 fusion after tamoxifen and letrozole."
+            }
+          ],
+          "unresolved": [
+            "No visible evidence supports or revises MPL W575T somatic oncogenicity in bone marrow cancer."
+          ],
+          "confidence": 0.95
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-32348852"
+  ],
+  "duration_seconds": 236.3214,
+  "research_only": true
+}

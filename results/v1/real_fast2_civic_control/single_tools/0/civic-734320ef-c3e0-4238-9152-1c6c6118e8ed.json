@@ -1,0 +1,303 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-734320ef-c3e0-4238-9152-1c6c6118e8ed",
+  "patient_id": "article-22124213",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "e1ee66d87d31ab7be225a97b9472333fc3296295a75b40259b613d9903378b22",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 200000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "findings_limit": 3,
+    "schema_retries": 1,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The supplied evidence is about DNMT3A mutations and response to decitabine in acute myeloid leukemia, not MTOR A2034V, breast myoepithelial carcinoma, or mTOR inhibitor resistance. It does not address the claimed somatic variant, disease, drug class, or resistance phenotype. Therefore, the evidence is insufficient to support or revise the claim; this is evidence insufficiency rather than uncertainty about the claim itself.",
+    "citations": [
+      {
+        "document_id": "pmid-22124213",
+        "start": 0,
+        "end": 563,
+        "quote": "\"DNMT3A Mutations and Response to the Hypomethylating Agent Decitabine in Acute Myeloid Leukemia\\nTo the editor\\nAcute myeloid leukemia (AML) is a disease of the elderly, affecting patients with a median age of 65 to 70 years. Cytotoxic chemotherapy remains the mainstay of treatment in younger patients (often defined as those below the age of 60 years), but is associated with lower complete remission (CR) rates and greater toxicity in older patients (>=60 years), resulting in poor long-term outcomes and a median overall survival (OS) of less than one year. "
+      },
+      {
+        "document_id": "pmid-22124213",
+        "start": 563,
+        "end": 1114,
+        "quote": "Thus, there is a need for novel, effective and well-tolerated treatment approaches, especially for older patients.\\nEpigenetic changes, including aberrant DNA methylation, can result in silencing of tumor suppressor genes and likely contribute to the pathogenesis of AML. Aberrant DNA methylation can be reversed pharmacologically by inhibitors of DNA methyltransferase (DNMT) enzymes. Two azanucleotide DNMT inhibitors, azacitidine and deci\" . . . \"ndpoint is whether DNMT3A mutations influence the response to treatment with hypomethylating agents. "
+      }
+    ],
+    "unresolved": [
+      "No visible evidence links MTOR A2034V to mTOR inhibitor resistance in breast myoepithelial carcinoma.",
+      "The supplied source does not establish the variant as somatic in the claimed disease context.",
+      "The supplied source does not evaluate mTOR inhibitors or resistance to them."
+    ],
+    "confidence": 0.98
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2171,
+    "output_tokens": 1111,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-22124213"
+        ],
+        "fingerprint": "e1ee66d87d31ab7be225a97b9472333fc3296295a75b40259b613d9903378b22",
+        "simulated": false,
+        "version": "0.1.0"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "A2034V",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "A2034V",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "A2034V",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-22124213"
+        ],
+        "query": "{\n  \"disease\": \"breast myoepithelial carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"MTOR A2034V\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"mTOR Inhibitor\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-22124213"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-22124213": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "A2034V",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-22124213": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-22124213"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-22124213": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "A2034V",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-22124213": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "825e1879eaa8aa71ffca300ef6fd77f937de4a4766e1e88b81fcfd7f051b2c4e",
+        "source_ids": [
+          "pmid-22124213"
+        ],
+        "token_reservation": 12257
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2171,
+        "output_tokens": 1111,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 18.871,
+        "evidence_fragments": 6
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The supplied evidence is about DNMT3A mutations and response to decitabine in acute myeloid leukemia, not MTOR A2034V, breast myoepithelial carcinoma, or mTOR inhibitor resistance. It does not address the claimed somatic variant, disease, drug class, or resistance phenotype. Therefore, the evidence is insufficient to support or revise the claim; this is evidence insufficiency rather than uncertainty about the claim itself.",
+          "citations": [
+            {
+              "document_id": "pmid-22124213",
+              "start": 0,
+              "end": 563,
+              "quote": "\"DNMT3A Mutations and Response to the Hypomethylating Agent Decitabine in Acute Myeloid Leukemia\\nTo the editor\\nAcute myeloid leukemia (AML) is a disease of the elderly, affecting patients with a median age of 65 to 70 years. Cytotoxic chemotherapy remains the mainstay of treatment in younger patients (often defined as those below the age of 60 years), but is associated with lower complete remission (CR) rates and greater toxicity in older patients (>=60 years), resulting in poor long-term outcomes and a median overall survival (OS) of less than one year. "
+            },
+            {
+              "document_id": "pmid-22124213",
+              "start": 563,
+              "end": 1114,
+              "quote": "Thus, there is a need for novel, effective and well-tolerated treatment approaches, especially for older patients.\\nEpigenetic changes, including aberrant DNA methylation, can result in silencing of tumor suppressor genes and likely contribute to the pathogenesis of AML. Aberrant DNA methylation can be reversed pharmacologically by inhibitors of DNA methyltransferase (DNMT) enzymes. Two azanucleotide DNMT inhibitors, azacitidine and deci\" . . . \"ndpoint is whether DNMT3A mutations influence the response to treatment with hypomethylating agents. "
+            }
+          ],
+          "unresolved": [
+            "No visible evidence links MTOR A2034V to mTOR inhibitor resistance in breast myoepithelial carcinoma.",
+            "The supplied source does not establish the variant as somatic in the claimed disease context.",
+            "The supplied source does not evaluate mTOR inhibitors or resistance to them."
+          ],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-22124213"
+  ],
+  "duration_seconds": 19.551983,
+  "research_only": true
+}

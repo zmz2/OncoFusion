@@ -1,0 +1,980 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-9dc5e8d7-7f69-46c6-a376-20b732dce28d",
+  "patient_id": "article-25349473",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "67aa3c5e6adfc3cd4fd77cf6b4e910d0522a4e3936ea0e0340a4e9a813d98adb",
+  "config": {
+    "mode": "multi",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 200000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "findings_limit": 3,
+    "schema_retries": 1,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The visible evidence partially supports the supplied claim but requires correction. (1) It reports an observed clinical-response association in a CP-CML cohort treated with ponatinib: at 12 months, 56% had MCyR, 46% had CCyR, and 34% had MMR, and higher response rates were reached for patients with the T315I mutation. This supports a limited association between ABL1 T315I and ponatinib response in CP-CML. (2) It does not support the claim as a statistically significant predictive biomarker for sensitivity/response across CML, because the same passage explicitly states that T315I was determined not to be a significant prognostic factor and provides no evidence of a significant predictive association. (3) The supplied molecular qualifiers are not fully established by the visible text: BCR::ABL1 fusion status and the somatic origin of ABL1 T315I are not explicitly stated, and the evidence is limited to CP-CML rather than CML broadly. Therefore the claim should be revised to a limited, non-significant CP-CML clinical-response association with ABL1 T315I and ponatinib, not a broad predictive sensitivity claim for BCR::ABL1-positive, somatic ABL1 T315I CML.",
+    "citations": [
+      {
+        "document_id": "pmid-25349473",
+        "start": 0,
+        "end": 312,
+        "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+      }
+    ],
+    "unresolved": [
+      "Whether BCR::ABL1 fusion status is explicitly established in the cited passage.",
+      "Whether the ABL1 T315I variant origin is explicitly stated as somatic in the visible evidence.",
+      "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response beyond the reported CP-CML cohort.",
+      "Whether the reported association should be interpreted as predictive rather than descriptive, given the source states T315I was not a significant prognostic factor.",
+      "Whether prior therapy exposure, primary versus acquired resistance, or assay context is specified."
+    ],
+    "confidence": 0.82
+  },
+  "reports": [
+    {
+      "role": "literature",
+      "executor": "literature",
+      "output": {
+        "findings": [
+          {
+            "statement": "In CP-CML patients treated with ponatinib, 12-month response rates were 56% MCyR, 46% CCyR, and 34% MMR; patients with the T315I mutation had higher response rates, but T315I was not determined to be a significant prognostic factor. This supports an association between ABL1 T315I and higher ponatinib response rates, but revises the claim by limiting it to CP-CML and indicating that the mutation was not a statistically significant prognostic factor.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 312,
+                "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response in CML beyond the reported CP-CML cohort.",
+          "Whether the BCR::ABL1 fusion qualifier is explicitly established in the cited passage, since the visible text specifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status."
+        ],
+        "requery": "Does the cited ponatinib CML study report statistically significant predictive value of ABL1 T315I for response, and does it explicitly define the cohort as BCR::ABL1-positive CML?"
+      }
+    },
+    {
+      "role": "timeline",
+      "executor": "timeline",
+      "output": {
+        "findings": [
+          {
+            "statement": "The visible evidence reports that CP-CML patients treated with ponatinib had 12-month response rates of 56% MCyR, 46% CCyR, and 34% MMR, and that higher response rates were reached for patients with ABL1 T315I; however, it explicitly states that T315I was not a significant prognostic factor and does not explicitly establish BCR::ABL1 fusion status or a statistically significant predictive biomarker for ponatinib sensitivity/response.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 312,
+                "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response in CML beyond the reported CP-CML cohort.",
+          "Whether the BCR::ABL1 fusion qualifier is explicitly established in the cited passage, since the visible text specifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status.",
+          "Whether the T315I variant origin is explicitly stated as somatic in the visible evidence."
+        ],
+        "requery": "Provide evidence explicitly linking BCR::ABL1 fusion and somatic ABL1 T315I to statistically significant predictive ponatinib response in CML."
+      }
+    },
+    {
+      "role": "genomics",
+      "executor": "genomics",
+      "output": {
+        "findings": [
+          {
+            "statement": "The visible evidence partially supports the claim but requires correction: in CP-CML patients treated with ponatinib, patients with ABL1 T315I had higher 12-month response rates, but the text explicitly states that T315I was not a significant prognostic factor. Therefore the evidence supports only a non-significant association with ponatinib response in CP-CML, not a statistically significant predictive biomarker for sensitivity/response across CML.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 312,
+                "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+              }
+            ]
+          },
+          {
+            "statement": "The BCR::ABL1 fusion qualifier and the somatic origin of ABL1 T315I are not explicitly established in the visible evidence. The fragment specifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status or variant origin, so those components of the supplied claim remain unsupported by the visible source material.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 312,
+                "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response in CML beyond the reported CP-CML cohort.",
+          "Whether the BCR::ABL1 fusion qualifier is explicitly established in the cited passage, since the visible text specifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status.",
+          "Whether the T315I variant origin is explicitly stated as somatic in the visible evidence.",
+          "Whether the reported association should be interpreted as predictive for ponatinib response rather than merely prognostic, given the text says T315I was not a significant prognostic factor."
+        ],
+        "requery": "Retrieve the full original text of PMID 25349473 to verify whether BCR::ABL1 fusion status, somatic origin of ABL1 T315I, and statistical significance of T315I as a predictive biomarker for ponatinib response in CML are explicitly reported."
+      }
+    },
+    {
+      "role": "pathology",
+      "executor": "pathology",
+      "output": {
+        "findings": [
+          {
+            "statement": "The visible evidence partially supports the claim but requires correction: in CP-CML patients treated with ponatinib, patients with ABL1 T315I had higher 12-month response rates, but the text explicitly states that T315I was not a significant prognostic factor. This supports only a limited CP-CML response association, not a statistically significant predictive biomarker for ponatinib sensitivity/response across CML.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 312,
+                "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+              }
+            ]
+          },
+          {
+            "statement": "The BCR::ABL1 fusion qualifier and the somatic origin of ABL1 T315I are not explicitly established in the visible evidence. The fragment identifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status or variant origin, so those components of the supplied claim remain unsupported by the visible source material.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 312,
+                "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response in CML beyond the reported CP-CML cohort.",
+          "Whether the BCR::ABL1 fusion qualifier is explicitly established in the cited passage, since the visible text specifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status.",
+          "Whether the T315I variant origin is explicitly stated as somatic in the visible evidence.",
+          "Whether the reported association should be interpreted as predictive for ponatinib response rather than merely prognostic, given the text says T315I was not a significant prognostic factor."
+        ],
+        "requery": ""
+      }
+    },
+    {
+      "role": "drug",
+      "executor": "drug",
+      "output": {
+        "findings": [
+          {
+            "statement": "The visible evidence partially supports the supplied claim but requires correction: in CP-CML patients treated with ponatinib, 12-month response rates were reported, and higher response rates were observed in patients with ABL1 T315I. However, the source explicitly states that T315I was not a significant prognostic factor and does not establish a statistically significant predictive biomarker for ponatinib sensitivity/response across CML.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 312,
+                "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+              }
+            ]
+          },
+          {
+            "statement": "The BCR::ABL1 fusion qualifier and the somatic origin of ABL1 T315I are not explicitly established in the visible evidence. The cited fragment identifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status or variant origin, so those components of the supplied claim remain unsupported by the visible source material.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 312,
+                "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+              }
+            ]
+          },
+          {
+            "statement": "The evidence is limited to a CP-CML cohort receiving ponatinib and reports response rates at 12 months; it does not specify prior exposure, primary versus acquired resistance, or a cell-based sensitivity assay. Therefore, the claim should be revised to a limited CP-CML clinical-response association rather than a broad predictive sensitivity claim for BCR::ABL1-positive, somatic ABL1 T315I CML.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 312,
+                "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response in CML beyond the reported CP-CML cohort.",
+          "Whether the BCR::ABL1 fusion qualifier is explicitly established in the cited passage, since the visible text specifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status.",
+          "Whether the T315I variant origin is explicitly stated as somatic in the visible evidence.",
+          "Whether the reported association should be interpreted as predictive for ponatinib response rather than merely prognostic, given the text says T315I was not a significant prognostic factor."
+        ],
+        "requery": ""
+      }
+    },
+    {
+      "role": "verifier",
+      "executor": "verifier",
+      "output": {
+        "findings": [
+          {
+            "statement": "Verified: the visible source reports that, at 12 months after ponatinib initiation in CP-CML, 56% had MCyR, 46% had CCyR, and 34% had MMR, and that higher response rates were reached for patients with the T315I mutation. Correction: this does not support the supplied claim as a statistically significant predictive biomarker for ponatinib sensitivity/response in CML, because the same passage states that T315I was not a significant prognostic factor and does not establish a significant predictive association.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 312,
+                "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+              }
+            ]
+          },
+          {
+            "statement": "Verified: the visible source identifies the cohort as CP-CML and mentions the T315I mutation in the context of ponatinib response. Correction: the BCR::ABL1 fusion qualifier and the somatic origin of ABL1 T315I are not explicitly established in the visible passage, so those components of the supplied molecular profile remain unsupported by the cited evidence.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 312,
+                "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+              }
+            ]
+          },
+          {
+            "statement": "Verified: the evidence is limited to a CP-CML clinical-response cohort and does not specify prior exposure, primary versus acquired resistance, or a cell-based sensitivity assay. Correction: the claim should be revised to a limited CP-CML clinical-response association with T315I, not a broad predictive sensitivity claim for BCR::ABL1-positive, somatic ABL1 T315I CML.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 312,
+                "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "Whether the BCR::ABL1 fusion qualifier is explicitly established in the cited passage.",
+          "Whether the ABL1 T315I variant origin is explicitly stated as somatic in the visible evidence.",
+          "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response beyond the reported CP-CML cohort."
+        ],
+        "requery": "Retrieve the exact passage from pmid-25349473 or a directly linked source that states the CP-CML cohort was BCR::ABL1-positive, that ABL1 T315I was somatic, and whether T315I was a statistically significant predictor of ponatinib response."
+      }
+    }
+  ],
+  "usage": {
+    "calls": 7,
+    "http_attempts": 7,
+    "tool_calls": 6,
+    "input_tokens": 16521,
+    "output_tokens": 13768,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25349473"
+        ],
+        "fingerprint": "67aa3c5e6adfc3cd4fd77cf6b4e910d0522a4e3936ea0e0340a4e9a813d98adb",
+        "simulated": false,
+        "version": "0.1.0"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25349473"
+        ],
+        "query": "{\n  \"disease\": \"Chronic Myeloid Leukemia\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BCR::ABL1 Fusion AND ABL1 T315I\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Ponatinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "agent_started",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "payload_sha256": "02d42abae8438bf981824af908040959c0a617ff4147cbcd843588901965fe3c",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 9374
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "model_usage",
+      "role": "literature",
+      "details": {
+        "input_tokens": 1266,
+        "output_tokens": 1840,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 30.774,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "agent_completed",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "output": {
+          "findings": [
+            {
+              "statement": "In CP-CML patients treated with ponatinib, 12-month response rates were 56% MCyR, 46% CCyR, and 34% MMR; patients with the T315I mutation had higher response rates, but T315I was not determined to be a significant prognostic factor. This supports an association between ABL1 T315I and higher ponatinib response rates, but revises the claim by limiting it to CP-CML and indicating that the mutation was not a statistically significant prognostic factor.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 312,
+                  "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response in CML beyond the reported CP-CML cohort.",
+            "Whether the BCR::ABL1 fusion qualifier is explicitly established in the cited passage, since the visible text specifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status."
+          ],
+          "requery": "Does the cited ponatinib CML study report statistically significant predictive value of ABL1 T315I for response, and does it explicitly define the cohort as BCR::ABL1-positive CML?"
+        }
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {},
+          "timeline": []
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "agent_started",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "payload_sha256": "fed343c789510780b90130665097eeeb9fee27451160a649b9ac5699ea2c6cb9",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 10153
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "model_usage",
+      "role": "timeline",
+      "details": {
+        "input_tokens": 1487,
+        "output_tokens": 1771,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 29.306,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "agent_completed",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "output": {
+          "findings": [
+            {
+              "statement": "The visible evidence reports that CP-CML patients treated with ponatinib had 12-month response rates of 56% MCyR, 46% CCyR, and 34% MMR, and that higher response rates were reached for patients with ABL1 T315I; however, it explicitly states that T315I was not a significant prognostic factor and does not explicitly establish BCR::ABL1 fusion status or a statistically significant predictive biomarker for ponatinib sensitivity/response.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 312,
+                  "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response in CML beyond the reported CP-CML cohort.",
+            "Whether the BCR::ABL1 fusion qualifier is explicitly established in the cited passage, since the visible text specifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status.",
+            "Whether the T315I variant origin is explicitly stated as somatic in the visible evidence."
+          ],
+          "requery": "Provide evidence explicitly linking BCR::ABL1 fusion and somatic ABL1 T315I to statistically significant predictive ponatinib response in CML."
+        }
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 206,
+              "end": 211,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_started",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "payload_sha256": "a149a76ffcfd3c2184a8c378e5542c8583886b2d6ca5fbe38f9dad03eaad69d7",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 11483
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "model_usage",
+      "role": "genomics",
+      "details": {
+        "input_tokens": 1852,
+        "output_tokens": 2035,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 33.036,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "agent_completed",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "output": {
+          "findings": [
+            {
+              "statement": "The visible evidence partially supports the claim but requires correction: in CP-CML patients treated with ponatinib, patients with ABL1 T315I had higher 12-month response rates, but the text explicitly states that T315I was not a significant prognostic factor. Therefore the evidence supports only a non-significant association with ponatinib response in CP-CML, not a statistically significant predictive biomarker for sensitivity/response across CML.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 312,
+                  "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+                }
+              ]
+            },
+            {
+              "statement": "The BCR::ABL1 fusion qualifier and the somatic origin of ABL1 T315I are not explicitly established in the visible evidence. The fragment specifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status or variant origin, so those components of the supplied claim remain unsupported by the visible source material.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 312,
+                  "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response in CML beyond the reported CP-CML cohort.",
+            "Whether the BCR::ABL1 fusion qualifier is explicitly established in the cited passage, since the visible text specifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status.",
+            "Whether the T315I variant origin is explicitly stated as somatic in the visible evidence.",
+            "Whether the reported association should be interpreted as predictive for ponatinib response rather than merely prognostic, given the text says T315I was not a significant prognostic factor."
+          ],
+          "requery": "Retrieve the full original text of PMID 25349473 to verify whether BCR::ABL1 fusion status, somatic origin of ABL1 T315I, and statistical significance of T315I as a predictive biomarker for ponatinib response in CML are explicitly reported."
+        }
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 206,
+              "end": 211,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_started",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "payload_sha256": "b99e5e4d99fb966a18b3a15ca3ad66b53ce80f7cdfa23ac68ec4766f1528d068",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 13162
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "model_usage",
+      "role": "pathology",
+      "details": {
+        "input_tokens": 2272,
+        "output_tokens": 1875,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 30.497,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "agent_completed",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "output": {
+          "findings": [
+            {
+              "statement": "The visible evidence partially supports the claim but requires correction: in CP-CML patients treated with ponatinib, patients with ABL1 T315I had higher 12-month response rates, but the text explicitly states that T315I was not a significant prognostic factor. This supports only a limited CP-CML response association, not a statistically significant predictive biomarker for ponatinib sensitivity/response across CML.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 312,
+                  "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+                }
+              ]
+            },
+            {
+              "statement": "The BCR::ABL1 fusion qualifier and the somatic origin of ABL1 T315I are not explicitly established in the visible evidence. The fragment identifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status or variant origin, so those components of the supplied claim remain unsupported by the visible source material.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 312,
+                  "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response in CML beyond the reported CP-CML cohort.",
+            "Whether the BCR::ABL1 fusion qualifier is explicitly established in the cited passage, since the visible text specifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status.",
+            "Whether the T315I variant origin is explicitly stated as somatic in the visible evidence.",
+            "Whether the reported association should be interpreted as predictive for ponatinib response rather than merely prognostic, given the text says T315I was not a significant prognostic factor."
+          ],
+          "requery": ""
+        }
+      }
+    },
+    {
+      "sequence": 18,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 206,
+              "end": 211,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25349473": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "5f1eb18f54c3e5b369bd452171304eff541b312ca8481ed88ff4db330b42c808",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 15034
+      }
+    },
+    {
+      "sequence": 20,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 2728,
+        "output_tokens": 2113,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 34.64,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 21,
+      "kind": "agent_completed",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "output": {
+          "findings": [
+            {
+              "statement": "The visible evidence partially supports the supplied claim but requires correction: in CP-CML patients treated with ponatinib, 12-month response rates were reported, and higher response rates were observed in patients with ABL1 T315I. However, the source explicitly states that T315I was not a significant prognostic factor and does not establish a statistically significant predictive biomarker for ponatinib sensitivity/response across CML.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 312,
+                  "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+                }
+              ]
+            },
+            {
+              "statement": "The BCR::ABL1 fusion qualifier and the somatic origin of ABL1 T315I are not explicitly established in the visible evidence. The cited fragment identifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status or variant origin, so those components of the supplied claim remain unsupported by the visible source material.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 312,
+                  "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+                }
+              ]
+            },
+            {
+              "statement": "The evidence is limited to a CP-CML cohort receiving ponatinib and reports response rates at 12 months; it does not specify prior exposure, primary versus acquired resistance, or a cell-based sensitivity assay. Therefore, the claim should be revised to a limited CP-CML clinical-response association rather than a broad predictive sensitivity claim for BCR::ABL1-positive, somatic ABL1 T315I CML.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 312,
+                  "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response in CML beyond the reported CP-CML cohort.",
+            "Whether the BCR::ABL1 fusion qualifier is explicitly established in the cited passage, since the visible text specifies CP-CML and T315I but does not directly state BCR::ABL1 fusion status.",
+            "Whether the T315I variant origin is explicitly stated as somatic in the visible evidence.",
+            "Whether the reported association should be interpreted as predictive for ponatinib response rather than merely prognostic, given the text says T315I was not a significant prognostic factor."
+          ],
+          "requery": ""
+        }
+      }
+    },
+    {
+      "sequence": 22,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 206,
+              "end": 211,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25349473": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 23,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "5a1e5c558d8e5a92bf6862e40511014d3947294b04b43ddd97d57d4550cbc091",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 17121
+      }
+    },
+    {
+      "sequence": 24,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 3239,
+        "output_tokens": 2142,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 35.266,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 25,
+      "kind": "agent_completed",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "output": {
+          "findings": [
+            {
+              "statement": "Verified: the visible source reports that, at 12 months after ponatinib initiation in CP-CML, 56% had MCyR, 46% had CCyR, and 34% had MMR, and that higher response rates were reached for patients with the T315I mutation. Correction: this does not support the supplied claim as a statistically significant predictive biomarker for ponatinib sensitivity/response in CML, because the same passage states that T315I was not a significant prognostic factor and does not establish a significant predictive association.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 312,
+                  "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+                }
+              ]
+            },
+            {
+              "statement": "Verified: the visible source identifies the cohort as CP-CML and mentions the T315I mutation in the context of ponatinib response. Correction: the BCR::ABL1 fusion qualifier and the somatic origin of ABL1 T315I are not explicitly established in the visible passage, so those components of the supplied molecular profile remain unsupported by the cited evidence.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 312,
+                  "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+                }
+              ]
+            },
+            {
+              "statement": "Verified: the evidence is limited to a CP-CML clinical-response cohort and does not specify prior exposure, primary versus acquired resistance, or a cell-based sensitivity assay. Correction: the claim should be revised to a limited CP-CML clinical-response association with T315I, not a broad predictive sensitivity claim for BCR::ABL1-positive, somatic ABL1 T315I CML.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 312,
+                  "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "Whether the BCR::ABL1 fusion qualifier is explicitly established in the cited passage.",
+            "Whether the ABL1 T315I variant origin is explicitly stated as somatic in the visible evidence.",
+            "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response beyond the reported CP-CML cohort."
+          ],
+          "requery": "Retrieve the exact passage from pmid-25349473 or a directly linked source that states the CP-CML cohort was BCR::ABL1-positive, that ABL1 T315I was somatic, and whether T315I was a statistically significant predictor of ponatinib response."
+        }
+      }
+    },
+    {
+      "sequence": 26,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "49c267e089d6e8b9b01b0ab92e2994ced2ad1de6d9e37682032003b56975caaa",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 18856
+      }
+    },
+    {
+      "sequence": 27,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 3677,
+        "output_tokens": 1992,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 32.847,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 28,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The visible evidence partially supports the supplied claim but requires correction. (1) It reports an observed clinical-response association in a CP-CML cohort treated with ponatinib: at 12 months, 56% had MCyR, 46% had CCyR, and 34% had MMR, and higher response rates were reached for patients with the T315I mutation. This supports a limited association between ABL1 T315I and ponatinib response in CP-CML. (2) It does not support the claim as a statistically significant predictive biomarker for sensitivity/response across CML, because the same passage explicitly states that T315I was determined not to be a significant prognostic factor and provides no evidence of a significant predictive association. (3) The supplied molecular qualifiers are not fully established by the visible text: BCR::ABL1 fusion status and the somatic origin of ABL1 T315I are not explicitly stated, and the evidence is limited to CP-CML rather than CML broadly. Therefore the claim should be revised to a limited, non-significant CP-CML clinical-response association with ABL1 T315I and ponatinib, not a broad predictive sensitivity claim for BCR::ABL1-positive, somatic ABL1 T315I CML.",
+          "citations": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 0,
+              "end": 312,
+              "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+            }
+          ],
+          "unresolved": [
+            "Whether BCR::ABL1 fusion status is explicitly established in the cited passage.",
+            "Whether the ABL1 T315I variant origin is explicitly stated as somatic in the visible evidence.",
+            "Whether ABL1 T315I is a statistically significant predictive biomarker for ponatinib sensitivity/response beyond the reported CP-CML cohort.",
+            "Whether the reported association should be interpreted as predictive rather than descriptive, given the source states T315I was not a significant prognostic factor.",
+            "Whether prior therapy exposure, primary versus acquired resistance, or assay context is specified."
+          ],
+          "confidence": 0.82
+        }
+      }
+    },
+    {
+      "sequence": 29,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25349473"
+  ],
+  "duration_seconds": 226.417986,
+  "research_only": true
+}

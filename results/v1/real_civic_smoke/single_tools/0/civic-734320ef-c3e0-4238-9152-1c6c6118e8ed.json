@@ -1,0 +1,297 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-734320ef-c3e0-4238-9152-1c6c6118e8ed",
+  "patient_id": "article-22124213",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "c14d1fabaf6f1199d60088195774a600b07d0d7ff9503424057f8b346f3dd0fc",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 200000,
+    "max_output_tokens": 5000,
+    "schema_retries": 0,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The supplied source is about DNMT3A mutations and response to decitabine in acute myeloid leukemia, not breast myoepithelial carcinoma. It does not mention MTOR, the A2034V variant, somatic origin, mTOR inhibitors, or resistance. Therefore, the evidence is missing/irrelevant for the claim that somatic MTOR A2034V in breast myoepithelial carcinoma predicts resistance to an mTOR inhibitor. This is evidence insufficiency, not uncertainty about a supported effect.",
+    "citations": [
+      {
+        "document_id": "pmid-22124213",
+        "start": 113,
+        "end": 226,
+        "quote": "Acute myeloid leukemia (AML) is a disease of the elderly, affecting patients with a median age of 65 to 70 years."
+      },
+      {
+        "document_id": "pmid-22124213",
+        "start": 1114,
+        "end": 1236,
+        "quote": "We therefore evaluated DNMT3A mutation status in a cohort of 46 predominantly older patients with previously untreated AML"
+      }
+    ],
+    "unresolved": [
+      "No visible source mentions MTOR A2034V.",
+      "No visible source mentions breast myoepithelial carcinoma.",
+      "No visible source mentions mTOR inhibitor resistance."
+    ],
+    "confidence": 0.98
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1916,
+    "output_tokens": 1763,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-22124213"
+        ],
+        "fingerprint": "c14d1fabaf6f1199d60088195774a600b07d0d7ff9503424057f8b346f3dd0fc",
+        "simulated": false,
+        "version": "0.1.0"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "A2034V",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "A2034V",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "A2034V",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-22124213"
+        ],
+        "query": "{\n  \"disease\": \"breast myoepithelial carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"MTOR A2034V\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"mTOR Inhibitor\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-22124213"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-22124213": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "A2034V",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-22124213": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-22124213"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-22124213": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "A2034V",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-22124213": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "0600fb9307e4367fbd6a61808d7dd00b49bd25ea126511067c0b83ed5ddf280e",
+        "source_ids": [
+          "pmid-22124213"
+        ],
+        "token_reservation": 11827
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1916,
+        "output_tokens": 1763,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The supplied source is about DNMT3A mutations and response to decitabine in acute myeloid leukemia, not breast myoepithelial carcinoma. It does not mention MTOR, the A2034V variant, somatic origin, mTOR inhibitors, or resistance. Therefore, the evidence is missing/irrelevant for the claim that somatic MTOR A2034V in breast myoepithelial carcinoma predicts resistance to an mTOR inhibitor. This is evidence insufficiency, not uncertainty about a supported effect.",
+          "citations": [
+            {
+              "document_id": "pmid-22124213",
+              "start": 113,
+              "end": 226,
+              "quote": "Acute myeloid leukemia (AML) is a disease of the elderly, affecting patients with a median age of 65 to 70 years."
+            },
+            {
+              "document_id": "pmid-22124213",
+              "start": 1114,
+              "end": 1236,
+              "quote": "We therefore evaluated DNMT3A mutation status in a cohort of 46 predominantly older patients with previously untreated AML"
+            }
+          ],
+          "unresolved": [
+            "No visible source mentions MTOR A2034V.",
+            "No visible source mentions breast myoepithelial carcinoma.",
+            "No visible source mentions mTOR inhibitor resistance."
+          ],
+          "confidence": 0.98
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-22124213"
+  ],
+  "duration_seconds": 317.800144,
+  "research_only": true
+}
