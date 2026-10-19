@@ -1,6 +1,6 @@
 # 课堂展示验收（claims-v1）
 
-审查基准 `56492fd`，分支 `codex/v1-fast-real-api-20261019`；本文件生成时的 HEAD 是 `3fde06a`。
+审查基准 `56492fd`，分支 `codex/v1-fast-real-api-20261019`；本文件生成时的 HEAD 是 `7e4c5a8`。
 数字全部由 `scripts/class_demo_report.py` 从磁盘上的结果行读出，不手写；本句之后的叙述文字同样来自该脚本。
 
 ## 启动与入口
@@ -78,14 +78,16 @@ export ONCOFUSION_API_TOKEN="$(cat /path/to/demo-token)" ONCOFUSION_RESULTS_DIR=
 
 ## 逐例协作与引用检查
 
-| 病例 | 答案/标签 | 主张 | 送入引用 | 逐字命中 | 核验结论 | 决策采用/排除 | 缺失资料声明 |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| `mtb-P-0006191-q0` | B / A | 17 | 16 | 16/16（无引用 7） | confirmed:19（14/17 主张） | 4/0 | 7 |
-| `mtb-P-0022916-q2` | A / A | 17 | 28 | 28/28（无引用 2） | confirmed:20（14/17 主张） | 5/0 | 2 |
-| `mtb-P-0022916-q6` | A / A | 17 | 24 | 24/24（无引用 5） | confirmed:20（14/17 主张） | 6/0 | 5 |
-| `mtb-P-0027883-q7` | A / A | 17 | 20 | 20/20（无引用 6） | confirmed:18,insufficient:1（14/17 主张） | 4/0 | 6 |
-| `civic-3e09dc9e-43af-4022-88ec-a31f18cfaf42` | NEI / REVISIONS | 11 | 8 | 8/8（无引用 3） | confirmed:11,insufficient:3（9/11 主张） | 6/2 | 3 |
-| `civic-60a33dc8-2af3-4b38-9a5c-951b40aafd27` | NEI / NEI | 9 | 4 | 4/4（无引用 7） | confirmed:8（6/9 主张） | 2/7 | 7 |
+`声明依据` ＝ 有多少条主张显式写出了自己依据的前序 `claim_id`（括号内是引用总次数）。这是后端记录的真实依赖，不是固定七步流程图。
+
+| 病例 | 答案/标签 | 主张 | 声明依据 | 送入引用 | 逐字命中 | 核验结论 | 决策采用/排除 | 缺失资料声明 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `mtb-P-0006191-q0` | B / A | 17 | 11（17 次） | 16 | 16/16（无引用 7） | confirmed:19（14/17 主张） | 4/0 | 7 |
+| `mtb-P-0022916-q2` | A / A | 17 | 11（13 次） | 28 | 28/28（无引用 2） | confirmed:20（14/17 主张） | 5/0 | 2 |
+| `mtb-P-0022916-q6` | A / A | 17 | 9（14 次） | 24 | 24/24（无引用 5） | confirmed:20（14/17 主张） | 6/0 | 5 |
+| `mtb-P-0027883-q7` | A / A | 17 | 5（14 次） | 20 | 20/20（无引用 6） | confirmed:18,insufficient:1（14/17 主张） | 4/0 | 6 |
+| `civic-3e09dc9e-43af-4022-88ec-a31f18cfaf42` | NEI / REVISIONS | 11 | 8（16 次） | 8 | 8/8（无引用 3） | confirmed:11,insufficient:3（9/11 主张） | 6/2 | 3 |
+| `civic-60a33dc8-2af3-4b38-9a5c-951b40aafd27` | NEI / NEI | 9 | 3（6 次） | 4 | 4/4（无引用 7） | confirmed:8（6/9 主张） | 2/7 | 7 |
 
 状态分布：{"mtb-P-0006191-q0": "completed", "mtb-P-0022916-q2": "completed", "mtb-P-0022916-q6": "completed", "mtb-P-0027883-q7": "completed", "civic-3e09dc9e-43af-4022-88ec-a31f18cfaf42": "completed", "civic-60a33dc8-2af3-4b38-9a5c-951b40aafd27": "completed"}
 

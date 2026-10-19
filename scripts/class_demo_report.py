@@ -94,6 +94,8 @@ def main() -> int:
         claims = [f for r in (detail.get("reports") or []) for f in r["output"].get("findings") or []]
         per_case.append({
             "item": item, "claims": len(claims), "citations": len([r for r in rows if r["locate"] != "N/A"]),
+            "uses": sum(1 for f in claims if f.get("used_claim_ids")),
+            "used_ids": sum(len(f.get("used_claim_ids") or []) for f in claims),
             "located": dict(Counter(r["locate"] for r in rows)),
             "verdicts": dict(Counter(v.get("verdict", "?") for v in verdict_rows)),
             "verdict_targets": len({v.get("target_claim_id") for v in verdict_rows}),
@@ -161,15 +163,18 @@ def main() -> int:
                   "`只覆盖前缀？` 一列在旧实现里恒为“是”，因为每文档最多取前 8 段。", ""]
 
     lines += ["## 逐例协作与引用检查", "",
-              "| 病例 | 答案/标签 | 主张 | 送入引用 | 逐字命中 | 核验结论 | 决策采用/排除 | 缺失资料声明 |",
-              "| --- | --- | --- | --- | --- | --- | --- | --- |"]
+              "`声明依据` ＝ 有多少条主张显式写出了自己依据的前序 `claim_id`（括号内是引用总次数）。"
+              "这是后端记录的真实依赖，不是固定七步流程图。", "",
+              "| 病例 | 答案/标签 | 主张 | 声明依据 | 送入引用 | 逐字命中 | 核验结论 | 决策采用/排除 | 缺失资料声明 |",
+              "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
     for row in per_case:
         item = row["item"]
         hit = row["located"].get("逐字命中", 0)
         total = sum(v for k, v in row["located"].items() if k != "N/A")
         na = row["located"].get("N/A", 0)
-        lines.append("| `%s` | %s / %s | %d | %d | %d/%d（无引用 %d） | %s（%d/%d 主张） | %d/%d | %d |" % (
+        lines.append("| `%s` | %s / %s | %d | %d（%d 次） | %d | %d/%d（无引用 %d） | %s（%d/%d 主张） | %d/%d | %d |" % (
             item["case_id"], item["answer"] or "-", item["gold_label"] or "-", row["claims"],
+            row["uses"], row["used_ids"],
             total, hit, total, na,
             ",".join("%s:%d" % kv for kv in sorted(row["verdicts"].items())) or "无",
             row["verdict_targets"], row["claims"],
