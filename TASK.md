@@ -177,6 +177,8 @@ python scripts/review_citations.py export --study results/v1/real_civic_dev --in
 四臂全部完成且 **0 次硬失败、0 次 HTTP 重试、0 例估算 usage**：
 七 Agent MTB 21 例 = 20 completed + 1 `budget_exhausted`、CIViC 10 例全 completed；
 逐角色 p50 149–295s、p95 ≤505s；每例 token：MTB 118,376 / CIViC 34,955（单调用 13,720 / 3,164）。
+p50 在全文统一指**中位数**：样本数为偶数时取中间两数均值，`compare_arms.py`、`real_metrics.py` 与
+`library.dataset_summary` 用同一函数，数据集页不再取“中间偏上”的那个样本。
 
 同例配对：**v1_fast 与 single_tools 准确率相同**（MTB 0.619/0.619，CIViC 0.500/0.500，
 CI 退化 [0,0]，仅 3 个聚类，不作显著性声明）；七 Agent 成本为 8.6×（MTB）、11.1×（CIViC）token。
@@ -286,15 +288,22 @@ single_tools 0.5238、1 调用、13,710 token/例。CIViC-Fact dev 3 组 10 例�
   `mtb-P-0006191-q0`（8 段候选全部送入，答错：以“最新 CT 无癌”外推为不复发，标签是复发）。
 - 输入截尾已量化：`scripts/fragment_truncation_audit.py` 重放 56492fd 的前缀走法，
   183 例里 126 例有文档截尾、1051 份文档里 181 份被截，看不见的原文 310,902 / 1,980,042 字符（15.7%）；
-  本轮 4 个 MTB 课堂样例单独重放为 22.9%。
+  本轮 4 个 MTB 课堂样例单独重放为 22.9%。这 15.7% 是**旧前缀走法的尾部丢失**；
+  结果行里的 `tail_dropped` 不是同一口径——它现在的含义是「该节点的候选集里有片段没进提示」，
+  未送入的片段可以在任何位置，不等于只截掉了前缀。
 - 修掉两处本轮新发现的缺陷：实验计划手抄 overrides 导致上限停在 200,000（demo 服务的是 `v1_class` 的 260,000），
   两例 MTB 卡在 token 预检 → 计划改由 `scripts/make_class_plan.py` 从 profile 生成并断言相等，
   `tests/test_v1_contract.py` 检查计划上限与 profile 一致；`library.get_item` 的 trace 归一化丢了
   `evidence_ids`／`evidence_coverage`，回放页显示不出记录里的覆盖 → 补回字段并加回归。
-- 语义核对为 AI 辅助（`results/SEMANTIC_CHECK_CLASS6_AI.md`）：6 例的引用偏移全部逐字命中，
-  但其中 4 条主张只能判“部分支持”，因为逐字命中只保证片段来源正确、不保证该句点名的每个字段都在其中；
-  核验分两轮，同一主张可能留下 insufficient 与 confirmed 两条结论；一条核验意见把 genomics 主张写成了
+- 语义核对为 AI 辅助（`results/SEMANTIC_CHECK_CLASS6_AI.md`）：6 例的引用偏移全部逐字命中。
+  核对读取的是每条引用的**完整 span**（`document_id[start:end]`，与 quote 完全相等），不是从中间截取的前段；
+  `MSI stable`、`tumor purity 40.0` 在完整 span 内可见，原先只能判“部分支持”的 4 条里有 3 条升为支持，
+  `pathology-01` 的 “lower lobe” 在两段完整 span 内都找不到，仍记为部分支持。AI 辅助标记保持不变，没有第二位人工评审。
+  一条核验意见把 genomics 主张写成了
   “pathologic layer”，属措辞问题，记在剩余事项。
+- 同一主张可能同时留下专业角色的反馈 verdict 与 Verifier 的最终 verdict（例如 q7 的 `genomics-03`：
+  pathology 反馈 `insufficient`，Verifier 最终 `confirmed`）。这**不是** Verifier 跑了多轮——该例 Verifier
+  只有 1 次模型调用（原始 trace 里 verifier 只有一条 `model_usage`）；报告与页面按“反馈/最终”区分这两行。
 - 同例对照（同一 case 在 `real_fast2_*` 的 v1_fast 与本轮 `real_class6c_*` 的 v1_class 各跑过一次）：
   MTB 可比 3 例里 `mtb-P-0022916-q2` 从 B 变 A（答对），`q6`、`q7` 保持 A；CIViC 可比 2 例里
   `civic-60a33dc8…` 保持 NEI，`civic-3e09dc9e…` 从 REVISIONS 变 NEI（答错）。**方向上算持平：一升一降，
@@ -302,8 +311,48 @@ single_tools 0.5238、1 调用、13,710 token/例。CIViC-Fact dev 3 组 10 例�
   成本方向明确：同例 token MTB 平均 119,014 → 138,187（+16.1%），CIViC 36,834 → 45,675（+24.0%），
   因为 claims-v1 每段提示要多带主张名单与逐主张核验；两臂不在同一时间窗，所以只报 token 不报秒数。
 - 网页真实链路复验（同一课堂输入 `mtb-P-0006191-q0`，2026-10-20 00:03 起）：`run-3c840f440e8e496a8843e7111f25b61a`
-  `succeeded`，11 次模型调用（其中一个角色触发 1 次结构修复，页面按“本角色实际调用 2 次（含 1 次结构修复）”显示）、
-  72,628 in + 21,741 out、552.6s、答 B（标签 A，与记录行一致）。角色卡的证据覆盖写“候选 8 段 / 送入 8 段…全部候选已送入”，
-  主张表出现“证据不足”结论。与 6 例研究臂的差别只在于这一例赶上了一次结构修复，所以调用数与研究臂不同。
+  `succeeded`，11 次模型调用、72,628 in + 21,741 out、552.6s、答 B（标签 A，与记录行一致）。
+  11 次由原始 trace 逐条解释：7 个角色各 1 次，加上 4 次结构修复（literature、timeline、genomics、verifier
+  各一次修正后才通过校验），7 + 4 = 11；`usage.calls=11`、`http_attempts=11`、零 HTTP 重试。
+  页面对 literature/timeline/genomics/verifier 显示“本角色实际调用 2 次（含 1 次结构修复）”，
+  与 trace 一致。此前报告把 11 次写成“只有 1 次结构修复”，与这条 trace 不符，已按原文更正。
+  角色卡的证据覆盖写“候选 8 段 / 送入 8 段…全部候选已送入”，主张表出现“证据不足”结论。
 - 仍开放：合入 `main` 由项目所有者决定；PR 仍需 HTTPS 凭据才能由我创建；31 例单次验收与必要的
   单 Agent 对照只在功能定稿后再跑，本轮没有自动扩量。
+
+## 11. 三组整改验收（2026-10-21，接第 10 节）
+
+本节只做用户指定的三组整改，不再扩实验。验收记录见 `results/ACCEPTANCE_CLASS6D.md`；
+分支 `codex/v1-fast-real-api-20261019`（PR #6），基线 `650e627`。
+
+- **核验进入决策**：`engine.py` 的 `verification_ledger()` 逐条保留
+  `target_claim_id / claim_author / reviewer / verdict / reason / final / citations`，
+  作为 `payload.verification_ledger` 与 `verification_ledger` trace 事件喂给 Decision；
+  `claim_roster[].verifier_verdict` 带最终判定。Decision 必须点名采用与排除的 ID，
+  同一 ID 不得两边都出现；主张 ID 只在整条响应通过校验后原子提交，失败不留幽灵 ID。
+  `reviewer_role` 区分专业角色反馈与 Verifier 最终判定，页面与报告不再把两者混为“Verifier 跑了多次”。
+- **用药事实保底**：`evidence.py` 按角色必需的模态（治疗/分子/病理）记录语法选择保底 span，
+  用原始记录 offset 标记；保底集超预算时写入 `guaranteed_unsent` 并停在预算内，不静默超限。
+  `material_basis` 明确区分 `not_recorded` / `selection_not_covered` / `supplied`。
+  `tail_dropped` 的口径是“有候选没送入”，不限于尾部前缀。
+- **用量一次归约**：页面用 `applyUsageEvents` 按 trace `sequence` 去重，实时、`finish`、刷新重查、
+  断线重连与回放共用同一条路径；总量读 `RunResult.usage`，秒数读 `duration_seconds`，
+  逐角色累计每次调用。合成 100/10/2s + 200/20/3s 显示 300/30/5s / 2 次。
+- **新真实运行（只补两条，放新目录）**：
+  - `results/v1/real_class6d_mtb_r2/`：q6，8 次调用、144,220 in + 16,760 out、207.0 s、答案 A/标签 A。
+    Drug 候选 47 / 送入 27 段、11,969 / 12,000 字符，`treatment` 保底 3/3、`guaranteed_unsent=[]`；
+    `file-ab603d3661c049070b15:f07` 的原始 span `[3113, 3678]` 在 offset 3623 处含 `AGENT: FLOXURIDINE`。
+    Drug 输出两条暴露（FOLFOX、FLOX）与一条关系未知，不再写“无用药”。
+    限制：模型与 Verifier 的措辞仍未逐字写出 FLOXURIDINE，Literature/Genomics 本轮各 0 条结论；
+    保底验收的是输入，不是抽取。
+  - `results/v1/real_class6d_civic/`：civic-3e09dc9e，10 次调用、34,885 in + 18,383 out、206.2 s、
+    答案 REVISIONS/标签 REVISIONS；6 条主张全部 confirmed，Decision 采用 6、排除 0；
+    ledger 6 行，5 行各带 1 条引用。
+- **保留失败**：第一次 q6 在 `results/v1/real_class6d_mtb/…q6.failed.json`，
+  `model output failed schema or source-integrity validation`（genomics/drug/verifier 的 scope
+  越界，修复后 verifier 仍重复同类输出）。原样保留，未因此改代码；成功记录在 `_r2`。
+- **回归**：三组确定性测试 18 passed；`test_demo_app.py` 8 passed / 3 skipped（服务器无 node）；
+  页面 node harness 与 `node --check` 返回 0。全量 pytest 749 passed / 3 skipped（23.51 s）；
+  `run_checks` 749 passed / 3 skipped、覆盖率 95%；`http_smoke` passed（25 预设、162 次模型请求）；
+  `stress_offline` 4048 次执行 0 失败。以上在本次提交前的工作树重跑，输出见 `results/checks/` 等。
+- **仍开放**：课堂冻结由用户决定；不合入 `main`；不自动启动方差、多 seed、完整消融或 31 例验收。

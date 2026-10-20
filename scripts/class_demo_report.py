@@ -89,8 +89,11 @@ def main() -> int:
     per_case = []
     for item in items:
         rows, detail = citation_rows(item)
-        verdict_rows = [v for r in (detail.get("reports") or [])
-                        for v in (r["output"].get("verdicts") or [])]
+        verdict_rows, feedback_rows = [], []
+        for report in detail.get("reports") or []:
+            for verdict in report["output"].get("verdicts") or []:
+                reviewer = verdict.get("reviewer_role", report["role"])
+                (verdict_rows if reviewer == "verifier" else feedback_rows).append(verdict)
         claims = [f for r in (detail.get("reports") or []) for f in r["output"].get("findings") or []]
         per_case.append({
             "item": item, "claims": len(claims), "citations": len([r for r in rows if r["locate"] != "N/A"]),
@@ -99,6 +102,8 @@ def main() -> int:
             "located": dict(Counter(r["locate"] for r in rows)),
             "verdicts": dict(Counter(v.get("verdict", "?") for v in verdict_rows)),
             "verdict_targets": len({v.get("target_claim_id") for v in verdict_rows}),
+            "feedback": dict(Counter(v.get("verdict", "?") for v in feedback_rows)),
+            "feedback_targets": len({v.get("target_claim_id") for v in feedback_rows}),
             "adopted": len((detail.get("decision") or {}).get("adopted_claim_ids") or []),
             "excluded": len((detail.get("decision") or {}).get("rejected_claim_ids") or []),
             "scopes": dict(Counter(c.get("scope", "") for c in claims)),
@@ -138,7 +143,7 @@ def main() -> int:
         if not arm:
             lines.append("| %s | 0 | 0 | - | - | - | - | - |" % study)
             continue
-        lines.append("| %s | %s | %s | claims-v1 | %s | %s | p50 %s / max %s | %d/%d 与标签一致（试运行） |" % (
+        lines.append("| %s | %s | %s | claims-v1 | %s | %s | p50 %s（中位数，偶数样本取中间两数均值）/ max %s | %d/%d 与标签一致（试运行） |" % (
             arm["dataset_label"], arm["cases"], arm["completed"], arm["calls_per_case"],
             arm["tokens_per_case"], arm["seconds_p50"], arm["seconds_max"],
             round(arm["accuracy"] * arm["cases"]), arm["cases"]))
@@ -148,7 +153,7 @@ def main() -> int:
     lines += ["## 每个角色实际收到多少证据（从记录回读，不是估算）", "",
               "`候选` = 该阶段可见文档被切成的整段记录数（现在覆盖全文）；`送入` = 本次真正写进提示的片段数。"
               "两列都在结果行里，网页的角色卡片同源。", "",
-              "| 病例 | 角色 | 候选段 | 送入段 | 原文字符 | 送入字符 | 送入占比 | 预算字符 | 只覆盖前缀？ |",
+              "| 病例 | 角色 | 候选段 | 送入段 | 原文字符 | 送入字符 | 送入占比 | 预算字符 | 有候选未送入？ |",
               "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
     for row in per_case:
         for role, cov in row["coverage"]:
@@ -157,15 +162,16 @@ def main() -> int:
                 row["item"]["case_id"], ROLE_CN.get(role, role), cov.get("candidates"),
                 cov.get("sent"), cov.get("chars_total"), cov.get("chars_sent"), share * 100,
                 cov.get("budget_characters"),
-                "是（有文档未全覆盖）" if cov.get("tail_dropped") else "否"))
+                "是（有候选未送入）" if cov.get("tail_dropped") else "否"))
     lines += ["", "这六例里同一病例的七个节点数字相同：记录显示它们看到的阶段可见文档集一致，角色差异体现在"
                   "各自的提示与输出契约上，而不是各自换一批文档；跨病例的候选数差别很大（1 段到 47 段）。"
-                  "`只覆盖前缀？` 一列在旧实现里恒为“是”，因为每文档最多取前 8 段。", ""]
+                  "`tail_dropped` 现在的含义是“该节点的候选集里存在没进提示的片段”，**不是**“只截掉了前缀”："
+                  "候选已覆盖全文，未送入的片段可能在任何位置，按问题、最新临床事件和关键字段排序后落在预算之外。", ""]
 
     lines += ["## 逐例协作与引用检查", "",
               "`声明依据` ＝ 有多少条主张显式写出了自己依据的前序 `claim_id`（括号内是引用总次数）。"
               "这是后端记录的真实依赖，不是固定七步流程图。", "",
-              "| 病例 | 答案/标签 | 主张 | 声明依据 | 送入引用 | 逐字命中 | 核验结论 | 决策采用/排除 | 缺失资料声明 |",
+              "| 病例 | 答案/标签 | 主张 | 声明依据 | 送入引用 | 逐字命中 | Verifier 最终判定 | 决策采用/排除 | 缺失资料声明 |",
               "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
     for row in per_case:
         item = row["item"]
@@ -179,6 +185,12 @@ def main() -> int:
             ",".join("%s:%d" % kv for kv in sorted(row["verdicts"].items())) or "无",
             row["verdict_targets"], row["claims"],
             row["adopted"], row["excluded"], len(row["missing_material"])))
+    feedback = ["%s：%s（%d 条，覆盖 %d 个主张）" % (
+        row["item"]["case_id"], ",".join("%s:%d" % kv for kv in sorted(row["feedback"].items())) or "无",
+        sum(row["feedback"].values()), row["feedback_targets"]) for row in per_case if row["feedback"]]
+    lines += ["", "上表的「Verifier 最终判定」只统计 `reviewer_role=verifier` 的结论。"
+                  "专业角色也可以对前序主张写反馈判定，它们单独统计，**不代表 Verifier 运行了多次**："
+                  + ("；".join(feedback) if feedback else "本批没有专业角色反馈判定") + "。", ""]
     lines += ["", "状态分布：%s" % json.dumps({i["item"]["case_id"]: i["item"]["status"] for i in per_case},
                                              ensure_ascii=False), ""]
     lines += ["## 主张层面分布（是否还在重复结局判断）", ""]
@@ -206,7 +218,8 @@ def main() -> int:
                   "现行 `fragment_documents()` 先把每份文档整篇切成记录级候选（候选数＝上表文档的真实段数，"
                   "不再有“永远不可见的前缀之外内容”），再按问题、最新临床事件与分子/病理关键字段挑选送入子集；"
                   "每个节点把自己收到的 `evidence_ids` 与覆盖信息写进结果行，就是上一节那张表。",
-                  "换句话说：修复的是“候选层面的截尾”，送入层面仍然受预算约束，并且现在会在页面上明说。", ""]
+                  "这里重放的 15.7% 指旧前缀走法在**尾部**丢掉的原文；修复后 `tail_dropped` 的含义是“有候选未送入”，"
+                  "未送入的片段可能位于任何位置，二者不是同一个计数。", ""]
     else:
         lines += ["", "（缺少 `%s`：先运行 `scripts/fragment_truncation_audit.py` 再重新生成本报告。）" % args.audit, ""]
 
@@ -222,9 +235,8 @@ def main() -> int:
         lines.append("| `%s` | %s | 答案 %s（标签 %s），主张 %d，逐字命中 %d，采用/排除 %d/%d，送入占比 %s |" % (
             case_id, pitch[0], item["answer"], item["gold_label"], row["claims"],
             row["located"].get("逐字命中", 0), row["adopted"], row["excluded"],
-            "100%" if not any(c.get("tail_dropped") for _, c in row["coverage"])
-            else "%.0f%%" % (100 * max((c.get("chars_sent", 0) / max(1, c.get("chars_total", 0))
-                                        for _, c in row["coverage"]), default=0))))
+            ("%.0f%%" % (100 * max((c.get("chars_sent", 0) / max(1, c.get("chars_total", 0))
+                                    for _, c in row["coverage"]), default=0)))))
     lines += ["", "网页里默认显示每个案例的中文要点，原始英文结论与引用片段放在折叠区（`oncofusion/web/index.html` 的 "
                   "CLASS_NOTES 与主张表）。", ""]
     for case_id, pitch in CLASSROOM_NOTES.items():
@@ -248,7 +260,8 @@ def main() -> int:
               "", "## 还没做的", "",
               "- 关键引用的逐条语义核对目前是 AI 辅助（`results/SEMANTIC_CHECK_CLASS6_AI.md`），"
               "偏移定位单独记录在 `results/SEMANTIC_REVIEW_CLASS6.md`；没有第二位人工评审。"
-              "核对里已经标出 4 条只能判“部分支持”的主张：逐字命中不等于引文覆盖该句的每个字段。",
+              "复核读的是完整 span：原先 4 条“部分支持”里 3 条升为支持，`pathology-01` 的 “lower lobe” "
+              "在两段完整 span 内都不存在，仍记为超出所引证据。",
               "- 六例是单 seed 试运行：MTB 4 例、3 位患者，CIViC 2 例、2 篇文献；不做显著性陈述，"
               "31 例单次验收与单 Agent 对照等到功能稳定后按需要再跑。",
               "- 预算仍是硬约束：上面“送入占比”小于 100% 的案例，页脚会写明哪些文档尾部没送进去，"

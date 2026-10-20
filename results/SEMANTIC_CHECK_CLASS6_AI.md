@@ -1,13 +1,14 @@
 # 关键引用的逐条语义核对（AI 辅助，不是人工评审）
 
 核对人：本会话的代理（同一个执行者，非独立第二人）。方法：把结果行里每条 `Finding.statement` 全文，与它自己引用的
-`quote`（`document_id[start:end]`，已由后端从片段号回查）逐段对照，判断**这段原文是否真的支撑这句话**。
+**完整 span**（`document_id[start:end]`，与 `quote` 完全相等，已由后端从片段号回查）逐段对照，判断**这段原文是否真的支撑这句话**。
+不是读引用开头的一小段；下面表里的“完整 span”指该引用在结果行中保存的整个片段。
 定位层面的机械检查（quote 是否与原文偏移完全相等）不在这里，见 `results/SEMANTIC_REVIEW_CLASS6.md`。
 
 判定用三档：
 
-- `支持`：引文里能看到该主张点名的字段或句子。
-- `部分支持`：引文确实来自同一条记录，但主张点名的某个具体字段在我截取的前段里看不到，需要展开完整片段才能确认。
+- `支持`：完整 span 里能看到该主张点名的字段或句子。
+- `部分支持`：完整 span 内仍缺少该主张点名的某个具体字段（不是“被截断”，而是引文本身没有）。
 - `N/A`：该主张没有引用任何片段（这些主张自己写的是 `unknown` 或 `not_applicable`，按规则不判）。
 
 范围：课堂现场用的 3 例逐条判；其余 3 例只做案例级结论（它们的 100% 引用定位都逐字命中，见下表）。
@@ -22,18 +23,19 @@
 | `timeline-01` | 时间线 | 逐字命中 | 支持 | 第二段引文含 `STOP_AGE: 55.5995 … PEMETREXED … CISPLATIN` 与 55.569 的随访记录 |
 | `timeline-02` | 时间线 | 逐字命中 | 支持 | 56.082 的 `HAS CANCER: No` 与 `cancer has NOT progressed` 逐字在引文内 |
 | `timeline-03` | 时间线 | 无引用 | N/A | `unknown`：56.082 之后无更晚事件 |
-| `genomics-01` | 基因 | 逐字命中 | 部分支持 | `GENE_PANEL: IMPACT410`、`TMB_NONSYNONYMOUS: 2.936159093` 在引文内；`MSI stable`、`tumor purity 40.0` 属同一条记录的后段，需展开完整片段 |
+| `genomics-01` | 基因 | 逐字命中 | 支持 | 完整 span（599 字符）内可见 `GENE_PANEL: IMPACT410`、`TMB_NONSYNONYMOUS: 2.936159093`、`MSI stable` 与 `tumor purity 40.0` |
 | `genomics-02` | 基因 | 无引用 | N/A | `unknown`：无基因/变异层面 |
-| `pathology-01` | 病理 | 逐字命中 | 部分支持 | `AJCC: IIA`、`PATH_GROUP: 2A`、`ADENOCARCINOMA COMBINED WITH OTHER TYPES` 在引文内；「lower lobe」「区域淋巴结受累」不在这两段的前 457 字符里，属同记录后段字段 |
-| `pathology-02` | 病理 | 逐字命中 | 部分支持 | 同上：`IMPACT410`、TMB 可见，MSI/purity 在同记录后段 |
+| `pathology-01` | 病理 | 逐字命中 | 部分支持 | 完整 span（两段共 1057 字符）内有 `AJCC: IIA`、`PATH_GROUP: 2A`、`ADENOCARCINOMA COMBINED WITH OTHER TYPES`、区域淋巴结与 `SAMPLE_TYPE: Primary`；但 “lower lobe” 在两段完整 span 里都不存在（`PRIMARY_SITE` 也没有 lobe 字样），该字段超出所引证据 |
+| `pathology-02` | 病理 | 逐字命中 | 支持 | 完整 span 内可见 `IMPACT410`、TMB、MSI 与 purity；主张点名的字段都在 |
 | `pathology-03` | 病理 | 无引用 | N/A | `unknown`：无 57.8 后的病理标本 |
 | `drug-01` | 药物 | 逐字命中 | 支持 | `AGENT: PEMETREXED` / `AGENT: CISPLATIN`，起止 55.427→55.5995 逐字可见 |
 | `drug-02`、`drug-03` | 药物 | 无引用 | N/A | `unknown`：无分子-药物关系、无后续用药 |
 | `verifier-01` | 核验 | 逐字命中 | 支持 | 复用的正是 56.082 那段 CT |
 | `verifier-02` | 核验 | 无引用 | N/A | `unknown`：无 56.082 之后事件 |
-| `verifier-03` | 核验 | 逐字命中 | 部分支持 | 与 `genomics-01` 同一处依赖记录后段字段 |
+| `verifier-03` | 核验 | 逐字命中 | 支持 | 复用的两段完整 span 覆盖所列的 AJCC/淋巴结/IMPACT410/MSI/purity/TMB 字段 |
 
 案例级：17 条主张 / 16 次引用全部逐字命中；7 条 `unknown` 主张一律不带引用（后端会拒绝带引用的 `unknown`）。
+完整 span 复核后，原先的 4 条“部分支持”里 3 条改为“支持”，只剩 `pathology-01` 的 “lower lobe” 仍超出所引证据。
 答错的 B/A 不在引用层面——引用都成立，是**外推方向**错了（最新 CT 无癌 ≠ 未来 12 个月不复发），
 而未解决项恰好把这条写了出来：「56.082 之后没有任何复发或随访记录」。
 
@@ -49,7 +51,7 @@
 | `timeline-03` | 时间线 | 无引用 | N/A | `unknown` |
 | `genomics-01` | 基因 | 逐字命中 | 支持 | `TP53 … p.Cys275Tyr,p.C275Y`、`FLT4 … missense_variant` 逐字在第二段引文里；`KRAS p.G12V` 在同一片段前部 |
 | `genomics-02` | 基因 | 逐字命中 | 支持 | CNA 行逐字给出 `CCND3,2.0 SMAD4,-2.0 CDKN2B,-2.0 CDKN2A,-2.0 TEK,-2.0 CDKN2Ap14ARF,-2.0 VEGFA,2.0 YES1,2.0 CDKN2Ap16INK4A,-2.0` |
-| `genomics-03` | 基因 | 无引用 | N/A | `unknown`：分子层面不下 12 个月结论；核验第一轮判 `insufficient`、复盘轮判 `confirmed`（两条都留在记录里） |
+| `genomics-03` | 基因 | 无引用 | N/A | `unknown`：分子层面不下 12 个月结论。记录里有两行 verdict：`pathology` 角色的反馈判 `insufficient`，Verifier 的最终判定是 `confirmed`；这不是 Verifier 跑了多轮 |
 | `pathology-01` | 病理 | 逐字命中 | 支持 | `Infiltrating Duct Carcinoma`、`TMB_NONSYNONYMOUS: 2.594094285`；`CLINICAL_GROUP_y` 起在同段后部 |
 | `pathology-02` | 病理 | 逐字命中 | 支持 | 样本号 `P-0027883-T01-IM6` 同时出现在病理与变异文件里 |
 | `pathology-03` | 病理 | 无引用 | N/A | `unknown` |
@@ -78,11 +80,11 @@
 
 ## 核对中发现的问题（如实记下）
 
-1. 个别主张点名的具体字段（如 `MSI stable`、`tumor purity 40.0`、`lower lobe`、区域淋巴结）在我截取的引文前段看不到，
-   只能判 `部分支持`：它们与被引用的记录同属一条，但**逐字命中只保证「这段原文确实来自这里」，不保证「这句话的每个字段都在这段里」**。
-   课堂里如果要展示这一点，就展开那条主张的完整片段。
-2. 核验角色分两轮（首轮 + 复盘），同一 `target_claim_id` 可能留下两条不同结论
-   （q7 的 `genomics-03`：`insufficient` → `confirmed`）。记录保留两条，页面按两条显示；
-   这不算矛盾数据，但报告里不能把它统计成「一次核验一个结论」。
+1. 完整 span 复核：`MSI stable`、`tumor purity 40.0` 都在被引片段内，原先按“截取前段”判的 3 条改为支持；
+   只有 `pathology-01` 的 “lower lobe” 在两段完整 span 内都不存在，确属所引证据之外的字段。
+   **逐字命中只保证“这段原文确实来自这里”，不保证“这句话的每个字段都在这段里”**；这条仍要在课堂里展开讲。
+2. 同一 `target_claim_id` 可能留下两行 verdict：专业角色对前序主张的反馈，以及 Verifier 的最终判定
+   （q7 的 `genomics-03`：`pathology` 反馈 `insufficient`，Verifier 最终 `confirmed`）。该例 Verifier 只有
+   1 次模型调用，不是“两轮核验”；报告和页面按“反馈/最终”区分，不把行数当运行次数。
 3. `civic-3e09dc9e` 里有一条核验意见的文字写成了「The pathologic layer confirms…」，而它针对的是 `genomics-01`。
    结论本身站得住，**是核验自己写错了层名**，属于提示词层面的措辞问题，不是协议缺陷；已在剩余事项里记下。

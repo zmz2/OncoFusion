@@ -12,7 +12,8 @@ from . import __version__
 from .agent_design import duty as specialist_duty
 from .workflow import dependency_identity, execute as execute_workflow
 from .evidence import (fragment_documents, resolve_fragment_citations, canonical_variant, check_citations, deduplicate_documents,
-                       deduplicate_findings, entity_compatibility, pathology_fields, polarity, retrieve, variant_mentions, visible_case)
+                       deduplicate_findings, entity_compatibility, material_basis_of, pathology_fields, polarity, retrieve,
+                       variant_mentions, visible_case)
 from .providers import Provider, ProviderError, provider_identity
 from .schemas import (ClaimAnalysisOutput, ClaimDecisionOutput, ClaimVerdict, ClaimVerificationOutput,
                       Finding, FragmentAnalysisOutput, FragmentDecisionOutput,
@@ -25,8 +26,11 @@ CLAIM_RULES = (
     "used_claim_ids only the claim ids you actually built on; never invent an id. If the material "
     "your role needs is absent from the visible inputs, emit one finding whose statement starts with "
     "'not_applicable:' (this case has no such modality) or 'unknown:' (the data is missing), with "
-    "relation NEI and no citations. Do not restate the final survival, recurrence or efficacy verdict: "
-    "report your own layer and leave the outcome to the decision role."
+    "relation NEI and no citations. payload.material_coverage says, for the modalities your role is "
+    "supposed to report on, how many records exist in the visible material and how many reached this "
+    "stage: write 'unknown: the selection did not cover it' when records exist but none were sent, "
+    "and 'not_applicable:' only when no such record exists at all. Do not restate the final survival, "
+    "recurrence or efficacy verdict: report your own layer and leave the outcome to the decision role."
 )
 TASK_FRAMING = {
     "mcq": "Task type: prediction. The question asks about an outcome after the information cutoff, "
@@ -68,9 +72,13 @@ ROLE_OUTPUT = {
     "literature": "Output contract: the source packet - which documents were used, what each one directly "
                   "measures, and its applicability limits.",
     "verifier": "Output contract: one verdict per claim id in payload.claim_roster - confirmed, corrected, "
-                "rejected or insufficient - each backed by the source spans you checked.",
-    "decision": "Output contract: name the claim ids you adopted and the claim ids you excluded, then answer "
-                "with source-grounded citations.",
+                "rejected or insufficient - each backed by the source spans you checked. Earlier roles may "
+                "have attached their own verdicts; those are feedback, your verdicts are the final check.",
+    "decision": "Output contract: read payload.verification_ledger, which records for every claim who "
+                "reviewed it, the verdict, the reason and the spans cited, and payload.claim_roster, whose "
+                "verifier_verdict is the final check. Adopt claims the verifier confirmed and exclude the "
+                "ones it rejected or found insufficient, then name both lists; an id may appear in only one "
+                "of them. Answer with source-grounded citations.",
 }
 
 DUTIES = {
@@ -86,24 +94,28 @@ DUTIES = {
 
 def build_analysis_output(wire, fragment_index, role: str, claims_on: bool, known_claims: dict[str, str],
                           findings_limit: int = 30, allowed_scopes: frozenset | set = frozenset(),
-                          emit=None) -> AnalysisOutput:
+                          emit=None, material_basis: str = "") -> AnalysisOutput:
     """Turn one wire response into findings with server-assigned claim ids and resolved spans.
 
-    A claim id may only reference claims produced by an earlier role, so an invented or
-    same-response id fails the run instead of quietly rewriting the collaboration record.
+    A claim id may only reference claims that were already committed to a report, so an invented id
+    fails the run instead of quietly rewriting the collaboration record. Nothing is registered here:
+    the caller commits the returned ids only after every check on this response has passed, which is
+    what stops a repaired or rejected response from leaving claim ids behind that no report owns.
     """
     if len(wire.findings) > findings_limit:
         dropped = len(wire.findings) - findings_limit
         if emit is not None:
             emit("findings_capped", role, reported=len(wire.findings), kept=findings_limit, dropped=dropped)
         wire = wire.model_copy(update={"findings": wire.findings[:findings_limit]})
+    base = sum(1 for owner in known_claims.values() if owner == role)
+    claimable = dict(known_claims)
     findings = []
     for position, entry in enumerate(wire.findings, 1):
         used = list(getattr(entry, "used_claim_ids", [])) if claims_on else []
-        stray = sorted({c for c in used if c not in known_claims}) if claims_on else []
+        stray = sorted({c for c in used if c not in claimable}) if claims_on else []
         if stray:
             raise ValueError("finding references claim ids no earlier role produced: " + ", ".join(stray))
-        claim_id = "%s-%02d" % (role, position) if claims_on else ""
+        claim_id = "%s-%02d" % (role, base + position) if claims_on else ""
         scope = getattr(entry, "scope", "")
         level = getattr(entry, "evidence_level", "")
         status = getattr(entry, "material_status", "")
@@ -117,18 +129,44 @@ def build_analysis_output(wire, fragment_index, role: str, claims_on: bool, know
                                 citations=resolve_fragment_citations(entry.citations, fragment_index),
                                 claim_id=claim_id, author_role=role if claims_on else "",
                                 used_claim_ids=used, scope=scope, evidence_level=level,
-                                material_status=status))
+                                material_status=status,
+                                material_basis=material_basis if status in ("not_applicable", "unknown") else ""))
         if claim_id:
-            known_claims[claim_id] = role
+            claimable[claim_id] = role
     verdicts = []
     for verdict in getattr(wire, "verdicts", []):
-        if claims_on and verdict.target_claim_id not in known_claims:
+        if claims_on and verdict.target_claim_id not in claimable:
             raise ValueError("verdict targets an unknown claim id: " + verdict.target_claim_id)
         verdicts.append(ClaimVerdict(target_claim_id=verdict.target_claim_id, verdict=verdict.verdict,
                                      note=verdict.note,
-                                     citations=resolve_fragment_citations(verdict.citations, fragment_index)))
+                                     citations=resolve_fragment_citations(verdict.citations, fragment_index),
+                                     reviewer_role=role if claims_on else ""))
     return AnalysisOutput(findings=findings, unresolved=list(wire.unresolved),
                           requery=wire.requery, verdicts=verdicts)
+
+
+def verification_ledger(reports, known_claims: dict[str, str], handle: dict | None = None) -> list[dict]:
+    """Every recorded review, with who wrote it: role feedback and the verifier's final check differ.
+
+    The citation text is not repeated here: fragment mode passes the evidence handle when this stage
+    still has it, and otherwise the source span without the quote, exactly like the findings board.
+    """
+    rows = []
+    for report in reports:
+        for verdict in report.output.verdicts:
+            citations = []
+            for c in verdict.citations:
+                key = (c.document_id, c.start, c.end)
+                if handle and key in handle:
+                    citations.append({"evidence_id": handle[key]})
+                else:
+                    citations.append({k: v for k, v in c.model_dump(mode="json").items() if k != "quote"})
+            rows.append({"target_claim_id": verdict.target_claim_id,
+                         "claim_author": known_claims.get(verdict.target_claim_id, ""),
+                         "reviewer": report.role, "verdict": verdict.verdict,
+                         "reason": verdict.note, "final": report.role == "verifier",
+                         "citations": citations})
+    return rows
 
 
 
@@ -257,7 +295,7 @@ class Engine:
                 reflection_now = role == "verifier" and not config.ablations.external_verification
                 _, index_now, _ = ([], {}, {}) if reflection_now else fragment_documents(
                     available, config.fragment_chars, config.max_fragments_per_document,
-                    stage_query, config.fragment_budget)
+                    stage_query, config.fragment_budget, role=role)
                 handle = {(d.id, s, e): eid for eid, (d, s, e) in index_now.items()}
                 board = [{**f.model_dump(mode="json"), "citations": [
                     {"evidence_id": handle[(c.document_id, c.start, c.end)]}
@@ -273,7 +311,9 @@ class Engine:
             if config.citation_mode == "fragment" and not reflection:
                 fragment_view, fragment_index, fragment_coverage = fragment_documents(
                     available, config.fragment_chars, config.max_fragments_per_document,
-                    stage_query, config.fragment_budget)
+                    stage_query, config.fragment_budget, role=role)
+            basis = material_basis_of(fragment_coverage)
+            decision_ledger = None
             source_roster = []
             source_characters = {}
             for d in ([] if reflection else available):
@@ -304,6 +344,28 @@ class Engine:
                                             "relation": f.relation, "scope": f.scope,
                                             "statement": f.statement[:180]}
                                            for report in reports for f in report.output.findings if f.claim_id]
+                if fragment_coverage and fragment_coverage.get("required_labels"):
+                    # The role's own material, counted by the server: a missing-modality claim has to
+                    # say whether nothing is recorded or the selection did not cover it.
+                    payload["material_coverage"] = {
+                        "modalities": {label: {"candidates": entry.get("candidates", 0),
+                                               "sent": entry.get("sent", 0)}
+                                       for label, entry in fragment_coverage.get("required", {}).items()},
+                        "basis": basis}
+                if role == "decision":
+                    # The decision sees every review, not only the verdicts: who reviewed the claim,
+                    # what they decided, why, and which spans they cited.
+                    ledger = verification_ledger(reports, known_claims,
+                                                 handle if config.citation_mode == "fragment" else None)
+                    final = {row["target_claim_id"]: row["verdict"] for row in ledger if row["final"]}
+                    for entry in payload["claim_roster"]:
+                        entry["verifier_verdict"] = final.get(entry["claim_id"])
+                    payload["verification_ledger"] = ledger
+                    decision_ledger = {"entries": ledger, "reviews": len(ledger),
+                                       "claims_reviewed": len({row["target_claim_id"] for row in ledger}),
+                                       "final_verdicts": len(final),
+                                       "rejected": sorted(cid for cid, verdict in final.items() if verdict == "rejected"),
+                                       "insufficient": sorted(cid for cid, verdict in final.items() if verdict == "insufficient")}
             if repair_context is not None:
                 payload["repair"] = repair_context
             executor = "generalist" if role in config.delegated_roles or config.mode not in ("multi", "fixed_five") else role
@@ -372,9 +434,13 @@ class Engine:
                  source_ids=[d.id for d in available], token_reservation=reserved,
                  evidence_ids=[f["evidence_id"] for f in fragment_view],
                  evidence_coverage=fragment_coverage,
+                 material_basis=basis,
                  board_findings=len(board) if isinstance(board, list) else 0,
                  unresolved_items=sum(len(entry["items"]) for entry in unresolved),
                  unresolved_by_role={entry["role"]: len(entry["items"]) for entry in unresolved})
+            if decision_ledger is not None:
+                # Recorded with the call it fed, so "what the decision saw" is replayable.
+                emit("verification_ledger", role, **decision_ledger)
             call_started = time.monotonic()
             try:
                 reply = self.provider.complete(system, payload, config.max_output_tokens, config.temperature, config.seed)
@@ -399,11 +465,17 @@ class Engine:
                 wire = wire_schema.model_validate_json(reply.content)
                 if config.citation_mode == "fragment":
                     if role == "decision":
-                        adopted = list(getattr(wire, "adopted_claim_ids", [])) if claims_on else []
-                        excluded = list(getattr(wire, "rejected_claim_ids", [])) if claims_on else []
+                        # Order-preserving dedupe, then an id may sit in exactly one list: the
+                        # adoption record has to be readable against the verification ledger.
+                        adopted = list(dict.fromkeys(getattr(wire, "adopted_claim_ids", []))) if claims_on else []
+                        excluded = list(dict.fromkeys(getattr(wire, "rejected_claim_ids", []))) if claims_on else []
                         stray = sorted({c for c in adopted + excluded if c not in known_claims}) if claims_on else []
                         if stray:
                             raise ValueError("decision names claim ids no role produced: " + ", ".join(stray))
+                        both = sorted(set(adopted) & set(excluded))
+                        if both:
+                            raise ValueError("decision lists the same claim ids as both adopted and rejected: "
+                                             + ", ".join(both))
                         output = DecisionOutput(
                             answer=wire.answer, explanation=wire.explanation,
                             unresolved=wire.unresolved, confidence=wire.confidence,
@@ -411,7 +483,7 @@ class Engine:
                             adopted_claim_ids=adopted, rejected_claim_ids=excluded)
                     else:
                         output = build_analysis_output(wire, fragment_index, role, claims_on, known_claims,
-                                                   config.findings_limit, allowed_scopes, emit)
+                                                   config.findings_limit, allowed_scopes, emit, basis)
                         if role == "verifier" and claims_on and not reflection and not output.verdicts:
                             raise ValueError("claims-v1 verifier must answer at least one claim")
                 else:
@@ -439,6 +511,12 @@ class Engine:
                         if finding.relation != "NEI" and not finding.citations:
                             raise ValueError("asserted findings require citations")
                     reports.append(AgentReport(role=role, executor=executor, output=output))
+                    if claims_on:
+                        # Atomic commit: these ids become referable only now, after every check on
+                        # this response passed and the report that owns them exists.
+                        for finding in output.findings:
+                            if finding.claim_id:
+                                known_claims[finding.claim_id] = finding.author_role
                     emit("agent_reported", role, output=output.model_dump(mode="json"))
             except (ValidationError, ValueError) as exc:
                 errors = exc.errors(include_input=False, include_url=False) if isinstance(exc, ValidationError) else [{"msg": str(exc)}]

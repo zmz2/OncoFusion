@@ -181,10 +181,73 @@ const DUTY_CN = { literature: "从可见文献里挑出与该主张直接相关�
 const CLAIM_CN = { disease: "癌种", molecularProfile: "分子特征", therapies: "药物",
   evidenceDirection: "证据方向", evidenceType: "证据类型", significance: "临床意义", variantOrigin: "变异来源" };
 const S = { token: localStorage.getItem("of.token") || "", demo: null, agents: {}, library: [],
-  current: null, runId: null, cursor: -1, idem: null, streaming: false };
+  current: null, runId: null, cursor: -1, idem: null, streaming: false, result: null, ledger: null };
 const STATE = {};
 const $ = (id) => document.getElementById(id);
 const esc = (v) => String(v == null ? "" : v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+// One reduction for the live stream, the completed run and a replayed record. Usage events are
+// deduplicated by their trace sequence, so a duplicate SSE frame, a reconnect catch-up or a
+// finish() over already-applied events cannot count a call twice.
+function reduceUsage(events) {
+  const seen = {}, perRole = {}, total = { in: 0, out: 0, sec: 0, calls: 0, attempts: 0 };
+  (events || []).forEach((e) => {
+    if (!e) return;
+    if (e.sequence != null) { if (seen[e.sequence]) return; seen[e.sequence] = 1; }
+    const role = e.role || "", d = e.details || e;
+    const row = perRole[role] = perRole[role] || { in: 0, out: 0, sec: 0, calls: 0, attempts: 0, fragments: null };
+    [row, total].forEach((t) => {
+      t.in += d.input_tokens || 0; t.out += d.output_tokens || 0; t.sec += d.seconds || 0;
+      t.calls += 1; t.attempts += d.attempts || 0;
+    });
+    if (d.evidence_fragments != null) row.fragments = d.evidence_fragments;
+    else if (d.fragments != null) row.fragments = d.fragments;
+  });
+  return { perRole: perRole, total: total };
+}
+
+function recordUsage(role, event, sequence) {
+  const st = STATE[role] = STATE[role] || {};
+  st.usageBySeq = st.usageBySeq || {};
+  const key = sequence != null ? "s" + sequence : "n" + Object.keys(st.usageBySeq).length;
+  const fresh = !(key in st.usageBySeq);
+  st.usageBySeq[key] = event;
+  const mine = reduceUsage(Object.keys(st.usageBySeq).map((k) => st.usageBySeq[k])).perRole[role] ||
+    { in: 0, out: 0, sec: 0, calls: 0, attempts: 0, fragments: null };
+  st.calls = mine.calls;
+  st.in = mine.calls ? mine.in : null;
+  st.out = mine.calls ? mine.out : null;
+  st.sec = mine.calls ? mine.sec : null;
+  st.attempts = mine.attempts;
+  if (mine.fragments != null) st.fragments = mine.fragments;
+  return { in: mine.in, out: mine.out, sec: mine.sec, calls: mine.calls, fresh: fresh };
+}
+
+function usageTotals() {
+  const events = [];
+  ROLES.forEach((r) => {
+    const st = STATE[r] || {};
+    Object.keys(st.usageBySeq || {}).forEach((k) => events.push(st.usageBySeq[k]));
+  });
+  const total = reduceUsage(events).total;
+  const totals = { in: total.in, out: total.out, sec: total.sec, calls: total.calls };
+  // The run result is authoritative for tokens and calls; wall time is the server's duration.
+  if (S.result && S.result.usage) {
+    const u = S.result.usage;
+    if (u.input_tokens != null) totals.in = u.input_tokens;
+    if (u.output_tokens != null) totals.out = u.output_tokens;
+    if (u.calls != null) totals.calls = u.calls;
+  }
+  if (S.result && typeof S.result.duration_seconds === "number") totals.sec = S.result.duration_seconds;
+  return totals;
+}
+
+// The completed run and the replayed record both arrive as a whole trace; the live stream calls
+// recordUsage per frame. All three end in the same per-role map, keyed by trace sequence.
+function applyUsageEvents(events) {
+  (events || []).filter((e) => e && (e.kind == null || e.kind === "model_usage"))
+    .forEach((e) => recordUsage(e.role, e, e.sequence));
+}
 
 async function api(path, opts) {
   opts = opts || {};
@@ -281,7 +344,9 @@ function unstashCase() {
 }
 
 function resetState() {
-  ROLES.forEach((r) => { STATE[r] = { state: "idle", in: null, out: null, sec: null, sources: [], fragments: null, output: null }; });
+  S.result = null;
+  S.ledger = null;
+  ROLES.forEach((r) => { STATE[r] = { state: "idle", in: null, out: null, sec: null, usageBySeq: {}, sources: [], fragments: null, output: null }; });
   $("timeline").innerHTML = "";
   $("graph").innerHTML = "";
   renderFlow();
@@ -309,13 +374,35 @@ function citationBlock(c) {
       : esc(raw)) + "</div></details>";
 }
 
-function outputBlock(output) {
+function ledgerBlock() {
+  if (!S.ledger || !S.ledger.length) return "";
+  const final = S.ledger.filter((x) => x.final), feedback = S.ledger.filter((x) => !x.final);
+  const rows = S.ledger.map((x) => "<tr><td>" + esc(x.target_claim_id) + "</td><td>" +
+    esc(ROLE_CN[x.reviewer] || x.reviewer) + "</td><td>" +
+    (x.final ? "<b>" : "") + esc(VERDICT_CN[x.verdict] || x.verdict) + (x.final ? "</b>" : "") + "</td><td>" +
+    esc(String(x.reason || "").slice(0, 200)) + "</td><td>" + ((x.citations || []).length) + "</td></tr>").join("");
+  return "<details open><summary>综合决策收到的核验账本 " + S.ledger.length +
+    " 条（最终判定 " + final.length + " 条，专业角色反馈 " + feedback.length + " 条）</summary>" +
+    "<div class=hint>这是后端在调用决策前组装的 payload.verification_ledger：每条保留主张 ID、审核者、判定、理由与引用数；" +
+    "只有 reviewer=主张核验 的行是最终判定。</div><table><tr><th>主张</th><th>审核者</th><th>判定</th><th>理由</th><th>引用</th></tr>" +
+    rows + "</table></details>";
+}
+
+function outputBlock(output, role) {
   if (!output) return "";
   const html = [];
   (output.findings || []).forEach((f) => {
     html.push("<div class=finding><span class=\"rel " + esc(f.relation) + "\">" + esc(REL_CN[f.relation] || f.relation) +
       "</span>" + claimChips(f) + esc(f.statement) + (f.citations || []).map(citationBlock).join("") + "</div>");
   });
+  const verdicts = output.verdicts || [];
+  if (verdicts.length) {
+    html.push("<details><summary>" + (role === "verifier" ? "对每条主张的最终判定 " : "对前序主张的反馈判定 ") +
+      verdicts.length + " 条" + (role === "verifier" ? "" : "（不是最终核验）") + "</summary>" +
+      "<table><tr><th>主张</th><th>判定</th><th>理由</th></tr>" + verdicts.map((v) =>
+        "<tr><td>" + esc(v.target_claim_id) + "</td><td>" + esc(VERDICT_CN[v.verdict] || v.verdict) +
+        "</td><td>" + esc(v.note || "") + "</td></tr>").join("") + "</table></details>");
+  }
   if (output.answer) html.push("<div class=finding><span class=\"rel\">" + esc(REL_CN[output.answer] || output.answer) +
     "</span><b>本步结论</b> " + esc(output.explanation || "") + "</div>");
   if ((output.unresolved || []).length) html.push("<details><summary>交给下一步的未解决项 " + output.unresolved.length +
@@ -375,7 +462,7 @@ function renderRoles() {
       "<div class=hint>" + ({ idle: "等待上游", running: "正在调用模型并生成结构化结论", done: "已完成", failed: "未完成" }[st.state] || "") +
       (meta.length ? " · " + meta.join(" · ") : "") + "</div>" +
       (io.length ? "<div class=io>" + io.join("<br>") + "</div>" : "") +
-      outputBlock(st.output);
+      outputBlock(st.output, r) + (r === "decision" ? ledgerBlock() : "");
   });
   renderFlow();
 }
@@ -402,6 +489,8 @@ const SCOPE_CN = {temporal: "时间与事件", molecular: "分子与变异", pat
   outcome_prediction: "结局推断"};
 const LEVEL_CN = {measured: "实测记录", curated: "整理库", literature: "文献", inferred: "推断", absent: "无支撑"};
 const MATERIAL_CN = {present: "有资料", not_applicable: "本题不涉及", unknown: "资料缺失"};
+const MATERIAL_BASIS_CN = {not_recorded: "缺失来源：原文未记录", selection_not_covered: "缺失来源：选集未覆盖",
+  supplied: "非选集缺失：所需资料已送入"};
 
 function claimChips(f) {
   const chips = [];
@@ -409,6 +498,9 @@ function claimChips(f) {
   if (f.evidence_level) chips.push("<span class=pill>依据：" + esc(LEVEL_CN[f.evidence_level] || f.evidence_level) + "</span>");
   if (f.material_status && f.material_status !== "present") {
     chips.push('<span class="pill warn">资料：' + esc(MATERIAL_CN[f.material_status] || f.material_status) + '</span>');
+  }
+  if (f.material_basis) {
+    chips.push('<span class="pill warn">' + esc(MATERIAL_BASIS_CN[f.material_basis] || f.material_basis) + '</span>');
   }
   return chips.length ? "<div class=hint>" + chips.join(" ") + "</div>" : "";
 }
@@ -420,13 +512,19 @@ function renderClaims() {
     (o.findings || []).forEach((f) => {
       if (f.claim_id) rows.push({id: f.claim_id, author: f.author_role || ROLE_CN[r], statement: f.statement,
                                  scope: f.scope, level: f.evidence_level, material: f.material_status,
-                                 used: f.used_claim_ids || []});
+                                 basis: f.material_basis, used: f.used_claim_ids || []});
     });
   });
-  const verdicts = {};
+  const verdicts = {}, feedback = {};
   ROLES.forEach((r) => {
     const o = (STATE[r] || {}).output || {};
-    (o.verdicts || []).forEach((v) => { verdicts[v.target_claim_id] = v; });
+    (o.verdicts || []).forEach((v) => {
+      // reviewer_role is server-assigned on new records; old ones fall back to the reporting role.
+      const reviewer = v.reviewer_role || r;
+      const row = Object.assign({}, v, { reviewer: reviewer });
+      if (reviewer === "verifier") verdicts[v.target_claim_id] = row;
+      else (feedback[v.target_claim_id] = feedback[v.target_claim_id] || []).push(row);
+    });
   });
   const dec = ((STATE.decision || {}).output) || {};
   const adopted = dec.adopted_claim_ids || [];
@@ -438,6 +536,9 @@ function renderClaims() {
   }
   const table = rows.map((c) => {
     const v = verdicts[c.id];
+    const fb = feedback[c.id] || [];
+    const fbText = fb.length ? "<br><span class=hint>反馈：" + fb.map((x) =>
+      (ROLE_CN[x.reviewer] || x.reviewer) + "「" + (VERDICT_CN[x.verdict] || x.verdict) + "」").join("、") + "</span>" : "";
     const state = adopted.indexOf(c.id) >= 0 ? "<span class=\"pill ok\">决策采用</span>" :
       (excluded.indexOf(c.id) >= 0 ? "<span class=\"pill bad\">决策排除</span>" : "<span class=hint>决策未点名</span>");
     return "<tr><td><b>" + esc(c.id) + "</b><br><span class=hint>" + esc(c.author) + "</span></td>" +
@@ -445,13 +546,14 @@ function renderClaims() {
       (c.level ? "<span class=pill>" + esc(LEVEL_CN[c.level] || c.level) + "</span>" : "") +
       (c.material && c.material !== "present"
         ? "<span class=\"pill warn\">" + esc(MATERIAL_CN[c.material] || c.material) + "</span>" : "") +
+      (c.basis ? "<span class=\"pill warn\">" + esc(MATERIAL_BASIS_CN[c.basis] || c.basis) + "</span>" : "") +
       "<details><summary>看模型原文陈述</summary><div class=quote>" + esc(c.statement) + "</div></details>" +
       (c.statement.indexOf("not_applicable") === 0 || c.statement.indexOf("unknown") === 0
         ? "<span class=hint>该角色声明本题缺少可核对的对应资料</span>" : "") + "</td>" +
       "<td>" + (c.used.length ? c.used.map((u) => "<span class=pill>" + esc(u) + "</span>").join("") : "<span class=hint>未声明</span>") + "</td>" +
       "<td>" + (v ? "<span class=\"pill " + (v.verdict === "rejected" ? "bad" : (v.verdict === "insufficient" ? "warn" : "ok")) +
         "\">" + (VERDICT_CN[v.verdict] || v.verdict) + "</span>" + (v.note ? "<br><span class=hint>" + esc(v.note.slice(0, 160)) + "</span>" : "")
-        : "<span class=hint>核验未点名</span>") + "</td><td>" + state + "</td></tr>";
+        : "<span class=hint>核验未点名</span>") + fbText + "</td><td>" + state + "</td></tr>";
   }).join("");
   const edges = [];
   rows.forEach((c) => c.used.forEach((u) => edges.push(esc(u) + " → " + esc(c.id))));
@@ -459,9 +561,11 @@ function renderClaims() {
   $("claims").innerHTML = "<div class=hint>下表每行是一条后端记录的主张：中文标签是它所属层面、依据类型与资料状态，" +
     "英文原文折叠在下面，关系与核验结论按后端保存的 ID 生成。</div>" +
     "<table><tr><th>主张 ID / 作者</th><th>主张内容与层面</th><th>它声明依据的主张</th>" +
-    "<th>核验结论</th><th>决策处理</th></tr>" + table + "</table>" +
+    "<th>Verifier 最终判定（附专业角色反馈）</th><th>决策处理</th></tr>" + table + "</table>" +
     "<div class=hint style=margin-top:6px>关系边：" + (edges.join(" · ") || "没有记录到跨主张引用") +
-    "</div><div class=hint>主张 ID 由后端按角色与顺序分配，模型只能引用已存在的 ID；引用不存在的 ID 会让本次运行失败并留下记录。</div>";
+    "</div><div class=hint>专业角色也会对前序主张给出反馈判定，它与 Verifier 的最终判定分开显示；" +
+    "一张表出现多行 verdict 不代表 Verifier 运行了多次。</div>" +
+    "<div class=hint>主张 ID 由后端按角色与顺序分配，模型只能引用已存在的 ID；引用不存在的 ID 会让本次运行失败并留下记录。</div>";
 }
 
 function buildGraph() {
@@ -501,11 +605,7 @@ function buildGraph() {
 
 function showAnswer() {
   const decision = (STATE.decision || {}).output;
-  const totals = ROLES.reduce((acc, r) => {
-    const st = STATE[r] || {};
-    acc.in += st.in || 0; acc.out += st.out || 0; acc.sec += st.sec || 0; acc.calls += (st.in != null ? 1 : 0);
-    return acc;
-  }, { in: 0, out: 0, sec: 0, calls: 0 });
+  const totals = usageTotals();
   const box = $("answer");
   if (!decision) {
     box.innerHTML = "<div class=hint>尚无最终答案。" + (S.runId ? "任务 " + esc(S.runId) + " 仍在执行，上方已完成的角色可先看。" : "") + "</div>";
@@ -606,13 +706,9 @@ function applyEvent(kind, data, runId) {
   }
   else if (kind === "retrieval_completed" && st) { st.retrieved = (d.ranked_ids || []).length; }
   else if (kind === "model_usage" && st) {
-    st.in = d.input_tokens; st.out = d.output_tokens; st.sec = d.seconds; st.attempts = d.attempts;
-    st.fragments = d.evidence_fragments != null ? d.evidence_fragments : d.fragments;
-    st.calls = (st.calls || 0) + 1;
-    st.in = (st.in || 0) + (d.input_tokens || 0);
-    st.out = (st.out || 0) + (d.output_tokens || 0);
-    st.sec = (st.sec || 0) + (d.seconds || 0);
-    if (st.sec != null) logEvent(ROLE_CN[role] + " 模型返回，耗时 " + st.sec.toFixed(0) + "s（输入 " + st.in + " / 输出 " + st.out + " token）");
+    const mine = recordUsage(role, { sequence: data.sequence, role: role, details: d }, data.sequence);
+    if (mine.fresh) logEvent(ROLE_CN[role] + " 模型返回，耗时 " + mine.sec.toFixed(0) + "s（输入 " + mine.in +
+      " / 输出 " + mine.out + " token，累计 " + mine.calls + " 次）");
   } else if (kind === "schema_repair_requested" && st) { st.repair = true; logEvent(ROLE_CN[role] + " 输出未通过校验，按统一设置修复一次"); }
   else if (kind === "invalid_model_output" && st) { st.state = "running"; }
   else if (kind === "agent_reported" && st) {
@@ -621,6 +717,11 @@ function applyEvent(kind, data, runId) {
   } else if (kind === "budget_exhausted") {
     if (st) st.state = "failed";
     logEvent("预算耗尽：" + (d.reason || ""));
+  } else if (kind === "verification_ledger") {
+    S.ledger = d.entries || [];
+    logEvent("综合决策收到核验账本：" + S.ledger.length + " 条审核记录（最终判定 " +
+      S.ledger.filter((x) => x.final).length + " 条，专业角色反馈 " +
+      S.ledger.filter((x) => !x.final).length + " 条）");
   } else if (kind === "run_completed") { logEvent("任务结束：" + (d.status || "")); }
   renderRoles();
   renderClaims();
@@ -631,16 +732,15 @@ async function finish(runId) {
   const run = await api("/v1/runs/" + runId);
   const result = run.result;
   if (result) {
+    S.result = result;
     (result.reports || []).forEach((r) => {
       const st = STATE[r.role] = STATE[r.role] || {};
       st.state = "done"; st.output = r.output;
     });
     if (result.decision) Object.assign(STATE.decision = STATE.decision || {}, { state: "done", output: result.decision });
-    const usage = (result.trace || []).filter((e) => e.kind === "model_usage");
-    usage.forEach((e) => {
-      const st = STATE[e.role] = STATE[e.role] || {};
-      st.in = e.details.input_tokens; st.out = e.details.output_tokens; st.sec = e.details.seconds; st.attempts = e.details.attempts; st.fragments = e.details.fragments;
-    });
+    const ledgerEvent = (result.trace || []).filter((t) => t.kind === "verification_ledger").slice(-1)[0];
+    if (ledgerEvent) S.ledger = (ledgerEvent.details || {}).entries || [];
+    applyUsageEvents(result.trace);
   } else {
     ROLES.forEach((r) => { if (STATE[r] && STATE[r].state === "running") STATE[r].state = "failed"; });
   }
@@ -708,18 +808,16 @@ async function openLibraryItem(id) {
   const item = await api("/v1/library/item?item_id=" + encodeURIComponent(id));
   setCase(item.case, "历史真实结果（" + item.arm + "，" + item.seconds + "s）");
   resetState();
+  const ledgerEvent = item.trace.filter((t) => t.kind === "verification_ledger").slice(-1)[0];
+  S.ledger = ledgerEvent ? (ledgerEvent.ledger || []) : null;
   item.reports.forEach((r) => {
     const st = STATE[r.role] = STATE[r.role] || {};
     st.state = "done"; st.output = r.output;
   });
   if (item.decision) Object.assign(STATE.decision = STATE.decision || {}, { state: "done", output: item.decision });
-  item.trace.filter((t) => t.kind === "model_usage").forEach((t) => {
-    const st = STATE[t.role] = STATE[t.role] || {};
-    st.in = (st.in || 0) + (t.input_tokens || 0); st.out = (st.out || 0) + (t.output_tokens || 0);
-    st.sec = (st.sec || 0) + (t.seconds || 0); st.attempts = t.attempts;
-    st.fragments = t.evidence_fragments != null ? t.evidence_fragments : t.fragments;
-    st.calls = (st.calls || 0) + 1;
-  });
+  applyUsageEvents(item.trace);
+  S.result = { usage: item.usage_full || {},
+    duration_seconds: typeof item.seconds === "number" ? item.seconds : null };
   item.trace.filter((t) => t.kind === "agent_started").forEach((t) => {
     const st = STATE[t.role] = STATE[t.role] || {};
     st.evidenceIds = t.evidence_ids || [];
@@ -768,8 +866,21 @@ function classroomPins() {
   return pins;
 }
 
+const ACCEPTANCE_CASES = [
+  ["real_class6d_mtb_r2", "mtb-P-0022916-q6", "验收 · 用药事实保底（q6）"],
+  ["real_class6d_civic", "civic-3e09dc9e-43af-4022-88ec-a31f18cfaf42", "验收 · 核验账本进入决策"]];
+
+function acceptancePins() {
+  return ACCEPTANCE_CASES.map(function (row) {
+    const hit = (S.library || []).filter(function (i) {
+      return i.study === row[0] && i.case_id === row[1] && i.status === "completed";
+    })[0];
+    return hit ? [row[2], hit.id] : null;
+  }).filter(Boolean);
+}
+
 function renderHistory() {
-  const classroom = classroomPins();
+  const classroom = classroomPins().concat(acceptancePins());
   $("pinned").innerHTML = PINS.concat(classroom).filter((pair) => S.library.some((i) => i.id === pair[1]))
     .map((pair) => "<button style=width:auto data-pin=\"" + esc(pair[1]) + "\">" + esc(pair[0]) + "</button>").join("");
   Array.prototype.forEach.call(document.querySelectorAll("[data-pin]"), (b) => {

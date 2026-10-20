@@ -206,10 +206,49 @@ KEY_FIELD = re.compile(
     r"MUTATION|AMPLIFIC|DELETION|FUSION|VARIANT|CANCER|ONCOTREE|SUBTYPE|GRADE|STAGE|"
     r"SPECIMEN|BIOPSY|HISTOLOG|DRUG|TREATMENT|THERAPY|MEDICAT|EXPOSURE", re.I)
 NEWEST_EVENT = re.compile(r"(?:AGE|DAY)[\s:]+(\d+(?:\.\d+)?)")
-_WORD = re.compile(r"[A-Za-z][A-Za-z0-9\-\']{2,}")
-_STOPWORDS = {"the", "and", "that", "with", "from", "will", "have", "has", "had", "not", "for",
-              "are", "was", "were", "what", "which", "when", "does", "did", "patient", "patients",
-              "this", "than", "then", "into", "about", "after", "before", "per"}
+
+# A role's own layer, stated as the record grammar the corpora actually use. KEY_FIELD is far too
+# broad to guarantee anything (42 of 47 candidate spans in mtb-P-0022916-q6 match it), so the
+# spans a role cannot work without are named here instead: 3 treatment records = 1,740 characters
+# in that case, which fits the 12,000-character stage budget next to the structural records.
+MODALITY_PATTERNS = {
+    "treatment": re.compile(r"treatment\s*-->|AGENT\s*:|MEDICATION\s*:|DRUG\s*:|RX_[A-Z]+|"
+                            r"SUBTYPE:\s*(?:Chemo|Targeted|Immuno|Radiation|Hormone)|"
+                            r"chemotherap|radiotherap|administered|infusion|prescrib", re.I),
+    "molecular": re.compile(r"MUTATION|AMPLIFIC|DELETION|FUSION|VARIANT|COPY_NUMBER|CNV|TMB|MSI|"
+                            r"\bp\.[A-Z][a-z]{2}\d+", re.I),
+    "pathology": re.compile(r"CANCER[_ ]TYPE|HISTOLOG|ONCOTREE CODE|SPECIMEN[_ ]TYPE|"
+                            r"PRIMARY[_ ]SITE|BIOPSY", re.I),
+}
+# Which layers each role must be handed. The decision needs all three because it is the role that
+# has to notice a specialist reported a missing modality the selection did not cover.
+ROLE_MODALITY = {"timeline": ("treatment",), "drug": ("treatment",), "genomics": ("molecular",),
+                 "pathology": ("pathology",), "verifier": ("treatment", "molecular", "pathology"),
+                 "decision": ("treatment", "molecular", "pathology")}
+
+
+def span_modalities(text: str, start: int, end: int, labels=None) -> set[str]:
+    """Which modality record grammars appear in one candidate span (no labels means all of them)."""
+    if labels is None:
+        labels = tuple(MODALITY_PATTERNS)
+    return {label for label in labels if MODALITY_PATTERNS[label].search(text[start:end])}
+
+
+def material_basis_of(coverage: dict) -> str:
+    """Why a role's own modality may be missing: nothing recorded, or not selected for this stage.
+
+    Server-side, so a claim's "unknown" and a plan's coverage cannot disagree; empty when the role
+    has no required modality (or, for the reflection verifier, no source view at all).
+    """
+    labels = coverage.get("required_labels") or []
+    summary = coverage.get("required") or {}
+    if not labels:
+        return ""
+    candidates = sum(summary.get(label, {}).get("candidates", 0) for label in labels)
+    sent = sum(summary.get(label, {}).get("sent", 0) for label in labels)
+    if candidates == 0:
+        return "not_recorded"
+    return "selection_not_covered" if sent == 0 else "supplied"
 
 
 def _question_terms(query: str) -> set[str]:
@@ -259,61 +298,83 @@ def _must_send(text: str, spans: list[tuple[int, int]]) -> set[int]:
 
 
 def fragment_documents(documents: list[Document], chars: int, per_document: int,
-                       query: str = "", budget: int | None = None):
+                       query: str = "", budget: int | None = None, role: str = ""):
     """Plan this stage's evidence: number every span, send a selected subset, report coverage.
 
-    Candidates span the full text of every stage-visible document. Each document gets a share of
-    the character budget and always contributes its first record, its last record and the newest
-    dated observation, so the clinical tail that used to be cut off is never what gets dropped.
-    Leftover budget is spent on molecular/pathology key fields first, then on question overlap.
-    Only sent ids resolve, so citing evidence the model never received still fails visibly.
+    Candidates span the full text of every stage-visible document and never cross into a later
+    stage. Two tiers are guaranteed by their original offsets: the records carrying the layer this
+    role reports on (drug exposures, variants, pathology fields) and the structural records (first,
+    last, newest dated observation). Everything else is best effort: key fields, then question
+    overlap. If the guaranteed set alone is bigger than the character budget the plan still stops
+    at the budget and lists every guaranteed span it could not send with its offsets, so an
+    over-budget stage is a recorded fact instead of a silent overcharge. Only sent ids resolve.
     """
     if not documents:
         return [], {}, {"documents": {}, "candidates": 0, "sent": 0, "chars_total": 0,
                         "chars_sent": 0, "budget_characters": 0, "fragment_characters": chars,
-                        "fragments_per_document": per_document, "tail_dropped": False}
+                        "fragments_per_document": per_document, "tail_dropped": False,
+                        "required_labels": [], "guaranteed_unsent": [], "required": {}}
     budget = budget if budget else max(24_000, len(documents) * per_document * chars)
     share = max(chars, budget // len(documents))
     terms = _question_terms(query)
+    labels = ROLE_MODALITY.get(role, ())
 
     planned = []
     for doc in documents:
         spans = fragment_spans(doc.text, chars)
-        must = _must_send(doc.text, spans)
+        structural = _must_send(doc.text, spans)
+        required: dict[int, list[str]] = {}
+        for i, (s, e) in enumerate(spans):
+            hit = sorted(span_modalities(doc.text, s, e, labels))
+            if hit:
+                required[i] = hit
         key = {i for i, (s, e) in enumerate(spans) if KEY_FIELD.search(doc.text[s:e])}
         scored = []
         for i, (s, e) in enumerate(spans):
             overlap = len(terms & {t.lower() for t in _WORD.findall(doc.text[s:e])})
-            tier = 0 if i in must else (1 if i in key else 2)
+            tier = 0 if i in required else (1 if i in structural else (2 if i in key else 3))
             scored.append((tier, -overlap, i, s, e))
-        planned.append((doc, spans, must, sorted(scored, key=lambda c: (c[0], c[1], c[2]))))
+        planned.append((doc, spans, structural, required, sorted(scored, key=lambda c: (c[0], c[1], c[2]))))
 
-    chosen: dict[str, list[int]] = {doc.id: [] for doc, _, _, _ in planned}
+    chosen: dict[str, list[int]] = {doc.id: [] for doc, *_ in planned}
     spent = 0
-    # first pass: every visible document must be represented inside its own share
-    for doc, spans, must, ranked in planned:
-        doc_spent = 0
-        for tier, _, i, s, e in sorted(ranked, key=lambda c: (0 if c[2] in must else 1, c[2])):
-            if i not in must:
-                continue
-            if chosen[doc.id] and spent + (e - s) > budget and doc_spent + (e - s) > share:
-                break
-            chosen[doc.id].append(i)
-            doc_spent += e - s
-            spent += e - s
-    # second pass: spend what is left on key fields, then on question overlap
-    leftovers = [(tier, overlap, i, doc, s, e) for doc, spans, must, ranked in planned
+    guaranteed_unsent: list[dict] = []
+
+    def take(doc: Document, i: int, s: int, e: int) -> None:
+        nonlocal spent
+        chosen[doc.id].append(i)
+        spent += e - s
+
+    # guaranteed pass: this role's own modality records first, then the structural records, each in
+    # document order, and a span that no longer fits is recorded rather than pushed over budget.
+    for tier in (0, 1):
+        for doc, spans, structural, required, _ in planned:
+            for i, (s, e) in enumerate(spans):
+                if i in chosen[doc.id]:
+                    continue
+                if (tier == 0 and i in required) or (tier == 1 and i in structural):
+                    if spent + (e - s) > budget:
+                        guaranteed_unsent.append({"document_id": doc.id, "kind": doc.kind,
+                                                  "evidence_id": "%s:f%02d" % (doc.id, i + 1),
+                                                  "record_span": [s, e], "characters": e - s,
+                                                  "guarantee": "modality" if tier == 0 else "structural",
+                                                  "modalities": required.get(i, []),
+                                                  "reason": "character budget"})
+                        continue
+                    take(doc, i, s, e)
+    # best-effort pass: spend what is left on key fields, then on question overlap.
+    leftovers = [(tier, overlap, i, doc, s, e) for doc, spans, structural, required, ranked in planned
                  for tier, overlap, i, s, e in ranked if i not in chosen[doc.id]]
     for tier, overlap, i, doc, s, e in sorted(leftovers, key=lambda c: (c[0], c[1], c[3].id, c[2])):
         if spent + (e - s) > budget or len(chosen[doc.id]) >= per_document:
             continue
-        chosen[doc.id].append(i)
-        spent += e - s
+        take(doc, i, s, e)
 
     listed: list[dict] = []
     index: dict[str, tuple[Document, int, int]] = {}
     coverage: dict[str, dict] = {}
-    for doc, spans, must, _ in planned:
+    required_summary: dict[str, dict] = {label: {"candidates": 0, "sent": 0, "unsent": []} for label in labels}
+    for doc, spans, structural, required, _ in planned:
         picked = sorted(set(chosen[doc.id]))
         sent_ids = []
         for i in picked:
@@ -321,13 +382,27 @@ def fragment_documents(documents: list[Document], chars: int, per_document: int,
             evidence_id = "%s:f%02d" % (doc.id, i + 1)
             listed.append({"evidence_id": evidence_id, "document_id": doc.id, "kind": doc.kind,
                            "stage": doc.available_stage, "text": doc.text[s:e],
-                           "forced": bool(i in must), "position": i + 1, "record_span": [s, e]})
+                           "forced": bool(i in structural), "position": i + 1, "record_span": [s, e],
+                           "required": required.get(i, [])})
             index[evidence_id] = (doc, s, e)
             sent_ids.append(evidence_id)
+            for label in required.get(i, []):
+                required_summary[label]["sent"] += 1
+        for i, hits in required.items():
+            if i in chosen[doc.id]:
+                continue
+            for label in hits:
+                required_summary[label]["unsent"].append("%s:f%02d" % (doc.id, i + 1))
+        for i, hits in required.items():
+            for label in hits:
+                required_summary[label]["candidates"] += 1
         coverage[doc.id] = {"candidates": len(spans), "sent": len(sent_ids),
                             "chars_total": len(doc.text),
                             "chars_sent": sum(spans[i][1] - spans[i][0] for i in picked),
-                            "key_records": sum(1 for i in picked if i in must),
+                            "key_records": sum(1 for i in picked if i in structural),
+                            "required_candidates": len(required),
+                            "required_sent": sum(1 for i in picked if i in required),
+                            "over_fragment_cap": max(0, len(sent_ids) - per_document),
                             "share_characters": share, "evidence_ids": sent_ids}
     listed.sort(key=lambda f: (f["document_id"], f["position"]))
     return listed, index, {
@@ -341,6 +416,10 @@ def fragment_documents(documents: list[Document], chars: int, per_document: int,
         "fragments_per_document": per_document,
         "documents_without_evidence": [d for d, v in coverage.items() if not v["sent"]],
         "tail_dropped": any(v["sent"] < v["candidates"] for v in coverage.values()),
+        # What a role was promised by design, and what the budget still could not hand over.
+        "required_labels": list(labels),
+        "required": required_summary,
+        "guaranteed_unsent": guaranteed_unsent,
     }
 
 

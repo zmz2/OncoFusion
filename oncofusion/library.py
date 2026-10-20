@@ -8,11 +8,15 @@ from __future__ import annotations
 import json
 import os
 import re
+import statistics
 import time
 from pathlib import Path
 
 # name -> (dataset label, study directory name, treatment)
-ARMS = (("real_class6c_mtb", "v1_class", "MTBBench dev 课堂样例 · 现行配置（4 问 · 3 位患者）"),
+ARMS = (("real_class6d_mtb_r2", "v1_class", "MTBBench dev · 用药事实修复验收（q6 重跑）"),
+        ("real_class6d_civic", "v1_class", "CIViC-Fact dev · 核验账本修复验收（1 条主张）"),
+        ("real_class6d_mtb", "v1_class", "MTBBench dev · 用药修复首次运行（q6，角色跨层被拒，失败记录保留）"),
+        ("real_class6c_mtb", "v1_class", "MTBBench dev 课堂样例 · 现行配置（4 问 · 3 位患者）"),
         ("real_class6c_civic", "v1_class", "CIViC-Fact dev 课堂样例 · 现行配置（2 条主张 · 2 篇文献）"),
         ("real_class6b_mtb", "v1_class", "MTBBench dev 课堂样例 · 旧预算快照（4 问 · 已停用）"),
         ("real_class6b_civic", "v1_class", "CIViC-Fact dev 课堂样例 · 旧预算快照（2 条主张 · 已停用）"),
@@ -22,7 +26,9 @@ ARMS = (("real_class6c_mtb", "v1_class", "MTBBench dev 课堂样例 · 现行配
         ("real_fast2_mtb_control", "single_tools", "MTBBench dev (single-tool control)"),
         ("real_fast2_civic", "v1_fast", "CIViC-Fact dev (3 article groups, 10 claims)"),
         ("real_fast2_civic_control", "single_tools", "CIViC-Fact dev (single-tool control)"))
-DATASET_FILES = {"real_class6c_mtb": "data/mtbbench", "real_class6c_civic": "data/civicfact-pmidids",
+DATASET_FILES = {"real_class6d_mtb": "data/mtbbench", "real_class6d_mtb_r2": "data/mtbbench",
+                 "real_class6d_civic": "data/civicfact-pmidids",
+                 "real_class6c_mtb": "data/mtbbench", "real_class6c_civic": "data/civicfact-pmidids",
                  "real_class6b_mtb": "data/mtbbench", "real_class6b_civic": "data/civicfact-pmidids",
                  "real_class6_mtb": "data/mtbbench", "real_class6_civic": "data/civicfact-pmidids",
                  "real_fast2_mtb": "data/mtbbench", "real_fast2_mtb_control": "data/mtbbench",
@@ -242,6 +248,9 @@ def get_item(item_id: str, root: Path | None = None, project: Path | None = None
     for event in data.get("trace", []):
         details = event.get("details", {})
         trace.append({"kind": event["kind"], "role": event.get("role"),
+                      # The page deduplicates usage by trace sequence, so a replay and the live
+                      # stream must carry the same keys for the same event.
+                      "sequence": event.get("sequence"),
                       "seconds": details.get("seconds"), "input_tokens": details.get("input_tokens"),
                       "output_tokens": details.get("output_tokens"),
                       "attempts": details.get("attempts"),
@@ -254,6 +263,9 @@ def get_item(item_id: str, root: Path | None = None, project: Path | None = None
                       "board_findings": details.get("board_findings"),
                       "unresolved_items": details.get("unresolved_items"),
                       "source_ids": details.get("source_ids"),
+                      # The decision payload's verification ledger, kept whole so a replayed run
+                      # can show reviewer, verdict, reason and citations, not just a count.
+                      "ledger": details.get("entries"),
                       "reservation": details.get("token_reservation"), "reason": details.get("reason")})
     detail.update({"case": case, "reports": data.get("reports", []), "decision": data.get("decision"),
                    "config": data.get("config", {}), "fingerprint": data.get("fingerprint"),
@@ -285,7 +297,10 @@ def dataset_summary(root: Path | None = None, project: Path | None = None) -> di
                     "accuracy": round(bucket["correct"] / bucket["cases"], 4),
                     "calls_per_case": round(sum(bucket["calls"]) / bucket["cases"], 2),
                     "tokens_per_case": round(sum(bucket["tokens"]) / bucket["cases"]),
-                    "seconds_p50": seconds[len(seconds) // 2], "seconds_max": seconds[-1],
+                    # Same definition as compare_arms/real_metrics: median, averaging the two
+                    # middle values for an even count, so "p50" means one thing everywhere.
+                    "seconds_p50": round(statistics.median(seconds), 1) if seconds else None,
+                    "seconds_max": seconds[-1],
                     "simulated": bucket["simulated"]})
     return {"note": "开发集验收规模的小批量真实运行，只用于说明流程能跑通，不构成显著性结论；"
                     "标签留在评测侧，仅在这个内部演示里展示。",

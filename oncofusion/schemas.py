@@ -152,14 +152,23 @@ class Finding(StrictModel):
     scope: str = ""
     evidence_level: str = ""
     material_status: str = ""
+    # Assigned by the server, never by the model: for a claim that reports missing material this
+    # says whether the visible record carries no such modality at all ("not_recorded") or the
+    # stage's selected spans simply did not cover it ("selection_not_covered").
+    material_basis: str = ""
 
 
 class ClaimVerdict(StrictModel):
-    """The verifier's per-claim answer, with the source spans that carry it."""
+    """One claim's review result, with the source spans that carry it.
+
+    Every role may review earlier claims, so the reviewing role is recorded by the server: a list of
+    verdicts says which roles gave feedback, not how often the verifier ran.
+    """
     target_claim_id: Identifier
     verdict: Literal["confirmed", "corrected", "rejected", "insufficient"]
     note: str = Field(default="", max_length=2000)
     citations: list[Citation] = Field(default_factory=list, max_length=30)
+    reviewer_role: str = ""
 
 
 class AnalysisOutput(StrictModel):

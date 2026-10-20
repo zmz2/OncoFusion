@@ -61,6 +61,7 @@ provider 落成 mock 时进程直接拒绝启动；页面徽章取 `/healthz` �
 该主张声明依据的前序主张、核验方逐条给出的 confirmed／corrected／rejected／insufficient，
 以及决策采用与排除了哪些主张；早于 claims-v1 的历史结果没有保存这些依赖，那里直接写"未记录"→ 最终答案与解释，引用可展开对照模型给出的片段与原文偏移→ 失败时给出原因并保留已完成步骤。课堂现场用三个置顶按钮（`mtb-P-0027883-q7` 长时间线+真实分子、`civic-60a33dc8…` 单文献且来源不对题、
 `mtb-P-0006191-q0` 全覆盖但答错），默认显示中文要点，模型原始的英文结论与引用片段放在折叠区；
+另有两个验收置顶（q6 用药事实保底、civic 核验账本进入决策），对应 `results/ACCEPTANCE_CLASS6D.md`。
 要点写在 `oncofusion/web/index.html` 的 CLASS_NOTES，数字与 `results/CLASS_DEMO_ACCEPTANCE.md` 同源。
 另有已完成真实结果的回放列表（失败记录留在统计分母里、默认不在回放列表出现，
 `/v1/library?include_failed=true` 可单独查看）、中文「数据集结果」小表和逐角色平均耗时（含综合决策）；刷新页面后可凭 run_id 重新查询任务与结果。
@@ -130,7 +131,8 @@ python -m oncofusion demo --profile v1 --out results/real_demo.json --allow-remo
 `results/CLASS_DEMO_ACCEPTANCE.md` 由 `scripts/class_demo_report.py` 从磁盘上的结果行生成，
 记录当前提交、唯一启动方式、真实与回放入口、三个课堂案例、逐角色证据覆盖、关键修复证据、实际结果与剩余事项。
 引用偏移的机械定位表在 `results/SEMANTIC_REVIEW_CLASS6.md`，逐条语义判断（AI 辅助，非人工评审）在
-`results/SEMANTIC_CHECK_CLASS6_AI.md`。
+`results/SEMANTIC_CHECK_CLASS6_AI.md`。三组整改（核验账本进入决策、用药事实保底、统一用量）的
+确定性测试与两条新真实运行的验收记录在 `results/ACCEPTANCE_CLASS6D.md`。
 
 本轮固定 6 例真实结果（claims-v1 / `v1_class`，同一时间窗，一轮，seed 0）：
 MTBBench dev 4 问（3 位患者）4/4 完成、3/4 与标签一致、7 次调用无结构修复；

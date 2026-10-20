@@ -57,7 +57,45 @@ def test_unknown_material_without_citations_is_a_valid_claim():
     output = build_analysis_output(wire, {}, "genomics", True, known, 3, {"molecular"})
     assert output.findings[0].material_status == "unknown"
     assert output.findings[0].claim_id == "genomics-01"
-    assert known["genomics-01"] == "genomics"
+    # Registration is the caller's job, after the whole response validated, so building alone
+    # must not make the id referable.
+    assert known == {}
+
+
+def test_failed_response_leaves_no_claim_ids_behind():
+    known = {"timeline-01": "timeline"}
+    wire = ClaimAnalysisOutput(findings=[
+        ClaimFinding(statement="First claim.", relation="NEI", scope="molecular",
+                     evidence_level="measured", material_status="present"),
+        ClaimFinding(statement="Second claim speaks out of scope.", relation="NEI", scope="temporal",
+                     evidence_level="measured", material_status="present")])
+    with pytest.raises(ValueError, match="outside this role"):
+        build_analysis_output(wire, {}, "genomics", True, known, 3, {"molecular"})
+    assert known == {"timeline-01": "timeline"}, "a rejected response must not register claim ids"
+
+
+def test_claim_ids_continue_across_a_reported_role_round():
+    known = {"literature-01": "literature", "literature-02": "literature"}
+    wire = ClaimAnalysisOutput(findings=[ClaimFinding(statement="Requeried passage.", relation="NEI",
+                                                      scope="source", evidence_level="literature",
+                                                      material_status="present")])
+    output = build_analysis_output(wire, {}, "literature", True, known, 3, {"source"})
+    assert output.findings[0].claim_id == "literature-03"
+
+
+def test_used_claim_ids_may_only_name_committed_or_earlier_same_response_ids():
+    known = {"timeline-01": "timeline"}
+    wire = ClaimAnalysisOutput(findings=[
+        ClaimFinding(statement="Built on the timeline.", relation="NEI", scope="molecular",
+                     evidence_level="measured", material_status="present", used_claim_ids=["timeline-01"]),
+        ClaimFinding(statement="Built on my own first claim.", relation="NEI", scope="molecular",
+                     evidence_level="measured", material_status="present", used_claim_ids=["genomics-01"])])
+    output = build_analysis_output(wire, {}, "genomics", True, known, 3, {"molecular"})
+    assert [f.used_claim_ids for f in output.findings] == [["timeline-01"], ["genomics-01"]]
+    with pytest.raises(ValueError, match="no earlier role produced"):
+        build_analysis_output(wire.model_copy(update={"findings": wire.findings[:1] + [
+            wire.findings[1].model_copy(update={"used_claim_ids": ["genomics-02"]})]}),
+            {}, "genomics", True, known, 3, {"molecular"})
 
 
 def test_findings_are_capped_and_the_drop_is_recorded():
