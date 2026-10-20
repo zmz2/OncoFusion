@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OncoFusion · 七 Agent 证据整合演示</title>
+<style>
+:root { --bg:#0f1418; --panel:#161d24; --panel2:#1d262f; --line:#2a3743; --text:#e6edf3;
+        --dim:#9fb0c0; --ok:#3fb37f; --warn:#e0a33c; --bad:#e0655f; --run:#4aa3df; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:14px/1.6 -apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif; }
+header { padding:12px 18px; border-bottom:1px solid var(--line); display:flex; gap:10px; align-items:center; flex-wrap:wrap; background:var(--panel); position:sticky; top:0; z-index:9; }
+h1 { font-size:16px; margin:0 10px 0 0; }
+.badge { font-size:12px; padding:2px 9px; border-radius:999px; border:1px solid var(--line); color:var(--dim); }
+.badge.real { color:#bdf0d4; border-color:#2c6b4f; background:#16291f; }
+.badge.sim { color:#f2d9a8; border-color:#6b5a2c; background:#28231a; }
+main { display:grid; grid-template-columns:390px 1fr; gap:14px; padding:14px 18px; align-items:start; }
+section { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px; margin-bottom:14px; }
+h2 { font-size:12.5px; margin:0 0 10px; color:var(--dim); text-transform:uppercase; letter-spacing:.7px; }
+h3 { font-size:14px; margin:0 0 6px; }
+label { display:block; font-size:12px; color:var(--dim); margin:8px 0 3px; }
+select, input, button { font:inherit; color:inherit; background:var(--panel2); border:1px solid var(--line); border-radius:7px; padding:7px 9px; width:100%; }
+button { cursor:pointer; background:#243343; }
+button:hover:not(:disabled) { background:#2d4053; }
+button:disabled { opacity:.45; cursor:not-allowed; }
+button.primary { background:#1f4d3a; border-color:#2c6b4f; }
+.row { display:flex; gap:8px; }
+.hint { font-size:12px; color:var(--dim); }
+.pill { display:inline-block; font-size:11px; padding:1px 7px; border-radius:999px; border:1px solid var(--line); color:var(--dim); margin:0 4px 4px 0; }
+.pill.warn { color:#f2d9a8; border-color:#6b5a2c; }
+.pill.bad { color:#f5c2be; border-color:#6b2c2c; }
+.pill.ok { color:#bdf0d4; border-color:#2c6b4f; }
+table { width:100%; border-collapse:collapse; font-size:12.5px; }
+th, td { border-bottom:1px solid var(--line); padding:4px 6px; text-align:left; vertical-align:top; }
+th { color:var(--dim); font-weight:500; }
+.flow { display:flex; align-items:center; gap:4px; flex-wrap:wrap; margin-bottom:12px; }
+.step { border:1px solid var(--line); border-radius:8px; padding:5px 9px; font-size:12px; background:var(--panel2); }
+.step b { display:block; font-size:12.5px; }
+.step[data-state=running] { border-color:var(--run); color:#cfe9fb; }
+.step[data-state=done] { border-color:#2c6b4f; color:#bdf0d4; }
+.step[data-state=failed] { border-color:var(--bad); color:#f5c2be; }
+.arrow { color:var(--dim); }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:10px; }
+.card { background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:10px; }
+.card[data-state=running] { border-color:var(--run); box-shadow:0 0 0 1px #1d3b4c inset; }
+.card[data-state=done] { border-color:#2c6b4f; }
+.card[data-state=failed] { border-color:var(--bad); }
+.dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#40505e; margin-right:6px; }
+.card[data-state=running] .dot { background:var(--run); animation:pulse 1.1s infinite; }
+.card[data-state=done] .dot { background:var(--ok); }
+.card[data-state=failed] .dot { background:var(--bad); }
+@keyframes pulse { 50% { opacity:.25; } }
+.duty { font-size:12px; color:var(--dim); margin-bottom:6px; }
+.io { font-size:12px; border-top:1px dashed var(--line); margin-top:6px; padding-top:6px; }
+.finding { border-top:1px dashed var(--line); margin-top:7px; padding-top:6px; font-size:12.5px; }
+.rel { font-size:11px; padding:1px 6px; border-radius:999px; border:1px solid var(--line); color:var(--dim); margin-right:6px; }
+.rel.SUPPORTS { color:#bdf0d4; border-color:#2c6b4f; }
+.rel.REVISIONS, .rel.MIXED { color:#f2d9a8; border-color:#6b5a2c; }
+.rel.NEI { color:#cfe9fb; border-color:#2c5d7a; }
+details { margin-top:5px; }
+summary { cursor:pointer; font-size:11.5px; color:var(--run); }
+.quote { font-size:11.5px; color:var(--dim); border-left:2px solid var(--line); padding-left:7px; margin-top:4px; white-space:pre-wrap; }
+.kv { display:flex; justify-content:space-between; gap:10px; font-size:12.5px; border-top:1px solid var(--line); padding:4px 0; }
+.kv span { color:var(--dim); }
+#timeline { max-height:190px; overflow:auto; font-size:12px; }
+#timeline div { border-top:1px solid var(--line); padding:3px 0; color:var(--dim); }
+.list { max-height:300px; overflow:auto; }
+.item { border-top:1px solid var(--line); padding:6px 4px; cursor:pointer; font-size:12.5px; }
+.item:hover { background:var(--panel2); }
+.item.sel { background:#1d2d3b; }
+#queue { font-size:12px; }
+footer { padding:10px 18px 26px; color:var(--dim); font-size:11.5px; }
+@media (max-width:1180px) { main { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>OncoFusion · 七 Agent 证据整合</h1>
+  <span class="badge" id="b-provider">provider …</span>
+  <span class="badge" id="b-model">model …</span>
+  <span class="badge" id="b-mode">运行模式 …</span>
+  <span class="badge" id="b-config">配置 …</span>
+  <div class="row" style="margin-left:auto;width:auto">
+    <input id="token" type="password" placeholder="（可选）Bearer 令牌" style="width:170px">
+    <button id="tab-demo" style="width:auto">演示</button>
+    <button id="tab-data" style="width:auto">数据集结果</button>
+  </div>
+</header>
+
+<main id="view-demo">
+  <div>
+    <section>
+      <h2>1 · 选择输入</h2>
+      <label>来源</label>
+      <select id="source-kind">
+        <option value="mtb">MTBBench 真实开发集样例（病例整合，选择题）</option>
+        <option value="civic">CIViC-Fact 真实开发集样例（文献主张核验）</option>
+        <option value="builtin">内置合成示例（离线可跑）</option>
+        <option value="upload">上传 JSON / JSONL（符合本协议）</option>
+      </select>
+      <label id="ref-label">样例</label>
+      <select id="source-ref"></select>
+      <label id="jsonl-label" style="display:none">JSONL：选择其中一条运行</label>
+      <select id="jsonl-index" style="display:none"></select>
+      <input id="file" type="file" accept=".json,.jsonl,application/json" style="display:none">
+      <button id="btn-pick" style="margin-top:8px" disabled>读取所选文件</button>
+      <div id="statusline" class="hint" style="margin-top:8px">空闲。</div>
+    </section>
+
+    <section>
+      <h2>2 · 当前输入（模型能看到的全部）</h2>
+      <div id="inputbox" class="hint">未选择输入。</div>
+      <div class="row" style="margin-top:10px">
+        <button id="btn-inspect" class="primary" disabled>输入检查</button>
+        <button id="btn-run" class="primary" disabled>发起真实 API 运行</button>
+      </div>
+      <div id="inspect" class="hint" style="margin-top:8px"></div>
+    </section>
+
+    <section>
+      <h2>5 · 历史真实结果回放</h2>
+      <div id="pinned" class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
+      <div class="list" id="history"></div>
+    </section>
+  </div>
+
+  <div>
+    <section>
+      <h2>3 · 七 Agent 协作流程（后端事件驱动）</h2>
+      <div class="flow" id="flow"></div>
+      <div class="cards" id="roles"></div>
+    </section>
+
+    <section>
+      <h2>4 · 最终结果与证据关系</h2>
+      <div id="answer" class="hint">尚无结果。</div>
+      <div id="graph" style="margin-top:10px"></div>
+      <h3 style="font-size:14px;margin-top:14px">主张与核验关系（按后端记录的主张 ID）</h3>
+      <div id="claims" class="hint">尚未载入结果。</div>
+    </section>
+
+    <section>
+      <h2>6 · 当前任务与事件时间线</h2>
+      <div id="taskinfo" class="hint">尚未发起运行，也未选择历史结果。</div>
+      <div id="queue" style="margin-top:8px"></div>
+      <div id="timeline" style="margin-top:8px"></div>
+    </section>
+  </div>
+</main>
+
+<main id="view-data" style="display:none;grid-template-columns:1fr">
+  <div>
+    <section>
+      <h2>小规模真实数据集结果（开发集验收，不作显著性声明）</h2>
+      <div id="dataset"></div>
+      <div id="dataset-note" class="hint"></div>
+    </section>
+    <section>
+      <h2>逐角色耗时与用量（已完成真实运行）</h2>
+      <div id="perrole"></div>
+    </section>
+  </div>
+</main>
+
+<footer>研究用途：只整合与核验既有证据；这两套数据的标注不评估最佳治疗方案。模型密钥只在服务器环境变量与本机令牌文件中。</footer>
+<script>
+const ROLES = ["literature", "timeline", "genomics", "pathology", "drug", "verifier", "decision"];
+const ROLE_CN = { literature: "文献证据", timeline: "病例时间线", genomics: "基因与通路",
+  pathology: "病理与癌种语境", drug: "药物关系", verifier: "主张核验", decision: "综合决策" };
+const TASK_CN = { verification: "主张核验（给定文献判断 SUPPORTS/REVISIONS/NEI）",
+  mcq: "病例选择题（整合当时可见的病例信息）", synthesis: "多来源综合叙述" };
+const KIND_CN = { clinical: "临床记录", pathology: "病理", genomics: "基因", literature: "文献", therapy: "治疗" };
+const REL_CN = { SUPPORTS: "支持", REVISIONS: "需修订", REFUTES: "反驳", NEI: "证据不足" };
+const DUTY_CN = { literature: "从可见文献里挑出与该主张直接相关的原文片段，保留适用条件与相反结果",
+  timeline: "把可见病例事件按时间排好，区分既往治疗、当前状态与尚未发生的事",
+  genomics: "读基因与变异原文，判断它到底被检测成什么、证据强度如何",
+  pathology: "确认癌种与病理语境，判断分子发现是否落在同一疾病背景上",
+  drug: "梳理药物与靶点关系及其方向（敏感/耐药），不越界推断疗效",
+  verifier: "逐条回查上游结论是否真有原文支撑，标出证据不足与冲突",
+  decision: "综合各角色结论与来源，给出答案、解释、引用和仍未解决的问题" };
+const CLAIM_CN = { disease: "癌种", molecularProfile: "分子特征", therapies: "药物",
+  evidenceDirection: "证据方向", evidenceType: "证据类型", significance: "临床意义", variantOrigin: "变异来源" };
+const S = { token: localStorage.getItem("of.token") || "", demo: null, agents: {}, library: [],
+  current: null, runId: null, cursor: -1, idem: null, streaming: false, result: null, ledger: null };
+const STATE = {};
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v == null ? "" : v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+// One reduction for the live stream, the completed run and a replayed record. Usage events are
+// deduplicated by their trace sequence, so a duplicate SSE frame, a reconnect catch-up or a
+// finish() over already-applied events cannot count a call twice.
+function reduceUsage(events) {
+  const seen = {}, perRole = {}, total = { in: 0, out: 0, sec: 0, calls: 0, attempts: 0 };
+  (events || []).forEach((e) => {
+    if (!e) return;
+    if (e.sequence != null) { if (seen[e.sequence]) return; seen[e.sequence] = 1; }
+    const role = e.role || "", d = e.details || e;
+    const row = perRole[role] = perRole[role] || { in: 0, out: 0, sec: 0, calls: 0, attempts: 0, fragments: null };
+    [row, total].forEach((t) => {
+      t.in += d.input_tokens || 0; t.out += d.output_tokens || 0; t.sec += d.seconds || 0;
+      t.calls += 1; t.attempts += d.attempts || 0;
+    });
+    if (d.evidence_fragments != null) row.fragments = d.evidence_fragments;
+    else if (d.fragments != null) row.fragments = d.fragments;
+  });
+  return { perRole: perRole, total: total };
+}
+
+function recordUsage(role, event, sequence) {
+  const st = STATE[role] = STATE[role] || {};
+  st.usageBySeq = st.usageBySeq || {};
+  const key = sequence != null ? "s" + sequence : "n" + Object.keys(st.usageBySeq).length;
+  const fresh = !(key in st.usageBySeq);
+  st.usageBySeq[key] = event;
+  const mine = reduceUsage(Object.keys(st.usageBySeq).map((k) => st.usageBySeq[k])).perRole[role] ||
+    { in: 0, out: 0, sec: 0, calls: 0, attempts: 0, fragments: null };
+  st.calls = mine.calls;
+  st.in = mine.calls ? mine.in : null;
+  st.out = mine.calls ? mine.out : null;
+  st.sec = mine.calls ? mine.sec : null;
+  st.attempts = mine.attempts;
+  if (mine.fragments != null) st.fragments = mine.fragments;
+  return { in: mine.in, out: mine.out, sec: mine.sec, calls: mine.calls, fresh: fresh };
+}
+
+function usageTotals() {
+  const events = [];
+  ROLES.forEach((r) => {
+    const st = STATE[r] || {};
+    Object.keys(st.usageBySeq || {}).forEach((k) => events.push(st.usageBySeq[k]));
+  });
+  const total = reduceUsage(events).total;
+  const totals = { in: total.in, out: total.out, sec: total.sec, calls: total.calls };
+  // The run result is authoritative for tokens and calls; wall time is the server's duration.
+  if (S.result && S.result.usage) {
+    const u = S.result.usage;
+    if (u.input_tokens != null) totals.in = u.input_tokens;
+    if (u.output_tokens != null) totals.out = u.output_tokens;
+    if (u.calls != null) totals.calls = u.calls;
+  }
+  if (S.result && typeof S.result.duration_seconds === "number") totals.sec = S.result.duration_seconds;
+  return totals;
+}
+
+// The completed run and the replayed record both arrive as a whole trace; the live stream calls
+// recordUsage per frame. All three end in the same per-role map, keyed by trace sequence.
+function applyUsageEvents(events) {
+  (events || []).filter((e) => e && (e.kind == null || e.kind === "model_usage"))
+    .forEach((e) => recordUsage(e.role, e, e.sequence));
+}
+
+async function api(path, opts) {
+  opts = opts || {};
+  const headers = Object.assign({}, opts.headers || {});
+  if (S.token) headers["Authorization"] = "Bearer " + S.token;
+  if (opts.json !== undefined) { headers["Content-Type"] = "application/json"; opts.body = JSON.stringify(opts.json); }
+  const res = await fetch(path, Object.assign({ method: opts.method || "GET" }, opts, { headers: headers }));
+  if (!res.ok) {
+    let text = "";
+    try { text = JSON.stringify(await res.json()).slice(0, 240); } catch (e) { text = String(res.statusText); }
+    throw new Error(res.status + " " + text);
+  }
+  return res.json();
+}
+
+function status(text) { $("statusline").textContent = text; }
+function logEvent(text) {
+  const box = $("timeline");
+  box.insertAdjacentHTML("afterbegin", "<div>" + new Date().toLocaleTimeString() + " · " + esc(text) + "</div>");
+  while (box.children.length > 120) box.removeChild(box.lastChild);
+}
+
+function claimTable(question) {
+  const trimmed = String(question || "").trim();
+  if (!(trimmed.charAt(0) === "{" && trimmed.charAt(trimmed.length - 1) === "}")) return "";
+  let parsed = null;
+  try { parsed = JSON.parse(trimmed); } catch (e) { return ""; }
+  if (!parsed || typeof parsed !== "object") return "";
+  const rows = Object.keys(CLAIM_CN).filter((k) => parsed[k]).map((k) => {
+    const value = Array.isArray(parsed[k]) ? parsed[k].join("、") : parsed[k];
+    return "<tr><th>" + CLAIM_CN[k] + "</th><td>" + esc(value) + "</td></tr>";
+  });
+  const extra = Object.keys(parsed).filter((k) => !CLAIM_CN[k]).map((k) =>
+    "<tr><th>" + esc(k) + "</th><td>" + esc(JSON.stringify(parsed[k])) + "</td></tr>");
+  return "<table>" + rows.concat(extra).join("") + "</table>";
+}
+
+function documentTable(docs) {
+  if (!docs || !docs.length) return "<div class=hint>无可见资料</div>";
+  const rows = docs.map((d) => {
+    const text = d.text || "";
+    return "<tr><td>" + esc(d.id) + "</td><td>" + esc(KIND_CN[d.kind] || d.kind) + "</td><td>" + text.length +
+      " 字符</td><td>" + esc((d.title || "（无标题）").slice(0, 60)) + "</td><td>" +
+      "<details><summary>看正文</summary><div class=quote>" + esc(text.slice(0, 2400)) +
+      (text.length > 2400 ? "\n…（本页只显示前 2400 字符；模型实际收到哪些片段见下方角色卡的证据覆盖）" : "") +
+      "</div></details></td></tr>";
+  });
+  return "<table><tr><th>来源 id</th><th>类别</th><th>长度</th><th>标题</th><th></th></tr>" + rows.join("") + "</table>";
+}
+
+function pretty(s) { try { return JSON.stringify(JSON.parse(s), null, 2); } catch (err) { return s; } }
+
+function renderInput() {
+  const current = S.current;
+  if (!current) { $("inputbox").innerHTML = "未选择输入。"; return; }
+  const c = current.case;
+  const parts = [];
+  parts.push("<div><span class=pill>" + esc(TASK_CN[c.task] || c.task) + "</span>" +
+    (current.origin ? "<span class=pill>" + esc(current.origin) + "</span>" : "") + "</div>");
+  parts.push("<div class=kv><span>病例 / 问题编号</span><b>" + esc(c.id) + "</b></div>");
+  const claim = claimTable(c.question);
+  parts.push("<div class=io><b>模型看到的原题</b>" + (/^[\[{]/.test((c.question || "").trim()) ?
+    "<details><summary>结构化输入逐字（" + c.question.length + " 字符，展开阅读）</summary><div class=quote>" +
+      esc(pretty(c.question)) + "</div></details>" :
+    "<div class=quote>" + esc(c.question) + "</div>") + "</div>");
+  if (claim) parts.push("<div class=io><b>主张要素（后端从问题文本解析出的结构化输入）</b>" + claim + "</div>");
+  const e = c.entities || {};
+  const entityRows = ["gene", "variant", "disease", "drug"].filter((k) => e[k])
+    .map((k) => "<tr><th>" + ({ gene: "基因", variant: "变异", disease: "癌种", drug: "药物" }[k]) +
+      "</th><td>" + esc(e[k]) + "</td></tr>");
+  if (entityRows.length) parts.push("<div class=io><b>病例实体</b><table>" + entityRows.join("") + "</table></div>");
+  parts.push("<div class=io><b>可见资料 " + (c.documents || []).length + " 份</b>" + documentTable(c.documents) + "</div>");
+  $("inputbox").innerHTML = parts.join("");
+  $("btn-inspect").disabled = false;
+  $("btn-run").disabled = true;
+  $("inspect").innerHTML = "";
+}
+
+function setCase(obj, origin) {
+  S.current = { case: obj, origin: origin || "" };
+  S.idem = null;
+  renderInput();
+}
+
+function stashCase() {
+  try { localStorage.setItem("of.case", JSON.stringify(S.current)); } catch (e) {}
+}
+
+function unstashCase() {
+  if (S.current) return;
+  const raw = localStorage.getItem("of.case");
+  if (!raw) return;
+  try { S.current = JSON.parse(raw); renderInput(); inspectInput(); } catch (e) {}
+}
+
+function resetState() {
+  S.result = null;
+  S.ledger = null;
+  ROLES.forEach((r) => { STATE[r] = { state: "idle", in: null, out: null, sec: null, usageBySeq: {}, sources: [], fragments: null, output: null }; });
+  $("timeline").innerHTML = "";
+  $("graph").innerHTML = "";
+  renderFlow();
+  renderRoles();
+}
+
+function renderFlow() {
+  $("flow").innerHTML = ROLES.map((r, i) => {
+    const st = (STATE[r] || {}).state || "idle";
+    return (i ? "<span class=arrow>→</span>" : "") +
+      "<div class=step data-state=" + st + "><b>" + (i + 1) + ". " + ROLE_CN[r] + "</b>" +
+      "<span class=hint>" + ({ idle: "等待", running: "正在调用模型", done: "已完成", failed: "未完成" }[st]) + "</span></div>";
+  }).join("");
+}
+
+function citationBlock(c) {
+  const docs = ((S.current || {}).case || {}).documents || [];
+  const doc = docs.filter((d) => d.id === c.document_id)[0] || {};
+  const raw = doc.text ? (doc.text.slice(c.start || 0, c.end || 0)) : null;
+  return "<details><summary>引用 " + esc(c.document_id) + " " + (doc.kind ? "· " + esc(KIND_CN[doc.kind] || doc.kind) : "") +
+    (c.start != null ? " · 偏移 " + c.start + "-" + c.end : "") + "</summary>" +
+    "<div class=quote>模型给出的片段：" + esc(c.quote) + "</div>" +
+    "<div class=quote>原文对应：" + (raw === null
+      ? esc(c.quote || "（该来源不在当前输入中）") + "<span class=hint>（正文未随本页加载，这里是后端回填的片段）</span>"
+      : esc(raw)) + "</div></details>";
+}
+
+function ledgerBlock() {
+  if (!S.ledger || !S.ledger.length) return "";
+  const final = S.ledger.filter((x) => x.final), feedback = S.ledger.filter((x) => !x.final);
+  const rows = S.ledger.map((x) => "<tr><td>" + esc(x.target_claim_id) + "</td><td>" +
+    esc(ROLE_CN[x.reviewer] || x.reviewer) + "</td><td>" +
+    (x.final ? "<b>" : "") + esc(VERDICT_CN[x.verdict] || x.verdict) + (x.final ? "</b>" : "") + "</td><td>" +
+    esc(String(x.reason || "").slice(0, 200)) + "</td><td>" + ((x.citations || []).length) + "</td></tr>").join("");
+  return "<details open><summary>综合决策收到的核验账本 " + S.ledger.length +
+    " 条（最终判定 " + final.length + " 条，专业角色反馈 " + feedback.length + " 条）</summary>" +
+    "<div class=hint>这是后端在调用决策前组装的 payload.verification_ledger：每条保留主张 ID、审核者、判定、理由与引用数；" +
+    "只有 reviewer=主张核验 的行是最终判定。</div><table><tr><th>主张</th><th>审核者</th><th>判定</th><th>理由</th><th>引用</th></tr>" +
+    rows + "</table></details>";
+}
+
+function outputBlock(output, role) {
+  if (!output) return "";
+  const html = [];
+  (output.findings || []).forEach((f) => {
+    html.push("<div class=finding><span class=\"rel " + esc(f.relation) + "\">" + esc(REL_CN[f.relation] || f.relation) +
+      "</span>" + claimChips(f) + esc(f.statement) + (f.citations || []).map(citationBlock).join("") + "</div>");
+  });
+  const verdicts = output.verdicts || [];
+  if (verdicts.length) {
+    html.push("<details><summary>" + (role === "verifier" ? "对每条主张的最终判定 " : "对前序主张的反馈判定 ") +
+      verdicts.length + " 条" + (role === "verifier" ? "" : "（不是最终核验）") + "</summary>" +
+      "<table><tr><th>主张</th><th>判定</th><th>理由</th></tr>" + verdicts.map((v) =>
+        "<tr><td>" + esc(v.target_claim_id) + "</td><td>" + esc(VERDICT_CN[v.verdict] || v.verdict) +
+        "</td><td>" + esc(v.note || "") + "</td></tr>").join("") + "</table></details>");
+  }
+  if (output.answer) html.push("<div class=finding><span class=\"rel\">" + esc(REL_CN[output.answer] || output.answer) +
+    "</span><b>本步结论</b> " + esc(output.explanation || "") + "</div>");
+  if ((output.unresolved || []).length) html.push("<details><summary>交给下一步的未解决项 " + output.unresolved.length +
+    "</summary><div class=quote>" + esc(output.unresolved.join("\n")) + "</div></details>");
+  return html.join("");
+}
+
+function renderRoles() {
+  const UP = {};
+  let carryF = 0, carryU = 0, carryN = 0;
+  ROLES.forEach((r) => {
+    UP[r] = { findings: carryF, unresolved: carryU, done: carryN };
+    const st = STATE[r] || {};
+    const o = st.output || {};
+    carryF += (o.findings || []).length;
+    if ((o.unresolved || []).length) carryU = o.unresolved.length;
+    if (st.state === "done") carryN += 1;
+  });
+  const box = $("roles");
+  if (box.children.length !== ROLES.length) {
+    box.innerHTML = ROLES.map((r) => "<div class=card id=card-" + r + " data-state=idle><h3><span class=dot></span>" +
+      ROLE_CN[r] + " <span class=hint>" + r + "</span></h3><div class=body></div></div>").join("");
+  }
+  ROLES.forEach((r) => {
+    const card = $("card-" + r), st = STATE[r] || {};
+    card.dataset.state = st.state || "idle";
+    const duty = DUTY_CN[r] || (S.agents[r] || {}).purpose || "";
+    const meta = [];
+    if (st.sec != null) meta.push("耗时 " + st.sec.toFixed(0) + "s");
+    if (st.in != null) meta.push("输入 " + st.in + " token");
+    if (st.out != null) meta.push("输出 " + st.out + " token");
+    if (st.attempts > 1) meta.push("HTTP 重试 " + (st.attempts - 1) + " 次");
+    if (st.repair) meta.push("触发 1 次结构修复");
+    const io = [];
+    if (st.sources && st.sources.length) io.push("读到的来源：" + st.sources.slice(0, 6).map(esc).join("、") + (st.sources.length > 6 ? " 等 " + st.sources.length + " 份" : ""));
+    if (st.fragments != null) io.push("后端递给它查阅的证据片段：" + st.fragments + " 段");
+    if (st.coverage) io.push("证据覆盖：候选 " + st.coverage.candidates + " 段 / 送入 " + st.coverage.sent +
+      " 段，原文 " + st.coverage.chars_total + " 字符 / 送入 " + st.coverage.chars_sent + " 字符" +
+      (st.coverage.tail_dropped ? "（超预算的候选未送入，已按问题与关键字段挑选）" : "（全部候选已送入）"));
+    if (st.calls > 1) io.push("本角色实际调用 " + st.calls + " 次（含 1 次结构修复）");
+    if (r === ROLES[0]) io.push("它是第一个角色，上游只有本题的可见资料，没有前序结论");
+    else if (!UP[r].done) io.push("前序角色还没有已完成的结论，本步要等" + ROLE_CN[ROLES[ROLES.indexOf(r) - 1]] + "结束");
+    else if (st.boardFindings != null) io.push("按送入内容统计：前序结论 " + st.boardFindings +
+      " 条，其中未解决项 " + (st.unresolvedItems != null ? st.unresolvedItems : "未记录") + " 条随本步一起送入");
+    else io.push("前序 " + UP[r].done + " 个已完成的角色交出 " + UP[r].findings + " 条结论，其中 " +
+      UP[r].unresolved + " 条仍未解决，这些都会带进本步（旧记录未保存送入统计，按已完成角色的输出推算）");
+    const outCount = st.output ? ((st.output.findings || []).length || (st.output.answer ? 1 : 0)) : 0;
+    const outCite = st.output ? ((st.output.citations || []).length +
+      (st.output.findings || []).reduce((a, f) => a + (f.citations || []).length, 0)) : 0;
+    const outUn = st.output ? (st.output.unresolved || []).length : 0;
+    if (st.output) io.push("本步产出：" + outCount + " 条结论" +
+      (outCite ? "，挂上 " + outCite + " 条原文引用" : "") +
+      (outUn ? (r === ROLES[ROLES.length - 1] ? "，最终仍有 " + outUn + " 条未解决"
+        : "，留下 " + outUn + " 条未解决项交给下一步") : ""));
+    card.querySelector(".body").innerHTML =
+      (duty ? "<div class=duty>职责：" + esc(duty) + "</div>" : "") +
+      "<div class=hint>" + ({ idle: "等待上游", running: "正在调用模型并生成结构化结论", done: "已完成", failed: "未完成" }[st.state] || "") +
+      (meta.length ? " · " + meta.join(" · ") : "") + "</div>" +
+      (io.length ? "<div class=io>" + io.join("<br>") + "</div>" : "") +
+      outputBlock(st.output, r) + (r === "decision" ? ledgerBlock() : "");
+  });
+  renderFlow();
+}
+
+const CLASS_NOTES = {
+  "mtb-P-0027883-q7":
+    "53 岁胰腺导管腺癌，问未来 12 个月是否还活着。七个角色各交自己那一层：时间线到 52.859 岁的最新 CT（有癌、未进展）；"
+    + "基因给 KRAS p.G12V、TP53 p.C275Y、FLT4 p.V1069I 与 SMAD4/CDKN2A 等拷贝数缺失；病理给原发胰导管腺癌与分期；"
+    + "用药只记到 50.070 岁的卡培他滨暴露。46 段候选送进 26 段（约 54%），差额在卡片上写明。"
+    + "6 条写 unknown 的主张不带引用，核验有 1 条判「证据不足」，决策采用 4 条主张答 A（与标签一致），解释里明说「支持但不证明」。",
+  "civic-60a33dc8-2af3-4b38-9a5c-951b40aafd27":
+    "要核验的是「MTOR F2108L 皮肤癌对丝氨酸/苏氨酸激酶抑制剂耐药」，但这一例只拿得到一篇 BCR-ABL/慢性髓系白血病文献。"
+    + "9 条主张里 7 条被各角色自己写成 unknown（不编造证据），文献角色直接指出来源与本题无关；"
+    + "决策排除 7 条、采用 2 条，答案 NEI（证据不足）与标签一致。这一例演示没有证据时系统怎么收口。",
+  "mtb-P-0006191-q0":
+    "56.1 岁肺腺癌，问未来 12 个月是否复发。输入小：8 段候选全部送入（覆盖 100%），最新记录是 56.082 岁的 CT「无癌、未进展」。"
+    + "系统据此答 B（不复发），标签是 A，答错了；未解决项写的是「56.082 之后没有任何复发或随访记录」，"
+    + "也就是它只能按过去事实外推。这一例用来说明预测题的诚实边界，而不是成功率。"
+};
+function caseKey() { return ((S.current || {}).case || {}).id || ""; }
+const VERDICT_CN = {confirmed: "已确认", corrected: "已更正", rejected: "已否定", insufficient: "证据不足"};
+const SCOPE_CN = {temporal: "时间与事件", molecular: "分子与变异", pathologic: "病理与癌种",
+  exposure: "既往用药", relationship: "药物关系", source: "资料来源", verification: "核验",
+  outcome_prediction: "结局推断"};
+const LEVEL_CN = {measured: "实测记录", curated: "整理库", literature: "文献", inferred: "推断", absent: "无支撑"};
+const MATERIAL_CN = {present: "有资料", not_applicable: "本题不涉及", unknown: "资料缺失"};
+const MATERIAL_BASIS_CN = {not_recorded: "缺失来源：原文未记录", selection_not_covered: "缺失来源：选集未覆盖",
+  supplied: "非选集缺失：所需资料已送入"};
+
+function claimChips(f) {
+  const chips = [];
+  if (f.scope) chips.push("<span class=pill>层面：" + esc(SCOPE_CN[f.scope] || f.scope) + "</span>");
+  if (f.evidence_level) chips.push("<span class=pill>依据：" + esc(LEVEL_CN[f.evidence_level] || f.evidence_level) + "</span>");
+  if (f.material_status && f.material_status !== "present") {
+    chips.push('<span class="pill warn">资料：' + esc(MATERIAL_CN[f.material_status] || f.material_status) + '</span>');
+  }
+  if (f.material_basis) {
+    chips.push('<span class="pill warn">' + esc(MATERIAL_BASIS_CN[f.material_basis] || f.material_basis) + '</span>');
+  }
+  return chips.length ? "<div class=hint>" + chips.join(" ") + "</div>" : "";
+}
+
+function renderClaims() {
+  const rows = [];
+  ROLES.forEach((r) => {
+    const o = (STATE[r] || {}).output || {};
+    (o.findings || []).forEach((f) => {
+      if (f.claim_id) rows.push({id: f.claim_id, author: f.author_role || ROLE_CN[r], statement: f.statement,
+                                 scope: f.scope, level: f.evidence_level, material: f.material_status,
+                                 basis: f.material_basis, used: f.used_claim_ids || []});
+    });
+  });
+  const verdicts = {}, feedback = {};
+  ROLES.forEach((r) => {
+    const o = (STATE[r] || {}).output || {};
+    (o.verdicts || []).forEach((v) => {
+      // reviewer_role is server-assigned on new records; old ones fall back to the reporting role.
+      const reviewer = v.reviewer_role || r;
+      const row = Object.assign({}, v, { reviewer: reviewer });
+      if (reviewer === "verifier") verdicts[v.target_claim_id] = row;
+      else (feedback[v.target_claim_id] = feedback[v.target_claim_id] || []).push(row);
+    });
+  });
+  const dec = ((STATE.decision || {}).output) || {};
+  const adopted = dec.adopted_claim_ids || [];
+  const excluded = dec.rejected_claim_ids || [];
+  if (!rows.length) {
+    $("claims").innerHTML = "<div class=hint>这条记录跑在 claims-v1 之前的旧协议上，后端当时没有保存主张 ID、" +
+      "引用关系与逐主张核验结论，所以这里显示未记录；执行顺序与逐角色卡片仍然可读。</div>";
+    return;
+  }
+  const table = rows.map((c) => {
+    const v = verdicts[c.id];
+    const fb = feedback[c.id] || [];
+    const fbText = fb.length ? "<br><span class=hint>反馈：" + fb.map((x) =>
+      (ROLE_CN[x.reviewer] || x.reviewer) + "「" + (VERDICT_CN[x.verdict] || x.verdict) + "」").join("、") + "</span>" : "";
+    const state = adopted.indexOf(c.id) >= 0 ? "<span class=\"pill ok\">决策采用</span>" :
+      (excluded.indexOf(c.id) >= 0 ? "<span class=\"pill bad\">决策排除</span>" : "<span class=hint>决策未点名</span>");
+    return "<tr><td><b>" + esc(c.id) + "</b><br><span class=hint>" + esc(c.author) + "</span></td>" +
+      "<td>" + (c.scope ? "<span class=pill>" + esc(SCOPE_CN[c.scope] || c.scope) + "</span>" : "") +
+      (c.level ? "<span class=pill>" + esc(LEVEL_CN[c.level] || c.level) + "</span>" : "") +
+      (c.material && c.material !== "present"
+        ? "<span class=\"pill warn\">" + esc(MATERIAL_CN[c.material] || c.material) + "</span>" : "") +
+      (c.basis ? "<span class=\"pill warn\">" + esc(MATERIAL_BASIS_CN[c.basis] || c.basis) + "</span>" : "") +
+      "<details><summary>看模型原文陈述</summary><div class=quote>" + esc(c.statement) + "</div></details>" +
+      (c.statement.indexOf("not_applicable") === 0 || c.statement.indexOf("unknown") === 0
+        ? "<span class=hint>该角色声明本题缺少可核对的对应资料</span>" : "") + "</td>" +
+      "<td>" + (c.used.length ? c.used.map((u) => "<span class=pill>" + esc(u) + "</span>").join("") : "<span class=hint>未声明</span>") + "</td>" +
+      "<td>" + (v ? "<span class=\"pill " + (v.verdict === "rejected" ? "bad" : (v.verdict === "insufficient" ? "warn" : "ok")) +
+        "\">" + (VERDICT_CN[v.verdict] || v.verdict) + "</span>" + (v.note ? "<br><span class=hint>" + esc(v.note.slice(0, 160)) + "</span>" : "")
+        : "<span class=hint>核验未点名</span>") + fbText + "</td><td>" + state + "</td></tr>";
+  }).join("");
+  const edges = [];
+  rows.forEach((c) => c.used.forEach((u) => edges.push(esc(u) + " → " + esc(c.id))));
+  Object.keys(verdicts).forEach((k) => edges.push("核验 " + esc(k) + " : " + (VERDICT_CN[verdicts[k].verdict] || verdicts[k].verdict)));
+  $("claims").innerHTML = "<div class=hint>下表每行是一条后端记录的主张：中文标签是它所属层面、依据类型与资料状态，" +
+    "英文原文折叠在下面，关系与核验结论按后端保存的 ID 生成。</div>" +
+    "<table><tr><th>主张 ID / 作者</th><th>主张内容与层面</th><th>它声明依据的主张</th>" +
+    "<th>Verifier 最终判定（附专业角色反馈）</th><th>决策处理</th></tr>" + table + "</table>" +
+    "<div class=hint style=margin-top:6px>关系边：" + (edges.join(" · ") || "没有记录到跨主张引用") +
+    "</div><div class=hint>专业角色也会对前序主张给出反馈判定，它与 Verifier 的最终判定分开显示；" +
+    "一张表出现多行 verdict 不代表 Verifier 运行了多次。</div>" +
+    "<div class=hint>主张 ID 由后端按角色与顺序分配，模型只能引用已存在的 ID；引用不存在的 ID 会让本次运行失败并留下记录。</div>";
+}
+
+function buildGraph() {
+  const docs = (((S.current || {}).case) || {}).documents || [];
+  const citesOf = (r) => {
+    const o = (STATE[r] || {}).output || {};
+    return (o.findings || []).reduce((acc, f) => acc.concat(f.citations || []), []).concat(o.citations || []);
+  };
+  const usersOf = (id) => ROLES.filter((r) => citesOf(r).some((c) => c.document_id === id));
+  const rows = [];
+  const known = {};
+  docs.forEach((d) => {
+    known[d.id] = 1;
+    const users = usersOf(d.id);
+    if (users.length) rows.push("<tr><td>" + esc(d.id) + "<br><span class=hint>" + esc(KIND_CN[d.kind] || d.kind) + "</span></td><td>" +
+      users.map((u) => "<span class=\"pill ok\">" + ROLE_CN[u] + "</span>").join("") + "</tr>");
+  });
+  const loose = {};
+  ROLES.forEach((r) => citesOf(r).forEach((c) => {
+    if (c.document_id && !known[c.document_id]) loose[c.document_id] = 1;
+  }));
+  Object.keys(loose).forEach((id) => rows.push("<tr><td>" + esc(id) +
+    "<br><span class=hint>正文未随本页加载</span></td><td>" +
+    usersOf(id).map((u) => "<span class=\"pill ok\">" + ROLE_CN[u] + "</span>").join("") + "</tr>"));
+  const handoff = ROLES.slice(0, 6).map((r, i) => {
+    const st = STATE[r] || {};
+    const next = ROLES[i + 1];
+    const n = (st.output && st.output.findings) ? st.output.findings.length : (st.output && st.output.answer ? 1 : 0);
+    return "<tr><td>" + ROLE_CN[r] + " → " + ROLE_CN[next] + "</td><td>" + n + " 条结论" +
+      ((st.output && st.output.unresolved) ? "，" + st.output.unresolved.length + " 条未解决" : "") + "</td></tr>";
+  });
+  $("graph").innerHTML = "<h3 style=font-size:13px>来源被哪些角色引用</h3><table><tr><th>来源</th><th>引用它的角色</th></tr>" +
+    (rows.join("") || "<tr><td colspan=2 class=hint>尚无引用关系</td></tr>") + "</table>" +
+    "<h3 style=font-size:13px;margin-top:10px>执行顺序上的传递（固定七步，不代表主张引用）</h3><table>" +
+    handoff.join("") + "</table>";
+}
+
+function showAnswer() {
+  const decision = (STATE.decision || {}).output;
+  const totals = usageTotals();
+  const box = $("answer");
+  if (!decision) {
+    box.innerHTML = "<div class=hint>尚无最终答案。" + (S.runId ? "任务 " + esc(S.runId) + " 仍在执行，上方已完成的角色可先看。" : "") + "</div>";
+    return;
+  }
+  box.innerHTML = "<div class=kv><span>最终答案</span><b>" + esc(REL_CN[decision.answer] || decision.answer) + "</b></div>" +
+    (CLASS_NOTES[caseKey()] ? "<div class=kv><span>课堂要点（中文）</span><b style=text-align:right>" +
+      esc(CLASS_NOTES[caseKey()]) + "</b></div>" : "") +
+    "<div class=kv><span>模型解释（英文原文）</span><details open style=text-align:right><summary>展开或收起</summary>" +
+      "<div class=quote>" + esc(decision.explanation || "") + "</div></details></div>" +
+    "<div class=kv><span>模型调用 / token / 耗时</span><b>" + totals.calls + " 次 · " + totals.in + " + " + totals.out +
+    " · " + totals.sec.toFixed(0) + "s</b></div>" +
+    "<div class=io><b>支撑答案的引用</b>" + (decision.citations || []).map(citationBlock).join("") + "</div>" +
+    ((decision.unresolved || []).length ? "<details><summary>仍未解决 " + decision.unresolved.length +
+      " 条</summary><div class=quote>" + esc(decision.unresolved.join("\n")) + "</div></details>" : "");
+}
+
+function taskPanel(text) { $("taskinfo").innerHTML = text; }
+
+async function attach(runId) {
+  if (S.streaming) return;
+  S.streaming = true;
+  // A role can take 3 minutes without emitting a frame, so the stall limit has to sit
+  // above that; when it trips, watch() catches up by polling the event log.
+  const STALL_MS = 90000;
+  let ctrl = new AbortController();
+  let timer = setTimeout(() => ctrl.abort(), STALL_MS);
+  const arm = () => { clearTimeout(timer); timer = setTimeout(() => ctrl.abort(), STALL_MS); };
+  try {
+    const res = await fetch("/v1/runs/" + runId + "/stream?after=" + S.cursor,
+      { headers: S.token ? { Authorization: "Bearer " + S.token } : {}, signal: ctrl.signal });
+    if (!res.ok || !res.body) throw new Error("stream " + res.status);
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = "";
+    while (true) {
+      arm();
+      const chunk = await reader.read();
+      if (chunk.done) break;
+      buf += decoder.decode(chunk.value, { stream: true });
+      let index;
+      while ((index = buf.indexOf("\n\n")) >= 0) {
+        const frame = buf.slice(0, index);
+        buf = buf.slice(index + 2);
+        handleFrame(frame, runId);
+      }
+    }
+  } catch (e) {
+    status("事件流中断：" + e.message + "（任务仍在服务器执行，改用轮询补取）");
+  }
+  clearTimeout(timer);
+  try { ctrl.abort(); } catch (e) {}
+  S.streaming = false;
+}
+
+async function watch(runId) {
+  if (S.watching) return;
+  S.watching = true;
+  for (let i = 0; i < 500; i++) {
+    await attach(runId);
+    try {
+      const evs = await api("/v1/runs/" + runId + "/events?after=" + S.cursor);
+      (evs || []).forEach((e) => { S.cursor = e.sequence; applyEvent(e.kind, e, runId); });
+    } catch (e) { status("补取事件失败：" + e.message + "，将继续重试。"); }
+    const run = await api("/v1/runs/" + runId).catch(() => null);
+    if (run && ["queued", "running"].indexOf(run.status) < 0) {
+      await finish(runId); S.watching = false; return;
+    }
+    await new Promise((r) => setTimeout(r, 5000));
+  }
+  S.watching = false;
+}
+
+function handleFrame(frame, runId) {
+  let kind = "", data = null;
+  frame.split("\n").forEach((line) => {
+    if (line.indexOf("id: ") === 0) S.cursor = parseInt(line.slice(4), 10);
+    else if (line.indexOf("event: ") === 0) kind = line.slice(7);
+    else if (line.indexOf("data: ") === 0) { try { data = JSON.parse(line.slice(6)); } catch (e) {} }
+  });
+  applyEvent(kind, data, runId);
+}
+
+function applyEvent(kind, data, runId) {
+  if (kind === "done") { finish(runId); return; }
+  if (!data) return;
+  const role = data.role, d = data.details || {};
+  const st = role ? (STATE[role] = STATE[role] || {}) : null;
+  if (kind === "agent_started" && st) {
+    st.state = "running"; st.sources = d.source_ids || [];
+    st.evidenceIds = d.evidence_ids || [];
+    st.coverage = d.evidence_coverage || null;
+    st.boardFindings = d.board_findings != null ? d.board_findings : null;
+    st.unresolvedItems = d.unresolved_items != null ? d.unresolved_items : null;
+    logEvent(ROLE_CN[role] + " 开始：可见来源 " + (d.source_ids || []).length + " 份，实际送入 " +
+      (d.evidence_ids || []).length + " 段" + (d.evidence_coverage && d.evidence_coverage.tail_dropped ?
+        "（候选 " + d.evidence_coverage.candidates + " 段，超出预算的部分未送入）" : ""));
+  }
+  else if (kind === "retrieval_completed" && st) { st.retrieved = (d.ranked_ids || []).length; }
+  else if (kind === "model_usage" && st) {
+    const mine = recordUsage(role, { sequence: data.sequence, role: role, details: d }, data.sequence);
+    if (mine.fresh) logEvent(ROLE_CN[role] + " 模型返回，耗时 " + mine.sec.toFixed(0) + "s（输入 " + mine.in +
+      " / 输出 " + mine.out + " token，累计 " + mine.calls + " 次）");
+  } else if (kind === "schema_repair_requested" && st) { st.repair = true; logEvent(ROLE_CN[role] + " 输出未通过校验，按统一设置修复一次"); }
+  else if (kind === "invalid_model_output" && st) { st.state = "running"; }
+  else if (kind === "agent_reported" && st) {
+    st.state = "done"; st.output = d.output;
+    logEvent(ROLE_CN[role] + " 完成，产出 " + (((d.output || {}).findings || []).length || ((d.output || {}).answer ? 1 : 0)) + " 条结论");
+  } else if (kind === "budget_exhausted") {
+    if (st) st.state = "failed";
+    logEvent("预算耗尽：" + (d.reason || ""));
+  } else if (kind === "verification_ledger") {
+    S.ledger = d.entries || [];
+    logEvent("综合决策收到核验账本：" + S.ledger.length + " 条审核记录（最终判定 " +
+      S.ledger.filter((x) => x.final).length + " 条，专业角色反馈 " +
+      S.ledger.filter((x) => !x.final).length + " 条）");
+  } else if (kind === "run_completed") { logEvent("任务结束：" + (d.status || "")); }
+  renderRoles();
+  renderClaims();
+  showAnswer();
+}
+
+async function finish(runId) {
+  const run = await api("/v1/runs/" + runId);
+  const result = run.result;
+  if (result) {
+    S.result = result;
+    (result.reports || []).forEach((r) => {
+      const st = STATE[r.role] = STATE[r.role] || {};
+      st.state = "done"; st.output = r.output;
+    });
+    if (result.decision) Object.assign(STATE.decision = STATE.decision || {}, { state: "done", output: result.decision });
+    const ledgerEvent = (result.trace || []).filter((t) => t.kind === "verification_ledger").slice(-1)[0];
+    if (ledgerEvent) S.ledger = (ledgerEvent.details || {}).entries || [];
+    applyUsageEvents(result.trace);
+  } else {
+    ROLES.forEach((r) => { if (STATE[r] && STATE[r].state === "running") STATE[r].state = "failed"; });
+  }
+  renderRoles(); showAnswer(); buildGraph(); renderClaims();
+  taskPanel("<div class=kv><span>模式</span><b>真实运行</b></div>" +
+    "<div class=kv><span>run_id</span><b>" + esc(runId) + "</b></div>" +
+    "<div class=kv><span>服务器状态</span><b>" + esc(run.status) + "</b></div>" +
+    (run.error ? "<div class=\"pill bad\">失败原因：" + esc(run.error) + "</div>" : "") +
+    (result && result.usage ? "<div class=kv><span>用量</span><b>" + result.usage.calls + " 次调用 · in " +
+      result.usage.input_tokens + " / out " + result.usage.output_tokens + " token · 估算用量 " +
+      (result.usage.estimated_tokens ? "有" : "无") + "</b></div>" : ""));
+  if (run.result) {
+    $("b-mode").textContent = run.result.simulated ? "这条记录来自模拟后端" : "这条记录来自真实 API";
+    $("b-mode").className = "badge " + (run.result.simulated ? "sim" : "real");
+  }
+  status("任务 " + runId + " 结束：" + run.status + (run.error ? " · " + run.error : "") +
+    (run.result ? " · " + (run.result.simulated ? "模拟" : "真实") + run.result.duration_seconds.toFixed(0) + "s" : ""));
+  loadQueue();
+}
+
+async function startRun() {
+  if (!S.current) return;
+  const body = { case: S.current.case, config: S.demo.config, allow_remote_processing: true };
+  if (!S.idem) S.idem = "demo:" + (window.crypto && crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
+  resetState();
+  showAnswer();
+  status("提交中…");
+  try {
+    const res = await api("/v1/runs", { method: "POST", json: body, headers: { "Idempotency-Key": S.idem } });
+    S.runId = res.run_id; S.cursor = -1;
+    localStorage.setItem("of.run", res.run_id);
+    stashCase();
+    taskPanel("<div class=kv><span>模式</span><b>真实运行中</b></div>" +
+      "<div class=kv><span>run_id</span><b>" + esc(res.run_id) + "</b></div>" +
+      "<div class=kv><span>状态</span><b>" + esc(res.status) + "</b></div>" +
+      "<div class=hint>事件游标 <span id=curline>-1</span>；刷新页面后仍可查回这个任务。</div>");
+    $("b-mode").textContent = S.simulated ? "本次为模拟后端" : "真实运行中（真实 API）";
+    status("任务已创建：" + res.run_id + "（" + res.status + "）");
+    logEvent("任务已创建 " + res.run_id);
+    watch(res.run_id);
+  } catch (e) { status("提交失败：" + e.message); }
+}
+
+async function inspectInput() {
+  if (!S.current) return;
+  try {
+    const r = await api("/v1/cases/inspect", { method: "POST", json: S.current.case });
+    const covered = Object.keys(r.explicit_role_inputs).filter((k) => r.explicit_role_inputs[k])
+      .map((k) => "<span class=\"pill ok\">" + (ROLE_CN[k] || k) + "</span>").join("");
+    const missing = (r.roles_without_explicit_inputs || []).map((k) => "<span class=\"pill warn\">" + (ROLE_CN[k] || k) + "</span>").join("");
+    $("inspect").innerHTML = "<div>有明确输入的角色：" + (covered || "无") + "</div>" +
+      (missing ? "<div style=margin-top:4px>缺明确输入的角色（仍会执行，但结论要标注依据不足）：" + missing + "</div>" : "") +
+      "<div style=margin-top:4px>不同文献候选：" + r.distinct_literature_candidates + " · 来源字符合计 " + r.source_bytes + "</div>" +
+      (r.warnings.length ? "<div style=margin-top:4px>" + r.warnings.map((x) => "<span class=\"pill warn\">" + esc(x) + "</span>").join("") + "</div>" : "");
+    $("btn-run").disabled = false;
+  } catch (e) { $("inspect").innerHTML = "<span class=\"pill bad\">输入检查失败：" + esc(e.message) + "</span>"; }
+}
+
+const PINS = [["MTB 多模态病例整合", "real_fast2_mtb:v1_fast:mtb-P-0027883-q7"],
+  ["CIViC 变异·癌种·药物", "real_fast2_civic:v1_fast:civic-60a33dc8-2af3-4b38-9a5c-951b40aafd27"],
+  ["冲突 / 证据不足", "real_fast2_civic:v1_fast:civic-3e09dc9e-43af-4022-88ec-a31f18cfaf42"],
+  ["错误样例（判定与标签相反）", "real_fast2_mtb:v1_fast:mtb-P-0022916-q2"]];
+
+async function openLibraryItem(id) {
+  const item = await api("/v1/library/item?item_id=" + encodeURIComponent(id));
+  setCase(item.case, "历史真实结果（" + item.arm + "，" + item.seconds + "s）");
+  resetState();
+  const ledgerEvent = item.trace.filter((t) => t.kind === "verification_ledger").slice(-1)[0];
+  S.ledger = ledgerEvent ? (ledgerEvent.ledger || []) : null;
+  item.reports.forEach((r) => {
+    const st = STATE[r.role] = STATE[r.role] || {};
+    st.state = "done"; st.output = r.output;
+  });
+  if (item.decision) Object.assign(STATE.decision = STATE.decision || {}, { state: "done", output: item.decision });
+  applyUsageEvents(item.trace);
+  S.result = { usage: item.usage_full || {},
+    duration_seconds: typeof item.seconds === "number" ? item.seconds : null };
+  item.trace.filter((t) => t.kind === "agent_started").forEach((t) => {
+    const st = STATE[t.role] = STATE[t.role] || {};
+    st.evidenceIds = t.evidence_ids || [];
+    st.coverage = t.evidence_coverage || null;
+    st.boardFindings = t.board_findings != null ? t.board_findings : null;
+    st.unresolvedItems = t.unresolved_items != null ? t.unresolved_items : null;
+    st.sources = t.source_ids || st.sources || [];
+  });
+  renderRoles(); showAnswer(); buildGraph(); renderClaims();
+  const verdict = item.answer === item.gold_label ? "<span class=\"pill ok\">与标签一致</span>" : "<span class=\"pill bad\">与标签不一致</span>";
+  taskPanel("<div class=kv><span>模式</span><b>历史真实结果回放</b></div>" +
+    "<div class=kv><span>样本</span><b>" + esc(item.case_id) + "</b></div>" +
+    "<div class=kv><span>系统 / 状态</span><b>" + esc(item.arm) + " · " + esc(item.status) + "</b></div>" +
+    "<div class=kv><span>答案 / 标签</span><b>" + esc(REL_CN[item.answer] || item.answer) + " / " +
+    esc(REL_CN[item.gold_label] || item.gold_label) + " " + verdict + "</b></div>");
+  $("b-mode").textContent = "历史回放（真实 API）";
+  $("btn-run").disabled = false;
+  status("回放：" + id + "；点“发起真实 API 运行”可用同一输入重新跑一次。");
+}
+
+const CLASSROOM_CASES = [
+  ["mtb-P-0027883-q7", "课堂 · 长时间线 + 真实分子（预测题）"],
+  ["civic-60a33dc8-2af3-4b38-9a5c-951b40aafd27", "课堂 · 单文献核验（证据不足）"],
+  ["mtb-P-0006191-q0", "课堂 · 全覆盖小输入（答错样例）"]];
+
+function classroomPins() {
+  // Prefer the study recorded under the profile the demo serves, and only then the older snapshot.
+  const prefers = ["real_class6c", "real_class6b"];
+  const pins = [];
+  CLASSROOM_CASES.forEach(function (pair) {
+    prefers.some(function (study) {
+      const hit = (S.library || []).filter(function (i) {
+        return i.study.indexOf(study) === 0 && i.case_id === pair[0] && i.status === "completed";
+      })[0];
+      if (hit) { pins.push([pair[1], hit.id]); return true; }
+      return false;
+    });
+  });
+  const taken = pins.map(function (p) { return p[1]; });
+  (S.library || []).forEach(function (i) {
+    if (pins.length < 3 && i.status === "completed" && i.study.indexOf("real_class6") === 0
+        && taken.indexOf(i.id) < 0) {
+      pins.push(["课堂 · " + i.dataset_label.slice(0, 12), i.id]);
+    }
+  });
+  return pins;
+}
+
+const ACCEPTANCE_CASES = [
+  ["real_class6d_mtb_r2", "mtb-P-0022916-q6", "验收 · 用药事实保底（q6）"],
+  ["real_class6d_civic", "civic-3e09dc9e-43af-4022-88ec-a31f18cfaf42", "验收 · 核验账本进入决策"]];
+
+function acceptancePins() {
+  return ACCEPTANCE_CASES.map(function (row) {
+    const hit = (S.library || []).filter(function (i) {
+      return i.study === row[0] && i.case_id === row[1] && i.status === "completed";
+    })[0];
+    return hit ? [row[2], hit.id] : null;
+  }).filter(Boolean);
+}
+
+function renderHistory() {
+  const classroom = classroomPins().concat(acceptancePins());
+  $("pinned").innerHTML = PINS.concat(classroom).filter((pair) => S.library.some((i) => i.id === pair[1]))
+    .map((pair) => "<button style=width:auto data-pin=\"" + esc(pair[1]) + "\">" + esc(pair[0]) + "</button>").join("");
+  Array.prototype.forEach.call(document.querySelectorAll("[data-pin]"), (b) => {
+    b.onclick = () => openLibraryItem(b.getAttribute("data-pin"));
+  });
+  $("history").innerHTML = S.library.map((i) => "<div class=item data-id=\"" + esc(i.id) + "\">" +
+    "<div>" + esc(i.case_id) + " <span class=hint>" + esc(i.arm) + " · " + esc(i.status) + " · 答案 " +
+    esc(i.answer || "-") + "/标签 " + esc(i.gold_label || "-") + " · " + i.seconds + "s</span></div>" +
+    "<div class=hint>" + esc(String(i.question || "").slice(0, 90)) + "</div></div>").join("");
+  Array.prototype.forEach.call(document.querySelectorAll("#history .item"), (el) => {
+    el.onclick = () => {
+      Array.prototype.forEach.call(document.querySelectorAll("#history .item"), (x) => x.classList.remove("sel"));
+      el.classList.add("sel");
+      openLibraryItem(el.getAttribute("data-id"));
+    };
+  });
+}
+
+async function loadQueue() {
+  try {
+    const runs = await api("/v1/runs?limit=6");
+    $("queue").innerHTML = "<b>服务器最近任务</b>" + runs.map((r) => "<div class=item data-run=\"" + esc(r.id) + "\">" +
+      esc(r.status) + " · " + esc(r.case_id) + " · " + esc(r.id) + "</div>").join("");
+    Array.prototype.forEach.call(document.querySelectorAll("[data-run]"), (el) => {
+      el.onclick = () => resume(el.getAttribute("data-run"));
+    });
+  } catch (e) { $("queue").innerHTML = "<span class=hint>读取任务列表需要有效令牌</span>"; }
+}
+
+async function resume(runId) {
+  const run = await api("/v1/runs/" + runId);
+  S.runId = runId; S.cursor = -1;
+  unstashCase();
+  resetState();
+  await finish(runId);
+  if (["queued", "running"].indexOf(run.status) >= 0) watch(runId);
+}
+
+async function loadDataset() {
+  const d = await api("/v1/datasets/summary");
+  $("dataset").innerHTML = "<table><tr><th>数据集</th><th>系统</th><th>例数</th><th>完成率</th><th>准确率</th>" +
+    "<th>调用/例</th><th>token/例</th><th>p50 秒</th><th>后端</th></tr>" +
+    d.arms.map((a) => "<tr><td>" + esc(a.dataset_label) + "</td><td>" + esc(a.arm) + "</td><td>" + a.cases + "</td><td>" +
+      a.completed + "/" + a.cases + "</td><td><b>" + a.accuracy + "</b></td><td>" + a.calls_per_case + "</td><td>" +
+      a.tokens_per_case + "</td><td>" + a.seconds_p50 + "</td><td>" + (a.simulated ? "模拟" : "真实 API") + "</td></tr>").join("") +
+    "</table>";
+  $("dataset-note").textContent = d.note + " 七 Agent 与 single_tools 使用同一模型、同一资料与同一预算上限；" +
+    "表格里的秒数是整条病例的端到端时间，下方逐角色表按角色平均。";
+  const usage = {};
+  (S.library || []).forEach((i) => {
+    const group = i.arm === "v1_fast" ? "v1_fast" : "single_tools";
+    (i.roles || []).forEach((r) => {
+      const b = usage[group] = usage[group] || {};
+      const row = b[r.role] = b[r.role] || { n: 0, sec: 0, findings: 0, citations: 0 };
+      row.n += 1; row.sec += r.seconds || 0; row.findings += r.findings || 0; row.citations += r.citations || 0;
+    });
+  });
+  $("perrole").innerHTML = Object.keys(usage).map((group) => {
+    const rows = ROLES.filter((r) => usage[group][r]).map((r) => {
+      const v = usage[group][r];
+      return "<tr><td>" + ROLE_CN[r] + " <span class=hint>" + r + "</span></td><td>" + v.n + "</td><td>" +
+        (v.sec / v.n).toFixed(1) + "</td><td>" + (v.findings / v.n).toFixed(2) + "</td><td>" + (v.citations / v.n).toFixed(2) + "</td></tr>";
+    });
+    return "<h3 style=font-size:13px;margin-top:10px>" + (group === "v1_fast" ?
+      "七 Agent 工作流（v1_fast）" : "单工具对照（single_tools）") + "</h3><table><tr><th>角色</th><th>执行次数</th>" +
+      "<th>平均秒</th><th>平均发现</th><th>平均引用</th></tr>" + rows.join("") + "</table>";
+  }).join("");
+}
+
+async function loadSources() {
+  const [examples, lib] = await Promise.all([api("/v1/examples"), api("/v1/library")]);
+  S.examples = examples;
+  S.library = lib.items;
+  renderHistory();
+  fillRefs();
+}
+
+function fillRefs(autoLoad) {
+  const load = autoLoad !== false && S.autoSelect !== false;
+  const kind = $("source-kind").value;
+  $("jsonl-label").style.display = $("jsonl-index").style.display = "none";
+  $("ref-label").style.display = kind === "upload" ? "none" : "block";
+  $("source-ref").style.display = kind === "upload" ? "none" : "block";
+  $("btn-pick").disabled = kind !== "upload";
+  $("file").style.display = kind === "upload" ? "block" : "none";
+  if (kind === "builtin") {
+    $("source-ref").innerHTML = S.examples.map((e) => "<option value=\"" + esc(e.id) + "\">" + esc(e.id) + " · " +
+      esc(TASK_CN[e.task] || e.task) + "</option>").join("");
+    if (load) loadRef();
+  } else if (kind === "mtb" || kind === "civic") {
+    const study = kind === "mtb" ? "real_fast2_mtb" : "real_fast2_civic";
+    const rows = S.library.filter((i) => i.study === study && i.arm === "v1_fast");
+    $("source-ref").innerHTML = rows.map((i) => "<option value=\"" + esc(i.case_id) + "\">" + esc(i.case_id) +
+      " · " + esc(String(i.question || "").replace(/\s+/g, " ").slice(0, 46)) + "</option>").join("");
+    if (load) loadRef();
+  } else if (load) {
+    $("source-ref").innerHTML = "";
+    S.current = null;
+    renderInput();
+  }
+}
+
+async function loadRef() {
+  const kind = $("source-kind").value;
+  const value = $("source-ref").value;
+  if (!value) return;
+  if (kind === "builtin") {
+    const c = await api("/v1/examples/" + encodeURIComponent(value));
+    setCase(c, "内置合成示例");
+  } else {
+    const study = kind === "mtb" ? "real_fast2_mtb" : "real_fast2_civic";
+    const item = await api("/v1/library/item?item_id=" + encodeURIComponent(study + ":v1_fast:" + value));
+    setCase(item.case, "真实开发集样例（结果已有一次真实运行）");
+    status("已选择 " + value + "，可直接发起新的真实运行。");
+  }
+}
+
+$("source-kind").onchange = fillRefs;
+$("source-ref").onchange = loadRef;
+$("btn-pick").onclick = () => $("file").click();
+$("file").onchange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const text = await file.text();
+  if (/\.jsonl$/i.test(file.name)) {
+    const rows = text.split("\n").filter((l) => l.trim()).map((l) => JSON.parse(l));
+    S.jsonl = rows;
+    $("jsonl-label").style.display = "block";
+    $("jsonl-index").style.display = "block";
+    $("jsonl-index").innerHTML = rows.map((r, i) => "<option value=" + i + ">#" + (i + 1) + " " + esc(r.id || "") + "</option>").join("");
+    $("jsonl-index").onchange = () => setCase(S.jsonl[parseInt($("jsonl-index").value, 10)], "上传 JSONL 中的第 " + ($("jsonl-index").value + 1) + " 条");
+    $("jsonl-index").onchange();
+  } else {
+    setCase(JSON.parse(text), "上传的单个 JSON 病例");
+  }
+};
+$("btn-inspect").onclick = inspectInput;
+$("btn-run").onclick = startRun;
+$("tab-demo").onclick = () => { $("view-demo").style.display = ""; $("view-data").style.display = "none"; };
+$("tab-data").onclick = async () => { $("view-demo").style.display = "none"; $("view-data").style.display = "";
+  try { await loadDataset(); } catch (e) { status("数据集结果加载失败：" + e.message + "，再点一次即可。"); } };
+$("token").onchange = async () => { S.token = $("token").value; localStorage.setItem("of.token", S.token); await boot(); };
+
+async function boot() {
+  S.autoSelect = false;
+  $("token").value = S.token;
+  resetState();
+  const health = await fetch("/healthz").then((r) => r.json());
+  $("b-provider").textContent = "provider " + health.provider;
+  $("b-mode").textContent = health.simulated ? "模拟后端" : "真实 API";
+  $("b-mode").className = "badge " + (health.simulated ? "sim" : "real");
+  S.simulated = health.simulated;
+  try {
+    const [demo, caps, agents] = await Promise.all([api("/v1/configs/demo"), api("/v1/capabilities"), api("/v1/agents")]);
+    S.demo = demo;
+    S.agents = agents.roles || {};
+    $("b-config").textContent = "配置 " + demo.name + "：七角色 · 片段引用 · 输出上限 " + demo.config.max_output_tokens +
+      " · 统一一次结构修复 · 总预算 " + demo.config.max_total_tokens + " token";
+    $("b-model").textContent = "model " + caps.model;
+    await loadSources();
+    await loadQueue();
+    const last = localStorage.getItem("of.run");
+    let resumed = false;
+    if (last) { try { await resume(last); resumed = true; } catch (e) {} }
+    if (!$("source-kind").value) $("source-kind").value = "mtb";
+    S.autoSelect = !resumed;
+    fillRefs();
+    S.autoSelect = true;
+    if (resumed && !S.current) {
+      $("inputbox").innerHTML = "<div class=hint>这个任务的输入没有随本页保存，所以输入面板是空的；" +
+        "引用块显示的是后端回填的片段。选回同一病例即可对照原文。</div>";
+    }
+  } catch (e) { status("读取演示配置失败（可能需要令牌）：" + e.message); }
+}
+boot();
+</script>
+</body>
+</html>

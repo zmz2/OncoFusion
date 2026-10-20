@@ -1,0 +1,293 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-1882c0b2-1f81-4ba1-907f-5b2f227492bb",
+  "patient_id": "article-25349473",
+  "status": "completed",
+  "provider": "mock",
+  "model": "lexical-simulator-v1",
+  "simulated": true,
+  "fingerprint": "4a009f4e0b04fb05c1a10b5289f4682d7505b8ab02f061d43a70ac157f6282c0",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 200000,
+    "max_output_tokens": 1500,
+    "schema_retries": 0,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "SIMULATED lexical output for software testing only.",
+    "citations": [
+      {
+        "document_id": "evidence",
+        "start": 0,
+        "end": 312,
+        "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+      }
+    ],
+    "unresolved": [],
+    "confidence": null
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 432,
+    "output_tokens": 126,
+    "estimated_tokens": true,
+    "cost_usd": 0.0
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "evidence"
+        ],
+        "fingerprint": "4a009f4e0b04fb05c1a10b5289f4682d7505b8ab02f061d43a70ac157f6282c0",
+        "simulated": true,
+        "version": "0.1.0"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "evidence"
+        ],
+        "query": "{\n  \"disease\": \"acute myeloid leukemia\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BCR::ABL1 Fusion AND ABL1 T315I\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Ponatinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "evidence"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "evidence": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "evidence",
+              "start": 206,
+              "end": 211,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "evidence": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "evidence"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "evidence": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "evidence",
+              "start": 206,
+              "end": 211,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "evidence": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "b39b10075cca268e4da03b83d9f879794ad270152022762b956b464443189063",
+        "source_ids": [
+          "evidence"
+        ],
+        "token_reservation": 5742
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 432,
+        "output_tokens": 126,
+        "attempts": 1,
+        "estimated": true
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "SIMULATED lexical output for software testing only.",
+          "citations": [
+            {
+              "document_id": "evidence",
+              "start": 0,
+              "end": 312,
+              "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+            }
+          ],
+          "unresolved": [],
+          "confidence": null
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "evidence"
+  ],
+  "duration_seconds": 0.005082,
+  "research_only": true
+}

@@ -330,3 +330,38 @@ def test_blank_question_rejected(client, case):
 def test_recursive_upload_rejected(client):
     body = b"[" * 2000 + b"0" + b"]" * 2000
     assert client.post("/v1/cases/upload", files={"file": ("deep.json", body)}).status_code == 422
+
+
+def test_acquire_mtb_honours_endpoint_override(tmp_path, monkeypatch):
+    revision = "b" * 40
+    questions = {"P1": [{"file_paths": ["/data/P1/specimen.txt"]}]}
+    visited = []
+
+    def handler(request):
+        visited.append(str(request.url))
+        if "/api/" in request.url.path:
+            return httpx.Response(200, json={"sha": revision, "siblings": [
+                {"rfilename": "questions_msk_bench.json"},
+                {"rfilename": "data/P1/specimen.txt"}]})
+        return (httpx.Response(200, json=questions) if request.url.path.endswith(".json")
+                else httpx.Response(200, text="specimen"))
+
+    monkeypatch.delenv("ONCOFUSION_HF_ENDPOINT", raising=False)
+    monkeypatch.delenv("HF_ENDPOINT", raising=False)
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        acquire_mtb(client, tmp_path / "canonical")
+    assert visited and all(url.startswith("https://huggingface.co/") for url in visited)
+
+    visited.clear()
+    monkeypatch.setenv("ONCOFUSION_HF_ENDPOINT", "https://mirror.example")
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        inventory = acquire_mtb(client, tmp_path / "mirror")
+    assert inventory["endpoint"] == "https://mirror.example"
+    assert all(url.startswith("https://mirror.example/") for url in visited)
+
+    visited.clear()
+    monkeypatch.delenv("ONCOFUSION_HF_ENDPOINT")
+    monkeypatch.setenv("HF_ENDPOINT", "https://mirror.example/")
+    with httpx.Client(transport=httpx.MockTransport(handler)) as client:
+        acquire_mtb(client, tmp_path / "generic")
+    assert all(url.startswith("https://mirror.example/") for url in visited)

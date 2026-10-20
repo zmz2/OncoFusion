@@ -1,0 +1,299 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-9dc5e8d7-7f69-46c6-a376-20b732dce28d",
+  "patient_id": "article-25349473",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "229caa312f1161ed7659503cf2031873ccb50899ab7d108713a5092021972b67",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 200000,
+    "max_output_tokens": 5000,
+    "schema_retries": 0,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The source reports ponatinib treatment in CP-CML and states that higher response rates were reached for patients with the T315I mutation, which supports an association between ABL1 T315I and ponatinib sensitivity/response. However, it also states that the presence of T315I was not a significant prognostic factor, so the claim that the molecular profile predictively determines sensitivity/response is not fully supported as written. The source does not explicitly mention BCR::ABL1 fusion or somatic origin, although the CML/CP-CML context is consistent with Ph+ disease. A necessary revision is that T315I in CML is associated with higher ponatinib response rates but was not a significant prognostic factor.",
+    "citations": [
+      {
+        "document_id": "pmid-25349473",
+        "start": 152,
+        "end": 312,
+        "quote": "higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+      }
+    ],
+    "unresolved": [
+      "Source does not explicitly state BCR::ABL1 fusion or somatic variant origin.",
+      "The statement that T315I was not a significant prognostic factor limits the strength of a predictive sensitivity claim."
+    ],
+    "confidence": 0.65
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1314,
+    "output_tokens": 1776,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25349473"
+        ],
+        "fingerprint": "229caa312f1161ed7659503cf2031873ccb50899ab7d108713a5092021972b67",
+        "simulated": false,
+        "version": "0.1.0"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25349473"
+        ],
+        "query": "{\n  \"disease\": \"Chronic Myeloid Leukemia\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BCR::ABL1 Fusion AND ABL1 T315I\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Ponatinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 206,
+              "end": 211,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25349473": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 206,
+              "end": 211,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25349473": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "18e4976cffbe000ed089da8f257b743b971b6711fbce82ce61c9c0f84cba8aad",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 9258
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1314,
+        "output_tokens": 1776,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The source reports ponatinib treatment in CP-CML and states that higher response rates were reached for patients with the T315I mutation, which supports an association between ABL1 T315I and ponatinib sensitivity/response. However, it also states that the presence of T315I was not a significant prognostic factor, so the claim that the molecular profile predictively determines sensitivity/response is not fully supported as written. The source does not explicitly mention BCR::ABL1 fusion or somatic origin, although the CML/CP-CML context is consistent with Ph+ disease. A necessary revision is that T315I in CML is associated with higher ponatinib response rates but was not a significant prognostic factor.",
+          "citations": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 152,
+              "end": 312,
+              "quote": "higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+            }
+          ],
+          "unresolved": [
+            "Source does not explicitly state BCR::ABL1 fusion or somatic variant origin.",
+            "The statement that T315I was not a significant prognostic factor limits the strength of a predictive sensitivity claim."
+          ],
+          "confidence": 0.65
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25349473"
+  ],
+  "duration_seconds": 396.774025,
+  "research_only": true
+}

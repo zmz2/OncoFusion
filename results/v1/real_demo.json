@@ -1,0 +1,1224 @@
+{
+  "schema_version": "1.0",
+  "case_id": "synthetic-support",
+  "patient_id": "synthetic-p1",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "cceedf9def1596aa4d7c11d072908b9b59de55e1824bc265d5ad59f7e65307be",
+  "config": {
+    "mode": "multi",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 200000,
+    "max_output_tokens": 1500,
+    "schema_retries": 0,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The visible literature source directly states that GENE1 V600E in Tumor-A was sensitive to Compound-A, which matches the supplied claim in gene, variant, disease, and drug. The genomics source confirms the variant p.Val600Glu, canonicalized as V600E, but does not itself establish Tumor-A context or Compound-A sensitivity. The pathology source identifies Tumor-A but does not report the variant or sensitivity. No visible source reports an opposing result. The main limitation is that the supporting literature source is explicitly synthetic, so the support is source-grounded but not independently confirmed.",
+    "citations": [
+      {
+        "document_id": "paper1",
+        "start": 0,
+        "end": 73,
+        "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+      },
+      {
+        "document_id": "gene",
+        "start": 0,
+        "end": 48,
+        "quote": "Fictional sequencing detected GENE1 p.Val600Glu."
+      }
+    ],
+    "unresolved": [
+      "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+      "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+    ],
+    "confidence": 0.85
+  },
+  "reports": [
+    {
+      "role": "literature",
+      "executor": "literature",
+      "output": {
+        "findings": [
+          {
+            "statement": "A literature source reports a synthetic experiment directly stating that GENE1 V600E in Tumor-A was sensitive to Compound-A, which supports the claim.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "paper1",
+                "start": 0,
+                "end": 73,
+                "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+          "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+        ],
+        "requery": "Find independent primary experimental or clinical evidence for GENE1 p.Val600Glu sensitivity to Compound-A in Tumor-A."
+      }
+    },
+    {
+      "role": "timeline",
+      "executor": "timeline",
+      "output": {
+        "findings": [
+          {
+            "statement": "A literature source directly reports that GENE1 V600E in Tumor-A was sensitive to Compound-A, which supports the supplied claim.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "paper1",
+                "start": 0,
+                "end": 73,
+                "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+              }
+            ]
+          },
+          {
+            "statement": "The genomics source reports detection of GENE1 p.Val600Glu, but it does not state that the variant is in Tumor-A or that it is sensitive to Compound-A.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "gene",
+                "start": 0,
+                "end": 48,
+                "quote": "Fictional sequencing detected GENE1 p.Val600Glu."
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+          "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+        ],
+        "requery": ""
+      }
+    },
+    {
+      "role": "genomics",
+      "executor": "genomics",
+      "output": {
+        "findings": [
+          {
+            "statement": "The supplied claim is directly supported by a visible literature source that states GENE1 V600E in Tumor-A was sensitive to Compound-A.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "paper1",
+                "start": 0,
+                "end": 73,
+                "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+              }
+            ]
+          },
+          {
+            "statement": "The genomics source confirms the exact variant spelling p.Val600Glu, which resolves to the canonical V600E variant in the claim, but it does not by itself establish Tumor-A context or Compound-A sensitivity.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "gene",
+                "start": 0,
+                "end": 48,
+                "quote": "Fictional sequencing detected GENE1 p.Val600Glu."
+              }
+            ]
+          },
+          {
+            "statement": "The supporting literature source is explicitly labeled synthetic, so the sensitivity claim is supported only by the provided synthetic evidence and lacks independent real-world confirmation.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "paper1",
+                "start": 0,
+                "end": 73,
+                "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+          "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+        ],
+        "requery": ""
+      }
+    },
+    {
+      "role": "pathology",
+      "executor": "pathology",
+      "output": {
+        "findings": [
+          {
+            "statement": "A visible literature source directly states that GENE1 V600E in Tumor-A was sensitive to Compound-A, which supports the supplied claim.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "paper1",
+                "start": 0,
+                "end": 73,
+                "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+              }
+            ]
+          },
+          {
+            "statement": "The genomics source reports detection of GENE1 p.Val600Glu, but it does not state that the variant is in Tumor-A or that it is sensitive to Compound-A.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "gene",
+                "start": 0,
+                "end": 48,
+                "quote": "Fictional sequencing detected GENE1 p.Val600Glu."
+              }
+            ]
+          },
+          {
+            "statement": "The pathology source identifies the specimen as Tumor-A, but it does not report GENE1 V600E or sensitivity to Compound-A.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "path",
+                "start": 0,
+                "end": 54,
+                "quote": "Fictional specimen: Tumor-A. This record is synthetic."
+              }
+            ]
+          },
+          {
+            "statement": "The supporting literature source is explicitly labeled synthetic, so the sensitivity claim is supported only by the provided synthetic evidence and lacks independent real-world confirmation.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "paper1",
+                "start": 0,
+                "end": 73,
+                "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+          "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+        ],
+        "requery": ""
+      }
+    },
+    {
+      "role": "drug",
+      "executor": "drug",
+      "output": {
+        "findings": [
+          {
+            "statement": "A visible literature source directly states that GENE1 V600E in Tumor-A was sensitive to Compound-A, which supports the supplied claim.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "paper1",
+                "start": 0,
+                "end": 73,
+                "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+              }
+            ]
+          },
+          {
+            "statement": "The genomics source confirms the exact variant spelling p.Val600Glu, which resolves to the canonical V600E variant in the claim, but it does not by itself establish Tumor-A context or Compound-A sensitivity.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "gene",
+                "start": 0,
+                "end": 48,
+                "quote": "Fictional sequencing detected GENE1 p.Val600Glu."
+              }
+            ]
+          },
+          {
+            "statement": "The pathology source identifies the specimen as Tumor-A, but it does not report GENE1 V600E or sensitivity to Compound-A.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "path",
+                "start": 0,
+                "end": 54,
+                "quote": "Fictional specimen: Tumor-A. This record is synthetic."
+              }
+            ]
+          },
+          {
+            "statement": "The supporting literature source is explicitly labeled synthetic, so the sensitivity claim is supported only by the provided synthetic evidence and lacks independent real-world confirmation.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "paper1",
+                "start": 0,
+                "end": 73,
+                "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+          "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+        ],
+        "requery": ""
+      }
+    },
+    {
+      "role": "verifier",
+      "executor": "verifier",
+      "output": {
+        "findings": [
+          {
+            "statement": "The visible literature source directly states that GENE1 V600E in Tumor-A was sensitive to Compound-A, which supports the supplied claim.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "paper1",
+                "start": 0,
+                "end": 73,
+                "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+              }
+            ]
+          },
+          {
+            "statement": "The genomics source reports detection of GENE1 p.Val600Glu, but it does not state that the variant is in Tumor-A or that it is sensitive to Compound-A.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "gene",
+                "start": 0,
+                "end": 48,
+                "quote": "Fictional sequencing detected GENE1 p.Val600Glu."
+              }
+            ]
+          },
+          {
+            "statement": "The pathology source identifies the specimen as Tumor-A, but it does not report GENE1 V600E or sensitivity to Compound-A.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "path",
+                "start": 0,
+                "end": 54,
+                "quote": "Fictional specimen: Tumor-A. This record is synthetic."
+              }
+            ]
+          },
+          {
+            "statement": "The supporting literature source is explicitly labeled synthetic, so the sensitivity claim is supported only by the provided synthetic evidence and lacks independent real-world confirmation.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "paper1",
+                "start": 0,
+                "end": 73,
+                "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+              }
+            ]
+          },
+          {
+            "statement": "No visible source reports an opposing experimental result, so the corpus does not refute the sensitivity claim; it only provides one synthetic supporting statement.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "paper1",
+                "start": 0,
+                "end": 73,
+                "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+          "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+        ],
+        "requery": "Find independent non-synthetic experimental or clinical evidence for GENE1 V600E in Tumor-A sensitivity to Compound-A."
+      }
+    }
+  ],
+  "usage": {
+    "calls": 7,
+    "http_attempts": 7,
+    "tool_calls": 6,
+    "input_tokens": 14045,
+    "output_tokens": 4797,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "fingerprint": "cceedf9def1596aa4d7c11d072908b9b59de55e1824bc265d5ad59f7e65307be",
+        "simulated": false,
+        "version": "0.1.0"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "paper1"
+        ],
+        "query": "GENE1 V600E in Tumor-A is sensitive to Compound-A.",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "agent_started",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "payload_sha256": "f090a161e006768179c7605cc0b331a25c88624aab1c1991c01a6943a0b85526",
+        "source_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "token_reservation": 5703
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "model_usage",
+      "role": "literature",
+      "details": {
+        "input_tokens": 1242,
+        "output_tokens": 447,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "agent_completed",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "output": {
+          "findings": [
+            {
+              "statement": "A literature source reports a synthetic experiment directly stating that GENE1 V600E in Tumor-A was sensitive to Compound-A, which supports the claim.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "paper1",
+                  "start": 0,
+                  "end": 73,
+                  "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+            "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+          ],
+          "requery": "Find independent primary experimental or clinical evidence for GENE1 p.Val600Glu sensitivity to Compound-A in Tumor-A."
+        }
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {},
+          "timeline": []
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "agent_started",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "payload_sha256": "ab7accc62028b366699df708a4c35007b49a622d13f2bdbb14adb4c46e65b751",
+        "source_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "token_reservation": 6131
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "model_usage",
+      "role": "timeline",
+      "details": {
+        "input_tokens": 1353,
+        "output_tokens": 581,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "agent_completed",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "output": {
+          "findings": [
+            {
+              "statement": "A literature source directly reports that GENE1 V600E in Tumor-A was sensitive to Compound-A, which supports the supplied claim.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "paper1",
+                  "start": 0,
+                  "end": 73,
+                  "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+                }
+              ]
+            },
+            {
+              "statement": "The genomics source reports detection of GENE1 p.Val600Glu, but it does not state that the variant is in Tumor-A or that it is sensitive to Compound-A.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "gene",
+                  "start": 0,
+                  "end": 48,
+                  "quote": "Fictional sequencing detected GENE1 p.Val600Glu."
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+            "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+          ],
+          "requery": ""
+        }
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "path": {
+              "gene": "unknown",
+              "variant": "unknown"
+            },
+            "gene": {
+              "gene": "match",
+              "variant": "match"
+            },
+            "paper1": {
+              "gene": "match",
+              "variant": "match"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "gene",
+              "start": 36,
+              "end": 47,
+              "raw": "p.Val600Glu",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "paper1",
+              "start": 28,
+              "end": 33,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_started",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "payload_sha256": "f529b3299d3632f4b22f16aa5b15eec2e910c62b45dec84ab55d03095f99ca44",
+        "source_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "token_reservation": 7499
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "model_usage",
+      "role": "genomics",
+      "details": {
+        "input_tokens": 1753,
+        "output_tokens": 693,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "agent_completed",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "output": {
+          "findings": [
+            {
+              "statement": "The supplied claim is directly supported by a visible literature source that states GENE1 V600E in Tumor-A was sensitive to Compound-A.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "paper1",
+                  "start": 0,
+                  "end": 73,
+                  "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+                }
+              ]
+            },
+            {
+              "statement": "The genomics source confirms the exact variant spelling p.Val600Glu, which resolves to the canonical V600E variant in the claim, but it does not by itself establish Tumor-A context or Compound-A sensitivity.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "gene",
+                  "start": 0,
+                  "end": 48,
+                  "quote": "Fictional sequencing detected GENE1 p.Val600Glu."
+                }
+              ]
+            },
+            {
+              "statement": "The supporting literature source is explicitly labeled synthetic, so the sensitivity claim is supported only by the provided synthetic evidence and lacks independent real-world confirmation.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "paper1",
+                  "start": 0,
+                  "end": 73,
+                  "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+            "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+          ],
+          "requery": ""
+        }
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "path": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "match"
+            },
+            "gene": {
+              "gene": "match",
+              "variant": "match",
+              "disease": "unknown"
+            },
+            "paper1": {
+              "gene": "match",
+              "variant": "match",
+              "disease": "match"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "gene",
+              "start": 36,
+              "end": 47,
+              "raw": "p.Val600Glu",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "paper1",
+              "start": 28,
+              "end": 33,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_started",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "payload_sha256": "cff356db0bad4f30bf7e4877c7799b221fc2183dad748500db1e08761e559e0c",
+        "source_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "token_reservation": 8895
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "model_usage",
+      "role": "pathology",
+      "details": {
+        "input_tokens": 2128,
+        "output_tokens": 781,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "agent_completed",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "output": {
+          "findings": [
+            {
+              "statement": "A visible literature source directly states that GENE1 V600E in Tumor-A was sensitive to Compound-A, which supports the supplied claim.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "paper1",
+                  "start": 0,
+                  "end": 73,
+                  "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+                }
+              ]
+            },
+            {
+              "statement": "The genomics source reports detection of GENE1 p.Val600Glu, but it does not state that the variant is in Tumor-A or that it is sensitive to Compound-A.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "gene",
+                  "start": 0,
+                  "end": 48,
+                  "quote": "Fictional sequencing detected GENE1 p.Val600Glu."
+                }
+              ]
+            },
+            {
+              "statement": "The pathology source identifies the specimen as Tumor-A, but it does not report GENE1 V600E or sensitivity to Compound-A.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "path",
+                  "start": 0,
+                  "end": 54,
+                  "quote": "Fictional specimen: Tumor-A. This record is synthetic."
+                }
+              ]
+            },
+            {
+              "statement": "The supporting literature source is explicitly labeled synthetic, so the sensitivity claim is supported only by the provided synthetic evidence and lacks independent real-world confirmation.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "paper1",
+                  "start": 0,
+                  "end": 73,
+                  "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+            "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+          ],
+          "requery": ""
+        }
+      }
+    },
+    {
+      "sequence": 18,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "path": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "match",
+              "drug": "unknown"
+            },
+            "gene": {
+              "gene": "match",
+              "variant": "match",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "paper1": {
+              "gene": "match",
+              "variant": "match",
+              "disease": "match",
+              "drug": "match"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "gene",
+              "start": 36,
+              "end": 47,
+              "raw": "p.Val600Glu",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "paper1",
+              "start": 28,
+              "end": 33,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "path": "unknown",
+            "gene": "unknown",
+            "paper1": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "85d44b957e11d23e12eb7d176e2d1cf03d4ee38ac9834fa5e1e57c0d89190620",
+        "source_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "token_reservation": 10085
+      }
+    },
+    {
+      "sequence": 20,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 2434,
+        "output_tokens": 789,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 21,
+      "kind": "agent_completed",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "output": {
+          "findings": [
+            {
+              "statement": "A visible literature source directly states that GENE1 V600E in Tumor-A was sensitive to Compound-A, which supports the supplied claim.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "paper1",
+                  "start": 0,
+                  "end": 73,
+                  "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+                }
+              ]
+            },
+            {
+              "statement": "The genomics source confirms the exact variant spelling p.Val600Glu, which resolves to the canonical V600E variant in the claim, but it does not by itself establish Tumor-A context or Compound-A sensitivity.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "gene",
+                  "start": 0,
+                  "end": 48,
+                  "quote": "Fictional sequencing detected GENE1 p.Val600Glu."
+                }
+              ]
+            },
+            {
+              "statement": "The pathology source identifies the specimen as Tumor-A, but it does not report GENE1 V600E or sensitivity to Compound-A.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "path",
+                  "start": 0,
+                  "end": 54,
+                  "quote": "Fictional specimen: Tumor-A. This record is synthetic."
+                }
+              ]
+            },
+            {
+              "statement": "The supporting literature source is explicitly labeled synthetic, so the sensitivity claim is supported only by the provided synthetic evidence and lacks independent real-world confirmation.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "paper1",
+                  "start": 0,
+                  "end": 73,
+                  "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+            "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+          ],
+          "requery": ""
+        }
+      }
+    },
+    {
+      "sequence": 22,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "path": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "match",
+              "drug": "unknown"
+            },
+            "gene": {
+              "gene": "match",
+              "variant": "match",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "paper1": {
+              "gene": "match",
+              "variant": "match",
+              "disease": "match",
+              "drug": "match"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "gene",
+              "start": 36,
+              "end": 47,
+              "raw": "p.Val600Glu",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "paper1",
+              "start": 28,
+              "end": 33,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "path": "unknown",
+            "gene": "unknown",
+            "paper1": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 23,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "be788bdb1791929afb7a02ffe70731c8a02675331d36340771f49e7dbf7a96c1",
+        "source_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "token_reservation": 10283
+      }
+    },
+    {
+      "sequence": 24,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 2472,
+        "output_tokens": 911,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 25,
+      "kind": "agent_completed",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "output": {
+          "findings": [
+            {
+              "statement": "The visible literature source directly states that GENE1 V600E in Tumor-A was sensitive to Compound-A, which supports the supplied claim.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "paper1",
+                  "start": 0,
+                  "end": 73,
+                  "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+                }
+              ]
+            },
+            {
+              "statement": "The genomics source reports detection of GENE1 p.Val600Glu, but it does not state that the variant is in Tumor-A or that it is sensitive to Compound-A.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "gene",
+                  "start": 0,
+                  "end": 48,
+                  "quote": "Fictional sequencing detected GENE1 p.Val600Glu."
+                }
+              ]
+            },
+            {
+              "statement": "The pathology source identifies the specimen as Tumor-A, but it does not report GENE1 V600E or sensitivity to Compound-A.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "path",
+                  "start": 0,
+                  "end": 54,
+                  "quote": "Fictional specimen: Tumor-A. This record is synthetic."
+                }
+              ]
+            },
+            {
+              "statement": "The supporting literature source is explicitly labeled synthetic, so the sensitivity claim is supported only by the provided synthetic evidence and lacks independent real-world confirmation.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "paper1",
+                  "start": 0,
+                  "end": 73,
+                  "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+                }
+              ]
+            },
+            {
+              "statement": "No visible source reports an opposing experimental result, so the corpus does not refute the sensitivity claim; it only provides one synthetic supporting statement.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "paper1",
+                  "start": 0,
+                  "end": 73,
+                  "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+            "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+          ],
+          "requery": "Find independent non-synthetic experimental or clinical evidence for GENE1 V600E in Tumor-A sensitivity to Compound-A."
+        }
+      }
+    },
+    {
+      "sequence": 26,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "8e4690deba0ac8e15cafb8e3fd1bb3028662e579a2a74cb469f0f2357dc22e1b",
+        "source_ids": [
+          "path",
+          "gene",
+          "paper1"
+        ],
+        "token_reservation": 11065
+      }
+    },
+    {
+      "sequence": 27,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2663,
+        "output_tokens": 595,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 28,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The visible literature source directly states that GENE1 V600E in Tumor-A was sensitive to Compound-A, which matches the supplied claim in gene, variant, disease, and drug. The genomics source confirms the variant p.Val600Glu, canonicalized as V600E, but does not itself establish Tumor-A context or Compound-A sensitivity. The pathology source identifies Tumor-A but does not report the variant or sensitivity. No visible source reports an opposing result. The main limitation is that the supporting literature source is explicitly synthetic, so the support is source-grounded but not independently confirmed.",
+          "citations": [
+            {
+              "document_id": "paper1",
+              "start": 0,
+              "end": 73,
+              "quote": "Synthetic experiment: GENE1 V600E in Tumor-A was sensitive to Compound-A."
+            },
+            {
+              "document_id": "gene",
+              "start": 0,
+              "end": 48,
+              "quote": "Fictional sequencing detected GENE1 p.Val600Glu."
+            }
+          ],
+          "unresolved": [
+            "The supporting source is explicitly synthetic and may not represent real-world evidence.",
+            "No independent or opposing experimental result is provided to confirm or refute the sensitivity claim."
+          ],
+          "confidence": 0.85
+        }
+      }
+    },
+    {
+      "sequence": 29,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "path",
+    "gene",
+    "paper1"
+  ],
+  "duration_seconds": 1268.169962,
+  "research_only": true
+}

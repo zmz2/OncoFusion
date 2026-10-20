@@ -1,0 +1,305 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-3e09dc9e-43af-4022-88ec-a31f18cfaf42",
+  "patient_id": "article-25349473",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "c8b3895abd9d31d5b583ea155749239863a827729634fe950a9330f5c358328a",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 200000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "findings_limit": 3,
+    "schema_retries": 1,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The supplied claim states that BCR::ABL1 fusion with somatic ABL1 T315I in CML does not support predictive sensitivity/response to ponatinib. The visible evidence instead reports that, after ponatinib therapy in CP-CML, patients with the T315I mutation reached higher response rates, although T315I was not a significant prognostic factor. This supports a sensitivity/response association for ponatinib in T315I-positive CML rather than a DOES_NOT_SUPPORT direction. The disease, therapy, variant, and response significance are relevant, but the evidence direction requires correction from DOES_NOT_SUPPORT to a supportive/sensitivity direction. The evidence does not establish that T315I predicts inferior response; it reports higher response rates, so the claim as written is not fully supported.",
+    "citations": [
+      {
+        "document_id": "pmid-25349473",
+        "start": 0,
+        "end": 312,
+        "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+      }
+    ],
+    "unresolved": [
+      "The fragment does not explicitly quantify the response-rate difference for T315I versus other ABL1 mutations.",
+      "The fragment does not explicitly state BCR::ABL1 fusion in the cited sentence, although the source context is CML/Ph+ disease."
+    ],
+    "confidence": 0.78
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1281,
+    "output_tokens": 1808,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25349473"
+        ],
+        "fingerprint": "c8b3895abd9d31d5b583ea155749239863a827729634fe950a9330f5c358328a",
+        "simulated": false,
+        "version": "0.1.0"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25349473"
+        ],
+        "query": "{\n  \"disease\": \"chronic myeloid leukemia\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BCR::ABL1 Fusion AND ABL1 T315I\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Ponatinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 206,
+              "end": 211,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25349473": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 206,
+              "end": 211,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25349473": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "8b9a4c25eb27dddc7a3fdc393c36a7efe30ec1b2c58e5790a2a91b51214e6fb5",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 9115
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1281,
+        "output_tokens": 1808,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 30.356,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The supplied claim states that BCR::ABL1 fusion with somatic ABL1 T315I in CML does not support predictive sensitivity/response to ponatinib. The visible evidence instead reports that, after ponatinib therapy in CP-CML, patients with the T315I mutation reached higher response rates, although T315I was not a significant prognostic factor. This supports a sensitivity/response association for ponatinib in T315I-positive CML rather than a DOES_NOT_SUPPORT direction. The disease, therapy, variant, and response significance are relevant, but the evidence direction requires correction from DOES_NOT_SUPPORT to a supportive/sensitivity direction. The evidence does not establish that T315I predicts inferior response; it reports higher response rates, so the claim as written is not fully supported.",
+          "citations": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 0,
+              "end": 312,
+              "quote": "At 12 months after the initiation of ponatinib therapy, 56% of patients with CP-CML had a MCyR, 46% had CCyR, and 34% had MMR (Table 3). Interestingly, higher response rates were reached for those with the T315I mutation, but the presence of this mutation was determined not to be a significant prognostic factor"
+            }
+          ],
+          "unresolved": [
+            "The fragment does not explicitly quantify the response-rate difference for T315I versus other ABL1 mutations.",
+            "The fragment does not explicitly state BCR::ABL1 fusion in the cited sentence, although the source context is CML/Ph+ disease."
+          ],
+          "confidence": 0.78
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25349473"
+  ],
+  "duration_seconds": 31.04151,
+  "research_only": true
+}

@@ -14,7 +14,7 @@ from .evaluation import evaluate, load_evaluation
 from .examples import examples
 from .providers import MockProvider, provider_from_env
 from .schemas import CaseInput
-from .profiles import v1_config
+from .profiles import v1_config, v1_fast_config
 from .preparation import prepare_civic, prepare_mtb
 
 
@@ -30,7 +30,7 @@ def parser() -> argparse.ArgumentParser:
     demo = commands.add_parser("demo")
     demo.add_argument("--example", choices=list(examples()), default="synthetic-support")
     demo.add_argument("--preset", choices=list(presets()), default="full")
-    demo.add_argument("--profile", choices=("v1",))
+    demo.add_argument("--profile", choices=("v1", "v1_fast"))
     demo.add_argument("--out", type=Path, required=True)
     demo.add_argument("--allow-remote", action="store_true")
     civic = commands.add_parser("import-civic")
@@ -53,7 +53,7 @@ def parser() -> argparse.ArgumentParser:
         command.add_argument("--execution-cap", type=int, default=1000)
         command.add_argument("--allow-remote", action="store_true")
         if name == "evaluate":
-            command.add_argument("--profile", choices=("v1",))
+            command.add_argument("--profile", choices=("v1", "v1_fast"))
             command.add_argument("--preset", choices=list(presets()), default="full")
         else:
             command.add_argument("--presets", nargs="+", choices=["all"] + list(presets()), default=["all"])
@@ -66,6 +66,10 @@ def parser() -> argparse.ArgumentParser:
 def save(path: Path, value: dict):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def profile_config(name: str):
+    return {"v1": v1_config, "v1_fast": v1_fast_config}[name]()
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -103,7 +107,7 @@ def main(argv: list[str] | None = None) -> int:
         p.error("real API calls require --allow-remote after reviewing data and cost")
     engine = Engine(provider)
     if args.command == "demo":
-        result = engine.run(examples()[args.example], v1_config() if args.profile else presets()[args.preset])
+        result = engine.run(examples()[args.example], profile_config(args.profile) if args.profile else presets()[args.preset])
         save(args.out, result.model_dump(mode="json"))
         print(json.dumps({"status": result.status, "simulated": result.simulated, "output": str(args.out)}))
         return 0 if result.status == "completed" else 2
@@ -117,7 +121,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "evaluate":
         if not provider.simulated and len(cases) > args.execution_cap:
             p.error("execution cap exceeded; inspect workload and set an explicit --execution-cap")
-        report = evaluate(cases, gold, engine, v1_config() if args.profile else presets()[args.preset], args.out)
+        report = evaluate(cases, gold, engine, profile_config(args.profile) if args.profile else presets()[args.preset], args.out)
         print(json.dumps({"simulated": report["simulated"], "metrics": report["metrics"], "failed_or_incomplete": report["failed_or_incomplete"]}))
         return 0 if report["failed_or_incomplete"] == 0 else 2
     if args.repeats < 1 or args.repeats > 20:

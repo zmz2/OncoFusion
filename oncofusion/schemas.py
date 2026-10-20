@@ -100,6 +100,16 @@ class RunConfig(StrictModel):
     max_tool_calls: int = Field(default=12, ge=1, le=50)
     max_total_tokens: int = Field(default=120_000, ge=100, le=2_000_000)
     max_output_tokens: int = Field(default=1500, ge=64, le=8000)
+    citation_mode: Literal["quote", "fragment"] = "quote"
+    fragment_chars: int = Field(default=600, ge=120, le=4000)
+    max_fragments_per_document: int = Field(default=8, ge=1, le=50)
+    # Characters of fragment text a single stage may receive; the planner spends this on the
+    # question-selected spans, so a long record no longer gets cut off the tail of a document.
+    fragment_budget: int = Field(default=24_000, ge=2_000, le=400_000)
+    findings_limit: int = Field(default=5, ge=1, le=30)
+    # claims-v1 adds claim ids, per-claim verifier verdicts and decision adoption/exclusion.
+    # "legacy" keeps the byte-identical protocol behind every result recorded before 2026-10-19.
+    interaction_protocol: Literal["legacy", "claims-v1"] = "legacy"
     schema_retries: int = Field(default=0, ge=0, le=2)
     top_k: int = Field(default=6, ge=1, le=30)
     candidate_k: int = Field(default=20, ge=1, le=100)
@@ -134,12 +144,38 @@ class Finding(StrictModel):
     statement: str = Field(min_length=1, max_length=4000)
     relation: Label = "NEI"
     citations: list[Citation] = Field(default_factory=list, max_length=30)
+    # Assigned by the engine, never by the model, so a claim id means the same thing in every run
+    # record. Empty on results written before the claims-v1 protocol existed.
+    claim_id: str = ""
+    author_role: str = ""
+    used_claim_ids: list[str] = Field(default_factory=list, max_length=30)
+    scope: str = ""
+    evidence_level: str = ""
+    material_status: str = ""
+    # Assigned by the server, never by the model: for a claim that reports missing material this
+    # says whether the visible record carries no such modality at all ("not_recorded") or the
+    # stage's selected spans simply did not cover it ("selection_not_covered").
+    material_basis: str = ""
+
+
+class ClaimVerdict(StrictModel):
+    """One claim's review result, with the source spans that carry it.
+
+    Every role may review earlier claims, so the reviewing role is recorded by the server: a list of
+    verdicts says which roles gave feedback, not how often the verifier ran.
+    """
+    target_claim_id: Identifier
+    verdict: Literal["confirmed", "corrected", "rejected", "insufficient"]
+    note: str = Field(default="", max_length=2000)
+    citations: list[Citation] = Field(default_factory=list, max_length=30)
+    reviewer_role: str = ""
 
 
 class AnalysisOutput(StrictModel):
     findings: list[Finding] = Field(default_factory=list, max_length=30)
     unresolved: list[str] = Field(default_factory=list, max_length=20)
     requery: str = Field(default="", max_length=1000)
+    verdicts: list[ClaimVerdict] = Field(default_factory=list, max_length=60)
 
 
 class DecisionOutput(StrictModel):
@@ -148,6 +184,86 @@ class DecisionOutput(StrictModel):
     citations: list[Citation] = Field(default_factory=list, max_length=30)
     unresolved: list[str] = Field(default_factory=list, max_length=20)
     confidence: float | None = Field(default=None, ge=0, le=1)
+    adopted_claim_ids: list[str] = Field(default_factory=list, max_length=60)
+    rejected_claim_ids: list[str] = Field(default_factory=list, max_length=60)
+
+
+class FragmentCitation(StrictModel):
+    evidence_id: Identifier
+
+
+class FragmentFinding(StrictModel):
+    statement: str = Field(min_length=1, max_length=4000)
+    relation: Label = "NEI"
+    citations: list[FragmentCitation] = Field(default_factory=list, max_length=30)
+    used_claim_ids: list[Identifier] = Field(default_factory=list, max_length=30)
+
+
+class FragmentAnalysisOutput(StrictModel):
+    findings: list[FragmentFinding] = Field(default_factory=list, max_length=30)
+    unresolved: list[str] = Field(default_factory=list, max_length=20)
+    requery: str = Field(default="", max_length=1000)
+
+
+class FragmentDecisionOutput(StrictModel):
+    answer: str = Field(min_length=1, max_length=6000)
+    explanation: str = Field(min_length=1, max_length=8000)
+    citations: list[FragmentCitation] = Field(default_factory=list, max_length=30)
+    unresolved: list[str] = Field(default_factory=list, max_length=20)
+    confidence: float | None = Field(default=None, ge=0, le=1)
+    adopted_claim_ids: list[Identifier] = Field(default_factory=list, max_length=60)
+    rejected_claim_ids: list[Identifier] = Field(default_factory=list, max_length=60)
+
+
+# claims-v1 findings declare which layer they speak from, so a genomics role cannot answer the
+# survival question and a drug role cannot hide that the patient was never exposed to the drug.
+CLAIM_SCOPE = Literal["temporal", "molecular", "pathologic", "exposure", "relationship", "source",
+                      "verification", "outcome_prediction"]
+EVIDENCE_LEVEL = Literal["measured", "curated", "literature", "inferred", "absent"]
+MATERIAL_STATUS = Literal["present", "not_applicable", "unknown"]
+
+
+class ClaimFinding(StrictModel):
+    statement: str = Field(min_length=1, max_length=4000)
+    relation: Label = "NEI"
+    citations: list[FragmentCitation] = Field(default_factory=list, max_length=30)
+    used_claim_ids: list[Identifier] = Field(default_factory=list, max_length=30)
+    scope: CLAIM_SCOPE
+    evidence_level: EVIDENCE_LEVEL
+    material_status: MATERIAL_STATUS
+
+
+class ClaimAnalysisOutput(StrictModel):
+    findings: list[ClaimFinding] = Field(default_factory=list, max_length=30)
+    # A reflection verifier receives no source view and answers in this shape, so the verdict list
+    # is allowed to be present and empty here as well.
+    verdicts: list[ClaimVerdictEntry] = Field(default_factory=list, max_length=60)
+    unresolved: list[str] = Field(default_factory=list, max_length=20)
+    requery: str = Field(default="", max_length=1000)
+
+
+class ClaimVerdictEntry(StrictModel):
+    target_claim_id: Identifier
+    verdict: Literal["confirmed", "corrected", "rejected", "insufficient"]
+    note: str = Field(default="", max_length=2000)
+    citations: list[FragmentCitation] = Field(default_factory=list, max_length=4)
+
+
+class ClaimVerificationOutput(StrictModel):
+    findings: list[ClaimFinding] = Field(default_factory=list, max_length=30)
+    verdicts: list[ClaimVerdictEntry] = Field(default_factory=list, max_length=60)
+    unresolved: list[str] = Field(default_factory=list, max_length=20)
+    requery: str = Field(default="", max_length=1000)
+
+
+class ClaimDecisionOutput(StrictModel):
+    answer: str = Field(min_length=1, max_length=6000)
+    explanation: str = Field(min_length=1, max_length=8000)
+    citations: list[FragmentCitation] = Field(default_factory=list, max_length=30)
+    unresolved: list[str] = Field(default_factory=list, max_length=20)
+    confidence: float | None = Field(default=None, ge=0, le=1)
+    adopted_claim_ids: list[Identifier] = Field(default_factory=list, max_length=60)
+    rejected_claim_ids: list[Identifier] = Field(default_factory=list, max_length=60)
 
 
 class AgentReport(StrictModel):

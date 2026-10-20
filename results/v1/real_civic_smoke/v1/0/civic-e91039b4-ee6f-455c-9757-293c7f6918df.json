@@ -1,0 +1,1276 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-e91039b4-ee6f-455c-9757-293c7f6918df",
+  "patient_id": "article-25349473",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "ec7dc0b698d7d060a94a58dd8d51f11587e516f52a6fb8da6f6d4027376c56d3",
+  "config": {
+    "mode": "multi",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 200000,
+    "max_output_tokens": 5000,
+    "schema_retries": 0,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The visible source supports ponatinib sensitivity/response to BCR-ABL T315I in CML: it states ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the T315I gatekeeper mutation and associates T315I with resistant or relapsed CML. It also reports a 74% major cytogenetic response rate for patients with the T315I mutant in the PACE trial. However, the supplied claim is not fully evidenced as written because the source does not explicitly state that BCR::ABL1 T315I is somatic, and the quoted 74% response rate is not explicitly restricted to CML only or to a specific CML phase because the PACE population included Ph+ALL. A necessary correction is to omit or separately evidence the somatic origin and to qualify the response evidence as coming from a mixed CML/Ph+ALL PACE population rather than a CML-only subgroup.",
+    "citations": [
+      {
+        "document_id": "pmid-25349473",
+        "start": 0,
+        "end": 180,
+        "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+      },
+      {
+        "document_id": "pmid-25349473",
+        "start": 855,
+        "end": 1051,
+        "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+      },
+      {
+        "document_id": "pmid-25349473",
+        "start": 472,
+        "end": 653,
+        "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+      }
+    ],
+    "unresolved": [
+      "The source does not explicitly state that BCR::ABL1 T315I is somatic; it only associates T315I with resistant or relapsed CML.",
+      "The 74% major cytogenetic response rate for T315I is not explicitly restricted to CML only or to a specific CML phase; the PACE population included Ph+ALL."
+    ],
+    "confidence": 0.82
+  },
+  "reports": [
+    {
+      "role": "literature",
+      "executor": "literature",
+      "output": {
+        "findings": [
+          {
+            "statement": "In CML, somatic BCR::ABL1 T315I is associated with sensitivity/response to ponatinib, as ponatinib is described as the only approved TKI capable of inhibiting BCR-ABL with the T315I gatekeeper mutation.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 180,
+                "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+              }
+            ]
+          },
+          {
+            "statement": "Clinical PACE trial data report a major cytogenetic response rate of 74% among patients with the T315I mutant, supporting ponatinib response in T315I-positive disease, though the trial population included CML and Ph+ALL and the exact CML-only subgroup is not specified in the quoted passage.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 855,
+                "end": 1051,
+                "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+              },
+              {
+                "document_id": "pmid-25349473",
+                "start": 472,
+                "end": 653,
+                "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "The quoted response rate for T315I is not explicitly restricted to CML only; the PACE population included Ph+ALL, so CML-specific predictive sensitivity cannot be isolated from the provided text.",
+          "The source does not specify whether the 74% MCyR rate was measured in CP-CML, AP-CML, BC-CML, or the combined PACE population."
+        ],
+        "requery": "Does the PACE trial report ponatinib major cytogenetic response specifically in CML patients with baseline BCR::ABL1 T315I, separated from Ph+ALL patients?"
+      }
+    },
+    {
+      "role": "timeline",
+      "executor": "timeline",
+      "output": {
+        "findings": [
+          {
+            "statement": "The source supports that ponatinib can inhibit BCR-ABL carrying the T315I gatekeeper mutation and that T315I is associated with resistant or relapsed CML, supporting a sensitivity/response relationship in CML.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 180,
+                "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+              }
+            ]
+          },
+          {
+            "statement": "Clinical PACE data report a 74% major cytogenetic response among patients with the T315I mutant, but the quoted population includes CML and Ph+ALL and does not isolate a CML-only predictive response.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 472,
+                "end": 653,
+                "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+              },
+              {
+                "document_id": "pmid-25349473",
+                "start": 855,
+                "end": 1051,
+                "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "The source does not explicitly state that the BCR::ABL1 T315I variant is somatic; it only associates T315I with resistant or relapsed CML.",
+          "The 74% MCyR rate for T315I is not explicitly restricted to CML only or to a specific CML phase; the PACE population included Ph+ALL."
+        ],
+        "requery": "Provide CML-only, phase-stratified ponatinib response data for somatic BCR::ABL1 T315I."
+      }
+    },
+    {
+      "role": "genomics",
+      "executor": "genomics",
+      "output": {
+        "findings": [
+          {
+            "statement": "The source supports that ponatinib can inhibit BCR-ABL carrying the T315I gatekeeper mutation, supporting a sensitivity/response relationship for BCR::ABL1 T315I-positive CML.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 180,
+                "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+              }
+            ]
+          },
+          {
+            "statement": "The PACE trial reports a 74% major cytogenetic response among patients with the T315I mutant, supporting response in T315I-positive disease, but the quoted population includes CML and Ph+ALL and does not isolate a CML-only predictive response.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 472,
+                "end": 653,
+                "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+              },
+              {
+                "document_id": "pmid-25349473",
+                "start": 855,
+                "end": 1051,
+                "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+              }
+            ]
+          },
+          {
+            "statement": "The provided source does not explicitly state that BCR::ABL1 T315I is somatic; it only associates T315I with resistant or relapsed CML, so the supplied somatic origin is not directly evidenced by the visible text.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 180,
+                "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "The source does not explicitly state that BCR::ABL1 T315I is somatic; it only associates T315I with resistant or relapsed CML.",
+          "The 74% MCyR rate for T315I is not explicitly restricted to CML only or to a specific CML phase; the PACE population included Ph+ALL."
+        ],
+        "requery": "Find CML-specific, somatic BCR::ABL1 T315I predictive response data for ponatinib, ideally by CML phase and excluding Ph+ALL."
+      }
+    },
+    {
+      "role": "pathology",
+      "executor": "pathology",
+      "output": {
+        "findings": [
+          {
+            "statement": "The visible source supports that ponatinib can inhibit BCR-ABL carrying the T315I gatekeeper mutation and associates T315I with resistant or relapsed CML, supporting a sensitivity/response relationship for BCR::ABL1 T315I-positive CML.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 180,
+                "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+              }
+            ]
+          },
+          {
+            "statement": "The PACE trial reports a 74% major cytogenetic response among patients with the T315I mutant, but the quoted population includes CML and Ph+ALL and does not isolate a CML-only predictive response or a specific CML phase.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 472,
+                "end": 653,
+                "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+              },
+              {
+                "document_id": "pmid-25349473",
+                "start": 855,
+                "end": 1051,
+                "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+              }
+            ]
+          },
+          {
+            "statement": "The supplied somatic origin for BCR::ABL1 T315I is not directly evidenced by the visible source; the text only associates T315I with resistant or relapsed CML and does not explicitly state that the variant is somatic.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 180,
+                "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "The 74% MCyR rate for T315I is not explicitly restricted to CML only or to a specific CML phase; the PACE population included Ph+ALL.",
+          "The source does not explicitly state that BCR::ABL1 T315I is somatic; it only associates T315I with resistant or relapsed CML."
+        ],
+        "requery": ""
+      }
+    },
+    {
+      "role": "drug",
+      "executor": "drug",
+      "output": {
+        "findings": [
+          {
+            "statement": "The source supports a sensitivity/response relationship for ponatinib in CML with BCR-ABL T315I by stating that ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the T315I gatekeeper mutation and associating T315I with resistant or relapsed CML.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 180,
+                "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+              }
+            ]
+          },
+          {
+            "statement": "PACE trial data report a 74% major cytogenetic response among patients with the T315I mutant, supporting ponatinib response in T315I-positive disease, but the quoted population includes CML and Ph+ALL and does not isolate a CML-only or phase-specific predictive response.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 472,
+                "end": 653,
+                "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+              },
+              {
+                "document_id": "pmid-25349473",
+                "start": 855,
+                "end": 1051,
+                "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+              }
+            ]
+          },
+          {
+            "statement": "The supplied somatic origin for BCR::ABL1 T315I is not directly evidenced by the visible source; the text associates T315I with resistant or relapsed CML but does not explicitly state that the variant is somatic.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 180,
+                "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+              }
+            ]
+          },
+          {
+            "statement": "The source does not specify approval jurisdiction or approval date for ponatinib; it only describes ponatinib as an approved TKI, so approval details cannot be recorded from the supplied material.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 180,
+                "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "The 74% major cytogenetic response rate for T315I is not explicitly restricted to CML only or to a specific CML phase; the PACE population included Ph+ALL.",
+          "The source does not explicitly state that BCR::ABL1 T315I is somatic; it only associates T315I with resistant or relapsed CML.",
+          "The source does not provide ponatinib approval jurisdiction or approval date."
+        ],
+        "requery": "Find CML-only or CML-phase-specific ponatinib response data for somatic BCR::ABL1 T315I, and approval jurisdiction/date for ponatinib."
+      }
+    },
+    {
+      "role": "verifier",
+      "executor": "verifier",
+      "output": {
+        "findings": [
+          {
+            "statement": "The visible source supports ponatinib sensitivity/response to BCR-ABL T315I in CML, but it does not explicitly establish that the T315I variant is somatic; the supplied claim should be revised to omit or separately evidence the somatic origin.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 180,
+                "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+              },
+              {
+                "document_id": "pmid-25349473",
+                "start": 855,
+                "end": 1051,
+                "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+              }
+            ]
+          },
+          {
+            "statement": "The PACE trial passage supports a 74% major cytogenetic response among patients with the T315I mutant, but the quoted population includes CML and Ph+ALL and does not isolate a CML-only or phase-specific predictive response.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 472,
+                "end": 653,
+                "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+              },
+              {
+                "document_id": "pmid-25349473",
+                "start": 855,
+                "end": 1051,
+                "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+              }
+            ]
+          },
+          {
+            "statement": "The supplied somatic origin for BCR::ABL1 T315I is not directly evidenced by the visible source; the text associates T315I with resistant or relapsed CML but does not explicitly state that the variant is somatic.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 180,
+                "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+              }
+            ]
+          },
+          {
+            "statement": "The source supports that ponatinib can inhibit BCR-ABL carrying the T315I gatekeeper mutation and associates T315I with resistant or relapsed CML, supporting a sensitivity/response relationship for BCR::ABL1 T315I-positive CML without resolving the somatic-origin requirement.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 180,
+                "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+              }
+            ]
+          },
+          {
+            "statement": "The visible source does not specify ponatinib approval jurisdiction or approval date; it only describes ponatinib as an approved TKI, so approval details cannot be recorded from the supplied material.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-25349473",
+                "start": 0,
+                "end": 180,
+                "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+              }
+            ]
+          }
+        ],
+        "unresolved": [
+          "The 74% major cytogenetic response rate for T315I is not explicitly restricted to CML only or to a specific CML phase; the PACE population included Ph+ALL.",
+          "The source does not explicitly state that BCR::ABL1 T315I is somatic; it only associates T315I with resistant or relapsed CML.",
+          "The source does not provide ponatinib approval jurisdiction or approval date."
+        ],
+        "requery": "Provide a source explicitly stating that BCR::ABL1 T315I in CML is a somatic mutation and, if possible, reporting ponatinib response rates restricted to CML patients with T315I."
+      }
+    }
+  ],
+  "usage": {
+    "calls": 7,
+    "http_attempts": 7,
+    "tool_calls": 6,
+    "input_tokens": 25858,
+    "output_tokens": 15946,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25349473"
+        ],
+        "fingerprint": "ec7dc0b698d7d060a94a58dd8d51f11587e516f52a6fb8da6f6d4027376c56d3",
+        "simulated": false,
+        "version": "0.1.0"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25349473"
+        ],
+        "query": "{\n  \"disease\": \"Chronic Myeloid Leukemia\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BCR::ABL1 Fusion AND ABL1 T315I\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Ponatinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "agent_started",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "payload_sha256": "05f4ae68d385182398115dc60addc3add526998f2e97873b25e31d3f6a185ff0",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 10847
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "model_usage",
+      "role": "literature",
+      "details": {
+        "input_tokens": 1647,
+        "output_tokens": 2115,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "agent_completed",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "output": {
+          "findings": [
+            {
+              "statement": "In CML, somatic BCR::ABL1 T315I is associated with sensitivity/response to ponatinib, as ponatinib is described as the only approved TKI capable of inhibiting BCR-ABL with the T315I gatekeeper mutation.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 180,
+                  "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+                }
+              ]
+            },
+            {
+              "statement": "Clinical PACE trial data report a major cytogenetic response rate of 74% among patients with the T315I mutant, supporting ponatinib response in T315I-positive disease, though the trial population included CML and Ph+ALL and the exact CML-only subgroup is not specified in the quoted passage.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 855,
+                  "end": 1051,
+                  "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+                },
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 472,
+                  "end": 653,
+                  "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "The quoted response rate for T315I is not explicitly restricted to CML only; the PACE population included Ph+ALL, so CML-specific predictive sensitivity cannot be isolated from the provided text.",
+            "The source does not specify whether the 74% MCyR rate was measured in CP-CML, AP-CML, BC-CML, or the combined PACE population."
+          ],
+          "requery": "Does the PACE trial report ponatinib major cytogenetic response specifically in CML patients with baseline BCR::ABL1 T315I, separated from Ph+ALL patients?"
+        }
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {},
+          "timeline": []
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "agent_started",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "payload_sha256": "14e23e95ed2532c73832f9815ffa89135f25273095625bddfee93279d85170f8",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 12446
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "model_usage",
+      "role": "timeline",
+      "details": {
+        "input_tokens": 2158,
+        "output_tokens": 2075,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "agent_completed",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "output": {
+          "findings": [
+            {
+              "statement": "The source supports that ponatinib can inhibit BCR-ABL carrying the T315I gatekeeper mutation and that T315I is associated with resistant or relapsed CML, supporting a sensitivity/response relationship in CML.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 180,
+                  "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+                }
+              ]
+            },
+            {
+              "statement": "Clinical PACE data report a 74% major cytogenetic response among patients with the T315I mutant, but the quoted population includes CML and Ph+ALL and does not isolate a CML-only predictive response.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 472,
+                  "end": 653,
+                  "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+                },
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 855,
+                  "end": 1051,
+                  "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "The source does not explicitly state that the BCR::ABL1 T315I variant is somatic; it only associates T315I with resistant or relapsed CML.",
+            "The 74% MCyR rate for T315I is not explicitly restricted to CML only or to a specific CML phase; the PACE population included Ph+ALL."
+          ],
+          "requery": "Provide CML-only, phase-stratified ponatinib response data for somatic BCR::ABL1 T315I."
+        }
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 85,
+              "end": 90,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 327,
+              "end": 332,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 1038,
+              "end": 1043,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_started",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "payload_sha256": "5a79bd77c0195bf6d5bf1d9ff9c1fcdfc74cd6d31830a50959a8c80f397e0f51",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 14580
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "model_usage",
+      "role": "genomics",
+      "details": {
+        "input_tokens": 2882,
+        "output_tokens": 2252,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "agent_completed",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "output": {
+          "findings": [
+            {
+              "statement": "The source supports that ponatinib can inhibit BCR-ABL carrying the T315I gatekeeper mutation, supporting a sensitivity/response relationship for BCR::ABL1 T315I-positive CML.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 180,
+                  "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+                }
+              ]
+            },
+            {
+              "statement": "The PACE trial reports a 74% major cytogenetic response among patients with the T315I mutant, supporting response in T315I-positive disease, but the quoted population includes CML and Ph+ALL and does not isolate a CML-only predictive response.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 472,
+                  "end": 653,
+                  "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+                },
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 855,
+                  "end": 1051,
+                  "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+                }
+              ]
+            },
+            {
+              "statement": "The provided source does not explicitly state that BCR::ABL1 T315I is somatic; it only associates T315I with resistant or relapsed CML, so the supplied somatic origin is not directly evidenced by the visible text.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 180,
+                  "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "The source does not explicitly state that BCR::ABL1 T315I is somatic; it only associates T315I with resistant or relapsed CML.",
+            "The 74% MCyR rate for T315I is not explicitly restricted to CML only or to a specific CML phase; the PACE population included Ph+ALL."
+          ],
+          "requery": "Find CML-specific, somatic BCR::ABL1 T315I predictive response data for ponatinib, ideally by CML phase and excluding Ph+ALL."
+        }
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 85,
+              "end": 90,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 327,
+              "end": 332,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 1038,
+              "end": 1043,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_started",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "payload_sha256": "4a3d22d6713915ebd72777a2f19ec75cdca1be4c90337fb47fbbc9bf7b11f6a9",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 16755
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "model_usage",
+      "role": "pathology",
+      "details": {
+        "input_tokens": 3578,
+        "output_tokens": 2135,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "agent_completed",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "output": {
+          "findings": [
+            {
+              "statement": "The visible source supports that ponatinib can inhibit BCR-ABL carrying the T315I gatekeeper mutation and associates T315I with resistant or relapsed CML, supporting a sensitivity/response relationship for BCR::ABL1 T315I-positive CML.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 180,
+                  "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+                }
+              ]
+            },
+            {
+              "statement": "The PACE trial reports a 74% major cytogenetic response among patients with the T315I mutant, but the quoted population includes CML and Ph+ALL and does not isolate a CML-only predictive response or a specific CML phase.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 472,
+                  "end": 653,
+                  "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+                },
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 855,
+                  "end": 1051,
+                  "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+                }
+              ]
+            },
+            {
+              "statement": "The supplied somatic origin for BCR::ABL1 T315I is not directly evidenced by the visible source; the text only associates T315I with resistant or relapsed CML and does not explicitly state that the variant is somatic.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 180,
+                  "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "The 74% MCyR rate for T315I is not explicitly restricted to CML only or to a specific CML phase; the PACE population included Ph+ALL.",
+            "The source does not explicitly state that BCR::ABL1 T315I is somatic; it only associates T315I with resistant or relapsed CML."
+          ],
+          "requery": ""
+        }
+      }
+    },
+    {
+      "sequence": 18,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 85,
+              "end": 90,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 327,
+              "end": 332,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 1038,
+              "end": 1043,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25349473": "mixed"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "bb4e64a38f397322fba0479c9540f7cda931dd4ea383aa1c0b76c00bb1eeb378",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 19191
+      }
+    },
+    {
+      "sequence": 20,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 4325,
+        "output_tokens": 2547,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 21,
+      "kind": "agent_completed",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "output": {
+          "findings": [
+            {
+              "statement": "The source supports a sensitivity/response relationship for ponatinib in CML with BCR-ABL T315I by stating that ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the T315I gatekeeper mutation and associating T315I with resistant or relapsed CML.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 180,
+                  "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+                }
+              ]
+            },
+            {
+              "statement": "PACE trial data report a 74% major cytogenetic response among patients with the T315I mutant, supporting ponatinib response in T315I-positive disease, but the quoted population includes CML and Ph+ALL and does not isolate a CML-only or phase-specific predictive response.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 472,
+                  "end": 653,
+                  "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+                },
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 855,
+                  "end": 1051,
+                  "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+                }
+              ]
+            },
+            {
+              "statement": "The supplied somatic origin for BCR::ABL1 T315I is not directly evidenced by the visible source; the text associates T315I with resistant or relapsed CML but does not explicitly state that the variant is somatic.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 180,
+                  "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+                }
+              ]
+            },
+            {
+              "statement": "The source does not specify approval jurisdiction or approval date for ponatinib; it only describes ponatinib as an approved TKI, so approval details cannot be recorded from the supplied material.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 180,
+                  "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "The 74% major cytogenetic response rate for T315I is not explicitly restricted to CML only or to a specific CML phase; the PACE population included Ph+ALL.",
+            "The source does not explicitly state that BCR::ABL1 T315I is somatic; it only associates T315I with resistant or relapsed CML.",
+            "The source does not provide ponatinib approval jurisdiction or approval date."
+          ],
+          "requery": "Find CML-only or CML-phase-specific ponatinib response data for somatic BCR::ABL1 T315I, and approval jurisdiction/date for ponatinib."
+        }
+      }
+    },
+    {
+      "sequence": 22,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-25349473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 85,
+              "end": 90,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 327,
+              "end": 332,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 1038,
+              "end": 1043,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25349473": "mixed"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 23,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "73f628c053052e34458807973ac3c1156363eb3744f9814fe23c3b19006e0754",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 22005
+      }
+    },
+    {
+      "sequence": 24,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 5178,
+        "output_tokens": 2711,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 25,
+      "kind": "agent_completed",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "output": {
+          "findings": [
+            {
+              "statement": "The visible source supports ponatinib sensitivity/response to BCR-ABL T315I in CML, but it does not explicitly establish that the T315I variant is somatic; the supplied claim should be revised to omit or separately evidence the somatic origin.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 180,
+                  "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+                },
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 855,
+                  "end": 1051,
+                  "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+                }
+              ]
+            },
+            {
+              "statement": "The PACE trial passage supports a 74% major cytogenetic response among patients with the T315I mutant, but the quoted population includes CML and Ph+ALL and does not isolate a CML-only or phase-specific predictive response.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 472,
+                  "end": 653,
+                  "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+                },
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 855,
+                  "end": 1051,
+                  "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+                }
+              ]
+            },
+            {
+              "statement": "The supplied somatic origin for BCR::ABL1 T315I is not directly evidenced by the visible source; the text associates T315I with resistant or relapsed CML but does not explicitly state that the variant is somatic.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 180,
+                  "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+                }
+              ]
+            },
+            {
+              "statement": "The source supports that ponatinib can inhibit BCR-ABL carrying the T315I gatekeeper mutation and associates T315I with resistant or relapsed CML, supporting a sensitivity/response relationship for BCR::ABL1 T315I-positive CML without resolving the somatic-origin requirement.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 180,
+                  "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+                }
+              ]
+            },
+            {
+              "statement": "The visible source does not specify ponatinib approval jurisdiction or approval date; it only describes ponatinib as an approved TKI, so approval details cannot be recorded from the supplied material.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-25349473",
+                  "start": 0,
+                  "end": 180,
+                  "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+                }
+              ]
+            }
+          ],
+          "unresolved": [
+            "The 74% major cytogenetic response rate for T315I is not explicitly restricted to CML only or to a specific CML phase; the PACE population included Ph+ALL.",
+            "The source does not explicitly state that BCR::ABL1 T315I is somatic; it only associates T315I with resistant or relapsed CML.",
+            "The source does not provide ponatinib approval jurisdiction or approval date."
+          ],
+          "requery": "Provide a source explicitly stating that BCR::ABL1 T315I in CML is a somatic mutation and, if possible, reporting ponatinib response rates restricted to CML patients with T315I."
+        }
+      }
+    },
+    {
+      "sequence": 26,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "c118db6a4287f7e06a58041cb1ee23151d55b65a1a13b7215f47bd9e9d88a202",
+        "source_ids": [
+          "pmid-25349473"
+        ],
+        "token_reservation": 24993
+      }
+    },
+    {
+      "sequence": 27,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 6090,
+        "output_tokens": 2111,
+        "attempts": 1,
+        "estimated": false
+      }
+    },
+    {
+      "sequence": 28,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The visible source supports ponatinib sensitivity/response to BCR-ABL T315I in CML: it states ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the T315I gatekeeper mutation and associates T315I with resistant or relapsed CML. It also reports a 74% major cytogenetic response rate for patients with the T315I mutant in the PACE trial. However, the supplied claim is not fully evidenced as written because the source does not explicitly state that BCR::ABL1 T315I is somatic, and the quoted 74% response rate is not explicitly restricted to CML only or to a specific CML phase because the PACE population included Ph+ALL. A necessary correction is to omit or separately evidence the somatic origin and to qualify the response evidence as coming from a mixed CML/Ph+ALL PACE population rather than a CML-only subgroup.",
+          "citations": [
+            {
+              "document_id": "pmid-25349473",
+              "start": 0,
+              "end": 180,
+              "quote": "Ponatinib is the only approved TKI capable of inhibiting BCR-ABL with the gatekeeper T315I kinase domain mutation, known to be the cause for 20% of resistant or relapsed CML cases."
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 855,
+              "end": 1051,
+              "quote": "with MCyR occurring in 56% of all patients, 49% of patients with native BCR-ABL, 64% for those with one mutation, 62% for those with two or more mutations, and 74% for those with the T315I mutant."
+            },
+            {
+              "document_id": "pmid-25349473",
+              "start": 472,
+              "end": 653,
+              "quote": "The Phase II Ponatinib Ph+ALL and CML Evaluation (PACE) trial enrolled 449 patients: 267 with CP-CML, 83 with accelerated phase (AP)-CML, and 94 with blast crisis (BC)-CML or Ph+ALL"
+            }
+          ],
+          "unresolved": [
+            "The source does not explicitly state that BCR::ABL1 T315I is somatic; it only associates T315I with resistant or relapsed CML.",
+            "The 74% major cytogenetic response rate for T315I is not explicitly restricted to CML only or to a specific CML phase; the PACE population included Ph+ALL."
+          ],
+          "confidence": 0.82
+        }
+      }
+    },
+    {
+      "sequence": 29,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25349473"
+  ],
+  "duration_seconds": 1362.971672,
+  "research_only": true
+}

@@ -13,7 +13,8 @@ from oncofusion.engine import Engine
 from oncofusion.evaluation import evaluate, load_evaluation
 from oncofusion.examples import examples
 from oncofusion.experiments import StudyPlan, select_cases
-from oncofusion.profiles import coverage_report, inspect_case, integration_example, profile_catalog, v1_config
+from oncofusion.profiles import (coverage_report, inspect_case, integration_example, profile_catalog,
+                                 v1_config, v1_fast_config, v1_class_config, available_backend)
 from oncofusion.providers import MockProvider, ModelReply, OpenAICompatibleProvider, ProviderError
 from oncofusion.schemas import CaseInput, Document, RunConfig
 from oncofusion.upstream_tools import TOOL_VERSION, SourcePlan, ToolRequest, ToolUniverseSources, attach_snapshot
@@ -33,7 +34,10 @@ def test_v1_fixed_seven_roles_and_no_optional_requery():
     assert result.usage.calls == 7 and result.decision
     assert not any(e.kind == 'requery_requested' for e in result.trace)
     assert specification(config)['max_requeries'] == 0
-    assert profile_catalog()['v1']['config']['workflow_backend'] == 'langgraph'
+    # the catalog advertises the backend this interpreter can actually run, and says whether
+    # LangGraph is installed; the classroom service is the same code path either way.
+    assert profile_catalog()['v1']['config']['workflow_backend'] == available_backend()
+    assert profile_catalog()['v1']['graph_installed'] == (available_backend() == 'langgraph')
 
 
 def test_readiness_distinguishes_component_and_heterogeneous_input():
@@ -91,7 +95,8 @@ def test_missing_graph_is_rejected_before_job_or_case_is_created(client, monkeyp
     def missing(_):
         raise PackageNotFoundError('langgraph')
     monkeypatch.setattr(workflow, 'version', missing)
-    response = client.post('/v1/runs', json={'example_id':'synthetic-support', 'config':v1_config().model_dump()})
+    response = client.post('/v1/runs', json={'example_id':'synthetic-support',
+                                             'config':v1_config('langgraph').model_dump()})
     assert response.status_code == 503
     assert client.get('/v1/cases').json() == client.get('/v1/runs').json() == []
 
@@ -246,6 +251,24 @@ def test_v1_long_input_has_headroom_and_all_controls_share_the_declared_cap():
     assert old.status == 'budget_exhausted'
     assert result.status == 'completed' and result.usage.calls == 7
     assert config.max_total_tokens == 200000
+    # Every arm inside one study must share the declared ceiling (that is what makes a paired
+    # comparison fair), and a plan whose `reference` names a known profile has to carry that
+    # profile's ceiling: the 6b classroom plans were copied by hand and silently kept 200000
+    # while the demo served v1_class at 260000, so two MTB cases died at the token preflight.
+    ceilings = {"v1": v1_config("native"), "v1_fast": v1_fast_config("native"),
+                "v1_class": v1_class_config("native")}
+    # Plans whose runs are already on disk stay frozen: they document the protocol those rows were
+    # produced under, and rewriting them would make recorded results unreadable. Any other plan has
+    # to carry its profile's ceiling; scripts/make_class_plan.py writes plans from the profile and
+    # asserts that equality, so a profile edit cannot leave a live plan behind.
+    frozen = {"v1_class6b_mtb.json", "v1_class6b_civic.json",
+              "v1_class_dev6_mtb.json", "v1_class_dev6_civic.json"}
     for path in (ROOT/'experiments').glob('v1_*.json'):
         plan = json.loads(path.read_text())
-        assert all(t['overrides']['max_total_tokens'] == config.max_total_tokens for t in plan['treatments'])
+        caps = {t['overrides'].get('max_total_tokens') for t in plan['treatments']}
+        assert caps == {max(caps)}, (path.name, caps)
+        reference = plan.get('reference')
+        if path.name in frozen:
+            assert reference == 'v1_class' and caps == {200000}, (path.name, caps, reference)
+        elif reference in ceilings:
+            assert caps == {ceilings[reference].max_total_tokens}, (path.name, caps, reference)
