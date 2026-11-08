@@ -5,7 +5,7 @@ import pytest
 
 from oncofusion.engine import Engine, build_analysis_output
 from oncofusion.examples import examples
-from oncofusion.providers import MockProvider
+from oncofusion.providers import MockProvider, ProviderError
 from oncofusion.schemas import (Ablations, ClaimAnalysisOutput, ClaimFinding, FragmentCitation,
                                RunConfig, CaseInput, Document, Entities)
 from oncofusion.profiles import v1_class_config, v1_fast_config
@@ -124,6 +124,49 @@ def test_mcq_decision_prompt_excludes_verification_labels(recorder):
     assert "never use SUPPORTS, REFUTES, REVISIONS, or NEI" in decision
     schema = json.JSONDecoder().raw_decode(decision.split("conforming to this schema: ", 1)[1])[0]
     assert schema["properties"]["answer"]["enum"] == ["A", "B", "C"]
+
+
+def test_revision_gate_adds_global_assessment_schema(recorder):
+    config = v1_class_config("native")
+    config.claim_revision_gate = True
+    case = CASE.model_copy(update={"verification_scheme": "revisions"})
+    Engine(recorder).run(case, config)
+    decision = recorder.systems[[payload["role"] for payload in recorder.payloads].index("decision")]
+    schema = json.JSONDecoder().raw_decode(
+        decision.split("conforming to this schema: ", 1)[1]
+    )[0]
+    assert schema["properties"]["assessment"]["$ref"].split("/")[-1] == "RevisionAssessment"
+    assert "evidence_relevance" in schema["$defs"]["RevisionAssessment"]["properties"]
+    assert "wrong direction or specificity is a revision" in decision
+
+
+def test_revision_gate_rejects_label_assessment_conflict():
+    case = CASE.model_copy(update={"verification_scheme": "revisions"})
+    class Conflict(MockProvider):
+        def complete(self, system, payload, max_tokens, temperature, seed):
+            reply = super().complete(system, payload, max_tokens, temperature, seed)
+            if payload.get("role") != "decision" or not payload.get("revision_gate"):
+                return reply
+            body = json.loads(reply.content)
+            body["answer"] = "NEI"
+            body["assessment"] = {
+                "evidence_relevance": "relevant",
+                "original_claim": "partially_supported",
+                "revision_fields": ["significance"],
+                "minimal_revision": "Change resistance to the supported direction.",
+            }
+            reply.content = json.dumps(body)
+            return reply
+    config = v1_class_config("native")
+    config.claim_revision_gate = True
+    with pytest.raises(ProviderError, match="schema or source-integrity"):
+        Engine(Conflict()).run(case, config)
+
+
+def test_revision_gate_is_verification_only():
+    config = v1_class_config("native").model_copy(update={"claim_revision_gate": True})
+    with pytest.raises(ValueError, match="requires a verification task"):
+        Engine(MockProvider()).run(examples()["synthetic-timeline"], config)
 
 
 def test_role_scope_is_encoded_in_the_response_schema(recorder):

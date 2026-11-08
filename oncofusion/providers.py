@@ -131,6 +131,23 @@ class MockProvider:
                 body = {"answer": out.answer, "explanation": out.explanation,
                         "unresolved": out.unresolved, "confidence": out.confidence,
                         "citations": [{"evidence_id": e} for e in ids[:2]]}
+                if payload.get("revision_gate"):
+                    if out.answer == "SUPPORTS":
+                        assessment = {"evidence_relevance": "relevant",
+                                      "original_claim": "fully_supported",
+                                      "revision_fields": [],
+                                      "minimal_revision": ""}
+                    elif out.answer == "REVISIONS":
+                        assessment = {"evidence_relevance": "relevant",
+                                      "original_claim": "partially_supported",
+                                      "revision_fields": ["significance"],
+                                      "minimal_revision": "Use the supported significance."}
+                    else:
+                        assessment = {"evidence_relevance": "insufficient",
+                                      "original_claim": "unclear",
+                                      "revision_fields": [],
+                                      "minimal_revision": ""}
+                    body["assessment"] = assessment
                 if roster:
                     body["adopted_claim_ids"] = [entry["claim_id"] for entry in roster[:2]]
                     body["rejected_claim_ids"] = [entry["claim_id"] for entry in roster[2:3]]

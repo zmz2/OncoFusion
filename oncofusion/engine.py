@@ -18,7 +18,8 @@ from .providers import Provider, ProviderError, provider_identity
 from .schemas import (ClaimAnalysisOutput, ClaimDecisionOutput, ClaimFindingsOnlyOutput,
                       ClaimVerdict, ClaimVerificationOutput,
                       Finding, FragmentAnalysisOutput, FragmentDecisionOutput,
-                      AgentReport, AnalysisOutput, CaseInput, DecisionOutput, ROLES, RunConfig, RunResult,
+                      RevisionDecisionOutput, AgentReport, AnalysisOutput, CaseInput,
+                      DecisionOutput, ROLES, RunConfig, RunResult,
                       TraceEvent, Usage)
 
 CLAIM_RULES = (
@@ -213,6 +214,8 @@ class Engine:
         if not self.provider.simulated and case.data_class == "unreviewed":
             raise ValueError("review/deidentify the case before remote model processing")
         config = config or RunConfig()
+        if config.claim_revision_gate and case.task != "verification":
+            raise ValueError("claim_revision_gate requires a verification task")
         if (config.citation_mode == "fragment" and not config.ablations.external_verification
                 and config.interaction_protocol != "claims-v1"):
             # Under claims-v1 the handle-to-span check is mechanical and always on, so turning the
@@ -345,6 +348,9 @@ class Engine:
                        "sources": source_roster,
                        "signals": {} if reflection else signals, "board": board,
                        "unresolved": unresolved if config.ablations.structured_board else json.dumps(unresolved, ensure_ascii=False)}
+            if (role == "decision" and visible.task == "verification"
+                    and config.claim_revision_gate):
+                payload["revision_gate"] = True
             if config.citation_mode == "fragment":
                 # Three distinct things: the original source roster, this stage's visible
                 # documents, and the spans actually handed to the model.
@@ -389,7 +395,9 @@ class Engine:
             allowed_scopes = ROLE_SCOPES.get(role, set())
             wire_key = "Finding"
             if config.citation_mode == "fragment":
-                if role == "decision":
+                if role == "decision" and visible.task == "verification" and config.claim_revision_gate:
+                    wire_schema = RevisionDecisionOutput
+                elif role == "decision":
                     wire_schema = FragmentDecisionOutput
                 elif role == "verifier" and claims_on and not reflection:
                     wire_schema = ClaimVerificationOutput
@@ -401,6 +409,9 @@ class Engine:
                     wire_schema = FragmentAnalysisOutput
                 wire_key = "ClaimFinding" if claims_on else "FragmentFinding"
             output_schema = wire_schema.model_json_schema()
+            if (role == "decision" and visible.task == "verification"
+                    and config.claim_revision_gate):
+                output_schema["properties"]["answer"]["enum"] = list(visible.verification_labels)
             if visible.task == "mcq" and role == "decision":
                 output_schema["properties"]["answer"]["enum"] = list(visible.options)
             if (visible.task == "verification" and role != "decision"
@@ -435,6 +446,15 @@ class Engine:
                                    "its relation into the final answer.")
                 if visible.verification_scheme == "revisions":
                     system += " SUPPORTS means the entire claim is evidenced as written. REVISIONS means partial support with a necessary claim correction; it is not equivalent to REFUTES. NEI means missing, irrelevant or insufficient evidence. Infer corrections only from visible evidence; gold revised claims are never available."
+                    if role == "decision" and config.claim_revision_gate:
+                        system += (" First classify evidence_relevance and original_claim independently of "
+                                   "every professional claim's local relation. Then name the exact claim "
+                                   "fields requiring revision and write one minimal evidence-grounded "
+                                   "revision. Valid final-label mappings are fixed: relevant + "
+                                   "fully_supported => SUPPORTS; relevant + partially_supported with a "
+                                   "minimal revision => REVISIONS; irrelevant/unclear, or insufficient "
+                                   "evidence => NEI. A wrong direction or specificity is a revision, "
+                                   "not automatic NEI. Role not-applicable is not evidence irrelevance.")
             if visible.task == "mcq" and role == "decision":
                 system += (" The answer must be exactly one option key from "
                            + ", ".join(visible.options) + "; never use SUPPORTS, REFUTES, REVISIONS, or NEI.")
@@ -524,6 +544,29 @@ class Engine:
                             unresolved=wire.unresolved, confidence=wire.confidence,
                             citations=resolve_fragment_citations(wire.citations, fragment_index),
                             adopted_claim_ids=adopted, rejected_claim_ids=excluded)
+                        if (visible.task == "verification"
+                                and config.claim_revision_gate):
+                            assessment = wire.assessment
+                            if assessment.evidence_relevance == "relevant":
+                                if assessment.original_claim == "fully_supported":
+                                    expected = "SUPPORTS"
+                                elif (assessment.original_claim == "partially_supported"
+                                      and assessment.revision_fields
+                                      and assessment.minimal_revision.strip()):
+                                    expected = "REVISIONS"
+                                else:
+                                    expected = "NEI"
+                            else:
+                                expected = "NEI"
+                            if output.answer != expected:
+                                raise ValueError(
+                                    "decision answer conflicts with revision assessment: "
+                                    f"answer={output.answer}, expected={expected}, "
+                                    f"evidence_relevance={assessment.evidence_relevance}, "
+                                    f"original_claim={assessment.original_claim}")
+                            emit("revision_assessment", role,
+                                 **assessment.model_dump(mode="json"),
+                                 expected_label=expected)
                     else:
                         output = build_analysis_output(wire, fragment_index, role, claims_on, known_claims,
                                                    config.findings_limit, allowed_scopes, emit, basis)

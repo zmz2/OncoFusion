@@ -115,6 +115,9 @@ class RunConfig(StrictModel):
     candidate_k: int = Field(default=20, ge=1, le=100)
     seed: int = Field(default=0, ge=0)
     temperature: float = Field(default=0, ge=0, le=2)
+    # Verification-only mechanism. It stays outside the legacy ablation namespace,
+    # so historical presets and the old 41-treatment plan remain unchanged.
+    claim_revision_gate: bool = False
 
     @model_validator(mode="after")
     def valid_config(self):
@@ -213,6 +216,25 @@ class FragmentDecisionOutput(StrictModel):
     confidence: float | None = Field(default=None, ge=0, le=1)
     adopted_claim_ids: list[Identifier] = Field(default_factory=list, max_length=60)
     rejected_claim_ids: list[Identifier] = Field(default_factory=list, max_length=60)
+
+
+class RevisionAssessment(StrictModel):
+    """Global stance assessment, kept separate from each professional claim's local relation."""
+    evidence_relevance: Literal["relevant", "irrelevant", "insufficient"]
+    original_claim: Literal["fully_supported", "partially_supported", "not_supported", "unclear"]
+    revision_fields: list[str] = Field(default_factory=list, max_length=12)
+    minimal_revision: str = Field(default="", max_length=3000)
+
+
+class RevisionDecisionOutput(StrictModel):
+    answer: str = Field(min_length=1, max_length=6000)
+    explanation: str = Field(min_length=1, max_length=8000)
+    citations: list[FragmentCitation] = Field(default_factory=list, max_length=30)
+    unresolved: list[str] = Field(default_factory=list, max_length=20)
+    confidence: float | None = Field(default=None, ge=0, le=1)
+    adopted_claim_ids: list[Identifier] = Field(default_factory=list, max_length=60)
+    rejected_claim_ids: list[Identifier] = Field(default_factory=list, max_length=60)
+    assessment: RevisionAssessment
 
 
 # claims-v1 findings declare which layer they speak from, so a genomics role cannot answer the
