@@ -1,0 +1,1768 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-6c530820-e919-4e27-b2ec-63314b25468e",
+  "patient_id": "article-27283860",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "1133a7cfc215f0fa623f4e6db01d79022432d1a61be8a93721272af1092e04f1",
+  "config": {
+    "mode": "multi",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "claims-v1",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-27283860) exclusively reports on the efficacy of Dabrafenib plus Trametinib in patients with BRAF V600E-mutant non-small cell lung cancer (NSCLC). The claim under assessment concerns the BRAF V691A variant. The source text does not mention BRAF V691A, nor does it provide any data regarding the sensitivity or response to Dabrafenib and Trametinib for this specific variant. Therefore, the evidence is insufficient to support the claim as written.",
+    "citations": [
+      {
+        "document_id": "pmid-27283860",
+        "start": 0,
+        "end": 165,
+        "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+      }
+    ],
+    "unresolved": [
+      "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+    ],
+    "confidence": 1.0,
+    "adopted_claim_ids": [
+      "literature-01",
+      "genomics-01",
+      "drug-01",
+      "timeline-01",
+      "pathology-01"
+    ],
+    "rejected_claim_ids": []
+  },
+  "reports": [
+    {
+      "role": "literature",
+      "executor": "literature",
+      "output": {
+        "findings": [
+          {
+            "statement": "The available literature evidence (pmid-27283860) reports on the combination of Dabrafenib and Trametinib in patients with BRAF V600E-mutant NSCLC, but does not contain data regarding the BRAF V691A variant.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-27283860",
+                "start": 0,
+                "end": 165,
+                "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+              }
+            ],
+            "claim_id": "literature-01",
+            "author_role": "literature",
+            "used_claim_ids": [],
+            "scope": "source",
+            "evidence_level": "literature",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+        ],
+        "requery": "Search for clinical trials or case reports specifically evaluating BRAF V691A mutations in lung non-small cell carcinoma treated with Dabrafenib and/or Trametinib.",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "timeline",
+      "executor": "timeline",
+      "output": {
+        "findings": [
+          {
+            "statement": "not_applicable: no timeline input was supplied for this case.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "timeline-01",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "not_recorded"
+          }
+        ],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "genomics",
+      "executor": "genomics",
+      "output": {
+        "findings": [
+          {
+            "statement": "The supplied literature (pmid-27283860) exclusively addresses BRAF V600E-mutant NSCLC and does not contain molecular data or efficacy results for the BRAF V691A variant.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-27283860",
+                "start": 0,
+                "end": 165,
+                "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+              }
+            ],
+            "claim_id": "genomics-01",
+            "author_role": "genomics",
+            "used_claim_ids": [
+              "literature-01"
+            ],
+            "scope": "molecular",
+            "evidence_level": "absent",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+        ],
+        "requery": "Search for specific clinical or preclinical evidence linking BRAF V691A mutations to sensitivity or resistance to BRAF/MEK inhibition in NSCLC.",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The literature finding correctly identifies that the source document is restricted to V600E and does not support the V691A claim.",
+            "citations": [],
+            "reviewer_role": "genomics"
+          }
+        ]
+      }
+    },
+    {
+      "role": "pathology",
+      "executor": "pathology",
+      "output": {
+        "findings": [
+          {
+            "statement": "not_applicable: no pathology input was supplied for this case.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "pathology-01",
+            "author_role": "pathology",
+            "used_claim_ids": [],
+            "scope": "pathologic",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "not_recorded"
+          }
+        ],
+        "unresolved": [
+          "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "genomics-01",
+            "verdict": "confirmed",
+            "note": "The literature evidence exclusively addresses BRAF V600E-mutant NSCLC and does not contain molecular data or efficacy results for the BRAF V691A variant.",
+            "citations": [
+              {
+                "document_id": "pmid-27283860",
+                "start": 0,
+                "end": 165,
+                "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+              }
+            ],
+            "reviewer_role": "pathology"
+          },
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The available literature evidence (pmid-27283860) reports on the combination of Dabrafenib and Trametinib in patients with BRAF V600E-mutant NSCLC, but does not contain data regarding the BRAF V691A variant.",
+            "citations": [
+              {
+                "document_id": "pmid-27283860",
+                "start": 0,
+                "end": 165,
+                "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+              }
+            ],
+            "reviewer_role": "pathology"
+          }
+        ]
+      }
+    },
+    {
+      "role": "drug",
+      "executor": "drug",
+      "output": {
+        "findings": [
+          {
+            "statement": "The available literature (pmid-27283860) reports on the combination of Dabrafenib and Trametinib in patients with BRAF V600E-mutant NSCLC, but does not contain data regarding the BRAF V691A variant.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-27283860",
+                "start": 0,
+                "end": 165,
+                "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+              }
+            ],
+            "claim_id": "drug-01",
+            "author_role": "drug",
+            "used_claim_ids": [
+              "literature-01"
+            ],
+            "scope": "relationship",
+            "evidence_level": "literature",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The literature evidence explicitly addresses BRAF V600E and does not support the specific claim for BRAF V691A.",
+            "citations": [],
+            "reviewer_role": "drug"
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "verdict": "confirmed",
+            "note": "The genomics claim correctly identifies the absence of data for the V691A variant in the provided source.",
+            "citations": [],
+            "reviewer_role": "drug"
+          }
+        ]
+      }
+    },
+    {
+      "role": "verifier",
+      "executor": "verifier",
+      "output": {
+        "findings": [],
+        "unresolved": [
+          "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+        ],
+        "requery": "Search for clinical data or case reports regarding Dabrafenib and Trametinib efficacy in BRAF V691A-mutant non-small cell lung cancer.",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The source text (pmid-27283860:f01) explicitly states the therapy is for 'BRAF V600E-mutant NSCLC'. It does not mention BRAF V691A. The claim that the literature reports on V600E but not V691A is supported.",
+            "citations": [
+              {
+                "document_id": "pmid-27283860",
+                "start": 0,
+                "end": 165,
+                "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "verdict": "confirmed",
+            "note": "The source text exclusively addresses BRAF V600E. There is no molecular data or efficacy results for BRAF V691A in the provided text. The claim is supported.",
+            "citations": [
+              {
+                "document_id": "pmid-27283860",
+                "start": 0,
+                "end": 165,
+                "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "drug-01",
+            "verdict": "confirmed",
+            "note": "The source text links Dabrafenib plus Trametinib to BRAF V600E-mutant NSCLC. It does not contain data regarding the BRAF V691A variant. The claim is supported.",
+            "citations": [
+              {
+                "document_id": "pmid-27283860",
+                "start": 0,
+                "end": 165,
+                "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "timeline-01",
+            "verdict": "confirmed",
+            "note": "No timeline input was supplied. The claim 'not_applicable' is correct.",
+            "citations": [],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "pathology-01",
+            "verdict": "confirmed",
+            "note": "No pathology input was supplied. The claim 'not_applicable' is correct.",
+            "citations": [],
+            "reviewer_role": "verifier"
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "calls": 6,
+    "http_attempts": 6,
+    "tool_calls": 5,
+    "input_tokens": 19994,
+    "output_tokens": 2284,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-27283860"
+        ],
+        "fingerprint": "1133a7cfc215f0fa623f4e6db01d79022432d1a61be8a93721272af1092e04f1",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "claims-v1",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-27283860"
+        ],
+        "query": "{\n  \"disease\": \"lung non-small cell carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BRAF V691A\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Dabrafenib\",\n    \"Trametinib\"\n  ],\n  \"therapyInteractionType\": \"COMBINATION\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "agent_started",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "payload_sha256": "da3894a92ff010d81b1ac4a080b079690eae465fc8b3b40824399cc9d3633aa3",
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "token_reservation": 12477,
+        "evidence_ids": [
+          "pmid-27283860:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27283860": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 165,
+              "chars_sent": 165,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27283860:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 165,
+          "chars_sent": 165,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [],
+          "required": {},
+          "guaranteed_unsent": []
+        },
+        "material_basis": "",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "model_usage",
+      "role": "literature",
+      "details": {
+        "input_tokens": 2051,
+        "output_tokens": 257,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.005,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "agent_reported",
+      "role": "literature",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The available literature evidence (pmid-27283860) reports on the combination of Dabrafenib and Trametinib in patients with BRAF V600E-mutant NSCLC, but does not contain data regarding the BRAF V691A variant.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+          ],
+          "requery": "Search for clinical trials or case reports specifically evaluating BRAF V691A mutations in lung non-small cell carcinoma treated with Dabrafenib and/or Trametinib.",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "agent_completed",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "output": {
+          "findings": [
+            {
+              "statement": "The available literature evidence (pmid-27283860) reports on the combination of Dabrafenib and Trametinib in patients with BRAF V600E-mutant NSCLC, but does not contain data regarding the BRAF V691A variant.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+          ],
+          "requery": "Search for clinical trials or case reports specifically evaluating BRAF V691A mutations in lung non-small cell carcinoma treated with Dabrafenib and/or Trametinib.",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "agent_skipped",
+      "role": "timeline",
+      "details": {
+        "reason": "no matching input modality"
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_reported",
+      "role": "timeline",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: no timeline input was supplied for this case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        },
+        "synthesized_not_applicable": true
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-27283860": {
+              "gene": "unknown",
+              "variant": "unknown"
+            }
+          },
+          "canonical_variant": "V691A",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27283860",
+              "start": 146,
+              "end": 151,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_started",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "payload_sha256": "16a6598ec2176f295a27c32b23a94ac489209f3b5a38ed7f13a3c34a77c822c1",
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "token_reservation": 14879,
+        "evidence_ids": [
+          "pmid-27283860:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27283860": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 165,
+              "chars_sent": 165,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27283860:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 165,
+          "chars_sent": 165,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "molecular"
+          ],
+          "required": {
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 2,
+        "unresolved_items": 1,
+        "unresolved_by_role": {
+          "literature": 1
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "model_usage",
+      "role": "genomics",
+      "details": {
+        "input_tokens": 2839,
+        "output_tokens": 329,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.063,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_reported",
+      "role": "genomics",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The supplied literature (pmid-27283860) exclusively addresses BRAF V600E-mutant NSCLC and does not contain molecular data or efficacy results for the BRAF V691A variant.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+          ],
+          "requery": "Search for specific clinical or preclinical evidence linking BRAF V691A mutations to sensitivity or resistance to BRAF/MEK inhibition in NSCLC.",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The literature finding correctly identifies that the source document is restricted to V600E and does not support the V691A claim.",
+              "citations": [],
+              "reviewer_role": "genomics"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "agent_completed",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "output": {
+          "findings": [
+            {
+              "statement": "The supplied literature (pmid-27283860) exclusively addresses BRAF V600E-mutant NSCLC and does not contain molecular data or efficacy results for the BRAF V691A variant.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+          ],
+          "requery": "Search for specific clinical or preclinical evidence linking BRAF V691A mutations to sensitivity or resistance to BRAF/MEK inhibition in NSCLC.",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The literature finding correctly identifies that the source document is restricted to V600E and does not support the V691A claim.",
+              "citations": [],
+              "reviewer_role": "genomics"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-27283860": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            }
+          },
+          "canonical_variant": "V691A",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27283860",
+              "start": 146,
+              "end": 151,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_started",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "payload_sha256": "39c5a29b7c96ffc8c60a678269dc37748e84de928b94eee6167c4c5d1d5eeda7",
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "token_reservation": 15783,
+        "evidence_ids": [
+          "pmid-27283860:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27283860": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 165,
+              "chars_sent": 165,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27283860:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 165,
+          "chars_sent": 165,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "pathology"
+          ],
+          "required": {
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 3,
+        "unresolved_items": 2,
+        "unresolved_by_role": {
+          "literature": 1,
+          "genomics": 1
+        }
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "model_usage",
+      "role": "pathology",
+      "details": {
+        "input_tokens": 3141,
+        "output_tokens": 401,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 4.878,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "agent_reported",
+      "role": "pathology",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: no pathology input was supplied for this case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [
+            "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The literature evidence exclusively addresses BRAF V600E-mutant NSCLC and does not contain molecular data or efficacy results for the BRAF V691A variant.",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "reviewer_role": "pathology"
+            },
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The available literature evidence (pmid-27283860) reports on the combination of Dabrafenib and Trametinib in patients with BRAF V600E-mutant NSCLC, but does not contain data regarding the BRAF V691A variant.",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "reviewer_role": "pathology"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 18,
+      "kind": "agent_completed",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: no pathology input was supplied for this case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [
+            "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The literature evidence exclusively addresses BRAF V600E-mutant NSCLC and does not contain molecular data or efficacy results for the BRAF V691A variant.",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "reviewer_role": "pathology"
+            },
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The available literature evidence (pmid-27283860) reports on the combination of Dabrafenib and Trametinib in patients with BRAF V600E-mutant NSCLC, but does not contain data regarding the BRAF V691A variant.",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "reviewer_role": "pathology"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-27283860": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V691A",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27283860",
+              "start": 146,
+              "end": 151,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27283860": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 20,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "8b5a4c228fcc64b5a43cf2d91e9a26bb13e368c22b54b4f2c8129330bf30de7a",
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "token_reservation": 16721,
+        "evidence_ids": [
+          "pmid-27283860:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27283860": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 165,
+              "chars_sent": 165,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27283860:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 165,
+          "chars_sent": 165,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 4,
+        "unresolved_items": 3,
+        "unresolved_by_role": {
+          "literature": 1,
+          "genomics": 1,
+          "pathology": 1
+        }
+      }
+    },
+    {
+      "sequence": 21,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 3396,
+        "output_tokens": 364,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 5.996,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 22,
+      "kind": "agent_reported",
+      "role": "drug",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The available literature (pmid-27283860) reports on the combination of Dabrafenib and Trametinib in patients with BRAF V600E-mutant NSCLC, but does not contain data regarding the BRAF V691A variant.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "claim_id": "drug-01",
+              "author_role": "drug",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "relationship",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The literature evidence explicitly addresses BRAF V600E and does not support the specific claim for BRAF V691A.",
+              "citations": [],
+              "reviewer_role": "drug"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The genomics claim correctly identifies the absence of data for the V691A variant in the provided source.",
+              "citations": [],
+              "reviewer_role": "drug"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 23,
+      "kind": "agent_completed",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "output": {
+          "findings": [
+            {
+              "statement": "The available literature (pmid-27283860) reports on the combination of Dabrafenib and Trametinib in patients with BRAF V600E-mutant NSCLC, but does not contain data regarding the BRAF V691A variant.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "claim_id": "drug-01",
+              "author_role": "drug",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "relationship",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The literature evidence explicitly addresses BRAF V600E and does not support the specific claim for BRAF V691A.",
+              "citations": [],
+              "reviewer_role": "drug"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The genomics claim correctly identifies the absence of data for the V691A variant in the provided source.",
+              "citations": [],
+              "reviewer_role": "drug"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 24,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-27283860": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V691A",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27283860",
+              "start": 146,
+              "end": 151,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27283860": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 25,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "42c23b46556eaaa322dcb8c2b59ecc6696de38dda651ff983188a5b2e7708621",
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "token_reservation": 16827,
+        "evidence_ids": [
+          "pmid-27283860:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27283860": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 165,
+              "chars_sent": 165,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27283860:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 165,
+          "chars_sent": 165,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 5,
+        "unresolved_items": 4,
+        "unresolved_by_role": {
+          "literature": 1,
+          "genomics": 1,
+          "pathology": 1,
+          "drug": 1
+        }
+      }
+    },
+    {
+      "sequence": 26,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 3439,
+        "output_tokens": 593,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 8.811,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 27,
+      "kind": "agent_reported",
+      "role": "verifier",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+          ],
+          "requery": "Search for clinical data or case reports regarding Dabrafenib and Trametinib efficacy in BRAF V691A-mutant non-small cell lung cancer.",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The source text (pmid-27283860:f01) explicitly states the therapy is for 'BRAF V600E-mutant NSCLC'. It does not mention BRAF V691A. The claim that the literature reports on V600E but not V691A is supported.",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The source text exclusively addresses BRAF V600E. There is no molecular data or efficacy results for BRAF V691A in the provided text. The claim is supported.",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "drug-01",
+              "verdict": "confirmed",
+              "note": "The source text links Dabrafenib plus Trametinib to BRAF V600E-mutant NSCLC. It does not contain data regarding the BRAF V691A variant. The claim is supported.",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "No timeline input was supplied. The claim 'not_applicable' is correct.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "pathology-01",
+              "verdict": "confirmed",
+              "note": "No pathology input was supplied. The claim 'not_applicable' is correct.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 28,
+      "kind": "agent_completed",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+          ],
+          "requery": "Search for clinical data or case reports regarding Dabrafenib and Trametinib efficacy in BRAF V691A-mutant non-small cell lung cancer.",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The source text (pmid-27283860:f01) explicitly states the therapy is for 'BRAF V600E-mutant NSCLC'. It does not mention BRAF V691A. The claim that the literature reports on V600E but not V691A is supported.",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The source text exclusively addresses BRAF V600E. There is no molecular data or efficacy results for BRAF V691A in the provided text. The claim is supported.",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "drug-01",
+              "verdict": "confirmed",
+              "note": "The source text links Dabrafenib plus Trametinib to BRAF V600E-mutant NSCLC. It does not contain data regarding the BRAF V691A variant. The claim is supported.",
+              "citations": [
+                {
+                  "document_id": "pmid-27283860",
+                  "start": 0,
+                  "end": 165,
+                  "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "No timeline input was supplied. The claim 'not_applicable' is correct.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "pathology-01",
+              "verdict": "confirmed",
+              "note": "No pathology input was supplied. The claim 'not_applicable' is correct.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 29,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "e741958f3dc852293b6be03a5a397155fc59dd322f219ed89e3eb4ab2a6bf4c7",
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "token_reservation": 23080,
+        "evidence_ids": [
+          "pmid-27283860:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27283860": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 165,
+              "chars_sent": 165,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27283860:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 165,
+          "chars_sent": 165,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 5,
+        "unresolved_items": 5,
+        "unresolved_by_role": {
+          "literature": 1,
+          "genomics": 1,
+          "pathology": 1,
+          "drug": 1,
+          "verifier": 1
+        }
+      }
+    },
+    {
+      "sequence": 30,
+      "kind": "verification_ledger",
+      "role": "decision",
+      "details": {
+        "entries": [
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "genomics",
+            "verdict": "confirmed",
+            "reason": "The literature finding correctly identifies that the source document is restricted to V600E and does not support the V691A claim.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "claim_author": "genomics",
+            "reviewer": "pathology",
+            "verdict": "confirmed",
+            "reason": "The literature evidence exclusively addresses BRAF V600E-mutant NSCLC and does not contain molecular data or efficacy results for the BRAF V691A variant.",
+            "final": false,
+            "citations": [
+              {
+                "evidence_id": "pmid-27283860:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "pathology",
+            "verdict": "confirmed",
+            "reason": "The available literature evidence (pmid-27283860) reports on the combination of Dabrafenib and Trametinib in patients with BRAF V600E-mutant NSCLC, but does not contain data regarding the BRAF V691A variant.",
+            "final": false,
+            "citations": [
+              {
+                "evidence_id": "pmid-27283860:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "drug",
+            "verdict": "confirmed",
+            "reason": "The literature evidence explicitly addresses BRAF V600E and does not support the specific claim for BRAF V691A.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "claim_author": "genomics",
+            "reviewer": "drug",
+            "verdict": "confirmed",
+            "reason": "The genomics claim correctly identifies the absence of data for the V691A variant in the provided source.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The source text (pmid-27283860:f01) explicitly states the therapy is for 'BRAF V600E-mutant NSCLC'. It does not mention BRAF V691A. The claim that the literature reports on V600E but not V691A is supported.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "pmid-27283860:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "claim_author": "genomics",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The source text exclusively addresses BRAF V600E. There is no molecular data or efficacy results for BRAF V691A in the provided text. The claim is supported.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "pmid-27283860:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "drug-01",
+            "claim_author": "drug",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The source text links Dabrafenib plus Trametinib to BRAF V600E-mutant NSCLC. It does not contain data regarding the BRAF V691A variant. The claim is supported.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "pmid-27283860:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-01",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "No timeline input was supplied. The claim 'not_applicable' is correct.",
+            "final": true,
+            "citations": []
+          },
+          {
+            "target_claim_id": "pathology-01",
+            "claim_author": "pathology",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "No pathology input was supplied. The claim 'not_applicable' is correct.",
+            "final": true,
+            "citations": []
+          }
+        ],
+        "reviews": 10,
+        "claims_reviewed": 5,
+        "final_verdicts": 5,
+        "rejected": [],
+        "insufficient": []
+      }
+    },
+    {
+      "sequence": 31,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 5128,
+        "output_tokens": 340,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.764,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 32,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "no_supported_revision",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "NEI"
+      }
+    },
+    {
+      "sequence": 33,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-27283860) exclusively reports on the efficacy of Dabrafenib plus Trametinib in patients with BRAF V600E-mutant non-small cell lung cancer (NSCLC). The claim under assessment concerns the BRAF V691A variant. The source text does not mention BRAF V691A, nor does it provide any data regarding the sensitivity or response to Dabrafenib and Trametinib for this specific variant. Therefore, the evidence is insufficient to support the claim as written.",
+          "citations": [
+            {
+              "document_id": "pmid-27283860",
+              "start": 0,
+              "end": 165,
+              "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+            }
+          ],
+          "unresolved": [
+            "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [
+            "literature-01",
+            "genomics-01",
+            "drug-01",
+            "timeline-01",
+            "pathology-01"
+          ],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 34,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-27283860) exclusively reports on the efficacy of Dabrafenib plus Trametinib in patients with BRAF V600E-mutant non-small cell lung cancer (NSCLC). The claim under assessment concerns the BRAF V691A variant. The source text does not mention BRAF V691A, nor does it provide any data regarding the sensitivity or response to Dabrafenib and Trametinib for this specific variant. Therefore, the evidence is insufficient to support the claim as written.",
+          "citations": [
+            {
+              "document_id": "pmid-27283860",
+              "start": 0,
+              "end": 165,
+              "quote": "Dabrafenib plus trametinib represents a new targeted therapy with robust antitumor activity and a manageable safety profile in patients with BRAF V600E-mutant NSCLC."
+            }
+          ],
+          "unresolved": [
+            "Efficacy of Dabrafenib plus Trametinib in BRAF V691A-mutant NSCLC"
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [
+            "literature-01",
+            "genomics-01",
+            "drug-01",
+            "timeline-01",
+            "pathology-01"
+          ],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 35,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-27283860"
+  ],
+  "duration_seconds": 29.557229,
+  "research_only": true
+}

@@ -1,0 +1,434 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-d21d7228-d7d8-4b3b-a5d7-defe88a2de58",
+  "patient_id": "article-25037139",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "b51d6e57c2bd21c0238fc1436bf3e39d5fc151a8d7e161f3f8ab2cc9e3dc58d8",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The evidence from the Phase 1b study (pmid-25037139) supports the claim. The study enrolled patients with unresectable or metastatic melanoma (disease: melanoma) who had BRAF V600 mutations (molecularProfile: BRAF V600, variantOrigin: SOMATIC, as confirmed by the cobas 4800 test and sequencing). The study evaluated the combination of vemurafenib and cobimetinib (therapies: Vemurafenib, Cobimetinib; therapyInteractionType: COMBINATION). The results showed confirmed objective responses, particularly in patients who had not previously received BRAF inhibitors (87% response rate), indicating that the combination supports sensitivity/response (significance: sensitivity/response) in this patient population. The evidence direction is positive (SUPPORTS) for the efficacy of the combination therapy in BRAF V600-mutated melanoma.",
+    "citations": [
+      {
+        "document_id": "pmid-25037139",
+        "start": 0,
+        "end": 598,
+        "quote": "In this Phase 1b study, 129 patients with unresectable or metastatic melanoma were verified for BRAF V600 mutation using the cobas 4800 mutation test were selected who had progressed on vemurafenib (66 patients) or never received BRAF inhibitor (63 patients). The combination of vemurafenib and cobimetinib was deemed safe and tolerable. Confirmed objective responses were seen in 15% of vemurafenib progressed patients and median progression-free survival was 2.8 months (95% CI 2·6–3·4). Confirmed objective responses were seen in 87% of patients who had never received BRAF inhibitor, including "
+      },
+      {
+        "document_id": "pmid-25037139",
+        "start": 598,
+        "end": 846,
+        "quote": "10% with complete response. Median progression-free survival was 13.7 months (95% CI 10·1–17·5). The majority of patients had BRAF V600E mutation. Post-hoc sequencing of 94 tumor samples indicated seven tumors with a mutation other than BRAF V600E."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.95,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2496,
+    "output_tokens": 371,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25037139"
+        ],
+        "fingerprint": "b51d6e57c2bd21c0238fc1436bf3e39d5fc151a8d7e161f3f8ab2cc9e3dc58d8",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25037139"
+        ],
+        "query": "{\n  \"disease\": \"melanoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BRAF V600\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Vemurafenib\",\n    \"Cobimetinib\"\n  ],\n  \"therapyInteractionType\": \"COMBINATION\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25037139"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25037139": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V600",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25037139",
+              "start": 729,
+              "end": 734,
+              "raw": "V600E",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "pmid-25037139",
+              "start": 840,
+              "end": 845,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25037139": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25037139"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25037139": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V600",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25037139",
+              "start": 729,
+              "end": 734,
+              "raw": "V600E",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "pmid-25037139",
+              "start": 840,
+              "end": 845,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25037139": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "099eb24e6ac059e479f1822692fcd756b1034d638e1936c96d1d0ea54d35167f",
+        "source_ids": [
+          "pmid-25037139"
+        ],
+        "token_reservation": 13311,
+        "evidence_ids": [
+          "pmid-25037139:f01",
+          "pmid-25037139:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-25037139": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 846,
+              "chars_sent": 846,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-25037139:f01",
+                "pmid-25037139:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 846,
+          "chars_sent": 846,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2496,
+        "output_tokens": 371,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.666,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "as_written",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "SUPPORTS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from the Phase 1b study (pmid-25037139) supports the claim. The study enrolled patients with unresectable or metastatic melanoma (disease: melanoma) who had BRAF V600 mutations (molecularProfile: BRAF V600, variantOrigin: SOMATIC, as confirmed by the cobas 4800 test and sequencing). The study evaluated the combination of vemurafenib and cobimetinib (therapies: Vemurafenib, Cobimetinib; therapyInteractionType: COMBINATION). The results showed confirmed objective responses, particularly in patients who had not previously received BRAF inhibitors (87% response rate), indicating that the combination supports sensitivity/response (significance: sensitivity/response) in this patient population. The evidence direction is positive (SUPPORTS) for the efficacy of the combination therapy in BRAF V600-mutated melanoma.",
+          "citations": [
+            {
+              "document_id": "pmid-25037139",
+              "start": 0,
+              "end": 598,
+              "quote": "In this Phase 1b study, 129 patients with unresectable or metastatic melanoma were verified for BRAF V600 mutation using the cobas 4800 mutation test were selected who had progressed on vemurafenib (66 patients) or never received BRAF inhibitor (63 patients). The combination of vemurafenib and cobimetinib was deemed safe and tolerable. Confirmed objective responses were seen in 15% of vemurafenib progressed patients and median progression-free survival was 2.8 months (95% CI 2·6–3·4). Confirmed objective responses were seen in 87% of patients who had never received BRAF inhibitor, including "
+            },
+            {
+              "document_id": "pmid-25037139",
+              "start": 598,
+              "end": 846,
+              "quote": "10% with complete response. Median progression-free survival was 13.7 months (95% CI 10·1–17·5). The majority of patients had BRAF V600E mutation. Post-hoc sequencing of 94 tumor samples indicated seven tumors with a mutation other than BRAF V600E."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.95,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from the Phase 1b study (pmid-25037139) supports the claim. The study enrolled patients with unresectable or metastatic melanoma (disease: melanoma) who had BRAF V600 mutations (molecularProfile: BRAF V600, variantOrigin: SOMATIC, as confirmed by the cobas 4800 test and sequencing). The study evaluated the combination of vemurafenib and cobimetinib (therapies: Vemurafenib, Cobimetinib; therapyInteractionType: COMBINATION). The results showed confirmed objective responses, particularly in patients who had not previously received BRAF inhibitors (87% response rate), indicating that the combination supports sensitivity/response (significance: sensitivity/response) in this patient population. The evidence direction is positive (SUPPORTS) for the efficacy of the combination therapy in BRAF V600-mutated melanoma.",
+          "citations": [
+            {
+              "document_id": "pmid-25037139",
+              "start": 0,
+              "end": 598,
+              "quote": "In this Phase 1b study, 129 patients with unresectable or metastatic melanoma were verified for BRAF V600 mutation using the cobas 4800 mutation test were selected who had progressed on vemurafenib (66 patients) or never received BRAF inhibitor (63 patients). The combination of vemurafenib and cobimetinib was deemed safe and tolerable. Confirmed objective responses were seen in 15% of vemurafenib progressed patients and median progression-free survival was 2.8 months (95% CI 2·6–3·4). Confirmed objective responses were seen in 87% of patients who had never received BRAF inhibitor, including "
+            },
+            {
+              "document_id": "pmid-25037139",
+              "start": 598,
+              "end": 846,
+              "quote": "10% with complete response. Median progression-free survival was 13.7 months (95% CI 10·1–17·5). The majority of patients had BRAF V600E mutation. Post-hoc sequencing of 94 tumor samples indicated seven tumors with a mutation other than BRAF V600E."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.95,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25037139"
+  ],
+  "duration_seconds": 3.70907,
+  "research_only": true
+}

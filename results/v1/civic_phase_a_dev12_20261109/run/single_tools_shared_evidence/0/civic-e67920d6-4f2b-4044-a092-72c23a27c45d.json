@@ -1,0 +1,445 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-e67920d6-4f2b-4044-a092-72c23a27c45d",
+  "patient_id": "article-25727400",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "6f642883306fc58f8d235322af47c1a296e72b6b20925cb1d1d35c87f29089e8",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim posits that Alectinib supports sensitivity/response in head and neck cancer with EML4::ALK Fusion AND ALK G1202R (SOMATIC). The available evidence (pmid-25727400:f01) demonstrates that G1202R is highly refractory (resistant) to Alectinib, contradicting the 'sensitivity/response' direction. Furthermore, the study utilizes NPM-ALK and EML4-ALK cellular models, not head and neck cancer tissue or clinical data, making the disease context unsupported. The evidence supports a revision to 'resistance' and indicates the disease context is preclinical/cellular models rather than head and neck cancer.",
+    "citations": [
+      {
+        "document_id": "pmid-25727400",
+        "start": 0,
+        "end": 389,
+        "quote": "Since the biological activity of ALK mutations extends beyond the specific type of fusion, both NPM-ALK- and EML4-ALK-positive cellular models were used. . . . In the activity profile of alectinib, we found three sensitive mutations (C1156Y, L1196M, and S1206Y), and three with varying degrees of resistance (Tables 3). In particular, G1202R was highly refractory to alectinib (RR = 27.9)."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2378,
+    "output_tokens": 351,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25727400"
+        ],
+        "fingerprint": "6f642883306fc58f8d235322af47c1a296e72b6b20925cb1d1d35c87f29089e8",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25727400"
+        ],
+        "query": "{\n  \"disease\": \"head and neck cancer\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"EML4::ALK Fusion AND ALK G1202R\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Alectinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25727400"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25727400": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25727400",
+              "start": 234,
+              "end": 240,
+              "raw": "C1156Y",
+              "canonical": "C1156Y"
+            },
+            {
+              "document_id": "pmid-25727400",
+              "start": 242,
+              "end": 248,
+              "raw": "L1196M",
+              "canonical": "L1196M"
+            },
+            {
+              "document_id": "pmid-25727400",
+              "start": 254,
+              "end": 260,
+              "raw": "S1206Y",
+              "canonical": "S1206Y"
+            },
+            {
+              "document_id": "pmid-25727400",
+              "start": 335,
+              "end": 341,
+              "raw": "G1202R",
+              "canonical": "G1202R"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25727400": "mixed"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25727400"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25727400": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25727400",
+              "start": 234,
+              "end": 240,
+              "raw": "C1156Y",
+              "canonical": "C1156Y"
+            },
+            {
+              "document_id": "pmid-25727400",
+              "start": 242,
+              "end": 248,
+              "raw": "L1196M",
+              "canonical": "L1196M"
+            },
+            {
+              "document_id": "pmid-25727400",
+              "start": 254,
+              "end": 260,
+              "raw": "S1206Y",
+              "canonical": "S1206Y"
+            },
+            {
+              "document_id": "pmid-25727400",
+              "start": 335,
+              "end": 341,
+              "raw": "G1202R",
+              "canonical": "G1202R"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25727400": "mixed"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "4a0bebbf599e502661478d4942d8b7e3e2a21504b23f5daf24da535c76eda0db",
+        "source_ids": [
+          "pmid-25727400"
+        ],
+        "token_reservation": 12875,
+        "evidence_ids": [
+          "pmid-25727400:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-25727400": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 389,
+              "chars_sent": 389,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-25727400:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 389,
+          "chars_sent": 389,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2378,
+        "output_tokens": 351,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 4.463,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "disease",
+          "evidenceDirection"
+        ],
+        "minimal_revision": "The evidence indicates G1202R is resistant to Alectinib (not sensitive) and is derived from cellular models (NPM-ALK/EML4-ALK), not head and neck cancer clinical data.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that Alectinib supports sensitivity/response in head and neck cancer with EML4::ALK Fusion AND ALK G1202R (SOMATIC). The available evidence (pmid-25727400:f01) demonstrates that G1202R is highly refractory (resistant) to Alectinib, contradicting the 'sensitivity/response' direction. Furthermore, the study utilizes NPM-ALK and EML4-ALK cellular models, not head and neck cancer tissue or clinical data, making the disease context unsupported. The evidence supports a revision to 'resistance' and indicates the disease context is preclinical/cellular models rather than head and neck cancer.",
+          "citations": [
+            {
+              "document_id": "pmid-25727400",
+              "start": 0,
+              "end": 389,
+              "quote": "Since the biological activity of ALK mutations extends beyond the specific type of fusion, both NPM-ALK- and EML4-ALK-positive cellular models were used. . . . In the activity profile of alectinib, we found three sensitive mutations (C1156Y, L1196M, and S1206Y), and three with varying degrees of resistance (Tables 3). In particular, G1202R was highly refractory to alectinib (RR = 27.9)."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that Alectinib supports sensitivity/response in head and neck cancer with EML4::ALK Fusion AND ALK G1202R (SOMATIC). The available evidence (pmid-25727400:f01) demonstrates that G1202R is highly refractory (resistant) to Alectinib, contradicting the 'sensitivity/response' direction. Furthermore, the study utilizes NPM-ALK and EML4-ALK cellular models, not head and neck cancer tissue or clinical data, making the disease context unsupported. The evidence supports a revision to 'resistance' and indicates the disease context is preclinical/cellular models rather than head and neck cancer.",
+          "citations": [
+            {
+              "document_id": "pmid-25727400",
+              "start": 0,
+              "end": 389,
+              "quote": "Since the biological activity of ALK mutations extends beyond the specific type of fusion, both NPM-ALK- and EML4-ALK-positive cellular models were used. . . . In the activity profile of alectinib, we found three sensitive mutations (C1156Y, L1196M, and S1206Y), and three with varying degrees of resistance (Tables 3). In particular, G1202R was highly refractory to alectinib (RR = 27.9)."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25727400"
+  ],
+  "duration_seconds": 4.484622,
+  "research_only": true
+}

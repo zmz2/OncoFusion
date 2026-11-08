@@ -1,0 +1,1573 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-5dba1dce-23d4-4c09-b6d2-6736c653bbaa",
+  "patient_id": "article-21791641",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "bb561adcac8417f42462b875ab5e2d7c7e598214f2aa129e05a6b92c379263cc",
+  "config": {
+    "mode": "multi",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "claims-v1",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-21791641:f01) describes a case of resistance to crizotinib mediated by an EML4::ALK L1152R mutation. It contains no data regarding the FLT3 gene, the D257L variant, the drug gilteritinib, or Acute Myeloid Leukemia (AML). Therefore, the evidence is irrelevant to the claim regarding FLT3 D257L-mediated resistance to gilteritinib in AML.",
+    "citations": [
+      {
+        "document_id": "pmid-21791641",
+        "start": 0,
+        "end": 237,
+        "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+      }
+    ],
+    "unresolved": [
+      "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+    ],
+    "confidence": 1.0,
+    "adopted_claim_ids": [
+      "literature-01",
+      "genomics-01",
+      "drug-01"
+    ],
+    "rejected_claim_ids": []
+  },
+  "reports": [
+    {
+      "role": "literature",
+      "executor": "literature",
+      "output": {
+        "findings": [
+          {
+            "statement": "The provided evidence (pmid-21791641:f01) describes resistance to crizotinib mediated by an EML4::ALK L1152R mutation in a non-specified context, which is irrelevant to the claim regarding FLT3 D257L-mediated resistance to gilteritinib in Acute Myeloid Leukemia.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-21791641",
+                "start": 0,
+                "end": 237,
+                "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+              }
+            ],
+            "claim_id": "literature-01",
+            "author_role": "literature",
+            "used_claim_ids": [],
+            "scope": "source",
+            "evidence_level": "literature",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+        ],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "timeline",
+      "executor": "timeline",
+      "output": {
+        "findings": [
+          {
+            "statement": "not_applicable: no timeline input was supplied for this case.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "timeline-01",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "not_recorded"
+          }
+        ],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "genomics",
+      "executor": "genomics",
+      "output": {
+        "findings": [
+          {
+            "statement": "The supplied evidence (pmid-21791641:f01) reports on an EML4::ALK L1152R mutation conferring resistance to crizotinib; it contains no data regarding FLT3 D257L, gilteritinib, or Acute Myeloid Leukemia.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-21791641",
+                "start": 0,
+                "end": 237,
+                "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+              }
+            ],
+            "claim_id": "genomics-01",
+            "author_role": "genomics",
+            "used_claim_ids": [
+              "literature-01"
+            ],
+            "scope": "molecular",
+            "evidence_level": "literature",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The literature finding correctly identifies the evidence as irrelevant to the FLT3/gilteritinib/AML claim.",
+            "citations": [
+              {
+                "document_id": "pmid-21791641",
+                "start": 0,
+                "end": 237,
+                "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+              }
+            ],
+            "reviewer_role": "genomics"
+          }
+        ]
+      }
+    },
+    {
+      "role": "pathology",
+      "executor": "pathology",
+      "output": {
+        "findings": [
+          {
+            "statement": "not_applicable: no pathology input was supplied for this case.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "pathology-01",
+            "author_role": "pathology",
+            "used_claim_ids": [],
+            "scope": "pathologic",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "not_recorded"
+          }
+        ],
+        "unresolved": [
+          "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+        ],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "drug",
+      "executor": "drug",
+      "output": {
+        "findings": [
+          {
+            "statement": "The provided evidence (pmid-21791641:f01) describes resistance to crizotinib mediated by an EML4::ALK L1152R mutation in a non-specified context, which is irrelevant to the claim regarding FLT3 D257L-mediated resistance to gilteritinib in Acute Myeloid Leukemia.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-21791641",
+                "start": 0,
+                "end": 237,
+                "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+              }
+            ],
+            "claim_id": "drug-01",
+            "author_role": "drug",
+            "used_claim_ids": [],
+            "scope": "relationship",
+            "evidence_level": "literature",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+        ],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "verifier",
+      "executor": "verifier",
+      "output": {
+        "findings": [],
+        "unresolved": [
+          "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The source text (pmid-21791641:f01) explicitly describes an EML4::ALK L1152R mutation and crizotinib resistance. It contains no mention of FLT3, D257L, gilteritinib, or AML. The claim that the evidence is irrelevant to the specific FLT3/gilteritinib/AML query is supported by the text.",
+            "citations": [
+              {
+                "document_id": "pmid-21791641",
+                "start": 0,
+                "end": 237,
+                "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "verdict": "confirmed",
+            "note": "The source text reports on EML4::ALK L1152R. It contains no data regarding FLT3 D257L, gilteritinib, or Acute Myeloid Leukemia. The claim that the evidence lacks this specific genomic/drug/disease data is confirmed.",
+            "citations": [
+              {
+                "document_id": "pmid-21791641",
+                "start": 0,
+                "end": 237,
+                "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "drug-01",
+            "verdict": "confirmed",
+            "note": "The source text describes resistance to crizotinib. It does not mention gilteritinib or any relationship between FLT3 D257L and gilteritinib resistance. The claim that the evidence is irrelevant to the drug/variant relationship in question is confirmed.",
+            "citations": [
+              {
+                "document_id": "pmid-21791641",
+                "start": 0,
+                "end": 237,
+                "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+              }
+            ],
+            "reviewer_role": "verifier"
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "calls": 6,
+    "http_attempts": 6,
+    "tool_calls": 5,
+    "input_tokens": 19392,
+    "output_tokens": 1747,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-21791641"
+        ],
+        "fingerprint": "bb561adcac8417f42462b875ab5e2d7c7e598214f2aa129e05a6b92c379263cc",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "claims-v1",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-21791641"
+        ],
+        "query": "{\n  \"disease\": \"Acute Myeloid Leukemia\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"FLT3 D257L\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Gilteritinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-21791641"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "agent_started",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "payload_sha256": "45d4cab61318f905a0e2ce32590774e335720686b6eb8368225b2bda0fcb69b3",
+        "source_ids": [
+          "pmid-21791641"
+        ],
+        "token_reservation": 12297,
+        "evidence_ids": [
+          "pmid-21791641:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-21791641": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 237,
+              "chars_sent": 237,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-21791641:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 237,
+          "chars_sent": 237,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [],
+          "required": {},
+          "guaranteed_unsent": []
+        },
+        "material_basis": "",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "model_usage",
+      "role": "literature",
+      "details": {
+        "input_tokens": 2008,
+        "output_tokens": 231,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.704,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "agent_reported",
+      "role": "literature",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided evidence (pmid-21791641:f01) describes resistance to crizotinib mediated by an EML4::ALK L1152R mutation in a non-specified context, which is irrelevant to the claim regarding FLT3 D257L-mediated resistance to gilteritinib in Acute Myeloid Leukemia.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "agent_completed",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided evidence (pmid-21791641:f01) describes resistance to crizotinib mediated by an EML4::ALK L1152R mutation in a non-specified context, which is irrelevant to the claim regarding FLT3 D257L-mediated resistance to gilteritinib in Acute Myeloid Leukemia.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "agent_skipped",
+      "role": "timeline",
+      "details": {
+        "reason": "no matching input modality"
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_reported",
+      "role": "timeline",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: no timeline input was supplied for this case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        },
+        "synthesized_not_applicable": true
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [
+          "pmid-21791641"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-21791641": {
+              "gene": "unknown",
+              "variant": "unknown"
+            }
+          },
+          "canonical_variant": "D257L",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-21791641",
+              "start": 52,
+              "end": 58,
+              "raw": "L1152R",
+              "canonical": "L1152R"
+            },
+            {
+              "document_id": "pmid-21791641",
+              "start": 112,
+              "end": 118,
+              "raw": "L1152R",
+              "canonical": "L1152R"
+            }
+          ],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_started",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "payload_sha256": "6aad2078a0affc604b85eca39142f069aafa33ed94cb42e635da5cc67925570c",
+        "source_ids": [
+          "pmid-21791641"
+        ],
+        "token_reservation": 14867,
+        "evidence_ids": [
+          "pmid-21791641:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-21791641": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 237,
+              "chars_sent": 237,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-21791641:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 237,
+          "chars_sent": 237,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "molecular"
+          ],
+          "required": {
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 2,
+        "unresolved_items": 1,
+        "unresolved_by_role": {
+          "literature": 1
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "model_usage",
+      "role": "genomics",
+      "details": {
+        "input_tokens": 2866,
+        "output_tokens": 342,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.151,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_reported",
+      "role": "genomics",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The supplied evidence (pmid-21791641:f01) reports on an EML4::ALK L1152R mutation conferring resistance to crizotinib; it contains no data regarding FLT3 D257L, gilteritinib, or Acute Myeloid Leukemia.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "molecular",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The literature finding correctly identifies the evidence as irrelevant to the FLT3/gilteritinib/AML claim.",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "reviewer_role": "genomics"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "agent_completed",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "output": {
+          "findings": [
+            {
+              "statement": "The supplied evidence (pmid-21791641:f01) reports on an EML4::ALK L1152R mutation conferring resistance to crizotinib; it contains no data regarding FLT3 D257L, gilteritinib, or Acute Myeloid Leukemia.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "molecular",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The literature finding correctly identifies the evidence as irrelevant to the FLT3/gilteritinib/AML claim.",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "reviewer_role": "genomics"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [
+          "pmid-21791641"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-21791641": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            }
+          },
+          "canonical_variant": "D257L",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-21791641",
+              "start": 52,
+              "end": 58,
+              "raw": "L1152R",
+              "canonical": "L1152R"
+            },
+            {
+              "document_id": "pmid-21791641",
+              "start": 112,
+              "end": 118,
+              "raw": "L1152R",
+              "canonical": "L1152R"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_started",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "payload_sha256": "ad108ff3a63e839a340a13e05029bb244a27b2c5a13afd0126b8bd17f61568bb",
+        "source_ids": [
+          "pmid-21791641"
+        ],
+        "token_reservation": 15817,
+        "evidence_ids": [
+          "pmid-21791641:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-21791641": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 237,
+              "chars_sent": 237,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-21791641:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 237,
+          "chars_sent": 237,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "pathology"
+          ],
+          "required": {
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 3,
+        "unresolved_items": 2,
+        "unresolved_by_role": {
+          "literature": 1,
+          "genomics": 1
+        }
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "model_usage",
+      "role": "pathology",
+      "details": {
+        "input_tokens": 3195,
+        "output_tokens": 144,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 6.014,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "agent_reported",
+      "role": "pathology",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: no pathology input was supplied for this case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [
+            "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 18,
+      "kind": "agent_completed",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: no pathology input was supplied for this case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [
+            "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [
+          "pmid-21791641"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-21791641": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "D257L",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-21791641",
+              "start": 52,
+              "end": 58,
+              "raw": "L1152R",
+              "canonical": "L1152R"
+            },
+            {
+              "document_id": "pmid-21791641",
+              "start": 112,
+              "end": 118,
+              "raw": "L1152R",
+              "canonical": "L1152R"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-21791641": "resistance"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 20,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "a7c5c573bbfe80853daedd831cdc33f21d062211666c0ec8d2382c8f39c638f8",
+        "source_ids": [
+          "pmid-21791641"
+        ],
+        "token_reservation": 16764,
+        "evidence_ids": [
+          "pmid-21791641:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-21791641": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 237,
+              "chars_sent": 237,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-21791641:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 237,
+          "chars_sent": 237,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 4,
+        "unresolved_items": 3,
+        "unresolved_by_role": {
+          "literature": 1,
+          "genomics": 1,
+          "pathology": 1
+        }
+      }
+    },
+    {
+      "sequence": 21,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 3444,
+        "output_tokens": 239,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 6.352,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 22,
+      "kind": "agent_reported",
+      "role": "drug",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided evidence (pmid-21791641:f01) describes resistance to crizotinib mediated by an EML4::ALK L1152R mutation in a non-specified context, which is irrelevant to the claim regarding FLT3 D257L-mediated resistance to gilteritinib in Acute Myeloid Leukemia.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "claim_id": "drug-01",
+              "author_role": "drug",
+              "used_claim_ids": [],
+              "scope": "relationship",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 23,
+      "kind": "agent_completed",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided evidence (pmid-21791641:f01) describes resistance to crizotinib mediated by an EML4::ALK L1152R mutation in a non-specified context, which is irrelevant to the claim regarding FLT3 D257L-mediated resistance to gilteritinib in Acute Myeloid Leukemia.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "claim_id": "drug-01",
+              "author_role": "drug",
+              "used_claim_ids": [],
+              "scope": "relationship",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 24,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-21791641"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-21791641": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "D257L",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-21791641",
+              "start": 52,
+              "end": 58,
+              "raw": "L1152R",
+              "canonical": "L1152R"
+            },
+            {
+              "document_id": "pmid-21791641",
+              "start": 112,
+              "end": 118,
+              "raw": "L1152R",
+              "canonical": "L1152R"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-21791641": "resistance"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 25,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "52170bc3544cb7a4bdb2f148a3259693639de16615a3fb4a8b715153431ab497",
+        "source_ids": [
+          "pmid-21791641"
+        ],
+        "token_reservation": 16402,
+        "evidence_ids": [
+          "pmid-21791641:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-21791641": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 237,
+              "chars_sent": 237,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-21791641:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 237,
+          "chars_sent": 237,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 4,
+        "unresolved_items": 4,
+        "unresolved_by_role": {
+          "literature": 1,
+          "genomics": 1,
+          "pathology": 1,
+          "drug": 1
+        }
+      }
+    },
+    {
+      "sequence": 26,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 3329,
+        "output_tokens": 484,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 10.888,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 27,
+      "kind": "agent_reported",
+      "role": "verifier",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The source text (pmid-21791641:f01) explicitly describes an EML4::ALK L1152R mutation and crizotinib resistance. It contains no mention of FLT3, D257L, gilteritinib, or AML. The claim that the evidence is irrelevant to the specific FLT3/gilteritinib/AML query is supported by the text.",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The source text reports on EML4::ALK L1152R. It contains no data regarding FLT3 D257L, gilteritinib, or Acute Myeloid Leukemia. The claim that the evidence lacks this specific genomic/drug/disease data is confirmed.",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "drug-01",
+              "verdict": "confirmed",
+              "note": "The source text describes resistance to crizotinib. It does not mention gilteritinib or any relationship between FLT3 D257L and gilteritinib resistance. The claim that the evidence is irrelevant to the drug/variant relationship in question is confirmed.",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 28,
+      "kind": "agent_completed",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The source text (pmid-21791641:f01) explicitly describes an EML4::ALK L1152R mutation and crizotinib resistance. It contains no mention of FLT3, D257L, gilteritinib, or AML. The claim that the evidence is irrelevant to the specific FLT3/gilteritinib/AML query is supported by the text.",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The source text reports on EML4::ALK L1152R. It contains no data regarding FLT3 D257L, gilteritinib, or Acute Myeloid Leukemia. The claim that the evidence lacks this specific genomic/drug/disease data is confirmed.",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "drug-01",
+              "verdict": "confirmed",
+              "note": "The source text describes resistance to crizotinib. It does not mention gilteritinib or any relationship between FLT3 D257L and gilteritinib resistance. The claim that the evidence is irrelevant to the drug/variant relationship in question is confirmed.",
+              "citations": [
+                {
+                  "document_id": "pmid-21791641",
+                  "start": 0,
+                  "end": 237,
+                  "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+                }
+              ],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 29,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "47822783e194815b4422ae643bdbe8111c33c0093e89e959ab59987dd3bd6bbb",
+        "source_ids": [
+          "pmid-21791641"
+        ],
+        "token_reservation": 21146,
+        "evidence_ids": [
+          "pmid-21791641:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-21791641": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 237,
+              "chars_sent": 237,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-21791641:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 237,
+          "chars_sent": 237,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 4,
+        "unresolved_items": 5,
+        "unresolved_by_role": {
+          "literature": 1,
+          "genomics": 1,
+          "pathology": 1,
+          "drug": 1,
+          "verifier": 1
+        }
+      }
+    },
+    {
+      "sequence": 30,
+      "kind": "verification_ledger",
+      "role": "decision",
+      "details": {
+        "entries": [
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "genomics",
+            "verdict": "confirmed",
+            "reason": "The literature finding correctly identifies the evidence as irrelevant to the FLT3/gilteritinib/AML claim.",
+            "final": false,
+            "citations": [
+              {
+                "evidence_id": "pmid-21791641:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The source text (pmid-21791641:f01) explicitly describes an EML4::ALK L1152R mutation and crizotinib resistance. It contains no mention of FLT3, D257L, gilteritinib, or AML. The claim that the evidence is irrelevant to the specific FLT3/gilteritinib/AML query is supported by the text.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "pmid-21791641:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "claim_author": "genomics",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The source text reports on EML4::ALK L1152R. It contains no data regarding FLT3 D257L, gilteritinib, or Acute Myeloid Leukemia. The claim that the evidence lacks this specific genomic/drug/disease data is confirmed.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "pmid-21791641:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "drug-01",
+            "claim_author": "drug",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The source text describes resistance to crizotinib. It does not mention gilteritinib or any relationship between FLT3 D257L and gilteritinib resistance. The claim that the evidence is irrelevant to the drug/variant relationship in question is confirmed.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "pmid-21791641:f01"
+              }
+            ]
+          }
+        ],
+        "reviews": 4,
+        "claims_reviewed": 3,
+        "final_verdicts": 3,
+        "rejected": [],
+        "insufficient": []
+      }
+    },
+    {
+      "sequence": 31,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 4550,
+        "output_tokens": 307,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 6.022,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 32,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "irrelevant",
+        "claim_conformance": "no_supported_revision",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "NEI"
+      }
+    },
+    {
+      "sequence": 33,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-21791641:f01) describes a case of resistance to crizotinib mediated by an EML4::ALK L1152R mutation. It contains no data regarding the FLT3 gene, the D257L variant, the drug gilteritinib, or Acute Myeloid Leukemia (AML). Therefore, the evidence is irrelevant to the claim regarding FLT3 D257L-mediated resistance to gilteritinib in AML.",
+          "citations": [
+            {
+              "document_id": "pmid-21791641",
+              "start": 0,
+              "end": 237,
+              "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+            }
+          ],
+          "unresolved": [
+            "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [
+            "literature-01",
+            "genomics-01",
+            "drug-01"
+          ],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 34,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-21791641:f01) describes a case of resistance to crizotinib mediated by an EML4::ALK L1152R mutation. It contains no data regarding the FLT3 gene, the D257L variant, the drug gilteritinib, or Acute Myeloid Leukemia (AML). Therefore, the evidence is irrelevant to the claim regarding FLT3 D257L-mediated resistance to gilteritinib in AML.",
+          "citations": [
+            {
+              "document_id": "pmid-21791641",
+              "start": 0,
+              "end": 237,
+              "quote": "Case-report of a patient with an acquired EML4::ALK L1152R mutation and resistance to crizotinib treatment. The L1152R variant was not present in the pre-crizotinib sample. A cell line model also showed resistance against ALK inhibition."
+            }
+          ],
+          "unresolved": [
+            "No evidence found linking FLT3 D257L to gilteritinib resistance in AML."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [
+            "literature-01",
+            "genomics-01",
+            "drug-01"
+          ],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 35,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-21791641"
+  ],
+  "duration_seconds": 36.194076,
+  "research_only": true
+}

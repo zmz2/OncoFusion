@@ -1,0 +1,427 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-636f4a42-6a40-4aa5-8d06-045ed2e0e53c",
+  "patient_id": "article-28319062",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "271f90f44ae64d8a630aa3850337896947b8bbbf83d74147ae0cf73ac59fd7b6",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim asserts that the CTCF P645Y variant is a somatic, loss-of-function mutation with functional evidence. The available evidence (pmid-28319062:f01) discusses CTCF mutations R377H and P378L as loss-of-function mutations that abrogate tumour suppressive effects, supporting the general concept of CTCF loss-of-function in endometrial carcinoma. However, the evidence does not mention the specific variant P645Y, nor does it confirm its somatic origin or specific functional impact. Therefore, the evidence is insufficient to support the specific claim about P645Y. The claim requires revision to reflect the lack of specific evidence for P645Y.",
+    "citations": [
+      {
+        "document_id": "pmid-28319062",
+        "start": 0,
+        "end": 213,
+        "quote": "R377H and P378L are loss-of-function mutations which abrogate the tumour suppressive effects of CTCF. These inter-ZF mutations may alter the conserved DNA binding domain structure and prevent normal CTCF function."
+      }
+    ],
+    "unresolved": [
+      "Specific evidence for CTCF P645Y variant is missing.",
+      "Somatic origin of P645Y is not confirmed by the provided evidence."
+    ],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2144,
+    "output_tokens": 415,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-28319062"
+        ],
+        "fingerprint": "271f90f44ae64d8a630aa3850337896947b8bbbf83d74147ae0cf73ac59fd7b6",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "P645Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "P645Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "P645Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-28319062"
+        ],
+        "query": "{\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"FUNCTIONAL\",\n  \"molecularProfile\": \"CTCF P645Y\",\n  \"significance\": \"loss of function\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-28319062"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28319062": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "P645Y",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28319062",
+              "start": 0,
+              "end": 5,
+              "raw": "R377H",
+              "canonical": "R377H"
+            },
+            {
+              "document_id": "pmid-28319062",
+              "start": 10,
+              "end": 15,
+              "raw": "P378L",
+              "canonical": "P378L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28319062": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-28319062"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28319062": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "P645Y",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28319062",
+              "start": 0,
+              "end": 5,
+              "raw": "R377H",
+              "canonical": "R377H"
+            },
+            {
+              "document_id": "pmid-28319062",
+              "start": 10,
+              "end": 15,
+              "raw": "P378L",
+              "canonical": "P378L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28319062": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "47f9970844d08a9e3a8613a8ca5e0a956efd1b045660317a1b5a0cdb29138d0f",
+        "source_ids": [
+          "pmid-28319062"
+        ],
+        "token_reservation": 12311,
+        "evidence_ids": [
+          "pmid-28319062:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-28319062": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 213,
+              "chars_sent": 213,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-28319062:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 213,
+          "chars_sent": 213,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2144,
+        "output_tokens": 415,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 8.909,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "molecularProfile",
+          "variantOrigin",
+          "significance"
+        ],
+        "minimal_revision": "The claim should be revised to indicate that while CTCF mutations like R377H and P378L are known loss-of-function mutations, specific evidence for the somatic nature and functional impact of the P645Y variant is not provided in the current evidence set.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim asserts that the CTCF P645Y variant is a somatic, loss-of-function mutation with functional evidence. The available evidence (pmid-28319062:f01) discusses CTCF mutations R377H and P378L as loss-of-function mutations that abrogate tumour suppressive effects, supporting the general concept of CTCF loss-of-function in endometrial carcinoma. However, the evidence does not mention the specific variant P645Y, nor does it confirm its somatic origin or specific functional impact. Therefore, the evidence is insufficient to support the specific claim about P645Y. The claim requires revision to reflect the lack of specific evidence for P645Y.",
+          "citations": [
+            {
+              "document_id": "pmid-28319062",
+              "start": 0,
+              "end": 213,
+              "quote": "R377H and P378L are loss-of-function mutations which abrogate the tumour suppressive effects of CTCF. These inter-ZF mutations may alter the conserved DNA binding domain structure and prevent normal CTCF function."
+            }
+          ],
+          "unresolved": [
+            "Specific evidence for CTCF P645Y variant is missing.",
+            "Somatic origin of P645Y is not confirmed by the provided evidence."
+          ],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim asserts that the CTCF P645Y variant is a somatic, loss-of-function mutation with functional evidence. The available evidence (pmid-28319062:f01) discusses CTCF mutations R377H and P378L as loss-of-function mutations that abrogate tumour suppressive effects, supporting the general concept of CTCF loss-of-function in endometrial carcinoma. However, the evidence does not mention the specific variant P645Y, nor does it confirm its somatic origin or specific functional impact. Therefore, the evidence is insufficient to support the specific claim about P645Y. The claim requires revision to reflect the lack of specific evidence for P645Y.",
+          "citations": [
+            {
+              "document_id": "pmid-28319062",
+              "start": 0,
+              "end": 213,
+              "quote": "R377H and P378L are loss-of-function mutations which abrogate the tumour suppressive effects of CTCF. These inter-ZF mutations may alter the conserved DNA binding domain structure and prevent normal CTCF function."
+            }
+          ],
+          "unresolved": [
+            "Specific evidence for CTCF P645Y variant is missing.",
+            "Somatic origin of P645Y is not confirmed by the provided evidence."
+          ],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-28319062"
+  ],
+  "duration_seconds": 8.932025,
+  "research_only": true
+}

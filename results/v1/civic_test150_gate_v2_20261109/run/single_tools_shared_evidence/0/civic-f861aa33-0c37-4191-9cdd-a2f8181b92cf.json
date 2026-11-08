@@ -1,0 +1,404 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-f861aa33-0c37-4191-9cdd-a2f8181b92cf",
+  "patient_id": "article-28424201",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "6832a292de1de20a2cff6ef4fe4c0153ff21f8919d68c2a5c7fe82582b4a9aa4",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim posits that the FLT3 D835Y variant is associated with resistance to Gilteritinib in benign neoplasm. The provided evidence (pmid-28424201:f01) describes a study on colorectal cancer (a malignant neoplasm, not benign) involving the PIK3CA p.V955G mutation and resistance to cetuximab. The evidence does not support the claim regarding FLT3, D835Y, Gilteritinib, or benign neoplasm. Specifically, the disease context is incorrect (colorectal cancer vs. benign neoplasm), the gene/variant is different (PIK3CA V955G vs. FLT3 D835Y), and the therapy is different (cetuximab vs. Gilteritinib). Since the evidence is relevant to the concept of resistance but contradicts the specific molecular profile, disease, and therapy in the claim, a revision is required. The minimal revision is to correct the disease to colorectal cancer, the molecular profile to PIK3CA V955G, and the therapies to cetuximab.",
+    "citations": [
+      {
+        "document_id": "pmid-28424201",
+        "start": 0,
+        "end": 316,
+        "quote": "A cohort of 32 colorectal cancer patients with acquired resistance to cetuximab (PFS > 12 weeks) was analyzed for resistance mutations using targeted deep sequencing of ctDNA. One patient had the PIK3CA p.V955G mutation. Cell viability studies of DiFi cells transfected with this PIK3CA variant confirmed resistance."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2150,
+    "output_tokens": 434,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-28424201"
+        ],
+        "fingerprint": "6832a292de1de20a2cff6ef4fe4c0153ff21f8919d68c2a5c7fe82582b4a9aa4",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-28424201"
+        ],
+        "query": "{\n  \"disease\": \"benign neoplasm\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"FLT3 D835Y\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Gilteritinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-28424201"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28424201": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28424201",
+              "start": 203,
+              "end": 210,
+              "raw": "p.V955G",
+              "canonical": "V955G"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28424201": "resistance"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-28424201"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28424201": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28424201",
+              "start": 203,
+              "end": 210,
+              "raw": "p.V955G",
+              "canonical": "V955G"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28424201": "resistance"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "1933213fafe05adc704a3af7dbfa3b3056a4b91b63cf521728e3d33eddb0458e",
+        "source_ids": [
+          "pmid-28424201"
+        ],
+        "token_reservation": 12367,
+        "evidence_ids": [
+          "pmid-28424201:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-28424201": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 316,
+              "chars_sent": 316,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-28424201:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 316,
+          "chars_sent": 316,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2150,
+        "output_tokens": 434,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 4.74,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "disease",
+          "molecularProfile",
+          "therapies"
+        ],
+        "minimal_revision": "Change disease to colorectal cancer, molecularProfile to PIK3CA V955G, and therapies to cetuximab.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that the FLT3 D835Y variant is associated with resistance to Gilteritinib in benign neoplasm. The provided evidence (pmid-28424201:f01) describes a study on colorectal cancer (a malignant neoplasm, not benign) involving the PIK3CA p.V955G mutation and resistance to cetuximab. The evidence does not support the claim regarding FLT3, D835Y, Gilteritinib, or benign neoplasm. Specifically, the disease context is incorrect (colorectal cancer vs. benign neoplasm), the gene/variant is different (PIK3CA V955G vs. FLT3 D835Y), and the therapy is different (cetuximab vs. Gilteritinib). Since the evidence is relevant to the concept of resistance but contradicts the specific molecular profile, disease, and therapy in the claim, a revision is required. The minimal revision is to correct the disease to colorectal cancer, the molecular profile to PIK3CA V955G, and the therapies to cetuximab.",
+          "citations": [
+            {
+              "document_id": "pmid-28424201",
+              "start": 0,
+              "end": 316,
+              "quote": "A cohort of 32 colorectal cancer patients with acquired resistance to cetuximab (PFS > 12 weeks) was analyzed for resistance mutations using targeted deep sequencing of ctDNA. One patient had the PIK3CA p.V955G mutation. Cell viability studies of DiFi cells transfected with this PIK3CA variant confirmed resistance."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that the FLT3 D835Y variant is associated with resistance to Gilteritinib in benign neoplasm. The provided evidence (pmid-28424201:f01) describes a study on colorectal cancer (a malignant neoplasm, not benign) involving the PIK3CA p.V955G mutation and resistance to cetuximab. The evidence does not support the claim regarding FLT3, D835Y, Gilteritinib, or benign neoplasm. Specifically, the disease context is incorrect (colorectal cancer vs. benign neoplasm), the gene/variant is different (PIK3CA V955G vs. FLT3 D835Y), and the therapy is different (cetuximab vs. Gilteritinib). Since the evidence is relevant to the concept of resistance but contradicts the specific molecular profile, disease, and therapy in the claim, a revision is required. The minimal revision is to correct the disease to colorectal cancer, the molecular profile to PIK3CA V955G, and the therapies to cetuximab.",
+          "citations": [
+            {
+              "document_id": "pmid-28424201",
+              "start": 0,
+              "end": 316,
+              "quote": "A cohort of 32 colorectal cancer patients with acquired resistance to cetuximab (PFS > 12 weeks) was analyzed for resistance mutations using targeted deep sequencing of ctDNA. One patient had the PIK3CA p.V955G mutation. Cell viability studies of DiFi cells transfected with this PIK3CA variant confirmed resistance."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-28424201"
+  ],
+  "duration_seconds": 4.760452,
+  "research_only": true
+}

@@ -221,9 +221,23 @@ class FragmentDecisionOutput(StrictModel):
 class RevisionAssessment(StrictModel):
     """Global stance assessment, kept separate from each professional claim's local relation."""
     evidence_relevance: Literal["relevant", "irrelevant", "insufficient"]
-    original_claim: Literal["fully_supported", "partially_supported", "not_supported", "unclear"]
-    revision_fields: list[str] = Field(default_factory=list, max_length=12)
+    claim_conformance: Literal["as_written", "requires_revision", "no_supported_revision", "unclear"]
+    revision_fields: list[Literal["disease", "evidenceDirection", "evidenceType", "molecularProfile",
+                                  "significance", "therapies", "variantOrigin"]] = Field(
+        default_factory=list, max_length=7)
     minimal_revision: str = Field(default="", max_length=3000)
+
+    @model_validator(mode="after")
+    def revision_fields_match_conformance(self):
+        revision_text = self.minimal_revision.strip()
+        if self.claim_conformance == "requires_revision" and not self.revision_fields:
+            raise ValueError("requires_revision must name at least one claim field")
+        if self.claim_conformance == "requires_revision" and not revision_text:
+            raise ValueError("requires_revision must provide a minimal revision")
+        if self.claim_conformance != "requires_revision" and (self.revision_fields or revision_text):
+            raise ValueError(
+                "revision fields and minimal revision require claim_conformance=requires_revision")
+        return self
 
 
 class RevisionDecisionOutput(StrictModel):

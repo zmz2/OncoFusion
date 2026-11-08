@@ -1,0 +1,396 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-19476322-0923-4836-961c-98caaca8e6e3",
+  "patient_id": "article-27276561",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "2bebb4aeeda2e7d59cf06973d86f498a26f4683a9d0357ed08637bb451624b62",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-27276561) exclusively discusses the genomic classification and prognostic subgroups of Acute Myeloid Leukemia (AML). It does not contain any information regarding aggressive NK-cell leukemia, the EGFR C797Y variant, or resistance to Epidermal Growth Factor Receptor Tyrosine Kinase Inhibitors. The evidence is irrelevant to the claim's disease, molecular profile, and therapeutic context.",
+    "citations": [
+      {
+        "document_id": "pmid-27276561",
+        "start": 0,
+        "end": 597,
+        "quote": "\"(see the Methods section and Fig. S7 in the Supplementary Appendix). From this model, we defined simple rules to generate 11 subgroups or classes of AML (Table 1, Fig. 1B, and Fig. 2; and Results sections S4 through S7 in the Supplementary Appendix). We found that inv(16), t(15;17), t(8;21), inv(3), t(6;9), and MLL fusions each represent small, individual subgroups (<=5% of the study cohort), confirming the WHO classification. NPM1-mutated AML and CEBPA-biallelic AML were also identified as distinct subgroups. NPM1-mutated AML was the largest class in our cohort (accounting for 27% of the "
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 4181,
+    "output_tokens": 237,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-27276561"
+        ],
+        "fingerprint": "2bebb4aeeda2e7d59cf06973d86f498a26f4683a9d0357ed08637bb451624b62",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "C797Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "C797Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "C797Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-27276561"
+        ],
+        "query": "{\n  \"disease\": \"aggressive NK-cell leukemia\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"EGFR C797Y\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Epidermal Growth Factor Receptor Tyrosine Kinase Inhibitor\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-27276561"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27276561": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "C797Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27276561": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-27276561"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27276561": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "C797Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27276561": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "915d6868f74f33ff623b89e86329129cd624a3f89c8a1e5a59865624c2eda571",
+        "source_ids": [
+          "pmid-27276561"
+        ],
+        "token_reservation": 17617,
+        "evidence_ids": [
+          "pmid-27276561:f01",
+          "pmid-27276561:f02",
+          "pmid-27276561:f03",
+          "pmid-27276561:f04",
+          "pmid-27276561:f05",
+          "pmid-27276561:f06",
+          "pmid-27276561:f07"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27276561": {
+              "candidates": 7,
+              "sent": 7,
+              "chars_total": 4056,
+              "chars_sent": 4056,
+              "key_records": 2,
+              "required_candidates": 6,
+              "required_sent": 6,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27276561:f01",
+                "pmid-27276561:f02",
+                "pmid-27276561:f03",
+                "pmid-27276561:f04",
+                "pmid-27276561:f05",
+                "pmid-27276561:f06",
+                "pmid-27276561:f07"
+              ]
+            }
+          },
+          "candidates": 7,
+          "sent": 7,
+          "chars_total": 4056,
+          "chars_sent": 4056,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 6,
+              "sent": 6,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 4181,
+        "output_tokens": 237,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 2.574,
+        "evidence_fragments": 7
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "irrelevant",
+        "claim_conformance": "unclear",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "NEI"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-27276561) exclusively discusses the genomic classification and prognostic subgroups of Acute Myeloid Leukemia (AML). It does not contain any information regarding aggressive NK-cell leukemia, the EGFR C797Y variant, or resistance to Epidermal Growth Factor Receptor Tyrosine Kinase Inhibitors. The evidence is irrelevant to the claim's disease, molecular profile, and therapeutic context.",
+          "citations": [
+            {
+              "document_id": "pmid-27276561",
+              "start": 0,
+              "end": 597,
+              "quote": "\"(see the Methods section and Fig. S7 in the Supplementary Appendix). From this model, we defined simple rules to generate 11 subgroups or classes of AML (Table 1, Fig. 1B, and Fig. 2; and Results sections S4 through S7 in the Supplementary Appendix). We found that inv(16), t(15;17), t(8;21), inv(3), t(6;9), and MLL fusions each represent small, individual subgroups (<=5% of the study cohort), confirming the WHO classification. NPM1-mutated AML and CEBPA-biallelic AML were also identified as distinct subgroups. NPM1-mutated AML was the largest class in our cohort (accounting for 27% of the "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-27276561) exclusively discusses the genomic classification and prognostic subgroups of Acute Myeloid Leukemia (AML). It does not contain any information regarding aggressive NK-cell leukemia, the EGFR C797Y variant, or resistance to Epidermal Growth Factor Receptor Tyrosine Kinase Inhibitors. The evidence is irrelevant to the claim's disease, molecular profile, and therapeutic context.",
+          "citations": [
+            {
+              "document_id": "pmid-27276561",
+              "start": 0,
+              "end": 597,
+              "quote": "\"(see the Methods section and Fig. S7 in the Supplementary Appendix). From this model, we defined simple rules to generate 11 subgroups or classes of AML (Table 1, Fig. 1B, and Fig. 2; and Results sections S4 through S7 in the Supplementary Appendix). We found that inv(16), t(15;17), t(8;21), inv(3), t(6;9), and MLL fusions each represent small, individual subgroups (<=5% of the study cohort), confirming the WHO classification. NPM1-mutated AML and CEBPA-biallelic AML were also identified as distinct subgroups. NPM1-mutated AML was the largest class in our cohort (accounting for 27% of the "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-27276561"
+  ],
+  "duration_seconds": 2.605058,
+  "research_only": true
+}

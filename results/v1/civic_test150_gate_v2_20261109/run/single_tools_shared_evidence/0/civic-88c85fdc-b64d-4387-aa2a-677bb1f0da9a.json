@@ -1,0 +1,386 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-88c85fdc-b64d-4387-aa2a-677bb1f0da9a",
+  "patient_id": "article-23171796",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "8f9c5af907154ee075019f989eb40e40823437a513c16fbd4c329aa1188f44f3",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim posits that Mirdametinib and Sirolimus support sensitivity/response in Skin Melanoma with BRAF V600E and NF1 Loss (SOMATIC). The provided evidence (pmid-23171796:f01) discusses Braf/Nf1 mutant melanomas and the use of Rapamycin (Sirolimus) and PD0325901. However, the evidence does not mention Mirdametinib; it mentions PD0325901. Furthermore, the evidence describes a synergy between Rapamycin and PD0325901, not a combination of Mirdametinib and Sirolimus. The evidence also does not explicitly confirm the 'Skin' origin, though melanoma is implied. The primary discrepancy is the therapy: Mirdametinib is not supported; PD0325901 is. Thus, the claim requires revision to reflect the actual therapies tested.",
+    "citations": [
+      {
+        "document_id": "pmid-23171796",
+        "start": 0,
+        "end": 544,
+        "quote": "Next we evaluated sensitivity to these agents in vivo. While allografts from several independent Braf/Nf1 mutant melanomas were readily established, cells from BRaf mutant mouse melanomas never successfully grew as allografts. As such we focused on using Braf/Nf1 allografts to determine whether we could identify a more effective therapy for these genetically distinct tumors. . . . Rapamycin had a more pronounced effect as compared to GDC-0941, but more importantly it synergized with PD0325901 to promote tumor regression (Fig. 4C, purple)."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2170,
+    "output_tokens": 379,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-23171796"
+        ],
+        "fingerprint": "8f9c5af907154ee075019f989eb40e40823437a513c16fbd4c329aa1188f44f3",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-23171796"
+        ],
+        "query": "{\n  \"disease\": \"Skin Melanoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BRAF V600E AND NF1 Loss\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Mirdametinib\",\n    \"Sirolimus\"\n  ],\n  \"therapyInteractionType\": \"COMBINATION\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-23171796"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-23171796": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-23171796": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-23171796"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-23171796": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-23171796": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "76d17821ca9afd5c3bfc33f4f132b214c793e56bc2bd77fc17b8d605c80594b3",
+        "source_ids": [
+          "pmid-23171796"
+        ],
+        "token_reservation": 12616,
+        "evidence_ids": [
+          "pmid-23171796:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-23171796": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 544,
+              "chars_sent": 544,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-23171796:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 544,
+          "chars_sent": 544,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2170,
+        "output_tokens": 379,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.399,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "therapies"
+        ],
+        "minimal_revision": "Replace 'Mirdametinib' with 'PD0325901' in the therapies list.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that Mirdametinib and Sirolimus support sensitivity/response in Skin Melanoma with BRAF V600E and NF1 Loss (SOMATIC). The provided evidence (pmid-23171796:f01) discusses Braf/Nf1 mutant melanomas and the use of Rapamycin (Sirolimus) and PD0325901. However, the evidence does not mention Mirdametinib; it mentions PD0325901. Furthermore, the evidence describes a synergy between Rapamycin and PD0325901, not a combination of Mirdametinib and Sirolimus. The evidence also does not explicitly confirm the 'Skin' origin, though melanoma is implied. The primary discrepancy is the therapy: Mirdametinib is not supported; PD0325901 is. Thus, the claim requires revision to reflect the actual therapies tested.",
+          "citations": [
+            {
+              "document_id": "pmid-23171796",
+              "start": 0,
+              "end": 544,
+              "quote": "Next we evaluated sensitivity to these agents in vivo. While allografts from several independent Braf/Nf1 mutant melanomas were readily established, cells from BRaf mutant mouse melanomas never successfully grew as allografts. As such we focused on using Braf/Nf1 allografts to determine whether we could identify a more effective therapy for these genetically distinct tumors. . . . Rapamycin had a more pronounced effect as compared to GDC-0941, but more importantly it synergized with PD0325901 to promote tumor regression (Fig. 4C, purple)."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that Mirdametinib and Sirolimus support sensitivity/response in Skin Melanoma with BRAF V600E and NF1 Loss (SOMATIC). The provided evidence (pmid-23171796:f01) discusses Braf/Nf1 mutant melanomas and the use of Rapamycin (Sirolimus) and PD0325901. However, the evidence does not mention Mirdametinib; it mentions PD0325901. Furthermore, the evidence describes a synergy between Rapamycin and PD0325901, not a combination of Mirdametinib and Sirolimus. The evidence also does not explicitly confirm the 'Skin' origin, though melanoma is implied. The primary discrepancy is the therapy: Mirdametinib is not supported; PD0325901 is. Thus, the claim requires revision to reflect the actual therapies tested.",
+          "citations": [
+            {
+              "document_id": "pmid-23171796",
+              "start": 0,
+              "end": 544,
+              "quote": "Next we evaluated sensitivity to these agents in vivo. While allografts from several independent Braf/Nf1 mutant melanomas were readily established, cells from BRaf mutant mouse melanomas never successfully grew as allografts. As such we focused on using Braf/Nf1 allografts to determine whether we could identify a more effective therapy for these genetically distinct tumors. . . . Rapamycin had a more pronounced effect as compared to GDC-0941, but more importantly it synergized with PD0325901 to promote tumor regression (Fig. 4C, purple)."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-23171796"
+  ],
+  "duration_seconds": 3.414059,
+  "research_only": true
+}

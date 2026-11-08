@@ -134,17 +134,17 @@ class MockProvider:
                 if payload.get("revision_gate"):
                     if out.answer == "SUPPORTS":
                         assessment = {"evidence_relevance": "relevant",
-                                      "original_claim": "fully_supported",
+                                      "claim_conformance": "as_written",
                                       "revision_fields": [],
                                       "minimal_revision": ""}
                     elif out.answer == "REVISIONS":
                         assessment = {"evidence_relevance": "relevant",
-                                      "original_claim": "partially_supported",
+                                      "claim_conformance": "requires_revision",
                                       "revision_fields": ["significance"],
                                       "minimal_revision": "Use the supported significance."}
                     else:
                         assessment = {"evidence_relevance": "insufficient",
-                                      "original_claim": "unclear",
+                                      "claim_conformance": "unclear",
                                       "revision_fields": [],
                                       "minimal_revision": ""}
                     body["assessment"] = assessment

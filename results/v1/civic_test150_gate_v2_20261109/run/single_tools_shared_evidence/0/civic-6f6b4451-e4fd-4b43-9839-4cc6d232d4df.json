@@ -1,0 +1,431 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-6f6b4451-e4fd-4b43-9839-4cc6d232d4df",
+  "patient_id": "article-27489350",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "d63b93cf2096e55d116873774faa0f3d6e353bb187c1c016bad70dca37429edc",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The evidence from pmid-27489350 supports that the PIK3CA E545K mutation confers resistance to cisplatin and radiation in cervical cancer cells. However, the claim specifies the disease as 'cervical adenocarcinoma' and the therapy as 'Radiosensitizing Agent'. The evidence explicitly mentions 'cervical cancer cells' (CaSki, HeLa, SiHa) and resistance to 'cisplatin' and 'radiation'. While cervical cancer includes adenocarcinoma, the specific histology is not confirmed in the text. More importantly, the claim lists 'Radiosensitizing Agent' as the therapy, but the evidence describes resistance to radiation itself, not a specific radiosensitizing agent. The evidence supports resistance to radiation, which is a treatment modality, not a specific drug class like 'Radiosensitizing Agent'. Therefore, the claim requires revision regarding the specific therapy and potentially the disease histology. The most direct correction is that the evidence supports resistance to radiation, not a radiosensitizing agent.",
+    "citations": [
+      {
+        "document_id": "pmid-27489350",
+        "start": 0,
+        "end": 599,
+        "quote": "The purpose of this study was to determine whether PIK3CA-E545K mutation renders cervical cancer cells more resistant to cisplatin and/or radiation, and whether PI3K inhibition reverses the phenotype. We found that CaSki cells that are heterozygous for the PIK3CA-E545K mutation are more resistant to cisplatin or cisplatin plus radiation than either HeLa or SiHa cells that express only wild-type PIK3CA. Similarly, HeLa cells engineered to stably express PIK3CA-E545K were more resistant to cisplatin or cisplatin plus radiation than cells expressing only wild-type PIK3CA or with PIK3CA depleted."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2384,
+    "output_tokens": 469,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-27489350"
+        ],
+        "fingerprint": "d63b93cf2096e55d116873774faa0f3d6e353bb187c1c016bad70dca37429edc",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "E545K",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "E545K",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "E545K",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-27489350"
+        ],
+        "query": "{\n  \"disease\": \"cervical adenocarcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"PIK3CA E545K\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Radiosensitizing Agent\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-27489350"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27489350": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "E545K",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27489350",
+              "start": 58,
+              "end": 63,
+              "raw": "E545K",
+              "canonical": "E545K"
+            },
+            {
+              "document_id": "pmid-27489350",
+              "start": 264,
+              "end": 269,
+              "raw": "E545K",
+              "canonical": "E545K"
+            },
+            {
+              "document_id": "pmid-27489350",
+              "start": 464,
+              "end": 469,
+              "raw": "E545K",
+              "canonical": "E545K"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27489350": "resistance"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-27489350"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27489350": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "E545K",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27489350",
+              "start": 58,
+              "end": 63,
+              "raw": "E545K",
+              "canonical": "E545K"
+            },
+            {
+              "document_id": "pmid-27489350",
+              "start": 264,
+              "end": 269,
+              "raw": "E545K",
+              "canonical": "E545K"
+            },
+            {
+              "document_id": "pmid-27489350",
+              "start": 464,
+              "end": 469,
+              "raw": "E545K",
+              "canonical": "E545K"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27489350": "resistance"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "bd0a0bbadce03caea033063de59fbfb5f73bc3d71f14da9a586a1baceeec479f",
+        "source_ids": [
+          "pmid-27489350"
+        ],
+        "token_reservation": 13013,
+        "evidence_ids": [
+          "pmid-27489350:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27489350": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 599,
+              "chars_sent": 599,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27489350:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 599,
+          "chars_sent": 599,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2384,
+        "output_tokens": 469,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 7.292,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "therapies",
+          "disease"
+        ],
+        "minimal_revision": "The evidence supports that PIK3CA E545K confers resistance to radiation and cisplatin in cervical cancer cells. The claim should be revised to specify 'radiation' and 'cisplatin' as the therapies/resistance context, and 'cervical cancer' as the disease, rather than 'cervical adenocarcinoma' and 'Radiosensitizing Agent'.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-27489350 supports that the PIK3CA E545K mutation confers resistance to cisplatin and radiation in cervical cancer cells. However, the claim specifies the disease as 'cervical adenocarcinoma' and the therapy as 'Radiosensitizing Agent'. The evidence explicitly mentions 'cervical cancer cells' (CaSki, HeLa, SiHa) and resistance to 'cisplatin' and 'radiation'. While cervical cancer includes adenocarcinoma, the specific histology is not confirmed in the text. More importantly, the claim lists 'Radiosensitizing Agent' as the therapy, but the evidence describes resistance to radiation itself, not a specific radiosensitizing agent. The evidence supports resistance to radiation, which is a treatment modality, not a specific drug class like 'Radiosensitizing Agent'. Therefore, the claim requires revision regarding the specific therapy and potentially the disease histology. The most direct correction is that the evidence supports resistance to radiation, not a radiosensitizing agent.",
+          "citations": [
+            {
+              "document_id": "pmid-27489350",
+              "start": 0,
+              "end": 599,
+              "quote": "The purpose of this study was to determine whether PIK3CA-E545K mutation renders cervical cancer cells more resistant to cisplatin and/or radiation, and whether PI3K inhibition reverses the phenotype. We found that CaSki cells that are heterozygous for the PIK3CA-E545K mutation are more resistant to cisplatin or cisplatin plus radiation than either HeLa or SiHa cells that express only wild-type PIK3CA. Similarly, HeLa cells engineered to stably express PIK3CA-E545K were more resistant to cisplatin or cisplatin plus radiation than cells expressing only wild-type PIK3CA or with PIK3CA depleted."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-27489350 supports that the PIK3CA E545K mutation confers resistance to cisplatin and radiation in cervical cancer cells. However, the claim specifies the disease as 'cervical adenocarcinoma' and the therapy as 'Radiosensitizing Agent'. The evidence explicitly mentions 'cervical cancer cells' (CaSki, HeLa, SiHa) and resistance to 'cisplatin' and 'radiation'. While cervical cancer includes adenocarcinoma, the specific histology is not confirmed in the text. More importantly, the claim lists 'Radiosensitizing Agent' as the therapy, but the evidence describes resistance to radiation itself, not a specific radiosensitizing agent. The evidence supports resistance to radiation, which is a treatment modality, not a specific drug class like 'Radiosensitizing Agent'. Therefore, the claim requires revision regarding the specific therapy and potentially the disease histology. The most direct correction is that the evidence supports resistance to radiation, not a radiosensitizing agent.",
+          "citations": [
+            {
+              "document_id": "pmid-27489350",
+              "start": 0,
+              "end": 599,
+              "quote": "The purpose of this study was to determine whether PIK3CA-E545K mutation renders cervical cancer cells more resistant to cisplatin and/or radiation, and whether PI3K inhibition reverses the phenotype. We found that CaSki cells that are heterozygous for the PIK3CA-E545K mutation are more resistant to cisplatin or cisplatin plus radiation than either HeLa or SiHa cells that express only wild-type PIK3CA. Similarly, HeLa cells engineered to stably express PIK3CA-E545K were more resistant to cisplatin or cisplatin plus radiation than cells expressing only wild-type PIK3CA or with PIK3CA depleted."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-27489350"
+  ],
+  "duration_seconds": 7.30604,
+  "research_only": true
+}

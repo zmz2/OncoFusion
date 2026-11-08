@@ -1,0 +1,407 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-8476f8d8-55ca-473c-a0ea-5c2076715469",
+  "patient_id": "article-25072261",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "e09d320d1cb2f6dc7a4ef48fbdff5437f471759a5921b95c682fc5e525ded162",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The evidence from pmid-25072261 supports a predictive association between BRCA1/2 mutations and sensitivity to platinum-based chemotherapy in pancreatic cancer (PDAC), specifically noting improved overall survival with platinum agents. However, the claim requires revision regarding the specific therapies and variant origin. The evidence explicitly states that the majority of patients received gemcitabine and cisplatin, or FOLFIRINOX (which includes oxaliplatin), rather than Cisplatin or Oxaliplatin as single agents or a specific substitution pair. Furthermore, the study cohort consists of hereditary BRCA mutation carriers (implied by the context of 'BRCA mutation carriers' and the high prevalence of germline mutations in such studies, though the text doesn't explicitly say 'germline', the context of 'RARE_GERMLINE' in the claim is likely an over-specification or mischaracterization if the study includes somatic or mixed, but more critically, the claim specifies 'RARE_GERMLINE' which is a specific subset; the study mentions 'BRCA mutation carriers' generally. More importantly, the claim lists 'Cisplatin' and 'Oxaliplatin' as therapies with a 'SUBSTITUTES' interaction type. The evidence shows patients received combinations (gemcitabine+cisplatin or FOLFIRINOX). The claim's therapy list and interaction type do not accurately reflect the combination regimens described. The most direct revision is that the evidence supports platinum-based agents generally, not specifically Cisplatin and Oxaliplatin as substitutes. Also, the claim specifies 'BRCA1 Mutation' but the evidence highlights that 69% had BRCA2 and 30% BRCA1, suggesting the predictive effect is likely broader or at least not exclusive to BRCA1, though BRCA1 is included. The claim's specificity to BRCA1 is supported (30% of cohort), but the therapy specification is the main issue. The evidence supports 'platinum-based agents' generally. The claim's 'therapies' field lists specific drugs. The evidence mentions 'gemcitabine and cisplatin' and 'FOLFIRINOX (oxaliplatin...)'. It does not support Cisplatin and Oxaliplatin as a substitutable pair. It supports platinum agents. The 'RARE_GERMLINE' origin is also potentially unsupported if the study includes all carriers, but the primary mismatch is the therapy specification. The claim says 'Cisplatin' and 'Oxaliplatin' with 'SUBSTITUTES'. The evidence shows combination therapy. A minimal revision would be to change therapies to 'Platinum-based agents' or list the specific combinations. Given the schema, I will revise the therapies and potentially the evidence direction if the specificity is too high. The evidence supports sensitivity/response. The claim is SUPPORTS for disease, evidenceDirection, evidenceType, molecularProfile (BRCA1 is a subset), significance. The therapies and variantOrigin are the issues. The evidence does not support 'RARE_GERMLINE' specifically, just 'BRCA mutation carriers'. It does not support 'Cisplatin' and 'Oxaliplatin' as a substitutable pair. It supports platinum agents. I will revise therapies to 'Platinum-based agents' and remove the specific drug list or change to 'Gemcitabine and Cisplatin' / 'FOLFIRINOX'. The most accurate minimal revision is to broaden therapies to 'Platinum-based agents' and clarify that the evidence supports platinum sensitivity. The claim's 'therapies' field is too specific and incorrect in its interaction type. I will revise therapies to 'Platinum-based agents' and evidenceDirection to SUPPORTS (which it is). The variantOrigin 'RARE_GERMLINE' is likely incorrect as the study is on 'BRCA mutation carriers' which are typically germline in this context, but 'RARE' is a specific qualifier not supported. I will revise variantOrigin to 'GERMLINE' or remove 'RARE'. The claim says 'RARE_GERMLINE'. The study is on 'BRCA mutation carriers'. This is likely germline. 'RARE' is not supported. I will revise variantOrigin to 'GERMLINE'. The therapies need revision. The claim lists 'Cisplatin' and 'Oxaliplatin'. The evidence lists 'gemcitabine and cisplatin' and 'FOLFIRINOX'. The common factor is platinum. I will revise therapies to 'Platinum-based agents'.",
+    "citations": [
+      {
+        "document_id": "pmid-25072261",
+        "start": 0,
+        "end": 600,
+        "quote": "Of all study participants, 69% (n=49) had a BRCA2 mutation, 30% (n=21) a BRCA1 mutation and 1% (n=1) had both a BRCA1 and a BRCA2 mutation. . . . The majority of our platinum-treated patients received gemcitabine and cisplatin, one patient received gemcitabine and oxaliplatin and three patients received FOLFIRINOX (oxaliplatin, irinotecan, folinic acid and fluorouracil). . . . When combining data for stages 3 and 4, the mOS was 22 months for the platinum exposed (n=22) compared with 9 months for the non-platinum (n=21) treatment groups (P<0.039; Figure 2C). . . . The main finding in our study "
+      },
+      {
+        "document_id": "pmid-25072261",
+        "start": 600,
+        "end": 784,
+        "quote": "is an improvement in OS in stage 3 and 4 BRCA1 or BRCA2-associated PDAC patients who were treated with platinum-based agents compared with those who were not treated with these agents."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2410,
+    "output_tokens": 1234,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25072261"
+        ],
+        "fingerprint": "e09d320d1cb2f6dc7a4ef48fbdff5437f471759a5921b95c682fc5e525ded162",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25072261"
+        ],
+        "query": "{\n  \"disease\": \"pancreatic cancer\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BRCA1 Mutation\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Cisplatin\",\n    \"Oxaliplatin\"\n  ],\n  \"therapyInteractionType\": \"SUBSTITUTES\",\n  \"variantOrigin\": \"RARE_GERMLINE\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25072261"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25072261": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25072261": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25072261"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25072261": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25072261": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "1dfbf56026767d60ed31fccf735c6351baccce16160277bc6cb2433cd3cdbe12",
+        "source_ids": [
+          "pmid-25072261"
+        ],
+        "token_reservation": 13169,
+        "evidence_ids": [
+          "pmid-25072261:f01",
+          "pmid-25072261:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-25072261": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 784,
+              "chars_sent": 784,
+              "key_records": 2,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-25072261:f01",
+                "pmid-25072261:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 784,
+          "chars_sent": 784,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2410,
+        "output_tokens": 1234,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 10.311,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "therapies",
+          "variantOrigin"
+        ],
+        "minimal_revision": "Revise therapies from ['Cisplatin', 'Oxaliplatin'] to 'Platinum-based agents' to reflect the combination regimens (gemcitabine+cisplatin, FOLFIRINOX) and general platinum sensitivity. Revise variantOrigin from 'RARE_GERMLINE' to 'GERMLINE' as the study population is 'BRCA mutation carriers' without specification of rarity, and 'RARE' is not supported.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-25072261 supports a predictive association between BRCA1/2 mutations and sensitivity to platinum-based chemotherapy in pancreatic cancer (PDAC), specifically noting improved overall survival with platinum agents. However, the claim requires revision regarding the specific therapies and variant origin. The evidence explicitly states that the majority of patients received gemcitabine and cisplatin, or FOLFIRINOX (which includes oxaliplatin), rather than Cisplatin or Oxaliplatin as single agents or a specific substitution pair. Furthermore, the study cohort consists of hereditary BRCA mutation carriers (implied by the context of 'BRCA mutation carriers' and the high prevalence of germline mutations in such studies, though the text doesn't explicitly say 'germline', the context of 'RARE_GERMLINE' in the claim is likely an over-specification or mischaracterization if the study includes somatic or mixed, but more critically, the claim specifies 'RARE_GERMLINE' which is a specific subset; the study mentions 'BRCA mutation carriers' generally. More importantly, the claim lists 'Cisplatin' and 'Oxaliplatin' as therapies with a 'SUBSTITUTES' interaction type. The evidence shows patients received combinations (gemcitabine+cisplatin or FOLFIRINOX). The claim's therapy list and interaction type do not accurately reflect the combination regimens described. The most direct revision is that the evidence supports platinum-based agents generally, not specifically Cisplatin and Oxaliplatin as substitutes. Also, the claim specifies 'BRCA1 Mutation' but the evidence highlights that 69% had BRCA2 and 30% BRCA1, suggesting the predictive effect is likely broader or at least not exclusive to BRCA1, though BRCA1 is included. The claim's specificity to BRCA1 is supported (30% of cohort), but the therapy specification is the main issue. The evidence supports 'platinum-based agents' generally. The claim's 'therapies' field lists specific drugs. The evidence mentions 'gemcitabine and cisplatin' and 'FOLFIRINOX (oxaliplatin...)'. It does not support Cisplatin and Oxaliplatin as a substitutable pair. It supports platinum agents. The 'RARE_GERMLINE' origin is also potentially unsupported if the study includes all carriers, but the primary mismatch is the therapy specification. The claim says 'Cisplatin' and 'Oxaliplatin' with 'SUBSTITUTES'. The evidence shows combination therapy. A minimal revision would be to change therapies to 'Platinum-based agents' or list the specific combinations. Given the schema, I will revise the therapies and potentially the evidence direction if the specificity is too high. The evidence supports sensitivity/response. The claim is SUPPORTS for disease, evidenceDirection, evidenceType, molecularProfile (BRCA1 is a subset), significance. The therapies and variantOrigin are the issues. The evidence does not support 'RARE_GERMLINE' specifically, just 'BRCA mutation carriers'. It does not support 'Cisplatin' and 'Oxaliplatin' as a substitutable pair. It supports platinum agents. I will revise therapies to 'Platinum-based agents' and remove the specific drug list or change to 'Gemcitabine and Cisplatin' / 'FOLFIRINOX'. The most accurate minimal revision is to broaden therapies to 'Platinum-based agents' and clarify that the evidence supports platinum sensitivity. The claim's 'therapies' field is too specific and incorrect in its interaction type. I will revise therapies to 'Platinum-based agents' and evidenceDirection to SUPPORTS (which it is). The variantOrigin 'RARE_GERMLINE' is likely incorrect as the study is on 'BRCA mutation carriers' which are typically germline in this context, but 'RARE' is a specific qualifier not supported. I will revise variantOrigin to 'GERMLINE' or remove 'RARE'. The claim says 'RARE_GERMLINE'. The study is on 'BRCA mutation carriers'. This is likely germline. 'RARE' is not supported. I will revise variantOrigin to 'GERMLINE'. The therapies need revision. The claim lists 'Cisplatin' and 'Oxaliplatin'. The evidence lists 'gemcitabine and cisplatin' and 'FOLFIRINOX'. The common factor is platinum. I will revise therapies to 'Platinum-based agents'.",
+          "citations": [
+            {
+              "document_id": "pmid-25072261",
+              "start": 0,
+              "end": 600,
+              "quote": "Of all study participants, 69% (n=49) had a BRCA2 mutation, 30% (n=21) a BRCA1 mutation and 1% (n=1) had both a BRCA1 and a BRCA2 mutation. . . . The majority of our platinum-treated patients received gemcitabine and cisplatin, one patient received gemcitabine and oxaliplatin and three patients received FOLFIRINOX (oxaliplatin, irinotecan, folinic acid and fluorouracil). . . . When combining data for stages 3 and 4, the mOS was 22 months for the platinum exposed (n=22) compared with 9 months for the non-platinum (n=21) treatment groups (P<0.039; Figure 2C). . . . The main finding in our study "
+            },
+            {
+              "document_id": "pmid-25072261",
+              "start": 600,
+              "end": 784,
+              "quote": "is an improvement in OS in stage 3 and 4 BRCA1 or BRCA2-associated PDAC patients who were treated with platinum-based agents compared with those who were not treated with these agents."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-25072261 supports a predictive association between BRCA1/2 mutations and sensitivity to platinum-based chemotherapy in pancreatic cancer (PDAC), specifically noting improved overall survival with platinum agents. However, the claim requires revision regarding the specific therapies and variant origin. The evidence explicitly states that the majority of patients received gemcitabine and cisplatin, or FOLFIRINOX (which includes oxaliplatin), rather than Cisplatin or Oxaliplatin as single agents or a specific substitution pair. Furthermore, the study cohort consists of hereditary BRCA mutation carriers (implied by the context of 'BRCA mutation carriers' and the high prevalence of germline mutations in such studies, though the text doesn't explicitly say 'germline', the context of 'RARE_GERMLINE' in the claim is likely an over-specification or mischaracterization if the study includes somatic or mixed, but more critically, the claim specifies 'RARE_GERMLINE' which is a specific subset; the study mentions 'BRCA mutation carriers' generally. More importantly, the claim lists 'Cisplatin' and 'Oxaliplatin' as therapies with a 'SUBSTITUTES' interaction type. The evidence shows patients received combinations (gemcitabine+cisplatin or FOLFIRINOX). The claim's therapy list and interaction type do not accurately reflect the combination regimens described. The most direct revision is that the evidence supports platinum-based agents generally, not specifically Cisplatin and Oxaliplatin as substitutes. Also, the claim specifies 'BRCA1 Mutation' but the evidence highlights that 69% had BRCA2 and 30% BRCA1, suggesting the predictive effect is likely broader or at least not exclusive to BRCA1, though BRCA1 is included. The claim's specificity to BRCA1 is supported (30% of cohort), but the therapy specification is the main issue. The evidence supports 'platinum-based agents' generally. The claim's 'therapies' field lists specific drugs. The evidence mentions 'gemcitabine and cisplatin' and 'FOLFIRINOX (oxaliplatin...)'. It does not support Cisplatin and Oxaliplatin as a substitutable pair. It supports platinum agents. The 'RARE_GERMLINE' origin is also potentially unsupported if the study includes all carriers, but the primary mismatch is the therapy specification. The claim says 'Cisplatin' and 'Oxaliplatin' with 'SUBSTITUTES'. The evidence shows combination therapy. A minimal revision would be to change therapies to 'Platinum-based agents' or list the specific combinations. Given the schema, I will revise the therapies and potentially the evidence direction if the specificity is too high. The evidence supports sensitivity/response. The claim is SUPPORTS for disease, evidenceDirection, evidenceType, molecularProfile (BRCA1 is a subset), significance. The therapies and variantOrigin are the issues. The evidence does not support 'RARE_GERMLINE' specifically, just 'BRCA mutation carriers'. It does not support 'Cisplatin' and 'Oxaliplatin' as a substitutable pair. It supports platinum agents. I will revise therapies to 'Platinum-based agents' and remove the specific drug list or change to 'Gemcitabine and Cisplatin' / 'FOLFIRINOX'. The most accurate minimal revision is to broaden therapies to 'Platinum-based agents' and clarify that the evidence supports platinum sensitivity. The claim's 'therapies' field is too specific and incorrect in its interaction type. I will revise therapies to 'Platinum-based agents' and evidenceDirection to SUPPORTS (which it is). The variantOrigin 'RARE_GERMLINE' is likely incorrect as the study is on 'BRCA mutation carriers' which are typically germline in this context, but 'RARE' is a specific qualifier not supported. I will revise variantOrigin to 'GERMLINE' or remove 'RARE'. The claim says 'RARE_GERMLINE'. The study is on 'BRCA mutation carriers'. This is likely germline. 'RARE' is not supported. I will revise variantOrigin to 'GERMLINE'. The therapies need revision. The claim lists 'Cisplatin' and 'Oxaliplatin'. The evidence lists 'gemcitabine and cisplatin' and 'FOLFIRINOX'. The common factor is platinum. I will revise therapies to 'Platinum-based agents'.",
+          "citations": [
+            {
+              "document_id": "pmid-25072261",
+              "start": 0,
+              "end": 600,
+              "quote": "Of all study participants, 69% (n=49) had a BRCA2 mutation, 30% (n=21) a BRCA1 mutation and 1% (n=1) had both a BRCA1 and a BRCA2 mutation. . . . The majority of our platinum-treated patients received gemcitabine and cisplatin, one patient received gemcitabine and oxaliplatin and three patients received FOLFIRINOX (oxaliplatin, irinotecan, folinic acid and fluorouracil). . . . When combining data for stages 3 and 4, the mOS was 22 months for the platinum exposed (n=22) compared with 9 months for the non-platinum (n=21) treatment groups (P<0.039; Figure 2C). . . . The main finding in our study "
+            },
+            {
+              "document_id": "pmid-25072261",
+              "start": 600,
+              "end": 784,
+              "quote": "is an improvement in OS in stage 3 and 4 BRCA1 or BRCA2-associated PDAC patients who were treated with platinum-based agents compared with those who were not treated with these agents."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25072261"
+  ],
+  "duration_seconds": 10.421883,
+  "research_only": true
+}

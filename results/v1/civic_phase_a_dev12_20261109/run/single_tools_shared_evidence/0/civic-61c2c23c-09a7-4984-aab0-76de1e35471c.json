@@ -1,0 +1,422 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-61c2c23c-09a7-4984-aab0-76de1e35471c",
+  "patient_id": "article-25295501",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "d9043b766b1fa893fdb362cea1fa4c75a58f8892461d127af26ca8147012e26d",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The evidence from pmid-25295501 supports the presence of the MTOR F2108L somatic mutation in the context of acquired resistance to everolimus (a Serine/Threonine Kinase Inhibitor). However, the disease specified in the claim is 'thyroid gland adenocarcinoma', whereas the source document explicitly identifies the cancer as 'anaplastic thyroid cancer' (or anaplastic thyroid carcinoma). Anaplastic thyroid cancer is a distinct and more aggressive histological subtype than thyroid gland adenocarcinoma (which typically refers to well-differentiated types like papillary or follicular carcinoma). Therefore, the disease field requires revision to match the specific pathology reported in the evidence.",
+    "citations": [
+      {
+        "document_id": "pmid-25295501",
+        "start": 0,
+        "end": 521,
+        "quote": "After 18 months of a sustained response to everolimus, scans revealed progressive disease (Fig. 1E). The patient underwent a mediastinoscopy with removal of an enlarged lymph node, which contained metastatic anaplastic thyroid cancer (Fig. 1B, and Fig. S1 in Supplementary Appendix 1). Whole-exome sequencing was performed on biopsy samples of the pretreatment and resistant tumors as well as on a blood sample. . . . Figure 2\nMutations in TSC2 and MTOR in Anaplastic Thyroid Carcinoma Revealed by Whole-Exome Sequencing\n"
+      },
+      {
+        "document_id": "pmid-25295501",
+        "start": 521,
+        "end": 806,
+        "quote": "Whole-exome sequencing of the tumor tissue before treatment and after the development of resistance to everolimus revealed a TSC2 nonsense mutation in both tumors (Panel A) and an F2108L mutation in MTOR in the resistant tumor that was undetectable in the pretreatment tumor (Panel B)."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2431,
+    "output_tokens": 354,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25295501"
+        ],
+        "fingerprint": "d9043b766b1fa893fdb362cea1fa4c75a58f8892461d127af26ca8147012e26d",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "F2108L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "F2108L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "F2108L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25295501"
+        ],
+        "query": "{\n  \"disease\": \"thyroid gland adenocarcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"MTOR F2108L\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Serine/Threonine Kinase Inhibitor\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25295501"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25295501": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "F2108L",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25295501",
+              "start": 701,
+              "end": 707,
+              "raw": "F2108L",
+              "canonical": "F2108L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25295501": "mixed"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25295501"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25295501": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "F2108L",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25295501",
+              "start": 701,
+              "end": 707,
+              "raw": "F2108L",
+              "canonical": "F2108L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25295501": "mixed"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "1d2673a6acaa3cde5f7136f4fd80f1e133bd5e84a8b9e2b5811a289e5b632482",
+        "source_ids": [
+          "pmid-25295501"
+        ],
+        "token_reservation": 13248,
+        "evidence_ids": [
+          "pmid-25295501:f01",
+          "pmid-25295501:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-25295501": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 806,
+              "chars_sent": 806,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-25295501:f01",
+                "pmid-25295501:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 806,
+          "chars_sent": 806,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2431,
+        "output_tokens": 354,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.244,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "disease"
+        ],
+        "minimal_revision": "Change disease from 'thyroid gland adenocarcinoma' to 'anaplastic thyroid cancer'.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-25295501 supports the presence of the MTOR F2108L somatic mutation in the context of acquired resistance to everolimus (a Serine/Threonine Kinase Inhibitor). However, the disease specified in the claim is 'thyroid gland adenocarcinoma', whereas the source document explicitly identifies the cancer as 'anaplastic thyroid cancer' (or anaplastic thyroid carcinoma). Anaplastic thyroid cancer is a distinct and more aggressive histological subtype than thyroid gland adenocarcinoma (which typically refers to well-differentiated types like papillary or follicular carcinoma). Therefore, the disease field requires revision to match the specific pathology reported in the evidence.",
+          "citations": [
+            {
+              "document_id": "pmid-25295501",
+              "start": 0,
+              "end": 521,
+              "quote": "After 18 months of a sustained response to everolimus, scans revealed progressive disease (Fig. 1E). The patient underwent a mediastinoscopy with removal of an enlarged lymph node, which contained metastatic anaplastic thyroid cancer (Fig. 1B, and Fig. S1 in Supplementary Appendix 1). Whole-exome sequencing was performed on biopsy samples of the pretreatment and resistant tumors as well as on a blood sample. . . . Figure 2\nMutations in TSC2 and MTOR in Anaplastic Thyroid Carcinoma Revealed by Whole-Exome Sequencing\n"
+            },
+            {
+              "document_id": "pmid-25295501",
+              "start": 521,
+              "end": 806,
+              "quote": "Whole-exome sequencing of the tumor tissue before treatment and after the development of resistance to everolimus revealed a TSC2 nonsense mutation in both tumors (Panel A) and an F2108L mutation in MTOR in the resistant tumor that was undetectable in the pretreatment tumor (Panel B)."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-25295501 supports the presence of the MTOR F2108L somatic mutation in the context of acquired resistance to everolimus (a Serine/Threonine Kinase Inhibitor). However, the disease specified in the claim is 'thyroid gland adenocarcinoma', whereas the source document explicitly identifies the cancer as 'anaplastic thyroid cancer' (or anaplastic thyroid carcinoma). Anaplastic thyroid cancer is a distinct and more aggressive histological subtype than thyroid gland adenocarcinoma (which typically refers to well-differentiated types like papillary or follicular carcinoma). Therefore, the disease field requires revision to match the specific pathology reported in the evidence.",
+          "citations": [
+            {
+              "document_id": "pmid-25295501",
+              "start": 0,
+              "end": 521,
+              "quote": "After 18 months of a sustained response to everolimus, scans revealed progressive disease (Fig. 1E). The patient underwent a mediastinoscopy with removal of an enlarged lymph node, which contained metastatic anaplastic thyroid cancer (Fig. 1B, and Fig. S1 in Supplementary Appendix 1). Whole-exome sequencing was performed on biopsy samples of the pretreatment and resistant tumors as well as on a blood sample. . . . Figure 2\nMutations in TSC2 and MTOR in Anaplastic Thyroid Carcinoma Revealed by Whole-Exome Sequencing\n"
+            },
+            {
+              "document_id": "pmid-25295501",
+              "start": 521,
+              "end": 806,
+              "quote": "Whole-exome sequencing of the tumor tissue before treatment and after the development of resistance to everolimus revealed a TSC2 nonsense mutation in both tumors (Panel A) and an F2108L mutation in MTOR in the resistant tumor that was undetectable in the pretreatment tumor (Panel B)."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25295501"
+  ],
+  "duration_seconds": 3.261804,
+  "research_only": true
+}

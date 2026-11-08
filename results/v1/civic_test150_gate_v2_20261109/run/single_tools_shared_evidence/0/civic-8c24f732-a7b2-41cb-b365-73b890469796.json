@@ -1,0 +1,416 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-8c24f732-a7b2-41cb-b365-73b890469796",
+  "patient_id": "article-25317746",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "8a260e1bbeb58911b463c3f20804e5d297cd1222ad352226f55161bce7e716e7",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The evidence from pmid-25317746:f01 describes an in vitro study using COS-7 cells expressing the KIT S628N mutation. The study demonstrates that cells with the KIT S628N mutation are sensitive to imatinib and dasatinib. This supports the claim's molecular profile (KIT S628N), therapies (Dasatinib, Imatinib), and significance (sensitivity/response). However, the evidence is derived from an in vitro cell line model (COS-7 cells), not a clinical disease context. The claim specifies the disease as 'Cancer' and the variant origin as 'SOMATIC'. While the mutation is somatic in nature, the evidence does not confirm the disease context as 'Cancer' specifically, nor does it establish clinical efficacy in a cancer patient. The evidence is preclinical (in vitro). Therefore, the claim requires revision regarding the disease context (should be 'in vitro' or 'cell line' rather than 'Cancer' if strictly adhering to the evidence source) and potentially the evidence type (PREDICTIVE is acceptable for in vitro, but the disease field is the primary mismatch). Given the schema's requirement for 'disease' and the evidence being purely in vitro, the most accurate revision is to correct the disease to reflect the experimental model or note the lack of clinical disease evidence. However, often 'Cancer' is used broadly. Let's look closer. The evidence says 'COS-7 cells'. It does not mention cancer. Thus, the disease 'Cancer' is not supported by this specific evidence fragment. The evidence supports the molecular interaction but not the disease indication. Therefore, the claim requires revision on the 'disease' field.",
+    "citations": [
+      {
+        "document_id": "pmid-25317746",
+        "start": 0,
+        "end": 347,
+        "quote": "In an in vitro study, COS-7 cells expressing KIT S628N activating mutation demonstrated sensitivity to imatinib and dasatinib treatments when compared to the KIT L576P, which was used as an imatinib-sensitive control. Sensitivity was determined by assessing reduced mutant KIT auto-phosphorylation via western blotting with addition of inhibitors."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2213,
+    "output_tokens": 534,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25317746"
+        ],
+        "fingerprint": "8a260e1bbeb58911b463c3f20804e5d297cd1222ad352226f55161bce7e716e7",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "S628N",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "S628N",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "S628N",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25317746"
+        ],
+        "query": "{\n  \"disease\": \"Cancer\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"KIT S628N\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Dasatinib\",\n    \"Imatinib\"\n  ],\n  \"therapyInteractionType\": \"SUBSTITUTES\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25317746"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25317746": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "S628N",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25317746",
+              "start": 49,
+              "end": 54,
+              "raw": "S628N",
+              "canonical": "S628N"
+            },
+            {
+              "document_id": "pmid-25317746",
+              "start": 162,
+              "end": 167,
+              "raw": "L576P",
+              "canonical": "L576P"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25317746": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25317746"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25317746": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "S628N",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25317746",
+              "start": 49,
+              "end": 54,
+              "raw": "S628N",
+              "canonical": "S628N"
+            },
+            {
+              "document_id": "pmid-25317746",
+              "start": 162,
+              "end": 167,
+              "raw": "L576P",
+              "canonical": "L576P"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25317746": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "33b37b11b0a7498cd56f00e5b8ddf72b0aea9475decfa71c845da314386dd5ea",
+        "source_ids": [
+          "pmid-25317746"
+        ],
+        "token_reservation": 12546,
+        "evidence_ids": [
+          "pmid-25317746:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-25317746": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 347,
+              "chars_sent": 347,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-25317746:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 347,
+          "chars_sent": 347,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2213,
+        "output_tokens": 534,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 6.558,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "disease"
+        ],
+        "minimal_revision": "Change disease from 'Cancer' to 'in vitro model' or remove disease claim as evidence is preclinical cell line data.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-25317746:f01 describes an in vitro study using COS-7 cells expressing the KIT S628N mutation. The study demonstrates that cells with the KIT S628N mutation are sensitive to imatinib and dasatinib. This supports the claim's molecular profile (KIT S628N), therapies (Dasatinib, Imatinib), and significance (sensitivity/response). However, the evidence is derived from an in vitro cell line model (COS-7 cells), not a clinical disease context. The claim specifies the disease as 'Cancer' and the variant origin as 'SOMATIC'. While the mutation is somatic in nature, the evidence does not confirm the disease context as 'Cancer' specifically, nor does it establish clinical efficacy in a cancer patient. The evidence is preclinical (in vitro). Therefore, the claim requires revision regarding the disease context (should be 'in vitro' or 'cell line' rather than 'Cancer' if strictly adhering to the evidence source) and potentially the evidence type (PREDICTIVE is acceptable for in vitro, but the disease field is the primary mismatch). Given the schema's requirement for 'disease' and the evidence being purely in vitro, the most accurate revision is to correct the disease to reflect the experimental model or note the lack of clinical disease evidence. However, often 'Cancer' is used broadly. Let's look closer. The evidence says 'COS-7 cells'. It does not mention cancer. Thus, the disease 'Cancer' is not supported by this specific evidence fragment. The evidence supports the molecular interaction but not the disease indication. Therefore, the claim requires revision on the 'disease' field.",
+          "citations": [
+            {
+              "document_id": "pmid-25317746",
+              "start": 0,
+              "end": 347,
+              "quote": "In an in vitro study, COS-7 cells expressing KIT S628N activating mutation demonstrated sensitivity to imatinib and dasatinib treatments when compared to the KIT L576P, which was used as an imatinib-sensitive control. Sensitivity was determined by assessing reduced mutant KIT auto-phosphorylation via western blotting with addition of inhibitors."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-25317746:f01 describes an in vitro study using COS-7 cells expressing the KIT S628N mutation. The study demonstrates that cells with the KIT S628N mutation are sensitive to imatinib and dasatinib. This supports the claim's molecular profile (KIT S628N), therapies (Dasatinib, Imatinib), and significance (sensitivity/response). However, the evidence is derived from an in vitro cell line model (COS-7 cells), not a clinical disease context. The claim specifies the disease as 'Cancer' and the variant origin as 'SOMATIC'. While the mutation is somatic in nature, the evidence does not confirm the disease context as 'Cancer' specifically, nor does it establish clinical efficacy in a cancer patient. The evidence is preclinical (in vitro). Therefore, the claim requires revision regarding the disease context (should be 'in vitro' or 'cell line' rather than 'Cancer' if strictly adhering to the evidence source) and potentially the evidence type (PREDICTIVE is acceptable for in vitro, but the disease field is the primary mismatch). Given the schema's requirement for 'disease' and the evidence being purely in vitro, the most accurate revision is to correct the disease to reflect the experimental model or note the lack of clinical disease evidence. However, often 'Cancer' is used broadly. Let's look closer. The evidence says 'COS-7 cells'. It does not mention cancer. Thus, the disease 'Cancer' is not supported by this specific evidence fragment. The evidence supports the molecular interaction but not the disease indication. Therefore, the claim requires revision on the 'disease' field.",
+          "citations": [
+            {
+              "document_id": "pmid-25317746",
+              "start": 0,
+              "end": 347,
+              "quote": "In an in vitro study, COS-7 cells expressing KIT S628N activating mutation demonstrated sensitivity to imatinib and dasatinib treatments when compared to the KIT L576P, which was used as an imatinib-sensitive control. Sensitivity was determined by assessing reduced mutant KIT auto-phosphorylation via western blotting with addition of inhibitors."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25317746"
+  ],
+  "duration_seconds": 6.570761,
+  "research_only": true
+}

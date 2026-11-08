@@ -1,0 +1,417 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-f8ed7e3d-e6fc-451c-bb1f-b2571f0b75ea",
+  "patient_id": "article-27032107",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "20f5a34e2485ef5fd94d6b236d41c79395f22692411041556f29386f828ad3d8",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim posits that Erlotinib does not support sensitivity/response in appendix adenocarcinoma for the somatic EGFR L858R mutation. The available evidence (pmid-27032107) describes a prospective phase II study of first-line Erlotinib in patients with advanced adenocarcinoma of the lung carrying a somatic EGFR mutation (including L858R). The study reports that Erlotinib was 'highly effective' in these patients. This evidence directly contradicts the claim's direction (DOES_NOT_SUPPORT) and disease context (appendix adenocarcinoma vs. lung adenocarcinoma). The evidence supports that Erlotinib is effective (SUPPORTS sensitivity/response) in lung adenocarcinoma with EGFR L858R, not that it does not support it in appendix adenocarcinoma. Therefore, the claim requires revision regarding the disease and evidence direction.",
+    "citations": [
+      {
+        "document_id": "pmid-27032107",
+        "start": 0,
+        "end": 588,
+        "quote": "We report on the long-term results of first-line treatment with erlotinib in Caucasian patients with advanced adenocarcinoma of the lung that have a somatic EGFR mutation in their tumor. . . . Exon\tMutations Nucleotide/s Change\tMutations Amino acid/s Change\tTimes found (in COSMIC)\tDXS/COBAS *\n18\tc.2156G>C\tp.Gly719Ala\t1 (31x)\tyes/yes . . . 21\tc.2573T>G\tp.Leu858Arg\t15 (1607x)\tyes/yes . . . In this prospective phase II study in phenotypically selected patients with a somatic EGFR mutation in their tumor erlotinib was well tolerated and highly effective in the majority of the patients."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2374,
+    "output_tokens": 410,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-27032107"
+        ],
+        "fingerprint": "20f5a34e2485ef5fd94d6b236d41c79395f22692411041556f29386f828ad3d8",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-27032107"
+        ],
+        "query": "{\n  \"disease\": \"appendix adenocarcinoma\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"EGFR L858R\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Erlotinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-27032107"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27032107": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27032107",
+              "start": 307,
+              "end": 318,
+              "raw": "p.Gly719Ala",
+              "canonical": "G719A"
+            },
+            {
+              "document_id": "pmid-27032107",
+              "start": 354,
+              "end": 365,
+              "raw": "p.Leu858Arg",
+              "canonical": "L858R"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27032107": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-27032107"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27032107": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27032107",
+              "start": 307,
+              "end": 318,
+              "raw": "p.Gly719Ala",
+              "canonical": "G719A"
+            },
+            {
+              "document_id": "pmid-27032107",
+              "start": 354,
+              "end": 365,
+              "raw": "p.Leu858Arg",
+              "canonical": "L858R"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27032107": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "df55cd1f60665b78dcf5d2c9f036948c1a5e86bbba02cf023be39bc71250baf5",
+        "source_ids": [
+          "pmid-27032107"
+        ],
+        "token_reservation": 12981,
+        "evidence_ids": [
+          "pmid-27032107:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27032107": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 588,
+              "chars_sent": 588,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27032107:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 588,
+          "chars_sent": 588,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2374,
+        "output_tokens": 410,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 11.449,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "disease",
+          "evidenceDirection"
+        ],
+        "minimal_revision": "The disease should be revised from 'appendix adenocarcinoma' to 'lung adenocarcinoma' (or 'non-small cell lung cancer'), and the evidenceDirection should be revised from 'DOES_NOT_SUPPORT' to 'SUPPORTS'.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that Erlotinib does not support sensitivity/response in appendix adenocarcinoma for the somatic EGFR L858R mutation. The available evidence (pmid-27032107) describes a prospective phase II study of first-line Erlotinib in patients with advanced adenocarcinoma of the lung carrying a somatic EGFR mutation (including L858R). The study reports that Erlotinib was 'highly effective' in these patients. This evidence directly contradicts the claim's direction (DOES_NOT_SUPPORT) and disease context (appendix adenocarcinoma vs. lung adenocarcinoma). The evidence supports that Erlotinib is effective (SUPPORTS sensitivity/response) in lung adenocarcinoma with EGFR L858R, not that it does not support it in appendix adenocarcinoma. Therefore, the claim requires revision regarding the disease and evidence direction.",
+          "citations": [
+            {
+              "document_id": "pmid-27032107",
+              "start": 0,
+              "end": 588,
+              "quote": "We report on the long-term results of first-line treatment with erlotinib in Caucasian patients with advanced adenocarcinoma of the lung that have a somatic EGFR mutation in their tumor. . . . Exon\tMutations Nucleotide/s Change\tMutations Amino acid/s Change\tTimes found (in COSMIC)\tDXS/COBAS *\n18\tc.2156G>C\tp.Gly719Ala\t1 (31x)\tyes/yes . . . 21\tc.2573T>G\tp.Leu858Arg\t15 (1607x)\tyes/yes . . . In this prospective phase II study in phenotypically selected patients with a somatic EGFR mutation in their tumor erlotinib was well tolerated and highly effective in the majority of the patients."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that Erlotinib does not support sensitivity/response in appendix adenocarcinoma for the somatic EGFR L858R mutation. The available evidence (pmid-27032107) describes a prospective phase II study of first-line Erlotinib in patients with advanced adenocarcinoma of the lung carrying a somatic EGFR mutation (including L858R). The study reports that Erlotinib was 'highly effective' in these patients. This evidence directly contradicts the claim's direction (DOES_NOT_SUPPORT) and disease context (appendix adenocarcinoma vs. lung adenocarcinoma). The evidence supports that Erlotinib is effective (SUPPORTS sensitivity/response) in lung adenocarcinoma with EGFR L858R, not that it does not support it in appendix adenocarcinoma. Therefore, the claim requires revision regarding the disease and evidence direction.",
+          "citations": [
+            {
+              "document_id": "pmid-27032107",
+              "start": 0,
+              "end": 588,
+              "quote": "We report on the long-term results of first-line treatment with erlotinib in Caucasian patients with advanced adenocarcinoma of the lung that have a somatic EGFR mutation in their tumor. . . . Exon\tMutations Nucleotide/s Change\tMutations Amino acid/s Change\tTimes found (in COSMIC)\tDXS/COBAS *\n18\tc.2156G>C\tp.Gly719Ala\t1 (31x)\tyes/yes . . . 21\tc.2573T>G\tp.Leu858Arg\t15 (1607x)\tyes/yes . . . In this prospective phase II study in phenotypically selected patients with a somatic EGFR mutation in their tumor erlotinib was well tolerated and highly effective in the majority of the patients."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-27032107"
+  ],
+  "duration_seconds": 11.475398,
+  "research_only": true
+}

@@ -1,0 +1,522 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-b5e35a07-eac2-4999-adc3-1421986ae501",
+  "patient_id": "article-24353160",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "789af995ac0b36161143dc29d05e0b3723d7bdb2e4a2f8c2ae85fe3067d3dc9a",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The evidence from pmid-24353160 supports the claim that EGFR L858R is sensitive to Erlotinib in the context of lung cancer cell lines (f01, f02, f03). However, the claim specifies the disease as 'lung non-small cell carcinoma' (NSCLC). The provided evidence fragments primarily describe in vitro experiments using Ba/F3 cells and specific NSCLC cell lines (PC9, HCC827, H3255, H1975) to demonstrate sensitivity. While these cell lines are derived from NSCLC, the evidence itself is preclinical/in vitro data rather than clinical trial data establishing efficacy in human patients with NSCLC. Furthermore, the evidence explicitly contrasts L858R sensitivity with L858R+T790M resistance. The claim's 'significance' is 'sensitivity/response', which is supported by the in vitro data. However, the 'disease' field in the claim is 'lung non-small cell carcinoma'. The evidence supports the molecular profile and therapy interaction in NSCLC-derived cell lines, but does not provide clinical evidence for the disease entity itself in a patient population. More critically, the evidence highlights that L858R is sensitive, but the claim does not account for the resistance mechanism (T790M) which is a key part of the evidence's narrative regarding L858R. However, the primary issue is that the evidence is in vitro/cell-line based, not clinical. The claim implies clinical relevance. A more precise revision would be to specify the evidence type as 'in vitro' or 'cell line' rather than implying clinical efficacy, or to restrict the disease context to 'NSCLC cell lines'. Given the options, the evidence supports the molecular interaction but the 'disease' and 'evidenceType' fields are not fully accurate as written for a clinical claim. The evidence is 'in vitro' (f01, f02, f03 describe cell proliferation assays). The claim says 'evidenceType': 'PREDICTIVE'. In vitro sensitivity is often considered predictive, but the disease context is cell lines. The most significant discrepancy is that the evidence is from cell lines, not patient data. The claim's 'disease' is 'lung non-small cell carcinoma'. The evidence uses NSCLC cell lines. This is a partial support. The evidence supports the sensitivity of L858R to Erlotinib in NSCLC-derived cells. The claim is 'as_written' if we accept cell line data as evidence for the disease context in a predictive sense. However, typically 'PREDICTIVE' evidence in clinical contexts refers to biomarker-driven response in patients. The evidence here is preclinical. Therefore, the 'evidenceType' should be 'in vitro' or 'preclinical' rather than 'PREDICTIVE' in the clinical sense, or the 'disease' should be 'NSCLC cell lines'. Let's look at the fields. 'disease': 'lung non-small cell carcinoma'. 'evidenceType': 'PREDICTIVE'. 'significance': 'sensitivity/response'. The evidence shows sensitivity. The evidence is from cell lines. The claim is likely intended to be clinical. The evidence does not support clinical efficacy. Thus, the claim requires revision to reflect the preclinical nature or the specific context of cell lines. The minimal revision is to change 'evidenceType' to 'in vitro' or 'preclinical' and potentially 'disease' to 'NSCLC cell lines' or keep 'disease' but clarify 'evidenceType'. Given the schema, 'evidenceType' can be revised. The evidence is clearly in vitro. So 'evidenceType' should be 'in vitro'. Also, the claim says 'therapies': ['Erlotinib']. The evidence supports this. The claim says 'variantOrigin': 'SOMATIC'. The evidence uses somatic mutations. The claim says 'significance': 'sensitivity/response'. The evidence supports this. The main issue is 'evidenceType' and potentially 'disease'. The evidence is in vitro. So 'evidenceType' should be 'in vitro'. The 'disease' is 'lung non-small cell carcinoma'. The cell lines are from NSCLC. This is acceptable in some contexts, but 'evidenceType' is definitely not clinical. So 'requires_revision' for 'evidenceType'.",
+    "citations": [
+      {
+        "document_id": "pmid-24353160",
+        "start": 0,
+        "end": 597,
+        "quote": "In addition, we used gefitinib/erlotinib-sensitive (L858R and exon 19 deletion mutations [delL747_S752 and delL747_P753insS]) and gefitinib/erlotinib-resistant (L858R+T790M and exon 19 deletion mutations+T790M) mutations as assay controls. . . . We created Ba/F3 cells stably expressing the aforementioned EGFR mutations. All were able to proliferate in the absence of IL3 (Sup. Fig. 1), indicating transforming ability of these mutations. We next measured proliferation in the presence of erlotinib and showed that only cells with EGFR-delL747_P753insS, L858R and the atypical A763_Y764insFQEA - "
+      },
+      {
+        "document_id": "pmid-24353160",
+        "start": 597,
+        "end": 1192,
+        "quote": "among all EGFR exon 20 insertions - were inhibited by erlotinib concentrations below 0.1 uM . . . To determine if BID007 requires mutant EGFR for its viability, we used siRNAs against EGFR in BID007, as well as in lung cancer cell lines H3255 (EGFR-L858R and known to undergo cell proliferation arrest and cell death upon inactivation of EGFR) . . . The sensitivity of BID007 cells to EGFR TKIs was compared to that of a group of three EGFR TKI-sensitive EGFR mutated NSCLC lines (PC9 [EGFR-delE746_A750], HCC827 [delE746_A750] and H3255) and one erlotinib-resistant line (H1975 [L858R+T790M]). "
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 3203,
+    "output_tokens": 1154,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-24353160"
+        ],
+        "fingerprint": "789af995ac0b36161143dc29d05e0b3723d7bdb2e4a2f8c2ae85fe3067d3dc9a",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-24353160"
+        ],
+        "query": "{\n  \"disease\": \"lung non-small cell carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"EGFR L858R\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Erlotinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-24353160"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-24353160": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-24353160",
+              "start": 52,
+              "end": 57,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 161,
+              "end": 166,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 167,
+              "end": 172,
+              "raw": "T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 204,
+              "end": 209,
+              "raw": "T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 555,
+              "end": 560,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 846,
+              "end": 851,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 1177,
+              "end": 1182,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 1183,
+              "end": 1188,
+              "raw": "T790M",
+              "canonical": "T790M"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-24353160": "mixed"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-24353160"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-24353160": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-24353160",
+              "start": 52,
+              "end": 57,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 161,
+              "end": 166,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 167,
+              "end": 172,
+              "raw": "T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 204,
+              "end": 209,
+              "raw": "T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 555,
+              "end": 560,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 846,
+              "end": 851,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 1177,
+              "end": 1182,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 1183,
+              "end": 1188,
+              "raw": "T790M",
+              "canonical": "T790M"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-24353160": "mixed"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "0af86b47e676183aad1a5ef48409d40f917a7afa3b60056405b9ff08d5151a08",
+        "source_ids": [
+          "pmid-24353160"
+        ],
+        "token_reservation": 14894,
+        "evidence_ids": [
+          "pmid-24353160:f01",
+          "pmid-24353160:f02",
+          "pmid-24353160:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-24353160": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1526,
+              "chars_sent": 1526,
+              "key_records": 2,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-24353160:f01",
+                "pmid-24353160:f02",
+                "pmid-24353160:f03"
+              ]
+            }
+          },
+          "candidates": 3,
+          "sent": 3,
+          "chars_total": 1526,
+          "chars_sent": 1526,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 3203,
+        "output_tokens": 1154,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 20.833,
+        "evidence_fragments": 3
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "evidenceType"
+        ],
+        "minimal_revision": "Change evidenceType from 'PREDICTIVE' to 'in vitro' as the evidence is derived from cell proliferation assays in Ba/F3 and NSCLC cell lines, not clinical patient data.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-24353160 supports the claim that EGFR L858R is sensitive to Erlotinib in the context of lung cancer cell lines (f01, f02, f03). However, the claim specifies the disease as 'lung non-small cell carcinoma' (NSCLC). The provided evidence fragments primarily describe in vitro experiments using Ba/F3 cells and specific NSCLC cell lines (PC9, HCC827, H3255, H1975) to demonstrate sensitivity. While these cell lines are derived from NSCLC, the evidence itself is preclinical/in vitro data rather than clinical trial data establishing efficacy in human patients with NSCLC. Furthermore, the evidence explicitly contrasts L858R sensitivity with L858R+T790M resistance. The claim's 'significance' is 'sensitivity/response', which is supported by the in vitro data. However, the 'disease' field in the claim is 'lung non-small cell carcinoma'. The evidence supports the molecular profile and therapy interaction in NSCLC-derived cell lines, but does not provide clinical evidence for the disease entity itself in a patient population. More critically, the evidence highlights that L858R is sensitive, but the claim does not account for the resistance mechanism (T790M) which is a key part of the evidence's narrative regarding L858R. However, the primary issue is that the evidence is in vitro/cell-line based, not clinical. The claim implies clinical relevance. A more precise revision would be to specify the evidence type as 'in vitro' or 'cell line' rather than implying clinical efficacy, or to restrict the disease context to 'NSCLC cell lines'. Given the options, the evidence supports the molecular interaction but the 'disease' and 'evidenceType' fields are not fully accurate as written for a clinical claim. The evidence is 'in vitro' (f01, f02, f03 describe cell proliferation assays). The claim says 'evidenceType': 'PREDICTIVE'. In vitro sensitivity is often considered predictive, but the disease context is cell lines. The most significant discrepancy is that the evidence is from cell lines, not patient data. The claim's 'disease' is 'lung non-small cell carcinoma'. The evidence uses NSCLC cell lines. This is a partial support. The evidence supports the sensitivity of L858R to Erlotinib in NSCLC-derived cells. The claim is 'as_written' if we accept cell line data as evidence for the disease context in a predictive sense. However, typically 'PREDICTIVE' evidence in clinical contexts refers to biomarker-driven response in patients. The evidence here is preclinical. Therefore, the 'evidenceType' should be 'in vitro' or 'preclinical' rather than 'PREDICTIVE' in the clinical sense, or the 'disease' should be 'NSCLC cell lines'. Let's look at the fields. 'disease': 'lung non-small cell carcinoma'. 'evidenceType': 'PREDICTIVE'. 'significance': 'sensitivity/response'. The evidence shows sensitivity. The evidence is from cell lines. The claim is likely intended to be clinical. The evidence does not support clinical efficacy. Thus, the claim requires revision to reflect the preclinical nature or the specific context of cell lines. The minimal revision is to change 'evidenceType' to 'in vitro' or 'preclinical' and potentially 'disease' to 'NSCLC cell lines' or keep 'disease' but clarify 'evidenceType'. Given the schema, 'evidenceType' can be revised. The evidence is clearly in vitro. So 'evidenceType' should be 'in vitro'. Also, the claim says 'therapies': ['Erlotinib']. The evidence supports this. The claim says 'variantOrigin': 'SOMATIC'. The evidence uses somatic mutations. The claim says 'significance': 'sensitivity/response'. The evidence supports this. The main issue is 'evidenceType' and potentially 'disease'. The evidence is in vitro. So 'evidenceType' should be 'in vitro'. The 'disease' is 'lung non-small cell carcinoma'. The cell lines are from NSCLC. This is acceptable in some contexts, but 'evidenceType' is definitely not clinical. So 'requires_revision' for 'evidenceType'.",
+          "citations": [
+            {
+              "document_id": "pmid-24353160",
+              "start": 0,
+              "end": 597,
+              "quote": "In addition, we used gefitinib/erlotinib-sensitive (L858R and exon 19 deletion mutations [delL747_S752 and delL747_P753insS]) and gefitinib/erlotinib-resistant (L858R+T790M and exon 19 deletion mutations+T790M) mutations as assay controls. . . . We created Ba/F3 cells stably expressing the aforementioned EGFR mutations. All were able to proliferate in the absence of IL3 (Sup. Fig. 1), indicating transforming ability of these mutations. We next measured proliferation in the presence of erlotinib and showed that only cells with EGFR-delL747_P753insS, L858R and the atypical A763_Y764insFQEA - "
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 597,
+              "end": 1192,
+              "quote": "among all EGFR exon 20 insertions - were inhibited by erlotinib concentrations below 0.1 uM . . . To determine if BID007 requires mutant EGFR for its viability, we used siRNAs against EGFR in BID007, as well as in lung cancer cell lines H3255 (EGFR-L858R and known to undergo cell proliferation arrest and cell death upon inactivation of EGFR) . . . The sensitivity of BID007 cells to EGFR TKIs was compared to that of a group of three EGFR TKI-sensitive EGFR mutated NSCLC lines (PC9 [EGFR-delE746_A750], HCC827 [delE746_A750] and H3255) and one erlotinib-resistant line (H1975 [L858R+T790M]). "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-24353160 supports the claim that EGFR L858R is sensitive to Erlotinib in the context of lung cancer cell lines (f01, f02, f03). However, the claim specifies the disease as 'lung non-small cell carcinoma' (NSCLC). The provided evidence fragments primarily describe in vitro experiments using Ba/F3 cells and specific NSCLC cell lines (PC9, HCC827, H3255, H1975) to demonstrate sensitivity. While these cell lines are derived from NSCLC, the evidence itself is preclinical/in vitro data rather than clinical trial data establishing efficacy in human patients with NSCLC. Furthermore, the evidence explicitly contrasts L858R sensitivity with L858R+T790M resistance. The claim's 'significance' is 'sensitivity/response', which is supported by the in vitro data. However, the 'disease' field in the claim is 'lung non-small cell carcinoma'. The evidence supports the molecular profile and therapy interaction in NSCLC-derived cell lines, but does not provide clinical evidence for the disease entity itself in a patient population. More critically, the evidence highlights that L858R is sensitive, but the claim does not account for the resistance mechanism (T790M) which is a key part of the evidence's narrative regarding L858R. However, the primary issue is that the evidence is in vitro/cell-line based, not clinical. The claim implies clinical relevance. A more precise revision would be to specify the evidence type as 'in vitro' or 'cell line' rather than implying clinical efficacy, or to restrict the disease context to 'NSCLC cell lines'. Given the options, the evidence supports the molecular interaction but the 'disease' and 'evidenceType' fields are not fully accurate as written for a clinical claim. The evidence is 'in vitro' (f01, f02, f03 describe cell proliferation assays). The claim says 'evidenceType': 'PREDICTIVE'. In vitro sensitivity is often considered predictive, but the disease context is cell lines. The most significant discrepancy is that the evidence is from cell lines, not patient data. The claim's 'disease' is 'lung non-small cell carcinoma'. The evidence uses NSCLC cell lines. This is a partial support. The evidence supports the sensitivity of L858R to Erlotinib in NSCLC-derived cells. The claim is 'as_written' if we accept cell line data as evidence for the disease context in a predictive sense. However, typically 'PREDICTIVE' evidence in clinical contexts refers to biomarker-driven response in patients. The evidence here is preclinical. Therefore, the 'evidenceType' should be 'in vitro' or 'preclinical' rather than 'PREDICTIVE' in the clinical sense, or the 'disease' should be 'NSCLC cell lines'. Let's look at the fields. 'disease': 'lung non-small cell carcinoma'. 'evidenceType': 'PREDICTIVE'. 'significance': 'sensitivity/response'. The evidence shows sensitivity. The evidence is from cell lines. The claim is likely intended to be clinical. The evidence does not support clinical efficacy. Thus, the claim requires revision to reflect the preclinical nature or the specific context of cell lines. The minimal revision is to change 'evidenceType' to 'in vitro' or 'preclinical' and potentially 'disease' to 'NSCLC cell lines' or keep 'disease' but clarify 'evidenceType'. Given the schema, 'evidenceType' can be revised. The evidence is clearly in vitro. So 'evidenceType' should be 'in vitro'. Also, the claim says 'therapies': ['Erlotinib']. The evidence supports this. The claim says 'variantOrigin': 'SOMATIC'. The evidence uses somatic mutations. The claim says 'significance': 'sensitivity/response'. The evidence supports this. The main issue is 'evidenceType' and potentially 'disease'. The evidence is in vitro. So 'evidenceType' should be 'in vitro'. The 'disease' is 'lung non-small cell carcinoma'. The cell lines are from NSCLC. This is acceptable in some contexts, but 'evidenceType' is definitely not clinical. So 'requires_revision' for 'evidenceType'.",
+          "citations": [
+            {
+              "document_id": "pmid-24353160",
+              "start": 0,
+              "end": 597,
+              "quote": "In addition, we used gefitinib/erlotinib-sensitive (L858R and exon 19 deletion mutations [delL747_S752 and delL747_P753insS]) and gefitinib/erlotinib-resistant (L858R+T790M and exon 19 deletion mutations+T790M) mutations as assay controls. . . . We created Ba/F3 cells stably expressing the aforementioned EGFR mutations. All were able to proliferate in the absence of IL3 (Sup. Fig. 1), indicating transforming ability of these mutations. We next measured proliferation in the presence of erlotinib and showed that only cells with EGFR-delL747_P753insS, L858R and the atypical A763_Y764insFQEA - "
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 597,
+              "end": 1192,
+              "quote": "among all EGFR exon 20 insertions - were inhibited by erlotinib concentrations below 0.1 uM . . . To determine if BID007 requires mutant EGFR for its viability, we used siRNAs against EGFR in BID007, as well as in lung cancer cell lines H3255 (EGFR-L858R and known to undergo cell proliferation arrest and cell death upon inactivation of EGFR) . . . The sensitivity of BID007 cells to EGFR TKIs was compared to that of a group of three EGFR TKI-sensitive EGFR mutated NSCLC lines (PC9 [EGFR-delE746_A750], HCC827 [delE746_A750] and H3255) and one erlotinib-resistant line (H1975 [L858R+T790M]). "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-24353160"
+  ],
+  "duration_seconds": 20.851972,
+  "research_only": true
+}

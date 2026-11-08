@@ -1,0 +1,386 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-00c9b780-c283-4a5d-8614-cb1bec591ebc",
+  "patient_id": "article-30797591",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "45ae23cb1fd5c3b356e23872f87d372c0d8b30ceace134a1da8c0d8a3ee2d59e",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim posits that ERCC1 underexpression DOES_NOT_SUPPORT sensitivity/response to Cisplatin in Epithelial Ovarian Cancer. However, the provided evidence (pmid-30797591:f01) explicitly states that low ERCC1 is significantly associated with improved progression-free survival and is a predictor of platinum sensitivity. This directly contradicts the claim's direction. The evidence supports that ERCC1 underexpression DOES support sensitivity to platinum agents (like Cisplatin). Therefore, the claim requires revision to reflect the correct evidence direction.",
+    "citations": [
+      {
+        "document_id": "pmid-30797591",
+        "start": 0,
+        "end": 327,
+        "quote": "platinum sensitive sporadic ovarian cancers . . . Low ERCC1 was significantly associated with improved progression free survival (PFS) in patients with ovarian cancers in univariate (p = 0.001) and multivariate (p = 0.002) analysis. . . . The data provide evidence that low ERCC1 is not only a predictor of platinum sensitivity"
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2122,
+    "output_tokens": 282,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-30797591"
+        ],
+        "fingerprint": "45ae23cb1fd5c3b356e23872f87d372c0d8b30ceace134a1da8c0d8a3ee2d59e",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-30797591"
+        ],
+        "query": "{\n  \"disease\": \"Epithelial Ovarian Cancer\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"ERCC1 Underexpression\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Cisplatin\"\n  ],\n  \"variantOrigin\": \"N/A\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-30797591"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-30797591": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-30797591": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-30797591"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-30797591": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-30797591": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "b41c1d627ae646c69fb1e58c92256a936738ad0ec2d160bf8677ff1177d92407",
+        "source_ids": [
+          "pmid-30797591"
+        ],
+        "token_reservation": 12452,
+        "evidence_ids": [
+          "pmid-30797591:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-30797591": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 327,
+              "chars_sent": 327,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-30797591:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 327,
+          "chars_sent": 327,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2122,
+        "output_tokens": 282,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 2.913,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "evidenceDirection"
+        ],
+        "minimal_revision": "Change evidenceDirection from 'DOES_NOT_SUPPORT' to 'SUPPORTS'.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that ERCC1 underexpression DOES_NOT_SUPPORT sensitivity/response to Cisplatin in Epithelial Ovarian Cancer. However, the provided evidence (pmid-30797591:f01) explicitly states that low ERCC1 is significantly associated with improved progression-free survival and is a predictor of platinum sensitivity. This directly contradicts the claim's direction. The evidence supports that ERCC1 underexpression DOES support sensitivity to platinum agents (like Cisplatin). Therefore, the claim requires revision to reflect the correct evidence direction.",
+          "citations": [
+            {
+              "document_id": "pmid-30797591",
+              "start": 0,
+              "end": 327,
+              "quote": "platinum sensitive sporadic ovarian cancers . . . Low ERCC1 was significantly associated with improved progression free survival (PFS) in patients with ovarian cancers in univariate (p = 0.001) and multivariate (p = 0.002) analysis. . . . The data provide evidence that low ERCC1 is not only a predictor of platinum sensitivity"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that ERCC1 underexpression DOES_NOT_SUPPORT sensitivity/response to Cisplatin in Epithelial Ovarian Cancer. However, the provided evidence (pmid-30797591:f01) explicitly states that low ERCC1 is significantly associated with improved progression-free survival and is a predictor of platinum sensitivity. This directly contradicts the claim's direction. The evidence supports that ERCC1 underexpression DOES support sensitivity to platinum agents (like Cisplatin). Therefore, the claim requires revision to reflect the correct evidence direction.",
+          "citations": [
+            {
+              "document_id": "pmid-30797591",
+              "start": 0,
+              "end": 327,
+              "quote": "platinum sensitive sporadic ovarian cancers . . . Low ERCC1 was significantly associated with improved progression free survival (PFS) in patients with ovarian cancers in univariate (p = 0.001) and multivariate (p = 0.002) analysis. . . . The data provide evidence that low ERCC1 is not only a predictor of platinum sensitivity"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-30797591"
+  ],
+  "duration_seconds": 2.933432,
+  "research_only": true
+}

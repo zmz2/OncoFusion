@@ -7,7 +7,7 @@ from oncofusion.engine import Engine, build_analysis_output
 from oncofusion.examples import examples
 from oncofusion.providers import MockProvider, ProviderError
 from oncofusion.schemas import (Ablations, ClaimAnalysisOutput, ClaimFinding, FragmentCitation,
-                               RunConfig, CaseInput, Document, Entities)
+                               RevisionAssessment, RunConfig, CaseInput, Document, Entities)
 from oncofusion.profiles import v1_class_config, v1_fast_config
 
 CASE = next(c for c in examples().values() if c.task == "verification")
@@ -137,7 +137,7 @@ def test_revision_gate_adds_global_assessment_schema(recorder):
     )[0]
     assert schema["properties"]["assessment"]["$ref"].split("/")[-1] == "RevisionAssessment"
     assert "evidence_relevance" in schema["$defs"]["RevisionAssessment"]["properties"]
-    assert "wrong direction or specificity is a revision" in decision
+    assert "classify requires_revision rather than no_supported_revision" in decision
 
 
 def test_revision_gate_rejects_label_assessment_conflict():
@@ -151,7 +151,7 @@ def test_revision_gate_rejects_label_assessment_conflict():
             body["answer"] = "NEI"
             body["assessment"] = {
                 "evidence_relevance": "relevant",
-                "original_claim": "partially_supported",
+                "claim_conformance": "requires_revision",
                 "revision_fields": ["significance"],
                 "minimal_revision": "Change resistance to the supported direction.",
             }
@@ -161,6 +161,41 @@ def test_revision_gate_rejects_label_assessment_conflict():
     config.claim_revision_gate = True
     with pytest.raises(ProviderError, match="schema or source-integrity"):
         Engine(Conflict()).run(case, config)
+
+
+def test_revision_gate_maps_no_supported_revision_to_nei():
+    case = CASE.model_copy(update={"verification_scheme": "revisions"})
+
+    class NoRevision(MockProvider):
+        def complete(self, system, payload, max_tokens, temperature, seed):
+            reply = super().complete(system, payload, max_tokens, temperature, seed)
+            if payload.get("role") != "decision" or not payload.get("revision_gate"):
+                return reply
+            body = json.loads(reply.content)
+            body["answer"] = "NEI"
+            body["assessment"] = {
+                "evidence_relevance": "relevant",
+                "claim_conformance": "no_supported_revision",
+                "revision_fields": [],
+                "minimal_revision": "",
+            }
+            reply.content = json.dumps(body)
+            return reply
+
+    config = v1_class_config("native")
+    config.claim_revision_gate = True
+    result = Engine(NoRevision()).run(case, config)
+    assert result.decision.answer == "NEI"
+    assert result.status == "completed"
+
+
+def test_revision_assessment_rejects_illegal_revision_shape():
+    with pytest.raises(ValueError, match="requires_revision must provide a minimal revision"):
+        RevisionAssessment(evidence_relevance="relevant", claim_conformance="requires_revision",
+                           revision_fields=["disease"])
+    with pytest.raises(ValueError, match="Input should be"):
+        RevisionAssessment(evidence_relevance="relevant", claim_conformance="requires_revision",
+                           revision_fields=["patient age"], minimal_revision="Narrow the disease context.")
 
 
 def test_revision_gate_is_verification_only():

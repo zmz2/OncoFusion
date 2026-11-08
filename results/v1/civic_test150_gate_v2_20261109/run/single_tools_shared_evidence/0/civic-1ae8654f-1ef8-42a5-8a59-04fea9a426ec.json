@@ -1,0 +1,386 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-1ae8654f-1ef8-42a5-8a59-04fea9a426ec",
+  "patient_id": "article-26673008",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "33e515c8132db07f28ca1885a718ded5f872a91e01ea23a0342b21d9d2705b30",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim posits that FGFR1 expression is a somatic variant associated with poor prognosis (DOES_NOT_SUPPORT direction for the claim's implied benefit, but the evidence shows it is a poor prognosticator) in Luminal Breast Carcinoma A. The evidence from pmid-26673008:f01 explicitly states that FGFR1 positive luminal A cancers are an independently poor prognosticator for disease-free survival. This supports the significance of 'poor outcome' and the disease 'Luminal Breast Carcinoma A' (or luminal cancers generally, which includes Luminal A). However, the claim specifies 'variantOrigin: SOMATIC'. The evidence describes FGFR1 expression evaluated by immunohistochemistry, which is a protein expression marker, not necessarily a somatic genetic variant. While FGFR1 amplification is a somatic event, the evidence provided focuses on 'FGFR1 expression' as a prognostic indicator. The term 'variantOrigin' typically refers to genetic variants (mutations, amplifications). Expression is a molecular profile characteristic. More critically, the claim's 'evidenceDirection' is 'DOES_NOT_SUPPORT'. In the context of prognostic claims, 'DOES_NOT_SUPPORT' usually means the factor does not support a favorable outcome or is not a good prognostic factor. The evidence shows it IS a poor prognosticator, which aligns with 'poor outcome'. However, the claim structure seems to imply a negative association with the 'variant' concept or perhaps the direction is meant to be interpreted as 'supports poor outcome'. Let's re-read carefully. The claim is: disease=Luminal Breast Carcinoma A, evidenceDirection=DOES_NOT_SUPPORT, evidenceType=PROGNOSTIC, molecularProfile=FGFR1 Expression, significance=poor outcome, variantOrigin=SOMATIC. If 'DOES_NOT_SUPPORT' refers to the direction of the association with the outcome, it's ambiguous. Usually, 'SUPPORTS' means the factor is associated with the outcome. If the outcome is 'poor outcome', then 'SUPPORTS' would mean it causes/supports poor outcome. 'DOES_NOT_SUPPORT' would mean it does not cause/support poor outcome (i.e., good prognosis or no effect). The evidence says it IS a poor prognosticator. Therefore, the evidence SUPPORTS the association with poor outcome. The claim says 'DOES_NOT_SUPPORT'. This is a contradiction. The evidence supports the significance 'poor outcome' but contradicts the direction 'DOES_NOT_SUPPORT' if that direction implies lack of association with poor outcome. Alternatively, if 'DOES_NOT_SUPPORT' is a label for the claim's stance on the variant's utility, it's unclear. Let's look at the 'variantOrigin'. The evidence is about 'expression', not a 'somatic variant'. Expression is a phenotype. Somatic refers to genetic alteration. This is a mismatch in 'variantOrigin'. The evidence does not support that FGFR1 expression is a somatic variant; it supports it is an expression marker. Thus, 'variantOrigin' should likely be 'GERMLINE' (if considering inherent expression) or 'N/A' or simply 'EXPRESSION'. But 'SOMATIC' is incorrect for 'Expression' unless it's driven by a somatic amplification, which isn't stated. The most direct conflict is the 'evidenceDirection'. If the claim asserts that the evidence does NOT support the poor outcome, but the evidence DOES support the poor outcome, then the claim is wrong. Or, if the claim is a hypothesis that 'FGFR1 expression does not support poor outcome', the evidence refutes it. In the context of 'REVISIONS', we need to correct the claim. The evidence supports that FGFR1 expression is associated with poor outcome in Luminal A breast cancer. The claim's 'evidenceDirection' is 'DOES_NOT_SUPPORT'. This likely needs to be changed to 'SUPPORTS' (if SUPPORTS means associated with the significance) or the significance needs to be flipped. Given 'significance' is 'poor outcome', and evidence shows poor outcome, the direction should be 'SUPPORTS'. Also, 'variantOrigin' is 'SOMATIC' but the evidence is about 'Expression'. Expression is not a variant origin. It is a molecular profile. The 'variantOrigin' field is likely inappropriate or should be 'N/A' or 'GERMLINE' (if constitutive). However, FGFR1 expression can be somatically amplified. But the evidence doesn't specify amplification, just expression. The safest revision is to correct the 'evidenceDirection' to 'SUPPORTS' because the evidence clearly links FGFR1 expression to poor outcome. The 'variantOrigin' might also need correction to 'N/A' or 'GERMLINE' if we strictly distinguish expression from somatic variants, but often in these schemas, 'SOMATIC' might be used loosely for tumor-specific events. However, 'Expression' is the molecular profile. Let's stick to the clearest error: the direction. The evidence supports the poor outcome. The claim says 'DOES_NOT_SUPPORT'. This is a direct contradiction. Therefore, the claim requires revision to 'SUPPORTS'.",
+    "citations": [
+      {
+        "document_id": "pmid-26673008",
+        "start": 0,
+        "end": 300,
+        "quote": "We evaluated FGFR1 expression in a large cohort of breast cancer by immunohistochemistry . . . Multivariate Cox regression analysis demonstrated FGFR1 positive luminal A cancers to be an independently poor prognosticator for disease free survival in luminal cancers (hazard ratio = 3.341, p = 0.008)."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2081,
+    "output_tokens": 1252,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-26673008"
+        ],
+        "fingerprint": "33e515c8132db07f28ca1885a718ded5f872a91e01ea23a0342b21d9d2705b30",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Expression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Expression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Expression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-26673008"
+        ],
+        "query": "{\n  \"disease\": \"Luminal Breast Carcinoma A\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PROGNOSTIC\",\n  \"molecularProfile\": \"FGFR1 Expression\",\n  \"significance\": \"poor outcome\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-26673008"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-26673008": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Expression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-26673008": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-26673008"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-26673008": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Expression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-26673008": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "349fb57fa561d916481736259dc8ebf3a47d4acefe47e548934aca52ef30cdd1",
+        "source_ids": [
+          "pmid-26673008"
+        ],
+        "token_reservation": 12291,
+        "evidence_ids": [
+          "pmid-26673008:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-26673008": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 300,
+              "chars_sent": 300,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-26673008:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 300,
+          "chars_sent": 300,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2081,
+        "output_tokens": 1252,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 12.711,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "evidenceDirection"
+        ],
+        "minimal_revision": "Change evidenceDirection from 'DOES_NOT_SUPPORT' to 'SUPPORTS'.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that FGFR1 expression is a somatic variant associated with poor prognosis (DOES_NOT_SUPPORT direction for the claim's implied benefit, but the evidence shows it is a poor prognosticator) in Luminal Breast Carcinoma A. The evidence from pmid-26673008:f01 explicitly states that FGFR1 positive luminal A cancers are an independently poor prognosticator for disease-free survival. This supports the significance of 'poor outcome' and the disease 'Luminal Breast Carcinoma A' (or luminal cancers generally, which includes Luminal A). However, the claim specifies 'variantOrigin: SOMATIC'. The evidence describes FGFR1 expression evaluated by immunohistochemistry, which is a protein expression marker, not necessarily a somatic genetic variant. While FGFR1 amplification is a somatic event, the evidence provided focuses on 'FGFR1 expression' as a prognostic indicator. The term 'variantOrigin' typically refers to genetic variants (mutations, amplifications). Expression is a molecular profile characteristic. More critically, the claim's 'evidenceDirection' is 'DOES_NOT_SUPPORT'. In the context of prognostic claims, 'DOES_NOT_SUPPORT' usually means the factor does not support a favorable outcome or is not a good prognostic factor. The evidence shows it IS a poor prognosticator, which aligns with 'poor outcome'. However, the claim structure seems to imply a negative association with the 'variant' concept or perhaps the direction is meant to be interpreted as 'supports poor outcome'. Let's re-read carefully. The claim is: disease=Luminal Breast Carcinoma A, evidenceDirection=DOES_NOT_SUPPORT, evidenceType=PROGNOSTIC, molecularProfile=FGFR1 Expression, significance=poor outcome, variantOrigin=SOMATIC. If 'DOES_NOT_SUPPORT' refers to the direction of the association with the outcome, it's ambiguous. Usually, 'SUPPORTS' means the factor is associated with the outcome. If the outcome is 'poor outcome', then 'SUPPORTS' would mean it causes/supports poor outcome. 'DOES_NOT_SUPPORT' would mean it does not cause/support poor outcome (i.e., good prognosis or no effect). The evidence says it IS a poor prognosticator. Therefore, the evidence SUPPORTS the association with poor outcome. The claim says 'DOES_NOT_SUPPORT'. This is a contradiction. The evidence supports the significance 'poor outcome' but contradicts the direction 'DOES_NOT_SUPPORT' if that direction implies lack of association with poor outcome. Alternatively, if 'DOES_NOT_SUPPORT' is a label for the claim's stance on the variant's utility, it's unclear. Let's look at the 'variantOrigin'. The evidence is about 'expression', not a 'somatic variant'. Expression is a phenotype. Somatic refers to genetic alteration. This is a mismatch in 'variantOrigin'. The evidence does not support that FGFR1 expression is a somatic variant; it supports it is an expression marker. Thus, 'variantOrigin' should likely be 'GERMLINE' (if considering inherent expression) or 'N/A' or simply 'EXPRESSION'. But 'SOMATIC' is incorrect for 'Expression' unless it's driven by a somatic amplification, which isn't stated. The most direct conflict is the 'evidenceDirection'. If the claim asserts that the evidence does NOT support the poor outcome, but the evidence DOES support the poor outcome, then the claim is wrong. Or, if the claim is a hypothesis that 'FGFR1 expression does not support poor outcome', the evidence refutes it. In the context of 'REVISIONS', we need to correct the claim. The evidence supports that FGFR1 expression is associated with poor outcome in Luminal A breast cancer. The claim's 'evidenceDirection' is 'DOES_NOT_SUPPORT'. This likely needs to be changed to 'SUPPORTS' (if SUPPORTS means associated with the significance) or the significance needs to be flipped. Given 'significance' is 'poor outcome', and evidence shows poor outcome, the direction should be 'SUPPORTS'. Also, 'variantOrigin' is 'SOMATIC' but the evidence is about 'Expression'. Expression is not a variant origin. It is a molecular profile. The 'variantOrigin' field is likely inappropriate or should be 'N/A' or 'GERMLINE' (if constitutive). However, FGFR1 expression can be somatically amplified. But the evidence doesn't specify amplification, just expression. The safest revision is to correct the 'evidenceDirection' to 'SUPPORTS' because the evidence clearly links FGFR1 expression to poor outcome. The 'variantOrigin' might also need correction to 'N/A' or 'GERMLINE' if we strictly distinguish expression from somatic variants, but often in these schemas, 'SOMATIC' might be used loosely for tumor-specific events. However, 'Expression' is the molecular profile. Let's stick to the clearest error: the direction. The evidence supports the poor outcome. The claim says 'DOES_NOT_SUPPORT'. This is a direct contradiction. Therefore, the claim requires revision to 'SUPPORTS'.",
+          "citations": [
+            {
+              "document_id": "pmid-26673008",
+              "start": 0,
+              "end": 300,
+              "quote": "We evaluated FGFR1 expression in a large cohort of breast cancer by immunohistochemistry . . . Multivariate Cox regression analysis demonstrated FGFR1 positive luminal A cancers to be an independently poor prognosticator for disease free survival in luminal cancers (hazard ratio = 3.341, p = 0.008)."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that FGFR1 expression is a somatic variant associated with poor prognosis (DOES_NOT_SUPPORT direction for the claim's implied benefit, but the evidence shows it is a poor prognosticator) in Luminal Breast Carcinoma A. The evidence from pmid-26673008:f01 explicitly states that FGFR1 positive luminal A cancers are an independently poor prognosticator for disease-free survival. This supports the significance of 'poor outcome' and the disease 'Luminal Breast Carcinoma A' (or luminal cancers generally, which includes Luminal A). However, the claim specifies 'variantOrigin: SOMATIC'. The evidence describes FGFR1 expression evaluated by immunohistochemistry, which is a protein expression marker, not necessarily a somatic genetic variant. While FGFR1 amplification is a somatic event, the evidence provided focuses on 'FGFR1 expression' as a prognostic indicator. The term 'variantOrigin' typically refers to genetic variants (mutations, amplifications). Expression is a molecular profile characteristic. More critically, the claim's 'evidenceDirection' is 'DOES_NOT_SUPPORT'. In the context of prognostic claims, 'DOES_NOT_SUPPORT' usually means the factor does not support a favorable outcome or is not a good prognostic factor. The evidence shows it IS a poor prognosticator, which aligns with 'poor outcome'. However, the claim structure seems to imply a negative association with the 'variant' concept or perhaps the direction is meant to be interpreted as 'supports poor outcome'. Let's re-read carefully. The claim is: disease=Luminal Breast Carcinoma A, evidenceDirection=DOES_NOT_SUPPORT, evidenceType=PROGNOSTIC, molecularProfile=FGFR1 Expression, significance=poor outcome, variantOrigin=SOMATIC. If 'DOES_NOT_SUPPORT' refers to the direction of the association with the outcome, it's ambiguous. Usually, 'SUPPORTS' means the factor is associated with the outcome. If the outcome is 'poor outcome', then 'SUPPORTS' would mean it causes/supports poor outcome. 'DOES_NOT_SUPPORT' would mean it does not cause/support poor outcome (i.e., good prognosis or no effect). The evidence says it IS a poor prognosticator. Therefore, the evidence SUPPORTS the association with poor outcome. The claim says 'DOES_NOT_SUPPORT'. This is a contradiction. The evidence supports the significance 'poor outcome' but contradicts the direction 'DOES_NOT_SUPPORT' if that direction implies lack of association with poor outcome. Alternatively, if 'DOES_NOT_SUPPORT' is a label for the claim's stance on the variant's utility, it's unclear. Let's look at the 'variantOrigin'. The evidence is about 'expression', not a 'somatic variant'. Expression is a phenotype. Somatic refers to genetic alteration. This is a mismatch in 'variantOrigin'. The evidence does not support that FGFR1 expression is a somatic variant; it supports it is an expression marker. Thus, 'variantOrigin' should likely be 'GERMLINE' (if considering inherent expression) or 'N/A' or simply 'EXPRESSION'. But 'SOMATIC' is incorrect for 'Expression' unless it's driven by a somatic amplification, which isn't stated. The most direct conflict is the 'evidenceDirection'. If the claim asserts that the evidence does NOT support the poor outcome, but the evidence DOES support the poor outcome, then the claim is wrong. Or, if the claim is a hypothesis that 'FGFR1 expression does not support poor outcome', the evidence refutes it. In the context of 'REVISIONS', we need to correct the claim. The evidence supports that FGFR1 expression is associated with poor outcome in Luminal A breast cancer. The claim's 'evidenceDirection' is 'DOES_NOT_SUPPORT'. This likely needs to be changed to 'SUPPORTS' (if SUPPORTS means associated with the significance) or the significance needs to be flipped. Given 'significance' is 'poor outcome', and evidence shows poor outcome, the direction should be 'SUPPORTS'. Also, 'variantOrigin' is 'SOMATIC' but the evidence is about 'Expression'. Expression is not a variant origin. It is a molecular profile. The 'variantOrigin' field is likely inappropriate or should be 'N/A' or 'GERMLINE' (if constitutive). However, FGFR1 expression can be somatically amplified. But the evidence doesn't specify amplification, just expression. The safest revision is to correct the 'evidenceDirection' to 'SUPPORTS' because the evidence clearly links FGFR1 expression to poor outcome. The 'variantOrigin' might also need correction to 'N/A' or 'GERMLINE' if we strictly distinguish expression from somatic variants, but often in these schemas, 'SOMATIC' might be used loosely for tumor-specific events. However, 'Expression' is the molecular profile. Let's stick to the clearest error: the direction. The evidence supports the poor outcome. The claim says 'DOES_NOT_SUPPORT'. This is a direct contradiction. Therefore, the claim requires revision to 'SUPPORTS'.",
+          "citations": [
+            {
+              "document_id": "pmid-26673008",
+              "start": 0,
+              "end": 300,
+              "quote": "We evaluated FGFR1 expression in a large cohort of breast cancer by immunohistochemistry . . . Multivariate Cox regression analysis demonstrated FGFR1 positive luminal A cancers to be an independently poor prognosticator for disease free survival in luminal cancers (hazard ratio = 3.341, p = 0.008)."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-26673008"
+  ],
+  "duration_seconds": 12.73342,
+  "research_only": true
+}

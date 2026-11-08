@@ -1,0 +1,404 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-e5cc04da-132b-461e-a60e-549d0dbd9a74",
+  "patient_id": "article-25493630",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "ee7bf4347cc458a67ee59a0fcdff5a10dc9188e10e7a446c5f5795e6c502c972",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim posits that Tazemetostat is a predictive biomarker for resistance in methotrexate-associated lymphoproliferation driven by EZH2 Y646F. The available evidence (pmid-25493630:f01) discusses the EZH2 inhibitor EPZ-6438 (tazemetostat's predecessor/analogue) in the context of EZH2 mutant germinal center NHL, specifically mentioning synergy with chemotherapy in EZH2 Y646F mutant cell lines. However, the evidence does not support the claim's specific disease context (methotrexate-associated lymphoproliferation) nor does it support the significance of 'resistance'; rather, it suggests synergy (sensitivity) or benefit. Furthermore, the drug mentioned is EPZ-6438, not explicitly Tazemetostat, though they are related. The primary mismatch is the disease context and the direction of effect (synergy vs resistance). The evidence is relevant to EZH2 Y646F and EZH2 inhibition in lymphoma but does not support the specific claim as written. A minimal revision would involve correcting the disease to germinal center NHL and the significance to synergy/sensitivity, or correcting the drug to EPZ-6438 if strictly adhering to the text. Given the options, the claim requires revision because the evidence does not support 'resistance' in 'methotrexate-associated lymphoproliferation'.",
+    "citations": [
+      {
+        "document_id": "pmid-25493630",
+        "start": 0,
+        "end": 423,
+        "quote": "We report here that combining EPZ-6438 with CHOP in preclinical cell culture and mouse models results in dramatic synergy for cell killing in EZH2 mutant germinal center NHL cells . . . EPZ-6438 shows combination benefit with lymphoma therapies in vitro . . . Combination index (CI) graphs, generated in Calcusyn, of EPZ-6438 with Mafosfamide, Doxorubicin, or Vincristine in the EZH2 Y646F mutant cell lines WSU-DLCL2 (A-C)"
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2246,
+    "output_tokens": 517,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25493630"
+        ],
+        "fingerprint": "ee7bf4347cc458a67ee59a0fcdff5a10dc9188e10e7a446c5f5795e6c502c972",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Y646F",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Y646F",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Y646F",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25493630"
+        ],
+        "query": "{\n  \"disease\": \"methotrexate-associated lymphoproliferation\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"EZH2 Y646F\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Tazemetostat\"\n  ],\n  \"variantOrigin\": \"N/A\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25493630"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25493630": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Y646F",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25493630",
+              "start": 384,
+              "end": 389,
+              "raw": "Y646F",
+              "canonical": "Y646F"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25493630": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25493630"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25493630": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Y646F",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25493630",
+              "start": 384,
+              "end": 389,
+              "raw": "Y646F",
+              "canonical": "Y646F"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25493630": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "752c9b0ebee7871f91a0597e391f5963ef3e5e7a4984d2091ecfc2712263305d",
+        "source_ids": [
+          "pmid-25493630"
+        ],
+        "token_reservation": 12645,
+        "evidence_ids": [
+          "pmid-25493630:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-25493630": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 423,
+              "chars_sent": 423,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-25493630:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 423,
+          "chars_sent": 423,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2246,
+        "output_tokens": 517,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 9.665,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "disease",
+          "significance",
+          "therapies"
+        ],
+        "minimal_revision": "Change disease to 'germinal center non-Hodgkin lymphoma', significance to 'synergy' or 'sensitivity', and therapies to 'EPZ-6438' (or 'EZH2 inhibitors').",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that Tazemetostat is a predictive biomarker for resistance in methotrexate-associated lymphoproliferation driven by EZH2 Y646F. The available evidence (pmid-25493630:f01) discusses the EZH2 inhibitor EPZ-6438 (tazemetostat's predecessor/analogue) in the context of EZH2 mutant germinal center NHL, specifically mentioning synergy with chemotherapy in EZH2 Y646F mutant cell lines. However, the evidence does not support the claim's specific disease context (methotrexate-associated lymphoproliferation) nor does it support the significance of 'resistance'; rather, it suggests synergy (sensitivity) or benefit. Furthermore, the drug mentioned is EPZ-6438, not explicitly Tazemetostat, though they are related. The primary mismatch is the disease context and the direction of effect (synergy vs resistance). The evidence is relevant to EZH2 Y646F and EZH2 inhibition in lymphoma but does not support the specific claim as written. A minimal revision would involve correcting the disease to germinal center NHL and the significance to synergy/sensitivity, or correcting the drug to EPZ-6438 if strictly adhering to the text. Given the options, the claim requires revision because the evidence does not support 'resistance' in 'methotrexate-associated lymphoproliferation'.",
+          "citations": [
+            {
+              "document_id": "pmid-25493630",
+              "start": 0,
+              "end": 423,
+              "quote": "We report here that combining EPZ-6438 with CHOP in preclinical cell culture and mouse models results in dramatic synergy for cell killing in EZH2 mutant germinal center NHL cells . . . EPZ-6438 shows combination benefit with lymphoma therapies in vitro . . . Combination index (CI) graphs, generated in Calcusyn, of EPZ-6438 with Mafosfamide, Doxorubicin, or Vincristine in the EZH2 Y646F mutant cell lines WSU-DLCL2 (A-C)"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that Tazemetostat is a predictive biomarker for resistance in methotrexate-associated lymphoproliferation driven by EZH2 Y646F. The available evidence (pmid-25493630:f01) discusses the EZH2 inhibitor EPZ-6438 (tazemetostat's predecessor/analogue) in the context of EZH2 mutant germinal center NHL, specifically mentioning synergy with chemotherapy in EZH2 Y646F mutant cell lines. However, the evidence does not support the claim's specific disease context (methotrexate-associated lymphoproliferation) nor does it support the significance of 'resistance'; rather, it suggests synergy (sensitivity) or benefit. Furthermore, the drug mentioned is EPZ-6438, not explicitly Tazemetostat, though they are related. The primary mismatch is the disease context and the direction of effect (synergy vs resistance). The evidence is relevant to EZH2 Y646F and EZH2 inhibition in lymphoma but does not support the specific claim as written. A minimal revision would involve correcting the disease to germinal center NHL and the significance to synergy/sensitivity, or correcting the drug to EPZ-6438 if strictly adhering to the text. Given the options, the claim requires revision because the evidence does not support 'resistance' in 'methotrexate-associated lymphoproliferation'.",
+          "citations": [
+            {
+              "document_id": "pmid-25493630",
+              "start": 0,
+              "end": 423,
+              "quote": "We report here that combining EPZ-6438 with CHOP in preclinical cell culture and mouse models results in dramatic synergy for cell killing in EZH2 mutant germinal center NHL cells . . . EPZ-6438 shows combination benefit with lymphoma therapies in vitro . . . Combination index (CI) graphs, generated in Calcusyn, of EPZ-6438 with Mafosfamide, Doxorubicin, or Vincristine in the EZH2 Y646F mutant cell lines WSU-DLCL2 (A-C)"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25493630"
+  ],
+  "duration_seconds": 9.681523,
+  "research_only": true
+}

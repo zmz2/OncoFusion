@@ -1,0 +1,640 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-57e4c726-1615-4e73-a953-93a3bbb7575a",
+  "patient_id": "article-27304188",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "495d355216b7c07076019c2e808a5fb19564d2e645f7bb4ad5c1341da7bbdee3",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The supplied evidence (pmid-27304188) exclusively discusses acquired resistance mechanisms in EGFR-mutated lung adenocarcinoma following tyrosine kinase inhibitor (TKI) therapy. It details mutations such as EGFR p.T790M, PIK3CA, and KRAS p.G12C. The evidence contains no mention of von Hippel-Lindau disease, the VHL gene, the VHL R161* variant, or any diagnostic context for VHL-related phenotypes. Therefore, the evidence is irrelevant to the claim.",
+    "citations": [
+      {
+        "document_id": "pmid-27304188",
+        "start": 0,
+        "end": 594,
+        "quote": "\"Heterogeneity of resistance mutations detectable by next-generation sequencing in TKI-treated lung adenocarcinoma\\nEGFR-mutated lung adenocarcinomas routinely develop resistance to tyrosine kinase inhibitors (TKI). To better characterize the relative frequencies of the resistance mechanisms, we analyzed 48 EGFR-mutated TKI-resistant specimens from 41 patients. Next-generation sequencing of post-treatment specimens detected EGFR p.T790M in 31 (79%) of 39 patients, PIK3CA mutations in 10 (26%), EGFR p.S768_V769delinsIL in one, and KRAS p.G12C in one. Five PIK3CA mutations were outside of "
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 5552,
+    "output_tokens": 264,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-27304188"
+        ],
+        "fingerprint": "495d355216b7c07076019c2e808a5fb19564d2e645f7bb4ad5c1341da7bbdee3",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R161* (c.481C>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R161* (c.481C>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R161* (c.481C>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-27304188"
+        ],
+        "query": "{\n  \"disease\": \"von Hippel-Lindau disease\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"DIAGNOSTIC\",\n  \"molecularProfile\": \"VHL R161* (c.481C>T)\",\n  \"phenotypes\": [\n    \"Retinal capillary hemangioma\",\n    \"Hemangioblastoma\",\n    \"Pancreatic cysts\",\n    \"Multiple renal cysts\",\n    \"Renal cyst\",\n    \"Cerebellar hemangioblastoma\"\n  ],\n  \"significance\": \"predisposition\",\n  \"variantOrigin\": \"RARE_GERMLINE\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-27304188"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27304188": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R161* (c.481C>T)",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27304188",
+              "start": 433,
+              "end": 440,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 541,
+              "end": 547,
+              "raw": "p.G12C",
+              "canonical": "G12C"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 807,
+              "end": 814,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 836,
+              "end": 843,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 897,
+              "end": 904,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 979,
+              "end": 986,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 1114,
+              "end": 1119,
+              "raw": "E709K",
+              "canonical": "E709K"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 1452,
+              "end": 1459,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 1524,
+              "end": 1531,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 1690,
+              "end": 1697,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 2533,
+              "end": 2540,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 2708,
+              "end": 2715,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 2746,
+              "end": 2754,
+              "raw": "p.G1049R",
+              "canonical": "G1049R"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 2863,
+              "end": 2870,
+              "raw": "p.E545K",
+              "canonical": "E545K"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 3025,
+              "end": 3030,
+              "raw": "T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 3328,
+              "end": 3335,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 4292,
+              "end": 4299,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27304188": "resistance"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-27304188"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27304188": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R161* (c.481C>T)",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27304188",
+              "start": 433,
+              "end": 440,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 541,
+              "end": 547,
+              "raw": "p.G12C",
+              "canonical": "G12C"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 807,
+              "end": 814,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 836,
+              "end": 843,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 897,
+              "end": 904,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 979,
+              "end": 986,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 1114,
+              "end": 1119,
+              "raw": "E709K",
+              "canonical": "E709K"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 1452,
+              "end": 1459,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 1524,
+              "end": 1531,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 1690,
+              "end": 1697,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 2533,
+              "end": 2540,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 2708,
+              "end": 2715,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 2746,
+              "end": 2754,
+              "raw": "p.G1049R",
+              "canonical": "G1049R"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 2863,
+              "end": 2870,
+              "raw": "p.E545K",
+              "canonical": "E545K"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 3025,
+              "end": 3030,
+              "raw": "T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 3328,
+              "end": 3335,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-27304188",
+              "start": 4292,
+              "end": 4299,
+              "raw": "p.T790M",
+              "canonical": "T790M"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27304188": "resistance"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "05dcf58b363407530f70fc34c88801ea7575a9d5fd73d91134c30b0ac64fcffc",
+        "source_ids": [
+          "pmid-27304188"
+        ],
+        "token_reservation": 21039,
+        "evidence_ids": [
+          "pmid-27304188:f01",
+          "pmid-27304188:f02",
+          "pmid-27304188:f03",
+          "pmid-27304188:f04",
+          "pmid-27304188:f05",
+          "pmid-27304188:f06",
+          "pmid-27304188:f07",
+          "pmid-27304188:f08",
+          "pmid-27304188:f09"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27304188": {
+              "candidates": 9,
+              "sent": 9,
+              "chars_total": 5102,
+              "chars_sent": 5102,
+              "key_records": 2,
+              "required_candidates": 9,
+              "required_sent": 9,
+              "over_fragment_cap": 1,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27304188:f01",
+                "pmid-27304188:f02",
+                "pmid-27304188:f03",
+                "pmid-27304188:f04",
+                "pmid-27304188:f05",
+                "pmid-27304188:f06",
+                "pmid-27304188:f07",
+                "pmid-27304188:f08",
+                "pmid-27304188:f09"
+              ]
+            }
+          },
+          "candidates": 9,
+          "sent": 9,
+          "chars_total": 5102,
+          "chars_sent": 5102,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 9,
+              "sent": 9,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 5552,
+        "output_tokens": 264,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 9.835,
+        "evidence_fragments": 9
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "irrelevant",
+        "claim_conformance": "no_supported_revision",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "NEI"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The supplied evidence (pmid-27304188) exclusively discusses acquired resistance mechanisms in EGFR-mutated lung adenocarcinoma following tyrosine kinase inhibitor (TKI) therapy. It details mutations such as EGFR p.T790M, PIK3CA, and KRAS p.G12C. The evidence contains no mention of von Hippel-Lindau disease, the VHL gene, the VHL R161* variant, or any diagnostic context for VHL-related phenotypes. Therefore, the evidence is irrelevant to the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-27304188",
+              "start": 0,
+              "end": 594,
+              "quote": "\"Heterogeneity of resistance mutations detectable by next-generation sequencing in TKI-treated lung adenocarcinoma\\nEGFR-mutated lung adenocarcinomas routinely develop resistance to tyrosine kinase inhibitors (TKI). To better characterize the relative frequencies of the resistance mechanisms, we analyzed 48 EGFR-mutated TKI-resistant specimens from 41 patients. Next-generation sequencing of post-treatment specimens detected EGFR p.T790M in 31 (79%) of 39 patients, PIK3CA mutations in 10 (26%), EGFR p.S768_V769delinsIL in one, and KRAS p.G12C in one. Five PIK3CA mutations were outside of "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The supplied evidence (pmid-27304188) exclusively discusses acquired resistance mechanisms in EGFR-mutated lung adenocarcinoma following tyrosine kinase inhibitor (TKI) therapy. It details mutations such as EGFR p.T790M, PIK3CA, and KRAS p.G12C. The evidence contains no mention of von Hippel-Lindau disease, the VHL gene, the VHL R161* variant, or any diagnostic context for VHL-related phenotypes. Therefore, the evidence is irrelevant to the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-27304188",
+              "start": 0,
+              "end": 594,
+              "quote": "\"Heterogeneity of resistance mutations detectable by next-generation sequencing in TKI-treated lung adenocarcinoma\\nEGFR-mutated lung adenocarcinomas routinely develop resistance to tyrosine kinase inhibitors (TKI). To better characterize the relative frequencies of the resistance mechanisms, we analyzed 48 EGFR-mutated TKI-resistant specimens from 41 patients. Next-generation sequencing of post-treatment specimens detected EGFR p.T790M in 31 (79%) of 39 patients, PIK3CA mutations in 10 (26%), EGFR p.S768_V769delinsIL in one, and KRAS p.G12C in one. Five PIK3CA mutations were outside of "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-27304188"
+  ],
+  "duration_seconds": 9.85623,
+  "research_only": true
+}

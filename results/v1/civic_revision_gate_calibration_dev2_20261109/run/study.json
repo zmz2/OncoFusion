@@ -1,0 +1,242 @@
+{
+  "plan": {
+    "schema_version": "1.0",
+    "name": "civic_revision_gate_calibration_dev2_20261109",
+    "task": "verification",
+    "split": "dev",
+    "seeds": [
+      0
+    ],
+    "group_limit": null,
+    "case_ids": [
+      "civic-e67920d6-4f2b-4044-a092-72c23a27c45d",
+      "civic-2209567c-a7c7-4ff1-a8ff-539d8b8888b2"
+    ],
+    "treatments": [
+      {
+        "name": "current_multi",
+        "preset": "full",
+        "overrides": {
+          "mode": "multi",
+          "ablations": {
+            "variant_normalization": true,
+            "disease_matching": true,
+            "drug_polarity": true,
+            "retrieval_reranking": true,
+            "timeline_structure": true,
+            "external_verification": true,
+            "source_deduplication": true,
+            "structured_board": true,
+            "targeted_requery": false
+          },
+          "delegated_roles": [],
+          "routing": "fixed",
+          "workflow_backend": "langgraph",
+          "evidence_first": true,
+          "specialist_contracts": true,
+          "latest_role_board": true,
+          "max_calls": 12,
+          "max_tool_calls": 12,
+          "max_total_tokens": 260000,
+          "max_output_tokens": 5000,
+          "citation_mode": "fragment",
+          "fragment_chars": 600,
+          "max_fragments_per_document": 8,
+          "fragment_budget": 12000,
+          "findings_limit": 3,
+          "interaction_protocol": "claims-v1",
+          "schema_retries": 2,
+          "top_k": 6,
+          "candidate_k": 20,
+          "seed": 0,
+          "temperature": 0.0,
+          "claim_revision_gate": false
+        },
+        "perturbation": "none"
+      },
+      {
+        "name": "revision_gate_multi",
+        "preset": "full",
+        "overrides": {
+          "mode": "multi",
+          "ablations": {
+            "variant_normalization": true,
+            "disease_matching": true,
+            "drug_polarity": true,
+            "retrieval_reranking": true,
+            "timeline_structure": true,
+            "external_verification": true,
+            "source_deduplication": true,
+            "structured_board": true,
+            "targeted_requery": false
+          },
+          "delegated_roles": [],
+          "routing": "fixed",
+          "workflow_backend": "langgraph",
+          "evidence_first": true,
+          "specialist_contracts": true,
+          "latest_role_board": true,
+          "max_calls": 12,
+          "max_tool_calls": 12,
+          "max_total_tokens": 260000,
+          "max_output_tokens": 5000,
+          "citation_mode": "fragment",
+          "fragment_chars": 600,
+          "max_fragments_per_document": 8,
+          "fragment_budget": 12000,
+          "findings_limit": 3,
+          "interaction_protocol": "claims-v1",
+          "schema_retries": 2,
+          "top_k": 6,
+          "candidate_k": 20,
+          "seed": 0,
+          "temperature": 0.0,
+          "claim_revision_gate": true
+        },
+        "perturbation": "none"
+      }
+    ],
+    "reference": "current_multi",
+    "bootstrap_repeats": 2000
+  },
+  "table": [
+    {
+      "treatment": "current_multi",
+      "preset": "full",
+      "perturbation": "none",
+      "accuracy_mean": 0.0,
+      "accuracy_std": 0,
+      "macro_f1_mean": 0.0,
+      "failed_or_incomplete": 0,
+      "observed_calls": 11,
+      "observed_input_tokens": 34571,
+      "observed_output_tokens": 3892,
+      "known_cost_usd": 0.0,
+      "cost_complete": false,
+      "usage_incomplete_runs": 0,
+      "delta_vs_reference": {
+        "mean_delta": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "groups": 2,
+        "repeats": 2000,
+        "seed": 0
+      }
+    },
+    {
+      "treatment": "revision_gate_multi",
+      "preset": "full",
+      "perturbation": "none",
+      "accuracy_mean": 0.5,
+      "accuracy_std": 0,
+      "macro_f1_mean": 0.2222222222222222,
+      "failed_or_incomplete": 0,
+      "observed_calls": 11,
+      "observed_input_tokens": 38843,
+      "observed_output_tokens": 5225,
+      "known_cost_usd": 0.0,
+      "cost_complete": false,
+      "usage_incomplete_runs": 0,
+      "delta_vs_reference": {
+        "mean_delta": 0.5,
+        "ci95": [
+          0,
+          1
+        ],
+        "groups": 2,
+        "repeats": 2000,
+        "seed": 0
+      }
+    }
+  ],
+  "group_table": [
+    {
+      "group_scope": "group_profile",
+      "groups": [
+        "article-25727400",
+        "article-30980071"
+      ],
+      "treatment": "current_multi",
+      "count": 2,
+      "metrics": {
+        "accuracy": 0.0,
+        "macro_f1": 0.0,
+        "per_class": {
+          "NEI": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          },
+          "REVISIONS": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 2
+          }
+        }
+      },
+      "failed_or_incomplete": 0,
+      "observed_calls": 11,
+      "observed_input_tokens": 34571,
+      "observed_output_tokens": 3892,
+      "interpretation": "Grouped metrics retain every failure in the denominator."
+    },
+    {
+      "group_scope": "group_profile",
+      "groups": [
+        "article-25727400",
+        "article-30980071"
+      ],
+      "treatment": "revision_gate_multi",
+      "count": 2,
+      "metrics": {
+        "accuracy": 0.5,
+        "macro_f1": 0.3333333333333333,
+        "per_class": {
+          "NEI": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          },
+          "REVISIONS": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6666666666666666,
+            "support": 2
+          }
+        }
+      },
+      "failed_or_incomplete": 0,
+      "observed_calls": 11,
+      "observed_input_tokens": 38843,
+      "observed_output_tokens": 5225,
+      "interpretation": "Grouped metrics retain every failure in the denominator."
+    }
+  ],
+  "inference": "CI clusters by patient/article; repeated seeds averaged within case before bootstrap. Exploratory comparisons are not multiplicity-adjusted.",
+  "identity": "a10ad987c54c1d655884b532950581975a63f16b9b7998bdda40da2cf1854baf",
+  "simulated": false,
+  "case_count": 2,
+  "group_count": 2,
+  "role_coverage": {
+    "cases": 2,
+    "patient_or_article_groups": 2,
+    "heterogeneous_input_cases": 0,
+    "multi_candidate_retrieval_cases": 0,
+    "explicit_role_input_cases": {
+      "timeline": 0,
+      "genomics": 0,
+      "pathology": 2,
+      "drug": 2,
+      "literature": 2,
+      "verifier": 2,
+      "decision": 2
+    },
+    "interpretation": "Counts are structural eligibility signals, not agent-importance labels. Report task-appropriate subsets and independent retrieval results."
+  },
+  "execution_order": "case_interleaved"
+}

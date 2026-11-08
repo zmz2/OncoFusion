@@ -1,0 +1,414 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-7101598e-1bba-45ce-853e-4a17e8aa8bb6",
+  "patient_id": "article-26244699",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "29560e234dcca8a2dfa2796c8c95af522a0befd6dc62a0dc56af27223ddaf472",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The evidence fragment from pmid-26244699 explicitly states that the A391E substitution over-stabilizes FGFR3 dimers, leading to enhanced dimerization propensity and increased activity of the mutant receptor. This directly supports the claim that the FGFR3 A391E variant is a gain-of-function mutation. The text further links this structural change and increased dimerization to pathology in Crouzon syndrome with acanthosis nigricans, supporting the rare germline origin context often associated with such syndromic presentations. The evidence direction is supportive of the functional impact described.",
+    "citations": [
+      {
+        "document_id": "pmid-26244699",
+        "start": 0,
+        "end": 430,
+        "quote": "The difference in dimer stability due to the A391E substitution was measured as -1.4 kcal/mole. Thus, the A391E mutation over-stabilizes the FGFR3 dimers, suggesting that the increased activity of the mutant receptor is due to its enhanced dimerization propensity. . . . his structural change, along with the increased dimerization propensity, is likely contributing to the pathology in Crouzon syndrome with acanthosis nigricans."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2208,
+    "output_tokens": 268,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-26244699"
+        ],
+        "fingerprint": "29560e234dcca8a2dfa2796c8c95af522a0befd6dc62a0dc56af27223ddaf472",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "A391E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "A391E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "A391E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-26244699"
+        ],
+        "query": "{\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"FUNCTIONAL\",\n  \"molecularProfile\": \"FGFR3 A391E\",\n  \"significance\": \"gain of function\",\n  \"variantOrigin\": \"RARE_GERMLINE\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-26244699"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-26244699": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "A391E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-26244699",
+              "start": 45,
+              "end": 50,
+              "raw": "A391E",
+              "canonical": "A391E"
+            },
+            {
+              "document_id": "pmid-26244699",
+              "start": 106,
+              "end": 111,
+              "raw": "A391E",
+              "canonical": "A391E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-26244699": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-26244699"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-26244699": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "A391E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-26244699",
+              "start": 45,
+              "end": 50,
+              "raw": "A391E",
+              "canonical": "A391E"
+            },
+            {
+              "document_id": "pmid-26244699",
+              "start": 106,
+              "end": 111,
+              "raw": "A391E",
+              "canonical": "A391E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-26244699": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "2c3acfd8820f7ec9d26c60e600bb144fe3f21e0aa012866d6b109d7ea4965678",
+        "source_ids": [
+          "pmid-26244699"
+        ],
+        "token_reservation": 12590,
+        "evidence_ids": [
+          "pmid-26244699:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-26244699": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 430,
+              "chars_sent": 430,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-26244699:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 430,
+          "chars_sent": 430,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2208,
+        "output_tokens": 268,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.451,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "as_written",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "SUPPORTS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence fragment from pmid-26244699 explicitly states that the A391E substitution over-stabilizes FGFR3 dimers, leading to enhanced dimerization propensity and increased activity of the mutant receptor. This directly supports the claim that the FGFR3 A391E variant is a gain-of-function mutation. The text further links this structural change and increased dimerization to pathology in Crouzon syndrome with acanthosis nigricans, supporting the rare germline origin context often associated with such syndromic presentations. The evidence direction is supportive of the functional impact described.",
+          "citations": [
+            {
+              "document_id": "pmid-26244699",
+              "start": 0,
+              "end": 430,
+              "quote": "The difference in dimer stability due to the A391E substitution was measured as -1.4 kcal/mole. Thus, the A391E mutation over-stabilizes the FGFR3 dimers, suggesting that the increased activity of the mutant receptor is due to its enhanced dimerization propensity. . . . his structural change, along with the increased dimerization propensity, is likely contributing to the pathology in Crouzon syndrome with acanthosis nigricans."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence fragment from pmid-26244699 explicitly states that the A391E substitution over-stabilizes FGFR3 dimers, leading to enhanced dimerization propensity and increased activity of the mutant receptor. This directly supports the claim that the FGFR3 A391E variant is a gain-of-function mutation. The text further links this structural change and increased dimerization to pathology in Crouzon syndrome with acanthosis nigricans, supporting the rare germline origin context often associated with such syndromic presentations. The evidence direction is supportive of the functional impact described.",
+          "citations": [
+            {
+              "document_id": "pmid-26244699",
+              "start": 0,
+              "end": 430,
+              "quote": "The difference in dimer stability due to the A391E substitution was measured as -1.4 kcal/mole. Thus, the A391E mutation over-stabilizes the FGFR3 dimers, suggesting that the increased activity of the mutant receptor is due to its enhanced dimerization propensity. . . . his structural change, along with the increased dimerization propensity, is likely contributing to the pathology in Crouzon syndrome with acanthosis nigricans."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-26244699"
+  ],
+  "duration_seconds": 3.487092,
+  "research_only": true
+}

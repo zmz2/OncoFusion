@@ -1,0 +1,436 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-fcdb3315-ca8a-41f2-813f-81d1ece0d864",
+  "patient_id": "article-27009859",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "4c6433ddb36b140ed26d8f61d20135d0720e3dadad75a7a5236460c29cf2503a",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The claim specifies the molecular profile 'FGFR3 S459I' and a 'gain of function' significance. The provided evidence from pmid-27009859 exclusively discusses the ALK gene, specifically the EML4-ALK fusion and the I117S/I1171S mutation in the context of TKI resistance. There is no mention of FGFR3, the S459I variant, or any functional characterization of FGFR3 S459I. The evidence is irrelevant to the specific molecular profile and variant in the claim.",
+    "citations": [
+      {
+        "document_id": "pmid-27009859",
+        "start": 8,
+        "end": 608,
+        "quote": "IC50s of each resistant line compared to the parent line from which they were derived . . . Interestingly, cross-validation using the lung cancer-derived EML4-ALK fusion showed both similarities and key differences in the effect of mutations on particular drugs. Our study therefore characterizes novel NPM-ALK TKI resistance mutations, . . . Consistent with its original identification in EML4-ALK-driven systems, we find I1171S is potently resistance-conferring to FL5.12 cells dependent on this fusion. All six TKIs tested had significantly increased IC50s when tested vs. EML4-ALK-I117S compared "
+      },
+      {
+        "document_id": "pmid-27009859",
+        "start": 608,
+        "end": 828,
+        "quote": "to wild-type . . . Several other amino acid substitutions occur at I1171 residue, all promoting resistance to both crizotinib and alectinib regardless of whether their characterization was in the context of NSCLC or ALCL"
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2526,
+    "output_tokens": 293,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-27009859"
+        ],
+        "fingerprint": "4c6433ddb36b140ed26d8f61d20135d0720e3dadad75a7a5236460c29cf2503a",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "S459I",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "S459I",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "S459I",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-27009859"
+        ],
+        "query": "{\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"FUNCTIONAL\",\n  \"molecularProfile\": \"FGFR3 S459I\",\n  \"significance\": \"gain of function\",\n  \"variantOrigin\": \"RARE_GERMLINE\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-27009859"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27009859": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "S459I",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27009859",
+              "start": 431,
+              "end": 437,
+              "raw": "I1171S",
+              "canonical": "I1171S"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 593,
+              "end": 598,
+              "raw": "I117S",
+              "canonical": "I117S"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27009859": "resistance"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-27009859"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27009859": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "S459I",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27009859",
+              "start": 431,
+              "end": 437,
+              "raw": "I1171S",
+              "canonical": "I1171S"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 593,
+              "end": 598,
+              "raw": "I117S",
+              "canonical": "I117S"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27009859": "resistance"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "f569d0c0cc4360f91755b8a200bb0ae749478dc072c2251fc61920c8801c4129",
+        "source_ids": [
+          "pmid-27009859"
+        ],
+        "token_reservation": 13348,
+        "evidence_ids": [
+          "pmid-27009859:f01",
+          "pmid-27009859:f02",
+          "pmid-27009859:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27009859": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 828,
+              "chars_sent": 828,
+              "key_records": 2,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27009859:f01",
+                "pmid-27009859:f02",
+                "pmid-27009859:f03"
+              ]
+            }
+          },
+          "candidates": 3,
+          "sent": 3,
+          "chars_total": 828,
+          "chars_sent": 828,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2526,
+        "output_tokens": 293,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 5.853,
+        "evidence_fragments": 3
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "irrelevant",
+        "claim_conformance": "no_supported_revision",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "NEI"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The claim specifies the molecular profile 'FGFR3 S459I' and a 'gain of function' significance. The provided evidence from pmid-27009859 exclusively discusses the ALK gene, specifically the EML4-ALK fusion and the I117S/I1171S mutation in the context of TKI resistance. There is no mention of FGFR3, the S459I variant, or any functional characterization of FGFR3 S459I. The evidence is irrelevant to the specific molecular profile and variant in the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-27009859",
+              "start": 8,
+              "end": 608,
+              "quote": "IC50s of each resistant line compared to the parent line from which they were derived . . . Interestingly, cross-validation using the lung cancer-derived EML4-ALK fusion showed both similarities and key differences in the effect of mutations on particular drugs. Our study therefore characterizes novel NPM-ALK TKI resistance mutations, . . . Consistent with its original identification in EML4-ALK-driven systems, we find I1171S is potently resistance-conferring to FL5.12 cells dependent on this fusion. All six TKIs tested had significantly increased IC50s when tested vs. EML4-ALK-I117S compared "
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 608,
+              "end": 828,
+              "quote": "to wild-type . . . Several other amino acid substitutions occur at I1171 residue, all promoting resistance to both crizotinib and alectinib regardless of whether their characterization was in the context of NSCLC or ALCL"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The claim specifies the molecular profile 'FGFR3 S459I' and a 'gain of function' significance. The provided evidence from pmid-27009859 exclusively discusses the ALK gene, specifically the EML4-ALK fusion and the I117S/I1171S mutation in the context of TKI resistance. There is no mention of FGFR3, the S459I variant, or any functional characterization of FGFR3 S459I. The evidence is irrelevant to the specific molecular profile and variant in the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-27009859",
+              "start": 8,
+              "end": 608,
+              "quote": "IC50s of each resistant line compared to the parent line from which they were derived . . . Interestingly, cross-validation using the lung cancer-derived EML4-ALK fusion showed both similarities and key differences in the effect of mutations on particular drugs. Our study therefore characterizes novel NPM-ALK TKI resistance mutations, . . . Consistent with its original identification in EML4-ALK-driven systems, we find I1171S is potently resistance-conferring to FL5.12 cells dependent on this fusion. All six TKIs tested had significantly increased IC50s when tested vs. EML4-ALK-I117S compared "
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 608,
+              "end": 828,
+              "quote": "to wild-type . . . Several other amino acid substitutions occur at I1171 residue, all promoting resistance to both crizotinib and alectinib regardless of whether their characterization was in the context of NSCLC or ALCL"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-27009859"
+  ],
+  "duration_seconds": 5.873184,
+  "research_only": true
+}

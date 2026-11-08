@@ -1,0 +1,403 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-ecce754b-5c30-4ef5-bb73-9f2c6c5baabe",
+  "patient_id": "article-28516360",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "4446fad7f38ecdc3696d6d0dcfc4a6702a349159f27be1024c4271c962dcb3d0",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim posits that Gilteritinib shows resistance in AML patients with the FLT3 D835Y mutation. The available evidence (pmid-28516360:f01) describes preclinical cellular and animal models demonstrating that Gilteritinib has potent inhibitory activity against the FLT3-D835Y mutation. This evidence supports the efficacy of Gilteritinib against this mutation, which contradicts the claim's assertion of resistance. Therefore, the evidence direction and significance require revision to reflect susceptibility/efficacy rather than resistance.",
+    "citations": [
+      {
+        "document_id": "pmid-28516360",
+        "start": 0,
+        "end": 391,
+        "quote": "The studies reported here evaluated the ability of a novel FLT3/AXL inhibitor, gilteritinib, to block mutated FLT3 in cellular and animal models of AML. . . . Gilteritinib demonstrated potent inhibitory activity against the internal tandem duplication (FLT3-ITD) and FLT3-D835Y point mutations in cellular assays using MV4-11 and MOLM-13 cells as well as Ba/F3 cells expressing mutated FLT3."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2208,
+    "output_tokens": 337,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-28516360"
+        ],
+        "fingerprint": "4446fad7f38ecdc3696d6d0dcfc4a6702a349159f27be1024c4271c962dcb3d0",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-28516360"
+        ],
+        "query": "{\n  \"disease\": \"acute myeloid leukemia\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"FLT3 D835Y\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Gilteritinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-28516360"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28516360": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28516360",
+              "start": 272,
+              "end": 277,
+              "raw": "D835Y",
+              "canonical": "D835Y"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28516360": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-28516360"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28516360": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28516360",
+              "start": 272,
+              "end": 277,
+              "raw": "D835Y",
+              "canonical": "D835Y"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28516360": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "f434f6450ef799c6de5c588b7afe1525658155bc0197822cf5bf242f43147956",
+        "source_ids": [
+          "pmid-28516360"
+        ],
+        "token_reservation": 12566,
+        "evidence_ids": [
+          "pmid-28516360:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-28516360": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 391,
+              "chars_sent": 391,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-28516360:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 391,
+          "chars_sent": 391,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2208,
+        "output_tokens": 337,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 7.689,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "significance",
+          "evidenceDirection"
+        ],
+        "minimal_revision": "The evidence supports that Gilteritinib is effective (susceptible) against the FLT3 D835Y mutation in preclinical models, rather than showing resistance. The significance should be revised to 'susceptibility' or 'efficacy' and evidenceDirection to 'SUPPORTS' (for efficacy).",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that Gilteritinib shows resistance in AML patients with the FLT3 D835Y mutation. The available evidence (pmid-28516360:f01) describes preclinical cellular and animal models demonstrating that Gilteritinib has potent inhibitory activity against the FLT3-D835Y mutation. This evidence supports the efficacy of Gilteritinib against this mutation, which contradicts the claim's assertion of resistance. Therefore, the evidence direction and significance require revision to reflect susceptibility/efficacy rather than resistance.",
+          "citations": [
+            {
+              "document_id": "pmid-28516360",
+              "start": 0,
+              "end": 391,
+              "quote": "The studies reported here evaluated the ability of a novel FLT3/AXL inhibitor, gilteritinib, to block mutated FLT3 in cellular and animal models of AML. . . . Gilteritinib demonstrated potent inhibitory activity against the internal tandem duplication (FLT3-ITD) and FLT3-D835Y point mutations in cellular assays using MV4-11 and MOLM-13 cells as well as Ba/F3 cells expressing mutated FLT3."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that Gilteritinib shows resistance in AML patients with the FLT3 D835Y mutation. The available evidence (pmid-28516360:f01) describes preclinical cellular and animal models demonstrating that Gilteritinib has potent inhibitory activity against the FLT3-D835Y mutation. This evidence supports the efficacy of Gilteritinib against this mutation, which contradicts the claim's assertion of resistance. Therefore, the evidence direction and significance require revision to reflect susceptibility/efficacy rather than resistance.",
+          "citations": [
+            {
+              "document_id": "pmid-28516360",
+              "start": 0,
+              "end": 391,
+              "quote": "The studies reported here evaluated the ability of a novel FLT3/AXL inhibitor, gilteritinib, to block mutated FLT3 in cellular and animal models of AML. . . . Gilteritinib demonstrated potent inhibitory activity against the internal tandem duplication (FLT3-ITD) and FLT3-D835Y point mutations in cellular assays using MV4-11 and MOLM-13 cells as well as Ba/F3 cells expressing mutated FLT3."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-28516360"
+  ],
+  "duration_seconds": 7.701945,
+  "research_only": true
+}

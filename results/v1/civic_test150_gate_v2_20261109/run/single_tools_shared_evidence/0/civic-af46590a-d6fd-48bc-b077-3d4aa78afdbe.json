@@ -1,0 +1,518 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-af46590a-d6fd-48bc-b077-3d4aa78afdbe",
+  "patient_id": "article-20147967",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "c060458363d407cd331c54319a401d6d30377cfeb0d689bdbf9df1533e41d53c",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim asserts that KRAS R164Q is an oncogenic variant (evidenceDirection: SUPPORTS, evidenceType: ONCOGENIC) in cancer with somatic origin. The provided evidence (pmid-20147967:f01) states that the Arg164Gln mutation was 'phenotypically equivalent to wt K-Ras'. This finding contradicts the claim's assertion of oncogenicity, as equivalence to wild-type suggests a lack of activating or oncogenic function. Therefore, the evidence direction must be revised from SUPPORTS to NO_SUPPORT (or BENIGN). The evidence does not provide information regarding the variant origin (SOMATIC) or specific disease context beyond general implications, but the primary contradiction is the functional effect. Thus, the claim requires revision of the evidenceDirection field.",
+    "citations": [
+      {
+        "document_id": "pmid-20147967",
+        "start": 0,
+        "end": 60,
+        "quote": "Arg164Gln mutation was phenotypically equivalent to wt K-Ras"
+      }
+    ],
+    "unresolved": [
+      "Variant origin (SOMATIC) is not addressed in the evidence.",
+      "Specific disease context (Cancer) is not explicitly confirmed in the evidence fragment."
+    ],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 2,
+    "http_attempts": 2,
+    "tool_calls": 6,
+    "input_tokens": 5525,
+    "output_tokens": 1551,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-20147967"
+        ],
+        "fingerprint": "c060458363d407cd331c54319a401d6d30377cfeb0d689bdbf9df1533e41d53c",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R164Q (exon 5b)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R164Q (exon 5b)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R164Q (exon 5b)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-20147967"
+        ],
+        "query": "{\n  \"disease\": \"cancer\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"ONCOGENIC\",\n  \"molecularProfile\": \"KRAS R164Q (exon 5b)\",\n  \"significance\": \"oncogenicity\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-20147967"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-20147967": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R164Q (exon 5b)",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-20147967",
+              "start": 0,
+              "end": 9,
+              "raw": "Arg164Gln",
+              "canonical": "R164Q"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-20147967": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-20147967"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-20147967": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R164Q (exon 5b)",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-20147967",
+              "start": 0,
+              "end": 9,
+              "raw": "Arg164Gln",
+              "canonical": "R164Q"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-20147967": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "9f7d400512dc2583ffb199c8127a1eb6c978742c6f499f4779c30599f056f635",
+        "source_ids": [
+          "pmid-20147967"
+        ],
+        "token_reservation": 12184,
+        "evidence_ids": [
+          "pmid-20147967:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-20147967": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 60,
+              "chars_sent": 60,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-20147967:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 60,
+          "chars_sent": 60,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2103,
+        "output_tokens": 1157,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 12.792,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "invalid_model_output",
+      "role": "decision",
+      "details": {
+        "error_type": "ValueError",
+        "previous_output": "{\n  \"answer\": \"NEI\",\n  \"explanation\": \"The claim asserts that KRAS R164Q is an oncogenic variant in cancer with somatic origin. The provided evidence (pmid-20147967:f01) states that the Arg164Gln mutation was 'phenotypically equivalent to wt K-Ras'. This statement suggests a lack of oncogenic activity or equivalence to wild-type, which contradicts the 'SUPPORTS' and 'ONCOGENIC' aspects of the claim. Furthermore, the evidence does not specify the variant origin (SOMATIC vs GERMLINE) nor explicitly confirm the disease context beyond general implications. Because the evidence direction is opposite to the claim (suggesting non-oncogenicity or neutrality rather than support) and lacks specific details on origin and disease confirmation required to support the claim as written, it does not support the claim. It also does not provide a specific minimal revision that would make the claim fully supported (e.g., it doesn't definitively prove it is benign, just that it was phenotypically equivalent in that specific assay context, which might be ambiguous). However, since the evidence explicitly contradicts the 'ONCOGENIC' direction by stating equivalence to wild-type, and does not support the claim, and no clear minimal revision is supported by this single fragment to make the claim true (e.g., changing to 'NO_SUPPORT' or 'BENIGN' might be an interpretation, but the prompt asks for minimal revision fields like disease, evidenceDirection, etc. If the evidence says it's equivalent to wt, the direction is likely NO_SUPPORT or BENIGN. But the claim is SUPPORTS/ONCOGENIC. The evidence is insufficient to support the claim. Is it REVISIONS? If I change evidenceDirection to NO_SUPPORT, does the evidence support that? 'Phenotypically equivalent to wt' supports NO_SUPPORT or BENIGN. So a revision to evidenceDirection='NO_SUPPORT' might be supported. However, the claim also includes 'SOMATIC' and 'Cancer'. The evidence doesn't confirm somatic. So multiple fields are unsupported. Usually, if the direction is opposite, it's REVISIONS if a specific correction is clear. Here, 'equivalent to wt' strongly suggests non-oncogenic. So REVISIONS with evidenceDirection='NO_SUPPORT' or 'BENIGN' is plausible. But wait, the schema says 'REVISIONS means partial support with a necessary claim correction'. If the evidence refutes the oncogenicity, it's a revision. Let's look at the 'unresolved' list. It's empty. The evidence is 'Arg164Gln mutation was phenotypically equivalent to wt K-Ras'. This is a negative result for oncogenicity. The claim says SUPPORTS/ONCOGENIC. This is a contradiction. Therefore, the claim requires revision. The minimal revision would be to change evidenceDirection to NO_SUPPORT or BENIGN. However, the prompt asks for 'REVISIONS' if there is a necessary correction. Is it 'NEI' because the evidence is insufficient to determine the full profile (somatic, cancer specific)? Or is it 'REVISIONS' because the direction is clearly wrong? Given the strict mapping: relevant + requires_revision => REVISIONS. The evidence is relevant (it discusses the variant). It requires revision (direction is wrong). So REVISIONS is likely. But wait, the evidence is very short. 'Phenotypically equivalent to wt K-Ras'. This might mean it's not activating. So evidenceDirection should be NO_SUPPORT. Let's check if 'NO_SUPPORT' is a valid value. The claim has 'SUPPORTS'. The evidence says 'equivalent to wt'. This is not 'SUPPORTS'. So it requires revision. I will classify as REVISIONS with evidenceDirection='NO_SUPPORT'. However, often 'equivalent to wt' in a specific assay might not be definitive for the whole disease. But based on the text, it's the only evidence. Let's consider if it's NEI. If the evidence is insufficient to confirm somatic or cancer, maybe NEI. But the direction is the main issue. If I have to choose between REVISIONS and NEI: REVISIONS implies the evidence supports a corrected claim. Does the evidence support 'KRAS R164Q is NO_SUPPORT in cancer somatic'? It supports 'NO_SUPPORT' for the molecular function. It doesn't support 'SOMATIC' or 'Cancer' specifically. So the revision is partial. The schema says 'REVISIONS means partial support with a necessary claim correction'. This fits. I will go with REVISIONS. Minimal revision: evidenceDirection='NO_SUPPORT'.\",\n  \"citations\": [\n    {\n      \"evidence_id\": \"pmid-20147967:f01\"\n    }\n  ],\n  \"unresolved\": [],\n  \"confidence\": 0.8,\n  \"adopted_claim_ids\": [],\n  \"rejected_claim_ids\": [],\n  \"assessment\": {\n    \"evidence_relevance\": \"relevant\",\n    \"claim_conformance\": \"requires_revision\",\n    \"revision_fields\": [\n      \"evidenceDirection\"\n    ],\n    \"minimal_revision\": \"Change evidenceDirection from SUPPORTS to NO_SUPPORT, as the evidence states the mutation was phenotypically equivalent to wild-type K-Ras, indicating a lack of oncogenic activation.\"\n  }\n}",
+        "validation_errors": [
+          {
+            "msg": "decision answer conflicts with revision assessment: answer=NEI, expected=REVISIONS, evidence_relevance=relevant, claim_conformance=requires_revision"
+          }
+        ],
+        "valid_claim_ids": [],
+        "output_truncated_in_trace": false
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "schema_repair_requested",
+      "role": "decision",
+      "details": {
+        "attempt": 1
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "55c89ee5571791508bb2af12ae4b70b828f22ad327d0f201d5cf0f27a784af90",
+        "source_ids": [
+          "pmid-20147967"
+        ],
+        "token_reservation": 17877,
+        "evidence_ids": [
+          "pmid-20147967:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-20147967": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 60,
+              "chars_sent": 60,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-20147967:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 60,
+          "chars_sent": 60,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 3422,
+        "output_tokens": 394,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 6.519,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "evidenceDirection"
+        ],
+        "minimal_revision": "Change evidenceDirection from SUPPORTS to NO_SUPPORT, as the evidence states the mutation was phenotypically equivalent to wild-type K-Ras, indicating a lack of oncogenic activation.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim asserts that KRAS R164Q is an oncogenic variant (evidenceDirection: SUPPORTS, evidenceType: ONCOGENIC) in cancer with somatic origin. The provided evidence (pmid-20147967:f01) states that the Arg164Gln mutation was 'phenotypically equivalent to wt K-Ras'. This finding contradicts the claim's assertion of oncogenicity, as equivalence to wild-type suggests a lack of activating or oncogenic function. Therefore, the evidence direction must be revised from SUPPORTS to NO_SUPPORT (or BENIGN). The evidence does not provide information regarding the variant origin (SOMATIC) or specific disease context beyond general implications, but the primary contradiction is the functional effect. Thus, the claim requires revision of the evidenceDirection field.",
+          "citations": [
+            {
+              "document_id": "pmid-20147967",
+              "start": 0,
+              "end": 60,
+              "quote": "Arg164Gln mutation was phenotypically equivalent to wt K-Ras"
+            }
+          ],
+          "unresolved": [
+            "Variant origin (SOMATIC) is not addressed in the evidence.",
+            "Specific disease context (Cancer) is not explicitly confirmed in the evidence fragment."
+          ],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim asserts that KRAS R164Q is an oncogenic variant (evidenceDirection: SUPPORTS, evidenceType: ONCOGENIC) in cancer with somatic origin. The provided evidence (pmid-20147967:f01) states that the Arg164Gln mutation was 'phenotypically equivalent to wt K-Ras'. This finding contradicts the claim's assertion of oncogenicity, as equivalence to wild-type suggests a lack of activating or oncogenic function. Therefore, the evidence direction must be revised from SUPPORTS to NO_SUPPORT (or BENIGN). The evidence does not provide information regarding the variant origin (SOMATIC) or specific disease context beyond general implications, but the primary contradiction is the functional effect. Thus, the claim requires revision of the evidenceDirection field.",
+          "citations": [
+            {
+              "document_id": "pmid-20147967",
+              "start": 0,
+              "end": 60,
+              "quote": "Arg164Gln mutation was phenotypically equivalent to wt K-Ras"
+            }
+          ],
+          "unresolved": [
+            "Variant origin (SOMATIC) is not addressed in the evidence.",
+            "Specific disease context (Cancer) is not explicitly confirmed in the evidence fragment."
+          ],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-20147967"
+  ],
+  "duration_seconds": 19.329934,
+  "research_only": true
+}

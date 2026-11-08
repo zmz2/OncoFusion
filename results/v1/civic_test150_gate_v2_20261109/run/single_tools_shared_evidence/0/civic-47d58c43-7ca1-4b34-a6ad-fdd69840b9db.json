@@ -1,0 +1,440 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-47d58c43-7ca1-4b34-a6ad-fdd69840b9db",
+  "patient_id": "article-28388566",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "b5404b950bcd77dbfa921fba31bb0081a9066df1c975e98d6df8ac3f869e883c",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-28388566) exclusively discusses Von Hippel-Lindau (VHL) disease, a tumor predisposition syndrome caused by germline mutations in the VHL gene. The text details the association between VHL gene mutations (specifically in Exons 1, 2, and 3) and the development of VHL-associated lesions such as central nervous system hemangioblastomas, retinal angiomas, renal cell carcinomas, pancreatic tumors, and pheochromocytomas. There is no mention of ARAF, the S729Y variant, large cell neuroendocrine carcinoma, Sorafenib, or any predictive resistance profile. The evidence is entirely irrelevant to the claim's molecular profile, disease, and therapy.",
+    "citations": [
+      {
+        "document_id": "pmid-28388566",
+        "start": 0,
+        "end": 598,
+        "quote": "\"mber 193300) is an autosomal-dominant inherited tumor predisposition syndrome. Patients with VHL are prone to the development of multiple neoplastic lesions including central nervous system hemangioblastomas (CHBs), retinal angiomas (RAs), renal cell carcinomas (RCCs), renal cysts, pancreatic tumors or cysts (PCTs), pheochromocytomas (PHEOs), endolymphatic-sac tumors, and papillary cystadenomas of the epididymis or broad ligament. The incidence of VHL disease is approximately 1 in 36000 live births and the overall penetrance is greater than 90% by age 65.\\nVHL disease is caused by germline "
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 4194,
+    "output_tokens": 304,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-28388566"
+        ],
+        "fingerprint": "b5404b950bcd77dbfa921fba31bb0081a9066df1c975e98d6df8ac3f869e883c",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "S729Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "S729Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "S729Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-28388566"
+        ],
+        "query": "{\n  \"disease\": \"large cell neuroendocrine carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"ARAF S729Y\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Sorafenib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-28388566"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28388566": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "S729Y",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28388566",
+              "start": 2080,
+              "end": 2083,
+              "raw": "E1M",
+              "canonical": "E1M"
+            },
+            {
+              "document_id": "pmid-28388566",
+              "start": 2100,
+              "end": 2103,
+              "raw": "E2M",
+              "canonical": "E2M"
+            },
+            {
+              "document_id": "pmid-28388566",
+              "start": 2124,
+              "end": 2127,
+              "raw": "E3M",
+              "canonical": "E3M"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28388566": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-28388566"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28388566": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "S729Y",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28388566",
+              "start": 2080,
+              "end": 2083,
+              "raw": "E1M",
+              "canonical": "E1M"
+            },
+            {
+              "document_id": "pmid-28388566",
+              "start": 2100,
+              "end": 2103,
+              "raw": "E2M",
+              "canonical": "E2M"
+            },
+            {
+              "document_id": "pmid-28388566",
+              "start": 2124,
+              "end": 2127,
+              "raw": "E3M",
+              "canonical": "E3M"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28388566": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "718661ba6d7a213e907511ac8635b9d66a60451499ffe3f31d6f568bebf2fc5c",
+        "source_ids": [
+          "pmid-28388566"
+        ],
+        "token_reservation": 17887,
+        "evidence_ids": [
+          "pmid-28388566:f01",
+          "pmid-28388566:f02",
+          "pmid-28388566:f03",
+          "pmid-28388566:f04",
+          "pmid-28388566:f05",
+          "pmid-28388566:f06",
+          "pmid-28388566:f07"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-28388566": {
+              "candidates": 7,
+              "sent": 7,
+              "chars_total": 4087,
+              "chars_sent": 4087,
+              "key_records": 2,
+              "required_candidates": 6,
+              "required_sent": 6,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-28388566:f01",
+                "pmid-28388566:f02",
+                "pmid-28388566:f03",
+                "pmid-28388566:f04",
+                "pmid-28388566:f05",
+                "pmid-28388566:f06",
+                "pmid-28388566:f07"
+              ]
+            }
+          },
+          "candidates": 7,
+          "sent": 7,
+          "chars_total": 4087,
+          "chars_sent": 4087,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 6,
+              "sent": 6,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 4194,
+        "output_tokens": 304,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.425,
+        "evidence_fragments": 7
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "irrelevant",
+        "claim_conformance": "no_supported_revision",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "NEI"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-28388566) exclusively discusses Von Hippel-Lindau (VHL) disease, a tumor predisposition syndrome caused by germline mutations in the VHL gene. The text details the association between VHL gene mutations (specifically in Exons 1, 2, and 3) and the development of VHL-associated lesions such as central nervous system hemangioblastomas, retinal angiomas, renal cell carcinomas, pancreatic tumors, and pheochromocytomas. There is no mention of ARAF, the S729Y variant, large cell neuroendocrine carcinoma, Sorafenib, or any predictive resistance profile. The evidence is entirely irrelevant to the claim's molecular profile, disease, and therapy.",
+          "citations": [
+            {
+              "document_id": "pmid-28388566",
+              "start": 0,
+              "end": 598,
+              "quote": "\"mber 193300) is an autosomal-dominant inherited tumor predisposition syndrome. Patients with VHL are prone to the development of multiple neoplastic lesions including central nervous system hemangioblastomas (CHBs), retinal angiomas (RAs), renal cell carcinomas (RCCs), renal cysts, pancreatic tumors or cysts (PCTs), pheochromocytomas (PHEOs), endolymphatic-sac tumors, and papillary cystadenomas of the epididymis or broad ligament. The incidence of VHL disease is approximately 1 in 36000 live births and the overall penetrance is greater than 90% by age 65.\\nVHL disease is caused by germline "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-28388566) exclusively discusses Von Hippel-Lindau (VHL) disease, a tumor predisposition syndrome caused by germline mutations in the VHL gene. The text details the association between VHL gene mutations (specifically in Exons 1, 2, and 3) and the development of VHL-associated lesions such as central nervous system hemangioblastomas, retinal angiomas, renal cell carcinomas, pancreatic tumors, and pheochromocytomas. There is no mention of ARAF, the S729Y variant, large cell neuroendocrine carcinoma, Sorafenib, or any predictive resistance profile. The evidence is entirely irrelevant to the claim's molecular profile, disease, and therapy.",
+          "citations": [
+            {
+              "document_id": "pmid-28388566",
+              "start": 0,
+              "end": 598,
+              "quote": "\"mber 193300) is an autosomal-dominant inherited tumor predisposition syndrome. Patients with VHL are prone to the development of multiple neoplastic lesions including central nervous system hemangioblastomas (CHBs), retinal angiomas (RAs), renal cell carcinomas (RCCs), renal cysts, pancreatic tumors or cysts (PCTs), pheochromocytomas (PHEOs), endolymphatic-sac tumors, and papillary cystadenomas of the epididymis or broad ligament. The incidence of VHL disease is approximately 1 in 36000 live births and the overall penetrance is greater than 90% by age 65.\\nVHL disease is caused by germline "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-28388566"
+  ],
+  "duration_seconds": 3.451417,
+  "research_only": true
+}

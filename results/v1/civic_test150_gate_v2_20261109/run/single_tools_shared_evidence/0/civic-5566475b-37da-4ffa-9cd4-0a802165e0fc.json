@@ -1,0 +1,414 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-5566475b-37da-4ffa-9cd4-0a802165e0fc",
+  "patient_id": "article-28319062",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "27e6d0551eed4a1caf4961b1958889e07d4f4f3373993536ea3d15d0593ecb83",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The evidence fragment from pmid-28319062 explicitly states that the CTCF R377H variant showed loss-of-function by abrogating the inhibition of clonogenicity of WT CTCF. This directly supports the claim's molecular profile (CTCF R377H), significance (loss of function), and evidence type (functional). The evidence direction is supportive of the loss-of-function characterization. The variant origin (somatic) is not explicitly contradicted or confirmed in this specific fragment, but the core functional claim is fully supported.",
+    "citations": [
+      {
+        "document_id": "pmid-28319062",
+        "start": 0,
+        "end": 96,
+        "quote": "R377H and P378L showed loss-of-function by abrogating the inhibition of clonogenicity of WT CTCF"
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2117,
+    "output_tokens": 256,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-28319062"
+        ],
+        "fingerprint": "27e6d0551eed4a1caf4961b1958889e07d4f4f3373993536ea3d15d0593ecb83",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R377H",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R377H",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R377H",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-28319062"
+        ],
+        "query": "{\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"FUNCTIONAL\",\n  \"molecularProfile\": \"CTCF R377H\",\n  \"significance\": \"loss of function\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-28319062"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28319062": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R377H",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28319062",
+              "start": 0,
+              "end": 5,
+              "raw": "R377H",
+              "canonical": "R377H"
+            },
+            {
+              "document_id": "pmid-28319062",
+              "start": 10,
+              "end": 15,
+              "raw": "P378L",
+              "canonical": "P378L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28319062": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-28319062"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28319062": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R377H",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28319062",
+              "start": 0,
+              "end": 5,
+              "raw": "R377H",
+              "canonical": "R377H"
+            },
+            {
+              "document_id": "pmid-28319062",
+              "start": 10,
+              "end": 15,
+              "raw": "P378L",
+              "canonical": "P378L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28319062": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "59e8a2954556c281a7edf1cb5d741335e75492adf5b0809bd978eaa7d9b4cb94",
+        "source_ids": [
+          "pmid-28319062"
+        ],
+        "token_reservation": 12185,
+        "evidence_ids": [
+          "pmid-28319062:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-28319062": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 96,
+              "chars_sent": 96,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-28319062:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 96,
+          "chars_sent": 96,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2117,
+        "output_tokens": 256,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 2.366,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "as_written",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "SUPPORTS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence fragment from pmid-28319062 explicitly states that the CTCF R377H variant showed loss-of-function by abrogating the inhibition of clonogenicity of WT CTCF. This directly supports the claim's molecular profile (CTCF R377H), significance (loss of function), and evidence type (functional). The evidence direction is supportive of the loss-of-function characterization. The variant origin (somatic) is not explicitly contradicted or confirmed in this specific fragment, but the core functional claim is fully supported.",
+          "citations": [
+            {
+              "document_id": "pmid-28319062",
+              "start": 0,
+              "end": 96,
+              "quote": "R377H and P378L showed loss-of-function by abrogating the inhibition of clonogenicity of WT CTCF"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence fragment from pmid-28319062 explicitly states that the CTCF R377H variant showed loss-of-function by abrogating the inhibition of clonogenicity of WT CTCF. This directly supports the claim's molecular profile (CTCF R377H), significance (loss of function), and evidence type (functional). The evidence direction is supportive of the loss-of-function characterization. The variant origin (somatic) is not explicitly contradicted or confirmed in this specific fragment, but the core functional claim is fully supported.",
+          "citations": [
+            {
+              "document_id": "pmid-28319062",
+              "start": 0,
+              "end": 96,
+              "quote": "R377H and P378L showed loss-of-function by abrogating the inhibition of clonogenicity of WT CTCF"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-28319062"
+  ],
+  "duration_seconds": 2.381168,
+  "research_only": true
+}

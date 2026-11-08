@@ -1,0 +1,398 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-4730686d-4fe0-49b3-abb9-e24173f7d9c8",
+  "patient_id": "article-33035457",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "a87e5ccff055bd6940108a59d8d5d477b5f98f8b878bdf72213b72d9fef00200",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-33035457) exclusively concerns follicular lymphoma and the EZH2 inhibitor tazemetostat. It contains no information regarding Lung Non-small Cell Carcinoma, EGFR mutations (specifically L680L), or EGFR-targeting agents. Therefore, the evidence is insufficient to support, refute, or revise the claim.",
+    "citations": [
+      {
+        "document_id": "pmid-33035457",
+        "start": 0,
+        "end": 594,
+        "quote": "\"Tazemetostat for patients with relapsed or refractory follicular lymphoma: an open-label, single-arm, multicentre, phase 2 trial\\nSummary\\nBackground\\nActivating mutations of EZH2, an epigenetic regulator, are present in approximately 20% of patients with follicular lymphoma. We investigated the activity and safety of tazemetostat, a first-in-class, oral EZH2 inhibitor, in patients with follicular lymphoma.\\nMethods\\nThis study was an open-label, single-arm, phase 2 trial done at 38 clinics or hospitals in France, the UK, Australia, Canada, Poland, Italy, Ukraine, Germany, and the USA. "
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 4029,
+    "output_tokens": 220,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-33035457"
+        ],
+        "fingerprint": "a87e5ccff055bd6940108a59d8d5d477b5f98f8b878bdf72213b72d9fef00200",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L680L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L680L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L680L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-33035457"
+        ],
+        "query": "{\n  \"disease\": \"Lung Non-small Cell Carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"EGFR L680L\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"EGFR-targeting Agent\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-33035457"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-33035457": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "L680L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-33035457": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-33035457"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-33035457": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "L680L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-33035457": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "fae92c601e236bec7d3ff2808931007f36f0992cf9fffb31aab70af26d0d415d",
+        "source_ids": [
+          "pmid-33035457"
+        ],
+        "token_reservation": 18207,
+        "evidence_ids": [
+          "pmid-33035457:f01",
+          "pmid-33035457:f02",
+          "pmid-33035457:f03",
+          "pmid-33035457:f04",
+          "pmid-33035457:f05",
+          "pmid-33035457:f06",
+          "pmid-33035457:f08",
+          "pmid-33035457:f09"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-33035457": {
+              "candidates": 9,
+              "sent": 8,
+              "chars_total": 5055,
+              "chars_sent": 4466,
+              "key_records": 2,
+              "required_candidates": 6,
+              "required_sent": 6,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-33035457:f01",
+                "pmid-33035457:f02",
+                "pmid-33035457:f03",
+                "pmid-33035457:f04",
+                "pmid-33035457:f05",
+                "pmid-33035457:f06",
+                "pmid-33035457:f08",
+                "pmid-33035457:f09"
+              ]
+            }
+          },
+          "candidates": 9,
+          "sent": 8,
+          "chars_total": 5055,
+          "chars_sent": 4466,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 6,
+              "sent": 6,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 4029,
+        "output_tokens": 220,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 2.356,
+        "evidence_fragments": 8
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "insufficient",
+        "claim_conformance": "unclear",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "NEI"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-33035457) exclusively concerns follicular lymphoma and the EZH2 inhibitor tazemetostat. It contains no information regarding Lung Non-small Cell Carcinoma, EGFR mutations (specifically L680L), or EGFR-targeting agents. Therefore, the evidence is insufficient to support, refute, or revise the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-33035457",
+              "start": 0,
+              "end": 594,
+              "quote": "\"Tazemetostat for patients with relapsed or refractory follicular lymphoma: an open-label, single-arm, multicentre, phase 2 trial\\nSummary\\nBackground\\nActivating mutations of EZH2, an epigenetic regulator, are present in approximately 20% of patients with follicular lymphoma. We investigated the activity and safety of tazemetostat, a first-in-class, oral EZH2 inhibitor, in patients with follicular lymphoma.\\nMethods\\nThis study was an open-label, single-arm, phase 2 trial done at 38 clinics or hospitals in France, the UK, Australia, Canada, Poland, Italy, Ukraine, Germany, and the USA. "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-33035457) exclusively concerns follicular lymphoma and the EZH2 inhibitor tazemetostat. It contains no information regarding Lung Non-small Cell Carcinoma, EGFR mutations (specifically L680L), or EGFR-targeting agents. Therefore, the evidence is insufficient to support, refute, or revise the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-33035457",
+              "start": 0,
+              "end": 594,
+              "quote": "\"Tazemetostat for patients with relapsed or refractory follicular lymphoma: an open-label, single-arm, multicentre, phase 2 trial\\nSummary\\nBackground\\nActivating mutations of EZH2, an epigenetic regulator, are present in approximately 20% of patients with follicular lymphoma. We investigated the activity and safety of tazemetostat, a first-in-class, oral EZH2 inhibitor, in patients with follicular lymphoma.\\nMethods\\nThis study was an open-label, single-arm, phase 2 trial done at 38 clinics or hospitals in France, the UK, Australia, Canada, Poland, Italy, Ukraine, Germany, and the USA. "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-33035457"
+  ],
+  "duration_seconds": 2.388254,
+  "research_only": true
+}

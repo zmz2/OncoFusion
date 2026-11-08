@@ -1,0 +1,529 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-61766705-9e86-4ee2-8e88-ea67f6031d2d",
+  "patient_id": "article-27009859",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "3ad3ecae1a80642703f68f6ce1a25866fd89573c0d7d8f177f6ad2ac94d77372",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The evidence from pmid-27009859:f01 provides in vitro data for the ALK I1171S mutation in the SUP-CR500-2 cell line. The data shows a 12.96-fold increase in IC50 for Crizotinib compared to the wild-type (fold change 1), indicating reduced sensitivity or resistance. This supports the claim that I1171S confers resistance to Crizotinib. However, the claim specifies the disease as 'lung large cell carcinoma'. The provided evidence is derived from cell lines (SUP-CR500-2) and does not specify the tissue of origin or disease subtype for these specific cell lines in the provided text. Furthermore, the claim includes 'EML4::ALK Fusion AND ALK I1171S' as the molecular profile. The evidence only explicitly links the I1171S mutation to the resistance phenotype in the context of the cell line, without explicitly confirming the co-occurrence with EML4::ALK fusion in the same context in the provided snippet. While I1171S is a known ALK mutation often associated with fusion-positive NSCLC, the specific disease 'lung large cell carcinoma' is not supported by the cell line data provided. The most direct support is for the resistance of I1171S to Crizotinib. The claim's disease specification is unsupported by the cell line evidence. Therefore, the claim requires revision regarding the disease context or the specificity of the molecular profile context. Given the options, the evidence supports the resistance direction but the disease and specific fusion context are not explicitly verified by the cell line data snippet. A minimal revision would be to remove the specific disease 'lung large cell carcinoma' as it is not evidenced by the cell line data, or to clarify that the evidence is preclinical/cell-line based. However, looking at the schema, 'disease' is a field. The evidence does not support 'lung large cell carcinoma'. It supports 'ALK I1171S' and 'Crizotinib' and 'resistance'. The 'evidenceType' is PREDICTIVE. Cell line data is often considered predictive. The 'significance' is resistance. The 'therapies' is Crizotinib. The 'variantOrigin' is SOMATIC. The 'molecularProfile' is 'EML4::ALK Fusion AND ALK I1171S'. The evidence only mentions I1171S. It does not mention EML4::ALK. Thus, the molecular profile is not fully supported. The disease is not supported. The direction is supported. The therapy is supported. The significance is supported. The origin is likely somatic. The evidence type is predictive. The claim requires revision on 'disease' and 'molecularProfile'.",
+    "citations": [
+      {
+        "document_id": "pmid-27009859",
+        "start": 0,
+        "end": 557,
+        "quote": "\t\tCell Line SUP-M2 IC50\tCell Line SUP-M2 Fold Change\tCell Line SU-DHL-1 IC50\tCell Line SU-DHL-1 Fold Change\tCell Line I1171S SUP-CR500-2 IC50\tCell Line I1171S SUP-CR500-2 Fold Change\tCell Line F1174L SUP-LR150-2 IC50\tCell Line F1174L SUP-LR150-2 Fold Change\tCell Line R1192P DHL1-CR500 IC50\tCell Line R1192P DHL1-CR500 Fold Change\tCell Line T1151M DHL1-LR150 IC50\tCell Line T1151M DHL1-LR150 Fold Change\tCell Line G1269A DHL1-CR500-2 IC50\tCell Line G1269A DHL1-CR500-2 Fold Change\nTKI\tCrizotinib\t67.75\t1\t128.9\t1\t878.03\t12.96\t-\t-\t887.18\t6.88\t-\t-\t933.275\t7.24"
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2876,
+    "output_tokens": 807,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-27009859"
+        ],
+        "fingerprint": "3ad3ecae1a80642703f68f6ce1a25866fd89573c0d7d8f177f6ad2ac94d77372",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-27009859"
+        ],
+        "query": "{\n  \"disease\": \"lung large cell carcinoma\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"EML4::ALK Fusion AND ALK I1171S\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Crizotinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-27009859"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27009859": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27009859",
+              "start": 118,
+              "end": 124,
+              "raw": "I1171S",
+              "canonical": "I1171S"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 152,
+              "end": 158,
+              "raw": "I1171S",
+              "canonical": "I1171S"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 193,
+              "end": 199,
+              "raw": "F1174L",
+              "canonical": "F1174L"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 227,
+              "end": 233,
+              "raw": "F1174L",
+              "canonical": "F1174L"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 268,
+              "end": 274,
+              "raw": "R1192P",
+              "canonical": "R1192P"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 301,
+              "end": 307,
+              "raw": "R1192P",
+              "canonical": "R1192P"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 341,
+              "end": 347,
+              "raw": "T1151M",
+              "canonical": "T1151M"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 374,
+              "end": 380,
+              "raw": "T1151M",
+              "canonical": "T1151M"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 414,
+              "end": 420,
+              "raw": "G1269A",
+              "canonical": "G1269A"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 449,
+              "end": 455,
+              "raw": "G1269A",
+              "canonical": "G1269A"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27009859": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-27009859"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27009859": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27009859",
+              "start": 118,
+              "end": 124,
+              "raw": "I1171S",
+              "canonical": "I1171S"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 152,
+              "end": 158,
+              "raw": "I1171S",
+              "canonical": "I1171S"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 193,
+              "end": 199,
+              "raw": "F1174L",
+              "canonical": "F1174L"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 227,
+              "end": 233,
+              "raw": "F1174L",
+              "canonical": "F1174L"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 268,
+              "end": 274,
+              "raw": "R1192P",
+              "canonical": "R1192P"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 301,
+              "end": 307,
+              "raw": "R1192P",
+              "canonical": "R1192P"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 341,
+              "end": 347,
+              "raw": "T1151M",
+              "canonical": "T1151M"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 374,
+              "end": 380,
+              "raw": "T1151M",
+              "canonical": "T1151M"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 414,
+              "end": 420,
+              "raw": "G1269A",
+              "canonical": "G1269A"
+            },
+            {
+              "document_id": "pmid-27009859",
+              "start": 449,
+              "end": 455,
+              "raw": "G1269A",
+              "canonical": "G1269A"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27009859": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "635e2adf202f212e983522fdbd1420d1df2a57ba0316d5f53b030c11db868447",
+        "source_ids": [
+          "pmid-27009859"
+        ],
+        "token_reservation": 13563,
+        "evidence_ids": [
+          "pmid-27009859:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27009859": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 557,
+              "chars_sent": 557,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27009859:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 557,
+          "chars_sent": 557,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2876,
+        "output_tokens": 807,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 16.076,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "disease",
+          "molecularProfile"
+        ],
+        "minimal_revision": "Remove 'lung large cell carcinoma' as the disease is not supported by cell line data. Remove 'EML4::ALK Fusion' from the molecular profile as it is not mentioned in the evidence; only 'ALK I1171S' is supported.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-27009859:f01 provides in vitro data for the ALK I1171S mutation in the SUP-CR500-2 cell line. The data shows a 12.96-fold increase in IC50 for Crizotinib compared to the wild-type (fold change 1), indicating reduced sensitivity or resistance. This supports the claim that I1171S confers resistance to Crizotinib. However, the claim specifies the disease as 'lung large cell carcinoma'. The provided evidence is derived from cell lines (SUP-CR500-2) and does not specify the tissue of origin or disease subtype for these specific cell lines in the provided text. Furthermore, the claim includes 'EML4::ALK Fusion AND ALK I1171S' as the molecular profile. The evidence only explicitly links the I1171S mutation to the resistance phenotype in the context of the cell line, without explicitly confirming the co-occurrence with EML4::ALK fusion in the same context in the provided snippet. While I1171S is a known ALK mutation often associated with fusion-positive NSCLC, the specific disease 'lung large cell carcinoma' is not supported by the cell line data provided. The most direct support is for the resistance of I1171S to Crizotinib. The claim's disease specification is unsupported by the cell line evidence. Therefore, the claim requires revision regarding the disease context or the specificity of the molecular profile context. Given the options, the evidence supports the resistance direction but the disease and specific fusion context are not explicitly verified by the cell line data snippet. A minimal revision would be to remove the specific disease 'lung large cell carcinoma' as it is not evidenced by the cell line data, or to clarify that the evidence is preclinical/cell-line based. However, looking at the schema, 'disease' is a field. The evidence does not support 'lung large cell carcinoma'. It supports 'ALK I1171S' and 'Crizotinib' and 'resistance'. The 'evidenceType' is PREDICTIVE. Cell line data is often considered predictive. The 'significance' is resistance. The 'therapies' is Crizotinib. The 'variantOrigin' is SOMATIC. The 'molecularProfile' is 'EML4::ALK Fusion AND ALK I1171S'. The evidence only mentions I1171S. It does not mention EML4::ALK. Thus, the molecular profile is not fully supported. The disease is not supported. The direction is supported. The therapy is supported. The significance is supported. The origin is likely somatic. The evidence type is predictive. The claim requires revision on 'disease' and 'molecularProfile'.",
+          "citations": [
+            {
+              "document_id": "pmid-27009859",
+              "start": 0,
+              "end": 557,
+              "quote": "\t\tCell Line SUP-M2 IC50\tCell Line SUP-M2 Fold Change\tCell Line SU-DHL-1 IC50\tCell Line SU-DHL-1 Fold Change\tCell Line I1171S SUP-CR500-2 IC50\tCell Line I1171S SUP-CR500-2 Fold Change\tCell Line F1174L SUP-LR150-2 IC50\tCell Line F1174L SUP-LR150-2 Fold Change\tCell Line R1192P DHL1-CR500 IC50\tCell Line R1192P DHL1-CR500 Fold Change\tCell Line T1151M DHL1-LR150 IC50\tCell Line T1151M DHL1-LR150 Fold Change\tCell Line G1269A DHL1-CR500-2 IC50\tCell Line G1269A DHL1-CR500-2 Fold Change\nTKI\tCrizotinib\t67.75\t1\t128.9\t1\t878.03\t12.96\t-\t-\t887.18\t6.88\t-\t-\t933.275\t7.24"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-27009859:f01 provides in vitro data for the ALK I1171S mutation in the SUP-CR500-2 cell line. The data shows a 12.96-fold increase in IC50 for Crizotinib compared to the wild-type (fold change 1), indicating reduced sensitivity or resistance. This supports the claim that I1171S confers resistance to Crizotinib. However, the claim specifies the disease as 'lung large cell carcinoma'. The provided evidence is derived from cell lines (SUP-CR500-2) and does not specify the tissue of origin or disease subtype for these specific cell lines in the provided text. Furthermore, the claim includes 'EML4::ALK Fusion AND ALK I1171S' as the molecular profile. The evidence only explicitly links the I1171S mutation to the resistance phenotype in the context of the cell line, without explicitly confirming the co-occurrence with EML4::ALK fusion in the same context in the provided snippet. While I1171S is a known ALK mutation often associated with fusion-positive NSCLC, the specific disease 'lung large cell carcinoma' is not supported by the cell line data provided. The most direct support is for the resistance of I1171S to Crizotinib. The claim's disease specification is unsupported by the cell line evidence. Therefore, the claim requires revision regarding the disease context or the specificity of the molecular profile context. Given the options, the evidence supports the resistance direction but the disease and specific fusion context are not explicitly verified by the cell line data snippet. A minimal revision would be to remove the specific disease 'lung large cell carcinoma' as it is not evidenced by the cell line data, or to clarify that the evidence is preclinical/cell-line based. However, looking at the schema, 'disease' is a field. The evidence does not support 'lung large cell carcinoma'. It supports 'ALK I1171S' and 'Crizotinib' and 'resistance'. The 'evidenceType' is PREDICTIVE. Cell line data is often considered predictive. The 'significance' is resistance. The 'therapies' is Crizotinib. The 'variantOrigin' is SOMATIC. The 'molecularProfile' is 'EML4::ALK Fusion AND ALK I1171S'. The evidence only mentions I1171S. It does not mention EML4::ALK. Thus, the molecular profile is not fully supported. The disease is not supported. The direction is supported. The therapy is supported. The significance is supported. The origin is likely somatic. The evidence type is predictive. The claim requires revision on 'disease' and 'molecularProfile'.",
+          "citations": [
+            {
+              "document_id": "pmid-27009859",
+              "start": 0,
+              "end": 557,
+              "quote": "\t\tCell Line SUP-M2 IC50\tCell Line SUP-M2 Fold Change\tCell Line SU-DHL-1 IC50\tCell Line SU-DHL-1 Fold Change\tCell Line I1171S SUP-CR500-2 IC50\tCell Line I1171S SUP-CR500-2 Fold Change\tCell Line F1174L SUP-LR150-2 IC50\tCell Line F1174L SUP-LR150-2 Fold Change\tCell Line R1192P DHL1-CR500 IC50\tCell Line R1192P DHL1-CR500 Fold Change\tCell Line T1151M DHL1-LR150 IC50\tCell Line T1151M DHL1-LR150 Fold Change\tCell Line G1269A DHL1-CR500-2 IC50\tCell Line G1269A DHL1-CR500-2 Fold Change\nTKI\tCrizotinib\t67.75\t1\t128.9\t1\t878.03\t12.96\t-\t-\t887.18\t6.88\t-\t-\t933.275\t7.24"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-27009859"
+  ],
+  "duration_seconds": 16.090694,
+  "research_only": true
+}

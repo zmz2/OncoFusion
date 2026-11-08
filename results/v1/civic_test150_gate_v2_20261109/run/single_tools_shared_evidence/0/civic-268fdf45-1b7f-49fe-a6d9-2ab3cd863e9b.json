@@ -1,0 +1,508 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-268fdf45-1b7f-49fe-a6d9-2ab3cd863e9b",
+  "patient_id": "article-27894077",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "714a893d3dc21ae3d2ffb75f07f7ead12cfd646205733f29c7836da79be60a0f",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim posits that JAK2 fusion is a diagnostic marker for B-lymphoblastic Leukemia/lymphoma, BCR-ABL1–like, with positive significance and somatic origin, associated with juvenile and young adult onsets. The provided evidence (pmid-27894077:f01) confirms that JAK2 fusions are present in BCR-ABL1-like ALL (6.5% frequency) and are associated with age >= 10 years. This supports the 'Early young adult onset' and 'Late young adult onset' phenotypes but contradicts or fails to support 'Juvenile onset' (typically <10 years) and 'Intermediate young adult onset' (ambiguous but not explicitly supported by the >=10 years finding). The evidence does not explicitly state the somatic origin or diagnostic significance in the provided snippet, but the primary discrepancy is the disease/phenotype association. The claim requires revision to restrict the phenotypic association to age >= 10 years, effectively removing 'Juvenile onset' and potentially 'Intermediate young adult onset' if not supported. The 'disease' field is technically correct as BCR-ABL1-like ALL, but the phenotypic specification is the key revision needed. However, since 'phenotypes' is not a valid revision field, the closest valid field is 'disease' if we interpret the disease specification as including the age/phenotype context, or 'significance' if we consider the diagnostic utility limited. Given the schema constraints, the most appropriate revision is to 'disease' to reflect the specific age-associated subtype, or 'significance' to reflect the limited diagnostic utility. However, the evidence clearly supports the presence of JAK2 fusions in BCR-ABL1-like ALL, so the disease is correct. The issue is the phenotypic association. Since 'phenotypes' is not a valid field, and the evidence supports the disease but not all phenotypes, the claim conformance is 'requires_revision' due to the 'significance' or 'disease' field needing adjustment to reflect the age restriction. Let's revise 'significance' to indicate it is supportive only for age >= 10 years, or 'disease' to specify the age group. Given the options, 'significance' is a valid field and the diagnostic significance is limited to the age group. Thus, the revision is to 'significance' to reflect the age-restricted support.",
+    "citations": [
+      {
+        "document_id": "pmid-27894077",
+        "start": 0,
+        "end": 294,
+        "quote": "Table 1\nFrequency of identified tyrosine kinase fusion genes\nMarker\tBCR-ABL1-like (n=77)\tRemaining B-other (n=76) . . . JAK2 fusion\t6.5%\t0% . . . Table 3\nClinical and molecular features of ABL/JAK class tyrosine kinase fusions\n\t\tTK fusion-positiveBCR-ABL1-like . . . age >= 10 years\t\t7/14 (50%)"
+      }
+    ],
+    "unresolved": [
+      "Somatic origin of JAK2 fusions is not explicitly confirmed in the provided text."
+    ],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 2,
+    "http_attempts": 2,
+    "tool_calls": 6,
+    "input_tokens": 5146,
+    "output_tokens": 1250,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-27894077"
+        ],
+        "fingerprint": "714a893d3dc21ae3d2ffb75f07f7ead12cfd646205733f29c7836da79be60a0f",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-27894077"
+        ],
+        "query": "{\n  \"disease\": \"B-lymphoblastic Leukemia/lymphoma, BCR-ABL1\\u2013like\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"DIAGNOSTIC\",\n  \"molecularProfile\": \"v::JAK2 Fusion\",\n  \"phenotypes\": [\n    \"Juvenile onset\",\n    \"Early young adult onset\",\n    \"Intermediate young adult onset\",\n    \"Late young adult onset\"\n  ],\n  \"significance\": \"positive\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-27894077"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27894077": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27894077": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-27894077"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27894077": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27894077": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "09678315841cf3ebef93401713655ee5421101ae620a69e4d6fc2c2a6e4d7a12",
+        "source_ids": [
+          "pmid-27894077"
+        ],
+        "token_reservation": 12498,
+        "evidence_ids": [
+          "pmid-27894077:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27894077": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 294,
+              "chars_sent": 294,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27894077:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 294,
+          "chars_sent": 294,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2189,
+        "output_tokens": 524,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 4.59,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "invalid_model_output",
+      "role": "decision",
+      "details": {
+        "error_type": "ValidationError",
+        "previous_output": "{\n  \"answer\": \"REVISIONS\",\n  \"explanation\": \"The claim posits that JAK2 fusion is a diagnostic marker for B-lymphoblastic Leukemia/lymphoma, BCR-ABL1–like, with a positive significance and somatic origin. The provided evidence (pmid-27894077:f01) confirms that JAK2 fusions are identified in BCR-ABL1-like ALL (6.5% frequency) and are associated with older age (>= 10 years), which aligns with the 'Early young adult onset' and 'Late young adult onset' phenotypes. However, the evidence does not support the 'Juvenile onset' or 'Intermediate young adult onset' phenotypes, nor does it explicitly confirm the somatic origin or diagnostic significance in the provided text snippet. The primary discrepancy is the disease classification: the evidence discusses BCR-ABL1-like ALL generally, but the claim specifies a subtype or context that may not be fully supported. More critically, the evidence does not support the 'positive' significance in a diagnostic sense for all listed phenotypes, particularly juvenile onset. The claim requires revision to reflect the specific age association (>= 10 years) and the limited phenotypic support.\",\n  \"citations\": [\n    {\n      \"evidence_id\": \"pmid-27894077:f01\"\n    }\n  ],\n  \"unresolved\": [\n    \"Somatic origin of JAK2 fusions in BCR-ABL1-like ALL is not explicitly confirmed in the provided text.\",\n    \"Diagnostic significance for juvenile onset is not supported by the age >= 10 years finding.\"\n  ],\n  \"confidence\": 0.8,\n  \"adopted_claim_ids\": [],\n  \"rejected_claim_ids\": [],\n  \"assessment\": {\n    \"evidence_relevance\": \"relevant\",\n    \"claim_conformance\": \"requires_revision\",\n    \"revision_fields\": [\n      \"disease\",\n      \"phenotypes\",\n      \"significance\"\n    ],\n    \"minimal_revision\": \"The claim should be revised to specify that JAK2 fusion is associated with BCR-ABL1-like ALL in patients aged >= 10 years (early/late young adult onset), rather than all listed phenotypes including juvenile onset. The diagnostic significance is supportive but limited to this age group.\"\n  }\n}",
+        "validation_errors": [
+          {
+            "type": "literal_error",
+            "loc": [
+              "assessment",
+              "revision_fields",
+              1
+            ],
+            "msg": "Input should be 'disease', 'evidenceDirection', 'evidenceType', 'molecularProfile', 'significance', 'therapies' or 'variantOrigin'",
+            "ctx": {
+              "expected": "'disease', 'evidenceDirection', 'evidenceType', 'molecularProfile', 'significance', 'therapies' or 'variantOrigin'"
+            }
+          }
+        ],
+        "valid_claim_ids": [],
+        "output_truncated_in_trace": false
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "schema_repair_requested",
+      "role": "decision",
+      "details": {
+        "attempt": 1
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "adaf545b0280bb9a614c060ef1c2e33dc8759a62945c9e3a44fd2643207ca304",
+        "source_ids": [
+          "pmid-27894077"
+        ],
+        "token_reservation": 15577,
+        "evidence_ids": [
+          "pmid-27894077:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27894077": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 294,
+              "chars_sent": 294,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27894077:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 294,
+          "chars_sent": 294,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2957,
+        "output_tokens": 726,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 6.205,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "significance"
+        ],
+        "minimal_revision": "The diagnostic significance of JAK2 fusion in BCR-ABL1-like ALL is supportive only for patients aged >= 10 years (early/late young adult onset), not for juvenile onset.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that JAK2 fusion is a diagnostic marker for B-lymphoblastic Leukemia/lymphoma, BCR-ABL1–like, with positive significance and somatic origin, associated with juvenile and young adult onsets. The provided evidence (pmid-27894077:f01) confirms that JAK2 fusions are present in BCR-ABL1-like ALL (6.5% frequency) and are associated with age >= 10 years. This supports the 'Early young adult onset' and 'Late young adult onset' phenotypes but contradicts or fails to support 'Juvenile onset' (typically <10 years) and 'Intermediate young adult onset' (ambiguous but not explicitly supported by the >=10 years finding). The evidence does not explicitly state the somatic origin or diagnostic significance in the provided snippet, but the primary discrepancy is the disease/phenotype association. The claim requires revision to restrict the phenotypic association to age >= 10 years, effectively removing 'Juvenile onset' and potentially 'Intermediate young adult onset' if not supported. The 'disease' field is technically correct as BCR-ABL1-like ALL, but the phenotypic specification is the key revision needed. However, since 'phenotypes' is not a valid revision field, the closest valid field is 'disease' if we interpret the disease specification as including the age/phenotype context, or 'significance' if we consider the diagnostic utility limited. Given the schema constraints, the most appropriate revision is to 'disease' to reflect the specific age-associated subtype, or 'significance' to reflect the limited diagnostic utility. However, the evidence clearly supports the presence of JAK2 fusions in BCR-ABL1-like ALL, so the disease is correct. The issue is the phenotypic association. Since 'phenotypes' is not a valid field, and the evidence supports the disease but not all phenotypes, the claim conformance is 'requires_revision' due to the 'significance' or 'disease' field needing adjustment to reflect the age restriction. Let's revise 'significance' to indicate it is supportive only for age >= 10 years, or 'disease' to specify the age group. Given the options, 'significance' is a valid field and the diagnostic significance is limited to the age group. Thus, the revision is to 'significance' to reflect the age-restricted support.",
+          "citations": [
+            {
+              "document_id": "pmid-27894077",
+              "start": 0,
+              "end": 294,
+              "quote": "Table 1\nFrequency of identified tyrosine kinase fusion genes\nMarker\tBCR-ABL1-like (n=77)\tRemaining B-other (n=76) . . . JAK2 fusion\t6.5%\t0% . . . Table 3\nClinical and molecular features of ABL/JAK class tyrosine kinase fusions\n\t\tTK fusion-positiveBCR-ABL1-like . . . age >= 10 years\t\t7/14 (50%)"
+            }
+          ],
+          "unresolved": [
+            "Somatic origin of JAK2 fusions is not explicitly confirmed in the provided text."
+          ],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that JAK2 fusion is a diagnostic marker for B-lymphoblastic Leukemia/lymphoma, BCR-ABL1–like, with positive significance and somatic origin, associated with juvenile and young adult onsets. The provided evidence (pmid-27894077:f01) confirms that JAK2 fusions are present in BCR-ABL1-like ALL (6.5% frequency) and are associated with age >= 10 years. This supports the 'Early young adult onset' and 'Late young adult onset' phenotypes but contradicts or fails to support 'Juvenile onset' (typically <10 years) and 'Intermediate young adult onset' (ambiguous but not explicitly supported by the >=10 years finding). The evidence does not explicitly state the somatic origin or diagnostic significance in the provided snippet, but the primary discrepancy is the disease/phenotype association. The claim requires revision to restrict the phenotypic association to age >= 10 years, effectively removing 'Juvenile onset' and potentially 'Intermediate young adult onset' if not supported. The 'disease' field is technically correct as BCR-ABL1-like ALL, but the phenotypic specification is the key revision needed. However, since 'phenotypes' is not a valid revision field, the closest valid field is 'disease' if we interpret the disease specification as including the age/phenotype context, or 'significance' if we consider the diagnostic utility limited. Given the schema constraints, the most appropriate revision is to 'disease' to reflect the specific age-associated subtype, or 'significance' to reflect the limited diagnostic utility. However, the evidence clearly supports the presence of JAK2 fusions in BCR-ABL1-like ALL, so the disease is correct. The issue is the phenotypic association. Since 'phenotypes' is not a valid field, and the evidence supports the disease but not all phenotypes, the claim conformance is 'requires_revision' due to the 'significance' or 'disease' field needing adjustment to reflect the age restriction. Let's revise 'significance' to indicate it is supportive only for age >= 10 years, or 'disease' to specify the age group. Given the options, 'significance' is a valid field and the diagnostic significance is limited to the age group. Thus, the revision is to 'significance' to reflect the age-restricted support.",
+          "citations": [
+            {
+              "document_id": "pmid-27894077",
+              "start": 0,
+              "end": 294,
+              "quote": "Table 1\nFrequency of identified tyrosine kinase fusion genes\nMarker\tBCR-ABL1-like (n=77)\tRemaining B-other (n=76) . . . JAK2 fusion\t6.5%\t0% . . . Table 3\nClinical and molecular features of ABL/JAK class tyrosine kinase fusions\n\t\tTK fusion-positiveBCR-ABL1-like . . . age >= 10 years\t\t7/14 (50%)"
+            }
+          ],
+          "unresolved": [
+            "Somatic origin of JAK2 fusions is not explicitly confirmed in the provided text."
+          ],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-27894077"
+  ],
+  "duration_seconds": 10.822727,
+  "research_only": true
+}

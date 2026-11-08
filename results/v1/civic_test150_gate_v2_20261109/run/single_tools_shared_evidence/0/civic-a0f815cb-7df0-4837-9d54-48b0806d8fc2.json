@@ -1,0 +1,422 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-a0f815cb-7df0-4837-9d54-48b0806d8fc2",
+  "patient_id": "article-28319062",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "b3250a4801730c7616dd675d16f72b6f8c42e57a856c3d16b124f156fdf49a9a",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The evidence fragment pmid-28319062:f01 explicitly states that R377H is a loss-of-function mutation, which supports the evidenceDirection (SUPPORTS), evidenceType (FUNCTIONAL), molecularProfile (CTCF R377H), and significance (loss of function) components of the claim. However, the evidence does not specify the variant origin (SOMATIC vs GERMLINE). The claim asserts a SOMATIC origin, but the provided text does not contain information to confirm or refute this specific origin. Therefore, the claim requires revision to remove the unsupported variantOrigin field or mark it as unknown.",
+    "citations": [
+      {
+        "document_id": "pmid-28319062",
+        "start": 0,
+        "end": 213,
+        "quote": "R377H and P378L are loss-of-function mutations which abrogate the tumour suppressive effects of CTCF. These inter-ZF mutations may alter the conserved DNA binding domain structure and prevent normal CTCF function."
+      }
+    ],
+    "unresolved": [
+      "Variant origin (SOMATIC) is not specified in the evidence."
+    ],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2144,
+    "output_tokens": 325,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-28319062"
+        ],
+        "fingerprint": "b3250a4801730c7616dd675d16f72b6f8c42e57a856c3d16b124f156fdf49a9a",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R377H",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R377H",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R377H",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-28319062"
+        ],
+        "query": "{\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"FUNCTIONAL\",\n  \"molecularProfile\": \"CTCF R377H\",\n  \"significance\": \"loss of function\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-28319062"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28319062": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R377H",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28319062",
+              "start": 0,
+              "end": 5,
+              "raw": "R377H",
+              "canonical": "R377H"
+            },
+            {
+              "document_id": "pmid-28319062",
+              "start": 10,
+              "end": 15,
+              "raw": "P378L",
+              "canonical": "P378L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28319062": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-28319062"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28319062": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R377H",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28319062",
+              "start": 0,
+              "end": 5,
+              "raw": "R377H",
+              "canonical": "R377H"
+            },
+            {
+              "document_id": "pmid-28319062",
+              "start": 10,
+              "end": 15,
+              "raw": "P378L",
+              "canonical": "P378L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28319062": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "e81ee81e890fffcaa1154d4bd9fbc018f40abefe2db79c7af390769350d40d38",
+        "source_ids": [
+          "pmid-28319062"
+        ],
+        "token_reservation": 12311,
+        "evidence_ids": [
+          "pmid-28319062:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-28319062": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 213,
+              "chars_sent": 213,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-28319062:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 213,
+          "chars_sent": 213,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2144,
+        "output_tokens": 325,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 9.076,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "variantOrigin"
+        ],
+        "minimal_revision": "Remove variantOrigin or mark as unknown, as the evidence does not specify if the mutation is somatic or germline.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence fragment pmid-28319062:f01 explicitly states that R377H is a loss-of-function mutation, which supports the evidenceDirection (SUPPORTS), evidenceType (FUNCTIONAL), molecularProfile (CTCF R377H), and significance (loss of function) components of the claim. However, the evidence does not specify the variant origin (SOMATIC vs GERMLINE). The claim asserts a SOMATIC origin, but the provided text does not contain information to confirm or refute this specific origin. Therefore, the claim requires revision to remove the unsupported variantOrigin field or mark it as unknown.",
+          "citations": [
+            {
+              "document_id": "pmid-28319062",
+              "start": 0,
+              "end": 213,
+              "quote": "R377H and P378L are loss-of-function mutations which abrogate the tumour suppressive effects of CTCF. These inter-ZF mutations may alter the conserved DNA binding domain structure and prevent normal CTCF function."
+            }
+          ],
+          "unresolved": [
+            "Variant origin (SOMATIC) is not specified in the evidence."
+          ],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence fragment pmid-28319062:f01 explicitly states that R377H is a loss-of-function mutation, which supports the evidenceDirection (SUPPORTS), evidenceType (FUNCTIONAL), molecularProfile (CTCF R377H), and significance (loss of function) components of the claim. However, the evidence does not specify the variant origin (SOMATIC vs GERMLINE). The claim asserts a SOMATIC origin, but the provided text does not contain information to confirm or refute this specific origin. Therefore, the claim requires revision to remove the unsupported variantOrigin field or mark it as unknown.",
+          "citations": [
+            {
+              "document_id": "pmid-28319062",
+              "start": 0,
+              "end": 213,
+              "quote": "R377H and P378L are loss-of-function mutations which abrogate the tumour suppressive effects of CTCF. These inter-ZF mutations may alter the conserved DNA binding domain structure and prevent normal CTCF function."
+            }
+          ],
+          "unresolved": [
+            "Variant origin (SOMATIC) is not specified in the evidence."
+          ],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-28319062"
+  ],
+  "duration_seconds": 9.091139,
+  "research_only": true
+}

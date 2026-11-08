@@ -1,0 +1,414 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-a8b34064-b3d3-4e0b-a621-6f5ca066eab6",
+  "patient_id": "article-9839497",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "9c07e64922d34f21f1a64a78038d2033e46abc80c211dd5ffeba84ca454cc30e",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The evidence from pmid-9839497 explicitly states that patients with the RET M918T mutation developed larger and more aggressive medullary thyroid cancer compared to other genotypes. This directly supports the claim that the RET M918T variant is associated with a poor outcome (aggressive disease) in Medullary Thyroid Carcinoma. The evidence identifies the mutation as a germline hotspot mutation, consistent with the RARE_GERMLINE origin specified in the claim. The evidence type is prognostic, as it describes the clinical course and aggressiveness of the cancer associated with the genotype.",
+    "citations": [
+      {
+        "document_id": "pmid-9839497",
+        "start": 0,
+        "end": 269,
+        "quote": "In a study of 64 patients (48 kindreds), 62 had germline mutations at known hotspots in RET. Patients with RET M918T mutation were associated with MEN 2B subtype and developed larger and more aggressive medullary thyroid cancer compared to other genotypes (e.g. C618S)."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2170,
+    "output_tokens": 269,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-9839497"
+        ],
+        "fingerprint": "9c07e64922d34f21f1a64a78038d2033e46abc80c211dd5ffeba84ca454cc30e",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "M918T",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "M918T",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "M918T",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-9839497"
+        ],
+        "query": "{\n  \"disease\": \"Medullary Thyroid Carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PROGNOSTIC\",\n  \"molecularProfile\": \"RET M918T\",\n  \"significance\": \"poor outcome\",\n  \"variantOrigin\": \"RARE_GERMLINE\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-9839497"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-9839497": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "M918T",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-9839497",
+              "start": 111,
+              "end": 116,
+              "raw": "M918T",
+              "canonical": "M918T"
+            },
+            {
+              "document_id": "pmid-9839497",
+              "start": 262,
+              "end": 267,
+              "raw": "C618S",
+              "canonical": "C618S"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-9839497": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-9839497"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-9839497": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "M918T",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-9839497",
+              "start": 111,
+              "end": 116,
+              "raw": "M918T",
+              "canonical": "M918T"
+            },
+            {
+              "document_id": "pmid-9839497",
+              "start": 262,
+              "end": 267,
+              "raw": "C618S",
+              "canonical": "C618S"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-9839497": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "d32f9f0c2afbe113aa58070bcd223affbb8989621058202f99a906eee53bb255",
+        "source_ids": [
+          "pmid-9839497"
+        ],
+        "token_reservation": 12362,
+        "evidence_ids": [
+          "pmid-9839497:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-9839497": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 269,
+              "chars_sent": 269,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-9839497:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 269,
+          "chars_sent": 269,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2170,
+        "output_tokens": 269,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 11.404,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "as_written",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "SUPPORTS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from pmid-9839497 explicitly states that patients with the RET M918T mutation developed larger and more aggressive medullary thyroid cancer compared to other genotypes. This directly supports the claim that the RET M918T variant is associated with a poor outcome (aggressive disease) in Medullary Thyroid Carcinoma. The evidence identifies the mutation as a germline hotspot mutation, consistent with the RARE_GERMLINE origin specified in the claim. The evidence type is prognostic, as it describes the clinical course and aggressiveness of the cancer associated with the genotype.",
+          "citations": [
+            {
+              "document_id": "pmid-9839497",
+              "start": 0,
+              "end": 269,
+              "quote": "In a study of 64 patients (48 kindreds), 62 had germline mutations at known hotspots in RET. Patients with RET M918T mutation were associated with MEN 2B subtype and developed larger and more aggressive medullary thyroid cancer compared to other genotypes (e.g. C618S)."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from pmid-9839497 explicitly states that patients with the RET M918T mutation developed larger and more aggressive medullary thyroid cancer compared to other genotypes. This directly supports the claim that the RET M918T variant is associated with a poor outcome (aggressive disease) in Medullary Thyroid Carcinoma. The evidence identifies the mutation as a germline hotspot mutation, consistent with the RARE_GERMLINE origin specified in the claim. The evidence type is prognostic, as it describes the clinical course and aggressiveness of the cancer associated with the genotype.",
+          "citations": [
+            {
+              "document_id": "pmid-9839497",
+              "start": 0,
+              "end": 269,
+              "quote": "In a study of 64 patients (48 kindreds), 62 had germline mutations at known hotspots in RET. Patients with RET M918T mutation were associated with MEN 2B subtype and developed larger and more aggressive medullary thyroid cancer compared to other genotypes (e.g. C618S)."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-9839497"
+  ],
+  "duration_seconds": 11.439327,
+  "research_only": true
+}

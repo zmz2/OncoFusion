@@ -1,0 +1,402 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-4f03a480-813e-4177-894d-c08627e1f4c6",
+  "patient_id": "article-29948154",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "96a0056f11cbc5abf0a91231dba217aa4586a6593212d46c7f649ce827209ce0",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The evidence from pmid-29948154 supports the association of BRAF V600E with poor outcome (shorter PFS and OS) in Childhood Low-grade Glioma (PLGGs). However, the evidence does not specify the variant origin as SOMATIC. While BRAF V600E is frequently somatic in gliomas, the provided text fragment does not explicitly confirm the somatic nature of the mutation in this cohort. Therefore, the claim requires revision to remove the unsupported 'SOMATIC' origin specification or to be marked as unclear regarding origin, but given the strong support for the prognostic significance and disease, the primary revision is the lack of explicit origin confirmation in the text. However, looking at the schema, if the evidence doesn't support a field, it might be NEI for that field, but here the claim is a whole. The claim says 'variantOrigin: SOMATIC'. The evidence does not mention origin. Thus, the evidence is insufficient to support the 'SOMATIC' aspect. But does it support the rest? Yes. So it's a partial support. The required revision is to the variantOrigin field. Since the evidence doesn't state it, we cannot confirm it. Is it 'no_supported_revision'? No, because we can revise the claim to remove the origin or mark it as unknown. But the schema says 'requires_revision' if relevant evidence cannot support the claim unchanged and supports a specific minimal correction. The correction here is that the origin is not specified. So we should revise the claim to not specify origin or mark it as 'unknown' if that's an option. But the options are fixed. Let's look at the fields: disease, evidenceDirection, evidenceType, molecularProfile, significance, therapies, variantOrigin. The evidence supports disease, evidenceDirection (SUPPORTS), evidenceType (PROGNOSTIC), molecularProfile (BRAF V600E), significance (poor outcome). It does NOT support variantOrigin (SOMATIC). So the claim requires revision in the 'variantOrigin' field. The minimal revision is to remove the origin or state it is unknown. Since 'unknown' is not a value in the claim, the revision is to remove the origin or mark it as not specified. In the context of the output, the minimal revision should be the corrected claim structure or a description. The instruction says 'state the exact minimal revision'. I will state that the variantOrigin is not supported by the text. Thus, the claim requires revision to remove the SOMATIC origin claim.",
+    "citations": [
+      {
+        "document_id": "pmid-29948154",
+        "start": 0,
+        "end": 145,
+        "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2147,
+    "output_tokens": 729,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-29948154"
+        ],
+        "fingerprint": "96a0056f11cbc5abf0a91231dba217aa4586a6593212d46c7f649ce827209ce0",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-29948154"
+        ],
+        "query": "{\n  \"disease\": \"Childhood Low-grade Glioma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PROGNOSTIC\",\n  \"molecularProfile\": \"BRAF V600E\",\n  \"phenotypes\": [\n    \"Pediatric onset\",\n    \"Early young adult onset\"\n  ],\n  \"significance\": \"poor outcome\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-29948154": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 55,
+              "end": 60,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-29948154": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-29948154": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 55,
+              "end": 60,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-29948154": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "7739038ab0c49de04f86d941d81bdb344c0673afde00cfe5fc77e83b51d926d7",
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "token_reservation": 12286,
+        "evidence_ids": [
+          "pmid-29948154:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-29948154": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 145,
+              "chars_sent": 145,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-29948154:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 145,
+          "chars_sent": 145,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2147,
+        "output_tokens": 729,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 14.436,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "variantOrigin"
+        ],
+        "minimal_revision": "The evidence supports BRAF V600E as a prognostic marker for poor outcome in Childhood Low-grade Glioma but does not specify the variant origin as SOMATIC. The claim should be revised to remove the 'SOMATIC' origin specification or mark it as unspecified.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-29948154 supports the association of BRAF V600E with poor outcome (shorter PFS and OS) in Childhood Low-grade Glioma (PLGGs). However, the evidence does not specify the variant origin as SOMATIC. While BRAF V600E is frequently somatic in gliomas, the provided text fragment does not explicitly confirm the somatic nature of the mutation in this cohort. Therefore, the claim requires revision to remove the unsupported 'SOMATIC' origin specification or to be marked as unclear regarding origin, but given the strong support for the prognostic significance and disease, the primary revision is the lack of explicit origin confirmation in the text. However, looking at the schema, if the evidence doesn't support a field, it might be NEI for that field, but here the claim is a whole. The claim says 'variantOrigin: SOMATIC'. The evidence does not mention origin. Thus, the evidence is insufficient to support the 'SOMATIC' aspect. But does it support the rest? Yes. So it's a partial support. The required revision is to the variantOrigin field. Since the evidence doesn't state it, we cannot confirm it. Is it 'no_supported_revision'? No, because we can revise the claim to remove the origin or mark it as unknown. But the schema says 'requires_revision' if relevant evidence cannot support the claim unchanged and supports a specific minimal correction. The correction here is that the origin is not specified. So we should revise the claim to not specify origin or mark it as 'unknown' if that's an option. But the options are fixed. Let's look at the fields: disease, evidenceDirection, evidenceType, molecularProfile, significance, therapies, variantOrigin. The evidence supports disease, evidenceDirection (SUPPORTS), evidenceType (PROGNOSTIC), molecularProfile (BRAF V600E), significance (poor outcome). It does NOT support variantOrigin (SOMATIC). So the claim requires revision in the 'variantOrigin' field. The minimal revision is to remove the origin or state it is unknown. Since 'unknown' is not a value in the claim, the revision is to remove the origin or mark it as not specified. In the context of the output, the minimal revision should be the corrected claim structure or a description. The instruction says 'state the exact minimal revision'. I will state that the variantOrigin is not supported by the text. Thus, the claim requires revision to remove the SOMATIC origin claim.",
+          "citations": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 0,
+              "end": 145,
+              "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-29948154 supports the association of BRAF V600E with poor outcome (shorter PFS and OS) in Childhood Low-grade Glioma (PLGGs). However, the evidence does not specify the variant origin as SOMATIC. While BRAF V600E is frequently somatic in gliomas, the provided text fragment does not explicitly confirm the somatic nature of the mutation in this cohort. Therefore, the claim requires revision to remove the unsupported 'SOMATIC' origin specification or to be marked as unclear regarding origin, but given the strong support for the prognostic significance and disease, the primary revision is the lack of explicit origin confirmation in the text. However, looking at the schema, if the evidence doesn't support a field, it might be NEI for that field, but here the claim is a whole. The claim says 'variantOrigin: SOMATIC'. The evidence does not mention origin. Thus, the evidence is insufficient to support the 'SOMATIC' aspect. But does it support the rest? Yes. So it's a partial support. The required revision is to the variantOrigin field. Since the evidence doesn't state it, we cannot confirm it. Is it 'no_supported_revision'? No, because we can revise the claim to remove the origin or mark it as unknown. But the schema says 'requires_revision' if relevant evidence cannot support the claim unchanged and supports a specific minimal correction. The correction here is that the origin is not specified. So we should revise the claim to not specify origin or mark it as 'unknown' if that's an option. But the options are fixed. Let's look at the fields: disease, evidenceDirection, evidenceType, molecularProfile, significance, therapies, variantOrigin. The evidence supports disease, evidenceDirection (SUPPORTS), evidenceType (PROGNOSTIC), molecularProfile (BRAF V600E), significance (poor outcome). It does NOT support variantOrigin (SOMATIC). So the claim requires revision in the 'variantOrigin' field. The minimal revision is to remove the origin or state it is unknown. Since 'unknown' is not a value in the claim, the revision is to remove the origin or mark it as not specified. In the context of the output, the minimal revision should be the corrected claim structure or a description. The instruction says 'state the exact minimal revision'. I will state that the variantOrigin is not supported by the text. Thus, the claim requires revision to remove the SOMATIC origin claim.",
+          "citations": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 0,
+              "end": 145,
+              "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-29948154"
+  ],
+  "duration_seconds": 14.452281,
+  "research_only": true
+}

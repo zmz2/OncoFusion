@@ -1,0 +1,404 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-aa9db1cc-16ba-47f1-9ddb-52b4fc9838f9",
+  "patient_id": "article-9462753",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "02a2d1fcb4942f8527867055fbe4bd361236f52396afe762844410bc0faf3d8b",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The supplied evidence (pmid-9462753) exclusively discusses the ETV6-NTRK3 gene fusion in congenital fibrosarcoma. It does not contain any information regarding the FLT3 gene, the D648K variant, Gilteritinib, or any predictive sensitivity/response data for these entities. The evidence is entirely irrelevant to the claim's molecular profile, therapies, and significance.",
+    "citations": [
+      {
+        "document_id": "pmid-9462753",
+        "start": 0,
+        "end": 599,
+        "quote": "This is the first study showing the ETV6-NTRK3 gene fusion in congenital fibrosarcoma (CFS). Using cytogenetic and FISH analyses, a novel t(12;15)(p13;q25) rearrangement was identified in CFS cases (3 of 4, including 1 case likely presenting overgrowth of normal fibroblasts). Mapping of breakpoints and mRNA analysis revealed that the translocation gives rise to the ETV6-NTRK3 fusion transcript, consisting of the HLH dimerization domain of ETV6 fused to the kinase domain of NTRK3. This aberration was absent in adult-type fibrosarcoma (ATFS, 2 cases) and infantile fibromatosis (IFB, 15 cases). "
+      },
+      {
+        "document_id": "pmid-9462753",
+        "start": 599,
+        "end": 784,
+        "quote": "This is the first study describing the involvement of NTRK proteins in human oncogenesis and ETV6 gene fusion in solid tumors and proposing ETV6-NTRK3 as a diagnostic biomarker for CFS."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2332,
+    "output_tokens": 254,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-9462753"
+        ],
+        "fingerprint": "02a2d1fcb4942f8527867055fbe4bd361236f52396afe762844410bc0faf3d8b",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D648K",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D648K",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D648K",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-9462753"
+        ],
+        "query": "{\n  \"disease\": \"Cancer\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"FLT3 D648K\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Gilteritinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-9462753"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-9462753": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "D648K",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-9462753": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-9462753"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-9462753": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "D648K",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-9462753": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "8ed7d6b35c305dbeadd3a2b5c86446bccdb4b6a9d586bde561ba6a9a46705f35",
+        "source_ids": [
+          "pmid-9462753"
+        ],
+        "token_reservation": 12954,
+        "evidence_ids": [
+          "pmid-9462753:f01",
+          "pmid-9462753:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-9462753": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 784,
+              "chars_sent": 784,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-9462753:f01",
+                "pmid-9462753:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 784,
+          "chars_sent": 784,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2332,
+        "output_tokens": 254,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.054,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "irrelevant",
+        "claim_conformance": "unclear",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "NEI"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The supplied evidence (pmid-9462753) exclusively discusses the ETV6-NTRK3 gene fusion in congenital fibrosarcoma. It does not contain any information regarding the FLT3 gene, the D648K variant, Gilteritinib, or any predictive sensitivity/response data for these entities. The evidence is entirely irrelevant to the claim's molecular profile, therapies, and significance.",
+          "citations": [
+            {
+              "document_id": "pmid-9462753",
+              "start": 0,
+              "end": 599,
+              "quote": "This is the first study showing the ETV6-NTRK3 gene fusion in congenital fibrosarcoma (CFS). Using cytogenetic and FISH analyses, a novel t(12;15)(p13;q25) rearrangement was identified in CFS cases (3 of 4, including 1 case likely presenting overgrowth of normal fibroblasts). Mapping of breakpoints and mRNA analysis revealed that the translocation gives rise to the ETV6-NTRK3 fusion transcript, consisting of the HLH dimerization domain of ETV6 fused to the kinase domain of NTRK3. This aberration was absent in adult-type fibrosarcoma (ATFS, 2 cases) and infantile fibromatosis (IFB, 15 cases). "
+            },
+            {
+              "document_id": "pmid-9462753",
+              "start": 599,
+              "end": 784,
+              "quote": "This is the first study describing the involvement of NTRK proteins in human oncogenesis and ETV6 gene fusion in solid tumors and proposing ETV6-NTRK3 as a diagnostic biomarker for CFS."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The supplied evidence (pmid-9462753) exclusively discusses the ETV6-NTRK3 gene fusion in congenital fibrosarcoma. It does not contain any information regarding the FLT3 gene, the D648K variant, Gilteritinib, or any predictive sensitivity/response data for these entities. The evidence is entirely irrelevant to the claim's molecular profile, therapies, and significance.",
+          "citations": [
+            {
+              "document_id": "pmid-9462753",
+              "start": 0,
+              "end": 599,
+              "quote": "This is the first study showing the ETV6-NTRK3 gene fusion in congenital fibrosarcoma (CFS). Using cytogenetic and FISH analyses, a novel t(12;15)(p13;q25) rearrangement was identified in CFS cases (3 of 4, including 1 case likely presenting overgrowth of normal fibroblasts). Mapping of breakpoints and mRNA analysis revealed that the translocation gives rise to the ETV6-NTRK3 fusion transcript, consisting of the HLH dimerization domain of ETV6 fused to the kinase domain of NTRK3. This aberration was absent in adult-type fibrosarcoma (ATFS, 2 cases) and infantile fibromatosis (IFB, 15 cases). "
+            },
+            {
+              "document_id": "pmid-9462753",
+              "start": 599,
+              "end": 784,
+              "quote": "This is the first study describing the involvement of NTRK proteins in human oncogenesis and ETV6 gene fusion in solid tumors and proposing ETV6-NTRK3 as a diagnostic biomarker for CFS."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-9462753"
+  ],
+  "duration_seconds": 3.07308,
+  "research_only": true
+}

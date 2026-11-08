@@ -1,0 +1,491 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-5884eb48-8393-4de4-9d7c-ce7af494eef6",
+  "patient_id": "article-26324363",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "a4cbc15a58cb0f83078f1cb7f302ceee4e0a2b8a72edf539842e6d4adf44b600",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The claim posits that the ZMIZ1::ABL1 fusion in B-lymphoblastic Leukemia/lymphoma, BCR-ABL1–like is a negative diagnostic marker. The available evidence (pmid-26324363:f01) describes a Phase 1 study of a pan-FGFR inhibitor (JNJ-42756493) in solid tumors, specifically focusing on FGFR pathway aberrations. This evidence is entirely irrelevant to the claim's specific molecular profile (ZMIZ1::ABL1), disease (B-lymphoblastic Leukemia/lymphoma, BCR-ABL1–like), and evidence type (DIAGNOSTIC). The study does not mention ABL1 fusions, B-lymphoblastic leukemia, or diagnostic significance. Since the evidence is irrelevant, it cannot support the claim as written, nor does it provide a basis for a specific minimal revision of the claim's fields. Therefore, the correct classification is NEI.",
+    "citations": [
+      {
+        "document_id": "pmid-26324363",
+        "start": 0,
+        "end": 391,
+        "quote": "Phase 1 study of pan-FGFR inhibitor JNJ-42756493 in patients with solid tumors. No responses were seen 36 patients without known FGFR pathway aberrations. Among 23 patients with FGFR pathway aberrations, 4 partial responses as well as 16 with stable disease were seen. In patients with FGFR2-BICC1 fusions, 1 patient with urothelial cancer harboring FGFR2-BICC1/FGFR2-CASP7 fusions had a PR."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.95,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 2,
+    "http_attempts": 2,
+    "tool_calls": 6,
+    "input_tokens": 5103,
+    "output_tokens": 990,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-26324363"
+        ],
+        "fingerprint": "a4cbc15a58cb0f83078f1cb7f302ceee4e0a2b8a72edf539842e6d4adf44b600",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-26324363"
+        ],
+        "query": "{\n  \"disease\": \"B-lymphoblastic Leukemia/lymphoma, BCR-ABL1\\u2013like\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"DIAGNOSTIC\",\n  \"molecularProfile\": \"ZMIZ1::ABL1 Fusion\",\n  \"phenotypes\": [\n    \"Pediatric onset\"\n  ],\n  \"significance\": \"negative\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-26324363"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-26324363": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-26324363": "resistance"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-26324363"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-26324363": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-26324363": "resistance"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "60cbb350eb11acc28f6a3470f213426474c95df00df058cf8f529486c2a50f00",
+        "source_ids": [
+          "pmid-26324363"
+        ],
+        "token_reservation": 12394,
+        "evidence_ids": [
+          "pmid-26324363:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-26324363": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 391,
+              "chars_sent": 391,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-26324363:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 391,
+          "chars_sent": 391,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2150,
+        "output_tokens": 630,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 9.972,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "invalid_model_output",
+      "role": "decision",
+      "details": {
+        "error_type": "ValueError",
+        "previous_output": "{\n  \"answer\": \"REVISIONS\",\n  \"explanation\": \"The claim posits that the ZMIZ1::ABL1 fusion in B-lymphoblastic Leukemia/lymphoma, BCR-ABL1–like is a negative diagnostic marker. The available evidence (pmid-26324363:f01) describes a Phase 1 study of a pan-FGFR inhibitor (JNJ-42756493) in solid tumors. This evidence is irrelevant to the claim's specific molecular profile (ZMIZ1::ABL1), disease (B-lymphoblastic Leukemia/lymphoma, BCR-ABL1–like), and evidence type (DIAGNOSTIC). The study focuses on FGFR aberrations, not ABL1 fusions, and does not provide diagnostic significance for the specified condition. Therefore, the evidence is insufficient to support the claim as written. However, since the evidence is completely unrelated to the claim's domain (FGFR inhibitors in solid tumors vs. ABL1 fusions in ALL), it cannot support any specific revision to the claim's fields (disease, molecularProfile, etc.) other than noting the mismatch. Given the strict mapping where relevant + requires_revision => REVISIONS, and this evidence is irrelevant, the correct classification is NEI. Wait, let me re-read the schema instructions. \\\"Role not-applicable is not evidence irrelevance.\\\" The evidence is clearly irrelevant to the specific claim. The claim is about ZMIZ1::ABL1 in ALL. The evidence is about FGFR inhibitors in solid tumors. There is no support. Is it REVISIONS? No, because there is no specific minimal revision supported by the evidence. The evidence doesn't tell us what the correct molecular profile or disease is. It just doesn't talk about it. Thus, NEI is the correct answer. However, looking at the \\\"requires_revision\\\" logic: \\\"When the evidence requires a corrected disease... classify requires_revision rather than no_supported_revision\\\". This implies the evidence must be relevant to the claim but contradict a specific field. Here, the evidence is not relevant. So it falls into NEI. Let me double check if I missed any subtle link. ZMIZ1::ABL1 is an ABL1 fusion. The drug is an FGFR inhibitor. No link. The evidence is irrelevant. Answer: NEI.\",\n  \"citations\": [\n    {\n      \"evidence_id\": \"pmid-26324363:f01\"\n    }\n  ],\n  \"unresolved\": [],\n  \"confidence\": 0.9,\n  \"adopted_claim_ids\": [],\n  \"rejected_claim_ids\": [],\n  \"assessment\": {\n    \"evidence_relevance\": \"irrelevant\",\n    \"claim_conformance\": \"no_supported_revision\",\n    \"revision_fields\": [],\n    \"minimal_revision\": \"\"\n  }\n}",
+        "validation_errors": [
+          {
+            "msg": "decision answer conflicts with revision assessment: answer=REVISIONS, expected=NEI, evidence_relevance=irrelevant, claim_conformance=no_supported_revision"
+          }
+        ],
+        "valid_claim_ids": [],
+        "output_truncated_in_trace": false
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "schema_repair_requested",
+      "role": "decision",
+      "details": {
+        "attempt": 1
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "cf5d371c30bd9bd9f6acb395bfeebfe09531a09067b17fb7e5297779a09b9780",
+        "source_ids": [
+          "pmid-26324363"
+        ],
+        "token_reservation": 15660,
+        "evidence_ids": [
+          "pmid-26324363:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-26324363": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 391,
+              "chars_sent": 391,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-26324363:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 391,
+          "chars_sent": 391,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2953,
+        "output_tokens": 360,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 6.389,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "irrelevant",
+        "claim_conformance": "no_supported_revision",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "NEI"
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The claim posits that the ZMIZ1::ABL1 fusion in B-lymphoblastic Leukemia/lymphoma, BCR-ABL1–like is a negative diagnostic marker. The available evidence (pmid-26324363:f01) describes a Phase 1 study of a pan-FGFR inhibitor (JNJ-42756493) in solid tumors, specifically focusing on FGFR pathway aberrations. This evidence is entirely irrelevant to the claim's specific molecular profile (ZMIZ1::ABL1), disease (B-lymphoblastic Leukemia/lymphoma, BCR-ABL1–like), and evidence type (DIAGNOSTIC). The study does not mention ABL1 fusions, B-lymphoblastic leukemia, or diagnostic significance. Since the evidence is irrelevant, it cannot support the claim as written, nor does it provide a basis for a specific minimal revision of the claim's fields. Therefore, the correct classification is NEI.",
+          "citations": [
+            {
+              "document_id": "pmid-26324363",
+              "start": 0,
+              "end": 391,
+              "quote": "Phase 1 study of pan-FGFR inhibitor JNJ-42756493 in patients with solid tumors. No responses were seen 36 patients without known FGFR pathway aberrations. Among 23 patients with FGFR pathway aberrations, 4 partial responses as well as 16 with stable disease were seen. In patients with FGFR2-BICC1 fusions, 1 patient with urothelial cancer harboring FGFR2-BICC1/FGFR2-CASP7 fusions had a PR."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.95,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The claim posits that the ZMIZ1::ABL1 fusion in B-lymphoblastic Leukemia/lymphoma, BCR-ABL1–like is a negative diagnostic marker. The available evidence (pmid-26324363:f01) describes a Phase 1 study of a pan-FGFR inhibitor (JNJ-42756493) in solid tumors, specifically focusing on FGFR pathway aberrations. This evidence is entirely irrelevant to the claim's specific molecular profile (ZMIZ1::ABL1), disease (B-lymphoblastic Leukemia/lymphoma, BCR-ABL1–like), and evidence type (DIAGNOSTIC). The study does not mention ABL1 fusions, B-lymphoblastic leukemia, or diagnostic significance. Since the evidence is irrelevant, it cannot support the claim as written, nor does it provide a basis for a specific minimal revision of the claim's fields. Therefore, the correct classification is NEI.",
+          "citations": [
+            {
+              "document_id": "pmid-26324363",
+              "start": 0,
+              "end": 391,
+              "quote": "Phase 1 study of pan-FGFR inhibitor JNJ-42756493 in patients with solid tumors. No responses were seen 36 patients without known FGFR pathway aberrations. Among 23 patients with FGFR pathway aberrations, 4 partial responses as well as 16 with stable disease were seen. In patients with FGFR2-BICC1 fusions, 1 patient with urothelial cancer harboring FGFR2-BICC1/FGFR2-CASP7 fusions had a PR."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.95,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-26324363"
+  ],
+  "duration_seconds": 16.379776,
+  "research_only": true
+}

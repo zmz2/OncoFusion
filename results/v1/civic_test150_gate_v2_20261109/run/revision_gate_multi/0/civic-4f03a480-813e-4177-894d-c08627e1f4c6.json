@@ -1,0 +1,1292 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-4f03a480-813e-4177-894d-c08627e1f4c6",
+  "patient_id": "article-29948154",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "e53680e63e458ce069bb1e9858aad51e2f75df2ac01f3ee4e5a6d114b2f52a9e",
+  "config": {
+    "mode": "multi",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "claims-v1",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The provided evidence from pmid-29948154 explicitly states that in a cohort of 289 pediatric low-grade gliomas (PLGGs), the BRAF V600E somatic variant was associated with shorter progression-free survival (PFS) and overall survival (OS). This directly supports the claim that BRAF V600E is a prognostic marker for poor outcome in Childhood Low-grade Glioma. The evidence aligns with the specified disease, molecular profile, variant origin, and significance.",
+    "citations": [
+      {
+        "document_id": "pmid-29948154",
+        "start": 0,
+        "end": 145,
+        "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [
+      "literature-01",
+      "genomics-01"
+    ],
+    "rejected_claim_ids": [
+      "timeline-01",
+      "pathology-01",
+      "drug-01"
+    ]
+  },
+  "reports": [
+    {
+      "role": "literature",
+      "executor": "literature",
+      "output": {
+        "findings": [
+          {
+            "statement": "In a cohort of 289 pediatric low-grade gliomas (PLGGs), the BRAF V600E somatic variant was associated with shorter progression-free survival (PFS) and overall survival (OS), indicating a poor prognostic outcome in this disease context.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "pmid-29948154",
+                "start": 0,
+                "end": 145,
+                "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+              }
+            ],
+            "claim_id": "literature-01",
+            "author_role": "literature",
+            "used_claim_ids": [],
+            "scope": "source",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "timeline",
+      "executor": "timeline",
+      "output": {
+        "findings": [
+          {
+            "statement": "not_applicable: no timeline input was supplied for this case.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "timeline-01",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "not_recorded"
+          }
+        ],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "genomics",
+      "executor": "genomics",
+      "output": {
+        "findings": [
+          {
+            "statement": "In the provided literature (pmid-29948154), the BRAF V600E somatic variant is associated with shorter progression-free survival (PFS) and overall survival (OS) in a cohort of 289 pediatric low-grade gliomas (PLGGs), supporting a poor prognostic outcome.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "pmid-29948154",
+                "start": 0,
+                "end": 145,
+                "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+              }
+            ],
+            "claim_id": "genomics-01",
+            "author_role": "genomics",
+            "used_claim_ids": [
+              "literature-01"
+            ],
+            "scope": "molecular",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The evidence explicitly links BRAF V600E somatic variant to shorter PFS and OS in PLGGs, supporting the claim of poor prognosis.",
+            "citations": [
+              {
+                "document_id": "pmid-29948154",
+                "start": 0,
+                "end": 145,
+                "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+              }
+            ],
+            "reviewer_role": "genomics"
+          }
+        ]
+      }
+    },
+    {
+      "role": "pathology",
+      "executor": "pathology",
+      "output": {
+        "findings": [
+          {
+            "statement": "not_applicable: no pathology input was supplied for this case.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "pathology-01",
+            "author_role": "pathology",
+            "used_claim_ids": [],
+            "scope": "pathologic",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "not_recorded"
+          }
+        ],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "drug",
+      "executor": "drug",
+      "output": {
+        "findings": [
+          {
+            "statement": "not_applicable: no drug input was supplied for this case.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "drug-01",
+            "author_role": "drug",
+            "used_claim_ids": [],
+            "scope": "exposure",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "not_recorded"
+          }
+        ],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "verifier",
+      "executor": "verifier",
+      "output": {
+        "findings": [],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The source text explicitly states that in a cohort of 289 PLGGs, BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032). This directly supports the claim that the variant is associated with shorter PFS and OS, indicating a poor prognostic outcome.",
+            "citations": [
+              {
+                "document_id": "pmid-29948154",
+                "start": 0,
+                "end": 145,
+                "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "verdict": "confirmed",
+            "note": "The claim asserts that BRAF V600E is associated with shorter PFS and OS in 289 pediatric low-grade gliomas. The source text confirms this exact association and cohort size. The claim is fully supported by the provided evidence.",
+            "citations": [
+              {
+                "document_id": "pmid-29948154",
+                "start": 0,
+                "end": 145,
+                "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+              }
+            ],
+            "reviewer_role": "verifier"
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "calls": 5,
+    "http_attempts": 5,
+    "tool_calls": 4,
+    "input_tokens": 15154,
+    "output_tokens": 1235,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-29948154"
+        ],
+        "fingerprint": "e53680e63e458ce069bb1e9858aad51e2f75df2ac01f3ee4e5a6d114b2f52a9e",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "claims-v1",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-29948154"
+        ],
+        "query": "{\n  \"disease\": \"Childhood Low-grade Glioma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PROGNOSTIC\",\n  \"molecularProfile\": \"BRAF V600E\",\n  \"phenotypes\": [\n    \"Pediatric onset\",\n    \"Early young adult onset\"\n  ],\n  \"significance\": \"poor outcome\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "agent_started",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "payload_sha256": "cf696ba7ac4dea45b2bf3028b526800c7d3876303a1121b5d5fea959f5e2cb2d",
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "token_reservation": 12307,
+        "evidence_ids": [
+          "pmid-29948154:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-29948154": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 145,
+              "chars_sent": 145,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-29948154:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 145,
+          "chars_sent": 145,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [],
+          "required": {},
+          "guaranteed_unsent": []
+        },
+        "material_basis": "",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "model_usage",
+      "role": "literature",
+      "details": {
+        "input_tokens": 2021,
+        "output_tokens": 184,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 1.803,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "agent_reported",
+      "role": "literature",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "In a cohort of 289 pediatric low-grade gliomas (PLGGs), the BRAF V600E somatic variant was associated with shorter progression-free survival (PFS) and overall survival (OS), indicating a poor prognostic outcome in this disease context.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "pmid-29948154",
+                  "start": 0,
+                  "end": 145,
+                  "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "agent_completed",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "output": {
+          "findings": [
+            {
+              "statement": "In a cohort of 289 pediatric low-grade gliomas (PLGGs), the BRAF V600E somatic variant was associated with shorter progression-free survival (PFS) and overall survival (OS), indicating a poor prognostic outcome in this disease context.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "pmid-29948154",
+                  "start": 0,
+                  "end": 145,
+                  "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "agent_skipped",
+      "role": "timeline",
+      "details": {
+        "reason": "no matching input modality"
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_reported",
+      "role": "timeline",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: no timeline input was supplied for this case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        },
+        "synthesized_not_applicable": true
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-29948154": {
+              "gene": "unknown",
+              "variant": "unknown"
+            }
+          },
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 55,
+              "end": 60,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_started",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "payload_sha256": "477ddf490c0ab0038496b18cbf1b3e7d9dc26b4de3fae468caa05c05ba92f991",
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "token_reservation": 14641,
+        "evidence_ids": [
+          "pmid-29948154:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-29948154": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 145,
+              "chars_sent": 145,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-29948154:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 145,
+          "chars_sent": 145,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "molecular"
+          ],
+          "required": {
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 2,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "model_usage",
+      "role": "genomics",
+      "details": {
+        "input_tokens": 2760,
+        "output_tokens": 327,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.924,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_reported",
+      "role": "genomics",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "In the provided literature (pmid-29948154), the BRAF V600E somatic variant is associated with shorter progression-free survival (PFS) and overall survival (OS) in a cohort of 289 pediatric low-grade gliomas (PLGGs), supporting a poor prognostic outcome.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "pmid-29948154",
+                  "start": 0,
+                  "end": 145,
+                  "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+                }
+              ],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "molecular",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The evidence explicitly links BRAF V600E somatic variant to shorter PFS and OS in PLGGs, supporting the claim of poor prognosis.",
+              "citations": [
+                {
+                  "document_id": "pmid-29948154",
+                  "start": 0,
+                  "end": 145,
+                  "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+                }
+              ],
+              "reviewer_role": "genomics"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "agent_completed",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "output": {
+          "findings": [
+            {
+              "statement": "In the provided literature (pmid-29948154), the BRAF V600E somatic variant is associated with shorter progression-free survival (PFS) and overall survival (OS) in a cohort of 289 pediatric low-grade gliomas (PLGGs), supporting a poor prognostic outcome.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "pmid-29948154",
+                  "start": 0,
+                  "end": 145,
+                  "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+                }
+              ],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "molecular",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The evidence explicitly links BRAF V600E somatic variant to shorter PFS and OS in PLGGs, supporting the claim of poor prognosis.",
+              "citations": [
+                {
+                  "document_id": "pmid-29948154",
+                  "start": 0,
+                  "end": 145,
+                  "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+                }
+              ],
+              "reviewer_role": "genomics"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-29948154": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            }
+          },
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 55,
+              "end": 60,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_started",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "payload_sha256": "732edf959653c1dbd36dab35341d69360d9ad6a03983abf2bd6767ab175e8c4e",
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "token_reservation": 15550,
+        "evidence_ids": [
+          "pmid-29948154:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-29948154": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 145,
+              "chars_sent": 145,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-29948154:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 145,
+          "chars_sent": 145,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "pathology"
+          ],
+          "required": {
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 3,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "model_usage",
+      "role": "pathology",
+      "details": {
+        "input_tokens": 3051,
+        "output_tokens": 117,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.446,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "agent_reported",
+      "role": "pathology",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: no pathology input was supplied for this case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 18,
+      "kind": "agent_completed",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: no pathology input was supplied for this case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "kind": "agent_skipped",
+      "role": "drug",
+      "details": {
+        "reason": "no matching input modality"
+      }
+    },
+    {
+      "sequence": 20,
+      "kind": "agent_reported",
+      "role": "drug",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: no drug input was supplied for this case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "drug-01",
+              "author_role": "drug",
+              "used_claim_ids": [],
+              "scope": "exposure",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        },
+        "synthesized_not_applicable": true
+      }
+    },
+    {
+      "sequence": 21,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-29948154": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            }
+          },
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 55,
+              "end": 60,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 22,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "296c0ca9fa5434da4b35f9564dd2fa96867543d22123adfaa119957d61c0fd86",
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "token_reservation": 16022,
+        "evidence_ids": [
+          "pmid-29948154:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-29948154": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 145,
+              "chars_sent": 145,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-29948154:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 145,
+          "chars_sent": 145,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 5,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 23,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 3135,
+        "output_tokens": 307,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.721,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 24,
+      "kind": "agent_reported",
+      "role": "verifier",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The source text explicitly states that in a cohort of 289 PLGGs, BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032). This directly supports the claim that the variant is associated with shorter PFS and OS, indicating a poor prognostic outcome.",
+              "citations": [
+                {
+                  "document_id": "pmid-29948154",
+                  "start": 0,
+                  "end": 145,
+                  "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The claim asserts that BRAF V600E is associated with shorter PFS and OS in 289 pediatric low-grade gliomas. The source text confirms this exact association and cohort size. The claim is fully supported by the provided evidence.",
+              "citations": [
+                {
+                  "document_id": "pmid-29948154",
+                  "start": 0,
+                  "end": 145,
+                  "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+                }
+              ],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 25,
+      "kind": "agent_completed",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The source text explicitly states that in a cohort of 289 PLGGs, BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032). This directly supports the claim that the variant is associated with shorter PFS and OS, indicating a poor prognostic outcome.",
+              "citations": [
+                {
+                  "document_id": "pmid-29948154",
+                  "start": 0,
+                  "end": 145,
+                  "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The claim asserts that BRAF V600E is associated with shorter PFS and OS in 289 pediatric low-grade gliomas. The source text confirms this exact association and cohort size. The claim is fully supported by the provided evidence.",
+              "citations": [
+                {
+                  "document_id": "pmid-29948154",
+                  "start": 0,
+                  "end": 145,
+                  "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+                }
+              ],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 26,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "ae6d8bef88941ef4bc37e7c0d50ace6e61de2013314f626a1b29f1214e1e6143",
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "token_reservation": 20227,
+        "evidence_ids": [
+          "pmid-29948154:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-29948154": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 145,
+              "chars_sent": 145,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-29948154:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 145,
+          "chars_sent": 145,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 5,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 27,
+      "kind": "verification_ledger",
+      "role": "decision",
+      "details": {
+        "entries": [
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "genomics",
+            "verdict": "confirmed",
+            "reason": "The evidence explicitly links BRAF V600E somatic variant to shorter PFS and OS in PLGGs, supporting the claim of poor prognosis.",
+            "final": false,
+            "citations": [
+              {
+                "evidence_id": "pmid-29948154:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The source text explicitly states that in a cohort of 289 PLGGs, BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032). This directly supports the claim that the variant is associated with shorter PFS and OS, indicating a poor prognostic outcome.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "pmid-29948154:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "claim_author": "genomics",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim asserts that BRAF V600E is associated with shorter PFS and OS in 289 pediatric low-grade gliomas. The source text confirms this exact association and cohort size. The claim is fully supported by the provided evidence.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "pmid-29948154:f01"
+              }
+            ]
+          }
+        ],
+        "reviews": 3,
+        "claims_reviewed": 2,
+        "final_verdicts": 2,
+        "rejected": [],
+        "insufficient": []
+      }
+    },
+    {
+      "sequence": 28,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 4187,
+        "output_tokens": 300,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.033,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 29,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "as_written",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "SUPPORTS"
+      }
+    },
+    {
+      "sequence": 30,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-29948154 explicitly states that in a cohort of 289 pediatric low-grade gliomas (PLGGs), the BRAF V600E somatic variant was associated with shorter progression-free survival (PFS) and overall survival (OS). This directly supports the claim that BRAF V600E is a prognostic marker for poor outcome in Childhood Low-grade Glioma. The evidence aligns with the specified disease, molecular profile, variant origin, and significance.",
+          "citations": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 0,
+              "end": 145,
+              "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [
+            "literature-01",
+            "genomics-01"
+          ],
+          "rejected_claim_ids": [
+            "timeline-01",
+            "pathology-01",
+            "drug-01"
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 31,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-29948154 explicitly states that in a cohort of 289 pediatric low-grade gliomas (PLGGs), the BRAF V600E somatic variant was associated with shorter progression-free survival (PFS) and overall survival (OS). This directly supports the claim that BRAF V600E is a prognostic marker for poor outcome in Childhood Low-grade Glioma. The evidence aligns with the specified disease, molecular profile, variant origin, and significance.",
+          "citations": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 0,
+              "end": 145,
+              "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [
+            "literature-01",
+            "genomics-01"
+          ],
+          "rejected_claim_ids": [
+            "timeline-01",
+            "pathology-01",
+            "drug-01"
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 32,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-29948154"
+  ],
+  "duration_seconds": 15.975135,
+  "research_only": true
+}

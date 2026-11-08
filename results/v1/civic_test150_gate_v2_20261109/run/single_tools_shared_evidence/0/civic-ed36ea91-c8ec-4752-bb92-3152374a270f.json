@@ -1,0 +1,430 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-ed36ea91-c8ec-4752-bb92-3152374a270f",
+  "patient_id": "article-30624546",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "f76531655114cf54bab55f4bb436427e6a5ff41cde96e14e3a6b57f80eacb82e",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The evidence from pmid-30624546 describes a patient with Gastrointestinal Stromal Tumor (GIST) who developed acquired resistance to Larotrectinib via the NTRK3 F617L mutation. This directly supports the claim's disease, therapy, molecular profile, and significance. However, the evidence explicitly describes the mutation as an acquired resistance mechanism following an initial response, which is a dynamic clinical outcome rather than a static predictive biomarker for primary resistance or sensitivity. The claim's evidenceType is listed as 'PREDICTIVE'. In oncology evidence standards, 'predictive' typically refers to baseline biomarkers predicting response or resistance. While the mutation is predictive of resistance, the specific context of 'acquired resistance' often warrants a more specific evidence type or significance description (e.g., 'ACQUIRED RESISTANCE' vs 'PREDICTIVE' for primary resistance). However, looking at the schema options, 'PREDICTIVE' is a broad category. A more critical mismatch is the 'variantOrigin'. The evidence states the mutation developed *after* initial response, implying it is an acquired somatic mutation. The claim lists 'variantOrigin' as 'SOMATIC'. Acquired mutations are somatic. So that matches. Let's re-evaluate 'evidenceType'. The claim says 'PREDICTIVE'. The evidence shows the mutation causes resistance. Is 'PREDICTIVE' the correct type for an acquired resistance mutation? Usually, predictive biomarkers are present at baseline. An acquired mutation is a mechanism of resistance. The significance is 'resistance'. This is consistent. Is there a mismatch? The claim says 'NTRK3 F617L'. The evidence says 'TRKC F617L'. NTRK3 encodes TRKC. This is a match. The claim says 'Gastrointestinal Stromal Tumor'. Evidence says 'gastrointestinal stromal tumour (GIST)'. Match. The claim says 'Larotrectinib'. Match. The claim says 'resistance'. Match. The claim says 'SOMATIC'. Match. The claim says 'PREDICTIVE'. The evidence describes an acquired resistance event. While the mutation predicts resistance, the *origin* is acquired. Some frameworks distinguish between 'Predictive' (baseline) and 'Resistance' (acquired). If the system requires 'evidenceType' to be 'RESISTANCE' or similar for acquired events, then 'PREDICTIVE' might be considered insufficient or requiring revision. However, 'PREDICTIVE' is often used broadly. Let's look for a clearer error. The evidence mentions 'solvent-front (TRKA G595R) and xDFG (TRKA G667S) mutations in the case of the patient with NSCLC, and a gatekeeper mutation (TRKC F617L) in the case of the patient with GIST.' The claim is about GIST and F617L. This is a specific case report. The evidence supports that F617L in GIST causes resistance to Larotrectinib. The 'evidenceType' being 'PREDICTIVE' might be technically correct in a broad sense (predicts resistance), but often 'RESISTANCE' is a distinct category. If I must choose a revision, 'evidenceType' from 'PREDICTIVE' to 'RESISTANCE' or 'ACQUIRED RESISTANCE' might be the minimal correction if the schema distinguishes them. However, if 'PREDICTIVE' is accepted for resistance mechanisms, then it supports. Let's look at the 'significance'. It is 'resistance'. This is consistent. Is there any other issue? The claim says 'NTRK3'. The evidence says 'TRKC'. NTRK3 is the gene, TRKC is the protein. This is standard. The claim says 'SOMATIC'. The evidence says 'acquired'. Acquired somatic is somatic. This is consistent. Perhaps the 'evidenceType' is the weak point. In many evidence schemas, 'Predictive' implies a biomarker for response/sensitivity. 'Resistance' is a separate significance or type. If the schema allows 'PREDICTIVE' for resistance, it's SUPPORTS. If not, it's REVISIONS. Given the explicit 'acquired' nature, 'RESISTANCE' is a more precise evidence type or significance. The significance is already 'resistance'. So maybe the evidenceType should be 'RESISTANCE' instead of 'PREDICTIVE'. Or perhaps the claim is SUPPORTS because 'PREDICTIVE' covers resistance prediction. Let's assume the stricter interpretation: Acquired resistance mutations are often categorized under 'RESISTANCE' rather than 'PREDICTIVE' (which is often reserved for baseline). Therefore, a revision to 'evidenceType': 'RESISTANCE' is plausible. However, without a specific schema definition, 'PREDICTIVE' is a strong candidate for support. Let's look at the 'variantOrigin'. 'SOMATIC' is correct. Let's look at the 'disease'. 'Gastrointestinal Stromal Tumor' is correct. Let's look at the 'therapies'. 'Larotrectinib' is correct. Let's look at the 'molecularProfile'. 'NTRK3 F617L' is correct. Let's look at the 'significance'. 'resistance' is correct. The only potential issue is 'evidenceType'. If I have to revise, I would change 'PREDICTIVE' to 'RESISTANCE' or 'ACQUIRED RESISTANCE'. But is 'PREDICTIVE' wrong? It predicts resistance. I will lean towards SUPPORTS if 'PREDICTIVE' is broad, but REVISIONS if it's specific. Given the 'acquired' context, 'RESISTANCE' is more accurate. I will propose a revision to 'evidenceType' to 'RESISTANCE' or keep it if 'PREDICTIVE' is accepted. Actually, looking at the evidence text: 'Larotrectinib had limited activity... acquired resistance mutations'. The mutation is a mechanism of resistance. The evidenceType 'PREDICTIVE' might be considered incorrect because it's not a baseline predictive biomarker. It's a resistance mechanism. So I will revise 'evidenceType' to 'RESISTANCE'.",
+    "citations": [
+      {
+        "document_id": "pmid-30624546",
+        "start": 0,
+        "end": 467,
+        "quote": "Larotrectinib had limited activity in tumours with NTRK mutations or amplifications. . . . Following an initial response to treatment, a 29-year-old male with NSCLC and a 58-year-old male with a gastrointestinal stromal tumour (GIST) progressed after developing acquired resistance mutations; solvent-front (TRKA G595R) and xDFG (TRKA G667S) mutations in the case of the patient with NSCLC, and a gatekeeper mutation (TRKC F617L) in the case of the patient with GIST."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2354,
+    "output_tokens": 1528,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-30624546"
+        ],
+        "fingerprint": "f76531655114cf54bab55f4bb436427e6a5ff41cde96e14e3a6b57f80eacb82e",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "F617L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "F617L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "F617L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-30624546"
+        ],
+        "query": "{\n  \"disease\": \"Gastrointestinal Stromal Tumor\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"NTRK3 F617L\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Larotrectinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-30624546"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-30624546": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "F617L",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-30624546",
+              "start": 313,
+              "end": 318,
+              "raw": "G595R",
+              "canonical": "G595R"
+            },
+            {
+              "document_id": "pmid-30624546",
+              "start": 335,
+              "end": 340,
+              "raw": "G667S",
+              "canonical": "G667S"
+            },
+            {
+              "document_id": "pmid-30624546",
+              "start": 423,
+              "end": 428,
+              "raw": "F617L",
+              "canonical": "F617L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-30624546": "mixed"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-30624546"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-30624546": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "F617L",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-30624546",
+              "start": 313,
+              "end": 318,
+              "raw": "G595R",
+              "canonical": "G595R"
+            },
+            {
+              "document_id": "pmid-30624546",
+              "start": 335,
+              "end": 340,
+              "raw": "G667S",
+              "canonical": "G667S"
+            },
+            {
+              "document_id": "pmid-30624546",
+              "start": 423,
+              "end": 428,
+              "raw": "F617L",
+              "canonical": "F617L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-30624546": "mixed"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "39cce3e41e29600c98fc308184a3447985f9d7bfd59c737e6d154bbe17836752",
+        "source_ids": [
+          "pmid-30624546"
+        ],
+        "token_reservation": 12850,
+        "evidence_ids": [
+          "pmid-30624546:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-30624546": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 467,
+              "chars_sent": 467,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-30624546:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 467,
+          "chars_sent": 467,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2354,
+        "output_tokens": 1528,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 21.594,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "evidenceType"
+        ],
+        "minimal_revision": "Change evidenceType from 'PREDICTIVE' to 'RESISTANCE' to accurately reflect the acquired resistance mechanism described in the evidence.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-30624546 describes a patient with Gastrointestinal Stromal Tumor (GIST) who developed acquired resistance to Larotrectinib via the NTRK3 F617L mutation. This directly supports the claim's disease, therapy, molecular profile, and significance. However, the evidence explicitly describes the mutation as an acquired resistance mechanism following an initial response, which is a dynamic clinical outcome rather than a static predictive biomarker for primary resistance or sensitivity. The claim's evidenceType is listed as 'PREDICTIVE'. In oncology evidence standards, 'predictive' typically refers to baseline biomarkers predicting response or resistance. While the mutation is predictive of resistance, the specific context of 'acquired resistance' often warrants a more specific evidence type or significance description (e.g., 'ACQUIRED RESISTANCE' vs 'PREDICTIVE' for primary resistance). However, looking at the schema options, 'PREDICTIVE' is a broad category. A more critical mismatch is the 'variantOrigin'. The evidence states the mutation developed *after* initial response, implying it is an acquired somatic mutation. The claim lists 'variantOrigin' as 'SOMATIC'. Acquired mutations are somatic. So that matches. Let's re-evaluate 'evidenceType'. The claim says 'PREDICTIVE'. The evidence shows the mutation causes resistance. Is 'PREDICTIVE' the correct type for an acquired resistance mutation? Usually, predictive biomarkers are present at baseline. An acquired mutation is a mechanism of resistance. The significance is 'resistance'. This is consistent. Is there a mismatch? The claim says 'NTRK3 F617L'. The evidence says 'TRKC F617L'. NTRK3 encodes TRKC. This is a match. The claim says 'Gastrointestinal Stromal Tumor'. Evidence says 'gastrointestinal stromal tumour (GIST)'. Match. The claim says 'Larotrectinib'. Match. The claim says 'resistance'. Match. The claim says 'SOMATIC'. Match. The claim says 'PREDICTIVE'. The evidence describes an acquired resistance event. While the mutation predicts resistance, the *origin* is acquired. Some frameworks distinguish between 'Predictive' (baseline) and 'Resistance' (acquired). If the system requires 'evidenceType' to be 'RESISTANCE' or similar for acquired events, then 'PREDICTIVE' might be considered insufficient or requiring revision. However, 'PREDICTIVE' is often used broadly. Let's look for a clearer error. The evidence mentions 'solvent-front (TRKA G595R) and xDFG (TRKA G667S) mutations in the case of the patient with NSCLC, and a gatekeeper mutation (TRKC F617L) in the case of the patient with GIST.' The claim is about GIST and F617L. This is a specific case report. The evidence supports that F617L in GIST causes resistance to Larotrectinib. The 'evidenceType' being 'PREDICTIVE' might be technically correct in a broad sense (predicts resistance), but often 'RESISTANCE' is a distinct category. If I must choose a revision, 'evidenceType' from 'PREDICTIVE' to 'RESISTANCE' or 'ACQUIRED RESISTANCE' might be the minimal correction if the schema distinguishes them. However, if 'PREDICTIVE' is accepted for resistance mechanisms, then it supports. Let's look at the 'significance'. It is 'resistance'. This is consistent. Is there any other issue? The claim says 'NTRK3'. The evidence says 'TRKC'. NTRK3 is the gene, TRKC is the protein. This is standard. The claim says 'SOMATIC'. The evidence says 'acquired'. Acquired somatic is somatic. This is consistent. Perhaps the 'evidenceType' is the weak point. In many evidence schemas, 'Predictive' implies a biomarker for response/sensitivity. 'Resistance' is a separate significance or type. If the schema allows 'PREDICTIVE' for resistance, it's SUPPORTS. If not, it's REVISIONS. Given the explicit 'acquired' nature, 'RESISTANCE' is a more precise evidence type or significance. The significance is already 'resistance'. So maybe the evidenceType should be 'RESISTANCE' instead of 'PREDICTIVE'. Or perhaps the claim is SUPPORTS because 'PREDICTIVE' covers resistance prediction. Let's assume the stricter interpretation: Acquired resistance mutations are often categorized under 'RESISTANCE' rather than 'PREDICTIVE' (which is often reserved for baseline). Therefore, a revision to 'evidenceType': 'RESISTANCE' is plausible. However, without a specific schema definition, 'PREDICTIVE' is a strong candidate for support. Let's look at the 'variantOrigin'. 'SOMATIC' is correct. Let's look at the 'disease'. 'Gastrointestinal Stromal Tumor' is correct. Let's look at the 'therapies'. 'Larotrectinib' is correct. Let's look at the 'molecularProfile'. 'NTRK3 F617L' is correct. Let's look at the 'significance'. 'resistance' is correct. The only potential issue is 'evidenceType'. If I have to revise, I would change 'PREDICTIVE' to 'RESISTANCE' or 'ACQUIRED RESISTANCE'. But is 'PREDICTIVE' wrong? It predicts resistance. I will lean towards SUPPORTS if 'PREDICTIVE' is broad, but REVISIONS if it's specific. Given the 'acquired' context, 'RESISTANCE' is more accurate. I will propose a revision to 'evidenceType' to 'RESISTANCE' or keep it if 'PREDICTIVE' is accepted. Actually, looking at the evidence text: 'Larotrectinib had limited activity... acquired resistance mutations'. The mutation is a mechanism of resistance. The evidenceType 'PREDICTIVE' might be considered incorrect because it's not a baseline predictive biomarker. It's a resistance mechanism. So I will revise 'evidenceType' to 'RESISTANCE'.",
+          "citations": [
+            {
+              "document_id": "pmid-30624546",
+              "start": 0,
+              "end": 467,
+              "quote": "Larotrectinib had limited activity in tumours with NTRK mutations or amplifications. . . . Following an initial response to treatment, a 29-year-old male with NSCLC and a 58-year-old male with a gastrointestinal stromal tumour (GIST) progressed after developing acquired resistance mutations; solvent-front (TRKA G595R) and xDFG (TRKA G667S) mutations in the case of the patient with NSCLC, and a gatekeeper mutation (TRKC F617L) in the case of the patient with GIST."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-30624546 describes a patient with Gastrointestinal Stromal Tumor (GIST) who developed acquired resistance to Larotrectinib via the NTRK3 F617L mutation. This directly supports the claim's disease, therapy, molecular profile, and significance. However, the evidence explicitly describes the mutation as an acquired resistance mechanism following an initial response, which is a dynamic clinical outcome rather than a static predictive biomarker for primary resistance or sensitivity. The claim's evidenceType is listed as 'PREDICTIVE'. In oncology evidence standards, 'predictive' typically refers to baseline biomarkers predicting response or resistance. While the mutation is predictive of resistance, the specific context of 'acquired resistance' often warrants a more specific evidence type or significance description (e.g., 'ACQUIRED RESISTANCE' vs 'PREDICTIVE' for primary resistance). However, looking at the schema options, 'PREDICTIVE' is a broad category. A more critical mismatch is the 'variantOrigin'. The evidence states the mutation developed *after* initial response, implying it is an acquired somatic mutation. The claim lists 'variantOrigin' as 'SOMATIC'. Acquired mutations are somatic. So that matches. Let's re-evaluate 'evidenceType'. The claim says 'PREDICTIVE'. The evidence shows the mutation causes resistance. Is 'PREDICTIVE' the correct type for an acquired resistance mutation? Usually, predictive biomarkers are present at baseline. An acquired mutation is a mechanism of resistance. The significance is 'resistance'. This is consistent. Is there a mismatch? The claim says 'NTRK3 F617L'. The evidence says 'TRKC F617L'. NTRK3 encodes TRKC. This is a match. The claim says 'Gastrointestinal Stromal Tumor'. Evidence says 'gastrointestinal stromal tumour (GIST)'. Match. The claim says 'Larotrectinib'. Match. The claim says 'resistance'. Match. The claim says 'SOMATIC'. Match. The claim says 'PREDICTIVE'. The evidence describes an acquired resistance event. While the mutation predicts resistance, the *origin* is acquired. Some frameworks distinguish between 'Predictive' (baseline) and 'Resistance' (acquired). If the system requires 'evidenceType' to be 'RESISTANCE' or similar for acquired events, then 'PREDICTIVE' might be considered insufficient or requiring revision. However, 'PREDICTIVE' is often used broadly. Let's look for a clearer error. The evidence mentions 'solvent-front (TRKA G595R) and xDFG (TRKA G667S) mutations in the case of the patient with NSCLC, and a gatekeeper mutation (TRKC F617L) in the case of the patient with GIST.' The claim is about GIST and F617L. This is a specific case report. The evidence supports that F617L in GIST causes resistance to Larotrectinib. The 'evidenceType' being 'PREDICTIVE' might be technically correct in a broad sense (predicts resistance), but often 'RESISTANCE' is a distinct category. If I must choose a revision, 'evidenceType' from 'PREDICTIVE' to 'RESISTANCE' or 'ACQUIRED RESISTANCE' might be the minimal correction if the schema distinguishes them. However, if 'PREDICTIVE' is accepted for resistance mechanisms, then it supports. Let's look at the 'significance'. It is 'resistance'. This is consistent. Is there any other issue? The claim says 'NTRK3'. The evidence says 'TRKC'. NTRK3 is the gene, TRKC is the protein. This is standard. The claim says 'SOMATIC'. The evidence says 'acquired'. Acquired somatic is somatic. This is consistent. Perhaps the 'evidenceType' is the weak point. In many evidence schemas, 'Predictive' implies a biomarker for response/sensitivity. 'Resistance' is a separate significance or type. If the schema allows 'PREDICTIVE' for resistance, it's SUPPORTS. If not, it's REVISIONS. Given the explicit 'acquired' nature, 'RESISTANCE' is a more precise evidence type or significance. The significance is already 'resistance'. So maybe the evidenceType should be 'RESISTANCE' instead of 'PREDICTIVE'. Or perhaps the claim is SUPPORTS because 'PREDICTIVE' covers resistance prediction. Let's assume the stricter interpretation: Acquired resistance mutations are often categorized under 'RESISTANCE' rather than 'PREDICTIVE' (which is often reserved for baseline). Therefore, a revision to 'evidenceType': 'RESISTANCE' is plausible. However, without a specific schema definition, 'PREDICTIVE' is a strong candidate for support. Let's look at the 'variantOrigin'. 'SOMATIC' is correct. Let's look at the 'disease'. 'Gastrointestinal Stromal Tumor' is correct. Let's look at the 'therapies'. 'Larotrectinib' is correct. Let's look at the 'molecularProfile'. 'NTRK3 F617L' is correct. Let's look at the 'significance'. 'resistance' is correct. The only potential issue is 'evidenceType'. If I have to revise, I would change 'PREDICTIVE' to 'RESISTANCE' or 'ACQUIRED RESISTANCE'. But is 'PREDICTIVE' wrong? It predicts resistance. I will lean towards SUPPORTS if 'PREDICTIVE' is broad, but REVISIONS if it's specific. Given the 'acquired' context, 'RESISTANCE' is more accurate. I will propose a revision to 'evidenceType' to 'RESISTANCE' or keep it if 'PREDICTIVE' is accepted. Actually, looking at the evidence text: 'Larotrectinib had limited activity... acquired resistance mutations'. The mutation is a mechanism of resistance. The evidenceType 'PREDICTIVE' might be considered incorrect because it's not a baseline predictive biomarker. It's a resistance mechanism. So I will revise 'evidenceType' to 'RESISTANCE'.",
+          "citations": [
+            {
+              "document_id": "pmid-30624546",
+              "start": 0,
+              "end": 467,
+              "quote": "Larotrectinib had limited activity in tumours with NTRK mutations or amplifications. . . . Following an initial response to treatment, a 29-year-old male with NSCLC and a 58-year-old male with a gastrointestinal stromal tumour (GIST) progressed after developing acquired resistance mutations; solvent-front (TRKA G595R) and xDFG (TRKA G667S) mutations in the case of the patient with NSCLC, and a gatekeeper mutation (TRKC F617L) in the case of the patient with GIST."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-30624546"
+  ],
+  "duration_seconds": 21.608443,
+  "research_only": true
+}

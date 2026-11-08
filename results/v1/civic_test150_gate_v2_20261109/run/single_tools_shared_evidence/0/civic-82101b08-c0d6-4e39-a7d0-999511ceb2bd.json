@@ -1,0 +1,416 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-82101b08-c0d6-4e39-a7d0-999511ceb2bd",
+  "patient_id": "article-29478821",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "aa6930983d15b947570cd1b59443d4732307380aa212e52de07bd420f5aef84d",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim posits that the FGFR3 K650E variant has 'unaltered function' (implying wild-type-like or neutral activity) and is supported by functional evidence. However, the provided evidence (pmid-29478821:f01) explicitly describes K650E as a 'highly oncogenic variant' that 'binds weakly' to Cdc37, with an affinity 'similar to the WT' in terms of binding strength, but functionally distinct as an oncogenic driver. The evidence supports that K650E is oncogenic (SUPPORTS oncogenicity) but contradicts the 'unaltered function' characterization if interpreted as neutral/wild-type-like functional equivalence in a disease context. More critically, the evidence states K650E binds weakly, similar to WT, but is still 'highly oncogenic'. The claim's 'unaltered function' is likely incorrect or at least requires revision to reflect its oncogenic nature despite weak binding. The evidence supports that K650E is oncogenic, which is a functional alteration. Therefore, the claim's significance 'unaltered function' is not supported; it should be revised to reflect its oncogenic status. The evidence direction is SUPPORTS oncogenicity, which contradicts 'unaltered function' if that implies neutrality. Thus, a revision is needed for the significance field.",
+    "citations": [
+      {
+        "document_id": "pmid-29478821",
+        "start": 0,
+        "end": 233,
+        "quote": "We also show that recognition by Cdc37 is independent of the activation status, with one of the two highly oncogenic variants (N540K) being a very strong client, while the other (K650E) binds weakly with an affinity similar to the WT"
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2179,
+    "output_tokens": 479,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-29478821"
+        ],
+        "fingerprint": "aa6930983d15b947570cd1b59443d4732307380aa212e52de07bd420f5aef84d",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "K650E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "K650E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "K650E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-29478821"
+        ],
+        "query": "{\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"FUNCTIONAL\",\n  \"molecularProfile\": \"FGFR3 K650E\",\n  \"significance\": \"unaltered function\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-29478821"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-29478821": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "K650E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-29478821",
+              "start": 127,
+              "end": 132,
+              "raw": "N540K",
+              "canonical": "N540K"
+            },
+            {
+              "document_id": "pmid-29478821",
+              "start": 179,
+              "end": 184,
+              "raw": "K650E",
+              "canonical": "K650E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-29478821": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-29478821"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-29478821": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "K650E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-29478821",
+              "start": 127,
+              "end": 132,
+              "raw": "N540K",
+              "canonical": "N540K"
+            },
+            {
+              "document_id": "pmid-29478821",
+              "start": 179,
+              "end": 184,
+              "raw": "K650E",
+              "canonical": "K650E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-29478821": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "9d5daf64cb54e02e9cd2ecc7226e936510daad3bb92603fc8a4384602651b371",
+        "source_ids": [
+          "pmid-29478821"
+        ],
+        "token_reservation": 12397,
+        "evidence_ids": [
+          "pmid-29478821:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-29478821": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 233,
+              "chars_sent": 233,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-29478821:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 233,
+          "chars_sent": 233,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2179,
+        "output_tokens": 479,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 8.644,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "significance"
+        ],
+        "minimal_revision": "Change significance from 'unaltered function' to 'oncogenic' or 'gain-of-function' as the evidence describes K650E as a 'highly oncogenic variant'.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that the FGFR3 K650E variant has 'unaltered function' (implying wild-type-like or neutral activity) and is supported by functional evidence. However, the provided evidence (pmid-29478821:f01) explicitly describes K650E as a 'highly oncogenic variant' that 'binds weakly' to Cdc37, with an affinity 'similar to the WT' in terms of binding strength, but functionally distinct as an oncogenic driver. The evidence supports that K650E is oncogenic (SUPPORTS oncogenicity) but contradicts the 'unaltered function' characterization if interpreted as neutral/wild-type-like functional equivalence in a disease context. More critically, the evidence states K650E binds weakly, similar to WT, but is still 'highly oncogenic'. The claim's 'unaltered function' is likely incorrect or at least requires revision to reflect its oncogenic nature despite weak binding. The evidence supports that K650E is oncogenic, which is a functional alteration. Therefore, the claim's significance 'unaltered function' is not supported; it should be revised to reflect its oncogenic status. The evidence direction is SUPPORTS oncogenicity, which contradicts 'unaltered function' if that implies neutrality. Thus, a revision is needed for the significance field.",
+          "citations": [
+            {
+              "document_id": "pmid-29478821",
+              "start": 0,
+              "end": 233,
+              "quote": "We also show that recognition by Cdc37 is independent of the activation status, with one of the two highly oncogenic variants (N540K) being a very strong client, while the other (K650E) binds weakly with an affinity similar to the WT"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that the FGFR3 K650E variant has 'unaltered function' (implying wild-type-like or neutral activity) and is supported by functional evidence. However, the provided evidence (pmid-29478821:f01) explicitly describes K650E as a 'highly oncogenic variant' that 'binds weakly' to Cdc37, with an affinity 'similar to the WT' in terms of binding strength, but functionally distinct as an oncogenic driver. The evidence supports that K650E is oncogenic (SUPPORTS oncogenicity) but contradicts the 'unaltered function' characterization if interpreted as neutral/wild-type-like functional equivalence in a disease context. More critically, the evidence states K650E binds weakly, similar to WT, but is still 'highly oncogenic'. The claim's 'unaltered function' is likely incorrect or at least requires revision to reflect its oncogenic nature despite weak binding. The evidence supports that K650E is oncogenic, which is a functional alteration. Therefore, the claim's significance 'unaltered function' is not supported; it should be revised to reflect its oncogenic status. The evidence direction is SUPPORTS oncogenicity, which contradicts 'unaltered function' if that implies neutrality. Thus, a revision is needed for the significance field.",
+          "citations": [
+            {
+              "document_id": "pmid-29478821",
+              "start": 0,
+              "end": 233,
+              "quote": "We also show that recognition by Cdc37 is independent of the activation status, with one of the two highly oncogenic variants (N540K) being a very strong client, while the other (K650E) binds weakly with an affinity similar to the WT"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-29478821"
+  ],
+  "duration_seconds": 8.671346,
+  "research_only": true
+}

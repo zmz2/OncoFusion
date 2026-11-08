@@ -447,14 +447,21 @@ class Engine:
                 if visible.verification_scheme == "revisions":
                     system += " SUPPORTS means the entire claim is evidenced as written. REVISIONS means partial support with a necessary claim correction; it is not equivalent to REFUTES. NEI means missing, irrelevant or insufficient evidence. Infer corrections only from visible evidence; gold revised claims are never available."
                     if role == "decision" and config.claim_revision_gate:
-                        system += (" First classify evidence_relevance and original_claim independently of "
-                                   "every professional claim's local relation. Then name the exact claim "
-                                   "fields requiring revision and write one minimal evidence-grounded "
-                                   "revision. Valid final-label mappings are fixed: relevant + "
-                                   "fully_supported => SUPPORTS; relevant + partially_supported with a "
-                                   "minimal revision => REVISIONS; irrelevant/unclear, or insufficient "
-                                   "evidence => NEI. A wrong direction or specificity is a revision, "
-                                   "not automatic NEI. Role not-applicable is not evidence irrelevance.")
+                        system += (" First classify evidence_relevance and claim_conformance independently of "
+                                   "every professional claim's local relation. claim_conformance is one of: "
+                                   "as_written (the whole structured claim is supported unchanged), "
+                                   "requires_revision (relevant evidence cannot support the claim unchanged "
+                                   "and supports a specific minimal correction), no_supported_revision "
+                                   "(relevant evidence but no specific corrected claim is supported), or unclear. "
+                                   "When the evidence requires a corrected disease, evidenceDirection, "
+                                   "evidenceType, molecularProfile, significance, therapies, or variantOrigin, "
+                                   "classify requires_revision rather than no_supported_revision; name only "
+                                   "those legal fields and state the exact minimal revision. Valid final-label "
+                                   "mappings are fixed: relevant + as_written => SUPPORTS; relevant + "
+                                   "requires_revision with legal fields and a minimal revision => REVISIONS; "
+                                   "all other combinations => NEI. A locally opposite result, narrower disease, "
+                                   "or different evidence endpoint can itself be the required revision. Role "
+                                   "not-applicable is not evidence irrelevance.")
             if visible.task == "mcq" and role == "decision":
                 system += (" The answer must be exactly one option key from "
                            + ", ".join(visible.options) + "; never use SUPPORTS, REFUTES, REVISIONS, or NEI.")
@@ -548,11 +555,9 @@ class Engine:
                                 and config.claim_revision_gate):
                             assessment = wire.assessment
                             if assessment.evidence_relevance == "relevant":
-                                if assessment.original_claim == "fully_supported":
+                                if assessment.claim_conformance == "as_written":
                                     expected = "SUPPORTS"
-                                elif (assessment.original_claim == "partially_supported"
-                                      and assessment.revision_fields
-                                      and assessment.minimal_revision.strip()):
+                                elif assessment.claim_conformance == "requires_revision":
                                     expected = "REVISIONS"
                                 else:
                                     expected = "NEI"
@@ -563,7 +568,7 @@ class Engine:
                                     "decision answer conflicts with revision assessment: "
                                     f"answer={output.answer}, expected={expected}, "
                                     f"evidence_relevance={assessment.evidence_relevance}, "
-                                    f"original_claim={assessment.original_claim}")
+                                    f"claim_conformance={assessment.claim_conformance}")
                             emit("revision_assessment", role,
                                  **assessment.model_dump(mode="json"),
                                  expected_label=expected)

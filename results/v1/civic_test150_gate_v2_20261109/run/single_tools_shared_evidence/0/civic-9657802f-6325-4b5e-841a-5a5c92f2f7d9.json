@@ -1,0 +1,387 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-9657802f-6325-4b5e-841a-5a5c92f2f7d9",
+  "patient_id": "article-33035457",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "febf1128277a8f37a7e6fa7dbfd15952d1f3833925322606a2559d4713ec8e59",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim posits that EZH2 activating mutations in non-Hodgkin lymphoma (NHL) do not support sensitivity/response to Tazemetostat. The provided evidence from pmid-33035457 demonstrates that in follicular lymphoma (a subtype of NHL), EZH2 activating mutations are associated with a significantly higher objective response rate to Tazemetostat (69% in EZH2mut vs 35% in EZH2WT). This indicates that the mutations DO support sensitivity/response, directly contradicting the claim's direction. Furthermore, the evidence is specific to follicular lymphoma, not the broader category of non-Hodgkin lymphoma. Therefore, the claim requires revision to reflect that the evidence supports sensitivity/response in follicular lymphoma, and potentially that the direction is SUPPORTS rather than DOES_NOT_SUPPORT.",
+    "citations": [
+      {
+        "document_id": "pmid-33035457",
+        "start": 0,
+        "end": 409,
+        "quote": "Activating mutations of EZH2, an epigenetic regulator, are present in approximately 20% of patients with follicular lymphoma. . . . Patients were categorised by EZH2 status: mutant (EZH2mut) or wild-type (EZH2WT). Patients received 800 mg of tazemetostat . . . The objective response rate was 69% (95% CI 53-82; 31 of 45 patients) in the EZH2mut cohort and 35% (23-49; 19 of 54 patients) in the EZH2WT cohort."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2194,
+    "output_tokens": 391,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-33035457"
+        ],
+        "fingerprint": "febf1128277a8f37a7e6fa7dbfd15952d1f3833925322606a2559d4713ec8e59",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Activating mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Activating mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Activating mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-33035457"
+        ],
+        "query": "{\n  \"disease\": \"non-Hodgkin lymphoma\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"EZH2 Activating Mutation\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Tazemetostat\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-33035457"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-33035457": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Activating mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-33035457": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-33035457"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-33035457": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Activating mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-33035457": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "71667a0107c3305477e9116eec873942aca75d298125bffbd5b061b8cf6e93a7",
+        "source_ids": [
+          "pmid-33035457"
+        ],
+        "token_reservation": 12553,
+        "evidence_ids": [
+          "pmid-33035457:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-33035457": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 409,
+              "chars_sent": 409,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-33035457:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 409,
+          "chars_sent": 409,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2194,
+        "output_tokens": 391,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 5.067,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "relevant",
+        "claim_conformance": "requires_revision",
+        "revision_fields": [
+          "disease",
+          "evidenceDirection"
+        ],
+        "minimal_revision": "The evidence supports sensitivity/response to Tazemetostat in follicular lymphoma (a subtype of non-Hodgkin lymphoma) for patients with EZH2 activating mutations, contradicting the claim's direction of DOES_NOT_SUPPORT. The disease should be specified as follicular lymphoma.",
+        "expected_label": "REVISIONS"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that EZH2 activating mutations in non-Hodgkin lymphoma (NHL) do not support sensitivity/response to Tazemetostat. The provided evidence from pmid-33035457 demonstrates that in follicular lymphoma (a subtype of NHL), EZH2 activating mutations are associated with a significantly higher objective response rate to Tazemetostat (69% in EZH2mut vs 35% in EZH2WT). This indicates that the mutations DO support sensitivity/response, directly contradicting the claim's direction. Furthermore, the evidence is specific to follicular lymphoma, not the broader category of non-Hodgkin lymphoma. Therefore, the claim requires revision to reflect that the evidence supports sensitivity/response in follicular lymphoma, and potentially that the direction is SUPPORTS rather than DOES_NOT_SUPPORT.",
+          "citations": [
+            {
+              "document_id": "pmid-33035457",
+              "start": 0,
+              "end": 409,
+              "quote": "Activating mutations of EZH2, an epigenetic regulator, are present in approximately 20% of patients with follicular lymphoma. . . . Patients were categorised by EZH2 status: mutant (EZH2mut) or wild-type (EZH2WT). Patients received 800 mg of tazemetostat . . . The objective response rate was 69% (95% CI 53-82; 31 of 45 patients) in the EZH2mut cohort and 35% (23-49; 19 of 54 patients) in the EZH2WT cohort."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that EZH2 activating mutations in non-Hodgkin lymphoma (NHL) do not support sensitivity/response to Tazemetostat. The provided evidence from pmid-33035457 demonstrates that in follicular lymphoma (a subtype of NHL), EZH2 activating mutations are associated with a significantly higher objective response rate to Tazemetostat (69% in EZH2mut vs 35% in EZH2WT). This indicates that the mutations DO support sensitivity/response, directly contradicting the claim's direction. Furthermore, the evidence is specific to follicular lymphoma, not the broader category of non-Hodgkin lymphoma. Therefore, the claim requires revision to reflect that the evidence supports sensitivity/response in follicular lymphoma, and potentially that the direction is SUPPORTS rather than DOES_NOT_SUPPORT.",
+          "citations": [
+            {
+              "document_id": "pmid-33035457",
+              "start": 0,
+              "end": 409,
+              "quote": "Activating mutations of EZH2, an epigenetic regulator, are present in approximately 20% of patients with follicular lymphoma. . . . Patients were categorised by EZH2 status: mutant (EZH2mut) or wild-type (EZH2WT). Patients received 800 mg of tazemetostat . . . The objective response rate was 69% (95% CI 53-82; 31 of 45 patients) in the EZH2mut cohort and 35% (23-49; 19 of 54 patients) in the EZH2WT cohort."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-33035457"
+  ],
+  "duration_seconds": 5.082187,
+  "research_only": true
+}

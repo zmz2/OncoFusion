@@ -1,0 +1,442 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-f51810a9-ffc8-4fd4-8929-bb95c94e5709",
+  "patient_id": "article-19147750",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "681ef6ae4a2fcf03312c8b61e6a697d049c9ed160af76f55bff424a82f7e3986",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0,
+    "claim_revision_gate": true
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The supplied evidence (pmid-19147750:f01) describes an in vitro study of EGFR mutations (R776C, L858R, V742A) and their sensitivity to erlotinib. The claim concerns FLT3 D580W in acute myeloid leukemia and resistance to gilteritinib. The evidence is entirely irrelevant to the claim's gene, variant, disease, drug, and significance. There is no evidence provided for the specific claim.",
+    "citations": [
+      {
+        "document_id": "pmid-19147750",
+        "start": 0,
+        "end": 371,
+        "quote": "In an in vitro study, a Ba/F3 cell line expressing EGFR R776C demonstrated increased sensitivity to erlotinib treatment comparable to Ba/F3 cells expressing a known sensitizing mutation (EGFR L858R). Sensitivity was determined by assessing cell proliferation, the IC50 of erlotinib for EGFR V742A and EGFR L858R expressing cells were 47 nmol/L and 6 nmol/L, respectively."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2335,
+    "output_tokens": 250,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-19147750"
+        ],
+        "fingerprint": "681ef6ae4a2fcf03312c8b61e6a697d049c9ed160af76f55bff424a82f7e3986",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D580W",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D580W",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D580W",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-19147750"
+        ],
+        "query": "{\n  \"disease\": \"acute myeloid leukemia\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"FLT3 D580W\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Gilteritinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-19147750"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-19147750": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "D580W",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-19147750",
+              "start": 56,
+              "end": 61,
+              "raw": "R776C",
+              "canonical": "R776C"
+            },
+            {
+              "document_id": "pmid-19147750",
+              "start": 192,
+              "end": 197,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-19147750",
+              "start": 291,
+              "end": 296,
+              "raw": "V742A",
+              "canonical": "V742A"
+            },
+            {
+              "document_id": "pmid-19147750",
+              "start": 306,
+              "end": 311,
+              "raw": "L858R",
+              "canonical": "L858R"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-19147750": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-19147750"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-19147750": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "D580W",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-19147750",
+              "start": 56,
+              "end": 61,
+              "raw": "R776C",
+              "canonical": "R776C"
+            },
+            {
+              "document_id": "pmid-19147750",
+              "start": 192,
+              "end": 197,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-19147750",
+              "start": 291,
+              "end": 296,
+              "raw": "V742A",
+              "canonical": "V742A"
+            },
+            {
+              "document_id": "pmid-19147750",
+              "start": 306,
+              "end": 311,
+              "raw": "L858R",
+              "canonical": "L858R"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-19147750": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "e6253ac24dccf7b3a0cc79484295f43d6838b15c8162cff8b6cdc6fb16014ca9",
+        "source_ids": [
+          "pmid-19147750"
+        ],
+        "token_reservation": 12719,
+        "evidence_ids": [
+          "pmid-19147750:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-19147750": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 371,
+              "chars_sent": 371,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-19147750:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 371,
+          "chars_sent": 371,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2335,
+        "output_tokens": 250,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 2.392,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "revision_assessment",
+      "role": "decision",
+      "details": {
+        "evidence_relevance": "irrelevant",
+        "claim_conformance": "unclear",
+        "revision_fields": [],
+        "minimal_revision": "",
+        "expected_label": "NEI"
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The supplied evidence (pmid-19147750:f01) describes an in vitro study of EGFR mutations (R776C, L858R, V742A) and their sensitivity to erlotinib. The claim concerns FLT3 D580W in acute myeloid leukemia and resistance to gilteritinib. The evidence is entirely irrelevant to the claim's gene, variant, disease, drug, and significance. There is no evidence provided for the specific claim.",
+          "citations": [
+            {
+              "document_id": "pmid-19147750",
+              "start": 0,
+              "end": 371,
+              "quote": "In an in vitro study, a Ba/F3 cell line expressing EGFR R776C demonstrated increased sensitivity to erlotinib treatment comparable to Ba/F3 cells expressing a known sensitizing mutation (EGFR L858R). Sensitivity was determined by assessing cell proliferation, the IC50 of erlotinib for EGFR V742A and EGFR L858R expressing cells were 47 nmol/L and 6 nmol/L, respectively."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The supplied evidence (pmid-19147750:f01) describes an in vitro study of EGFR mutations (R776C, L858R, V742A) and their sensitivity to erlotinib. The claim concerns FLT3 D580W in acute myeloid leukemia and resistance to gilteritinib. The evidence is entirely irrelevant to the claim's gene, variant, disease, drug, and significance. There is no evidence provided for the specific claim.",
+          "citations": [
+            {
+              "document_id": "pmid-19147750",
+              "start": 0,
+              "end": 371,
+              "quote": "In an in vitro study, a Ba/F3 cell line expressing EGFR R776C demonstrated increased sensitivity to erlotinib treatment comparable to Ba/F3 cells expressing a known sensitizing mutation (EGFR L858R). Sensitivity was determined by assessing cell proliferation, the IC50 of erlotinib for EGFR V742A and EGFR L858R expressing cells were 47 nmol/L and 6 nmol/L, respectively."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-19147750"
+  ],
+  "duration_seconds": 2.406401,
+  "research_only": true
+}
