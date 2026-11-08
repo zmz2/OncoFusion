@@ -20,6 +20,8 @@ def main():
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--workers", type=int, default=1,
                    help="parallel case executions per treatment; results and cost are unchanged")
+    p.add_argument("--interleave-treatments", action="store_true",
+                   help="run each case through every arm together, up to --workers cases in flight")
     p.add_argument("--execution-cap", type=int, default=1000, help="maximum permitted real case executions; raise explicitly after reviewing cost")
     args = p.parse_args()
     if args.execution_cap < 1:
@@ -39,7 +41,7 @@ def main():
     if not provider.simulated and executions > args.execution_cap:
         p.error("planned real workload exceeds --execution-cap; inspect --dry-run and raise the cap explicitly")
     report = run_study(plan, cases, gold, Engine(provider), args.out, args.resume, args.retry_failed,
-                       workers=args.workers)
+                       workers=args.workers, interleave_treatments=args.interleave_treatments)
     print(json.dumps({"simulated": report["simulated"], "output": str(args.out / "study.json"),
                       "failed_or_incomplete": sum(t["failed_or_incomplete"] for t in report["table"])}))
     return 0 if not any(t["failed_or_incomplete"] for t in report["table"]) else 2

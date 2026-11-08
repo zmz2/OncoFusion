@@ -240,3 +240,24 @@ def test_parallel_studies_match_sequential(tmp_path):
     assert serial["identity"] == parallel["identity"]
     assert serial["table"] == parallel["table"]
     assert serial["case_count"] == parallel["case_count"]
+
+
+def test_interleaved_study_pairs_case_execution_and_reports_groups(tmp_path):
+    cases, gold = _verification_set()
+    plan = standard_plan("verification", smoke=True)
+    plan.group_limit = None
+    plan.treatments = plan.treatments[:2]
+    plan.reference = plan.treatments[0].name
+    report = run_study(
+        plan, cases, gold, Engine(MockProvider()), tmp_path / "interleaved",
+        workers=2, interleave_treatments=True,
+    )
+    assert report["case_count"] == len(cases)
+    assert report["execution_order"] == "case_interleaved"
+    assert len(report["table"]) == 2
+    for treatment in plan.treatments:
+        rows = json.loads(
+            (tmp_path / "interleaved" / treatment.name / "0" / "summary.json").read_text()
+        )["rows"]
+        assert [row["case_id"] for row in rows] == [case.id for case in cases]
+    assert report["group_table"]

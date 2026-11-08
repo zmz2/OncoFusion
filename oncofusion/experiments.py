@@ -5,7 +5,8 @@ import hashlib
 import json
 import random
 import statistics
-from collections import Counter
+from collections import Counter, defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Literal
 
@@ -13,7 +14,7 @@ from pydantic import Field, model_validator
 from .config import presets
 from .datasets import GoldRecord, validate_alignment
 from .engine import Engine, implementation_digest
-from .evaluation import evaluate, paired_cluster_bootstrap
+from .evaluation import classification_metrics, evaluate, paired_cluster_bootstrap, run_case, summarize
 from .providers import provider_identity
 from .profiles import coverage_report
 from .workflow import dependency_identity
@@ -193,7 +194,7 @@ def atomic_json(path: Path, obj: dict) -> None:
 
 def run_study(plan: StudyPlan, cases: list[CaseInput], gold: list[GoldRecord], engine: Engine,
               output: Path, resume: bool = False, retry_failed: bool = False,
-              workers: int = 1) -> dict:
+              workers: int = 1, interleave_treatments: bool = False) -> dict:
     cases, gold = select_cases(cases, gold, plan)
     identity = plan_identity(plan, cases, gold, engine)
     identity_file = output / "identity.json"
@@ -205,26 +206,98 @@ def run_study(plan: StudyPlan, cases: list[CaseInput], gold: list[GoldRecord], e
             raise ValueError("study exists; use --resume or choose a new output directory")
     atomic_json(identity_file, {"identity": identity, "plan": plan.model_dump(),
                                "case_ids": [c.id for c in cases], "simulated": engine.provider.simulated})
-    summaries = []
-    for treatment in plan.treatments:
-        for seed in plan.seeds:
-            directory = output / treatment.name / str(seed)
-            summary_file = directory / "summary.json"
-            if resume and summary_file.exists():
-                report = json.loads(summary_file.read_text())
-                if not report["failed_or_incomplete"] or not retry_failed:
-                    summaries.append({"treatment": treatment.name, "seed": seed, "report": report})
-                    continue
-            transformed = [perturb(c, treatment.perturbation, seed) for c in cases]
-            report = evaluate(transformed, gold, engine, treatment.config(seed), directory, resume=resume,
-                              retry_failed=retry_failed, workers=workers)
-            summaries.append({"treatment": treatment.name, "seed": seed, "report": report})
+    if interleave_treatments and len(plan.treatments) > 1 and len(plan.seeds) == 1:
+        summaries = _interleaved_summaries(plan, cases, gold, engine, output,
+                                           resume=resume, retry_failed=retry_failed,
+                                           workers=workers)
+    else:
+        summaries = []
+        for treatment in plan.treatments:
+            for seed in plan.seeds:
+                summaries.append(_run_treatment(
+                    plan, cases, gold, engine, output, treatment, seed,
+                    resume=resume, retry_failed=retry_failed, workers=workers))
     result = analyze(plan, summaries)
     result.update({"identity": identity, "simulated": engine.provider.simulated,
                    "case_count": len(cases), "group_count": len({g.group_id for g in gold}),
-                   "role_coverage": coverage_report(cases)})
+                   "role_coverage": coverage_report(cases),
+                   "execution_order": ("case_interleaved" if interleave_treatments
+                                       and len(plan.treatments) > 1 and len(plan.seeds) == 1
+                                       else "treatment_sequential")})
     atomic_json(output / "study.json", result)
     return result
+
+
+def _cached_summary(directory: Path, resume: bool, retry_failed: bool) -> dict | None:
+    summary_file = directory / "summary.json"
+    if not (resume and summary_file.exists()):
+        return None
+    report = json.loads(summary_file.read_text())
+    return None if report["failed_or_incomplete"] and retry_failed else report
+
+
+def _run_treatment(plan: StudyPlan, cases: list[CaseInput], gold: list[GoldRecord], engine: Engine,
+                   output: Path, treatment: Treatment, seed: int, *, resume: bool,
+                   retry_failed: bool, workers: int) -> dict:
+    directory = output / treatment.name / str(seed)
+    report = _cached_summary(directory, resume, retry_failed)
+    if report is None:
+        transformed = [perturb(c, treatment.perturbation, seed) for c in cases]
+        report = evaluate(transformed, gold, engine, treatment.config(seed), directory,
+                          resume=resume, retry_failed=retry_failed, workers=workers)
+    return {"treatment": treatment.name, "seed": seed, "report": report}
+
+
+def _interleaved_summaries(plan: StudyPlan, cases: list[CaseInput], gold: list[GoldRecord],
+                           engine: Engine, output: Path, *, resume: bool,
+                           retry_failed: bool, workers: int) -> list[dict]:
+    """Run each case through every arm together, with at most `workers` cases in flight."""
+    seed = plan.seeds[0]
+    directories = {t.name: output / t.name / str(seed) for t in plan.treatments}
+    initial = {t.name: _cached_summary(directories[t.name], resume, retry_failed)
+               for t in plan.treatments}
+    indexes = {case.id: index for index, case in enumerate(cases)}
+    pending = [case for case in cases
+               if any(initial[t.name] is None for t in plan.treatments)]
+
+    def run_pair(case: CaseInput):
+        reports = {}
+        for treatment in plan.treatments:
+            report = initial[treatment.name]
+            if report is None:
+                transformed = perturb(case, treatment.perturbation, seed)
+                directory = directories[treatment.name]
+                directory.mkdir(parents=True, exist_ok=True)
+                reports[treatment.name] = run_case(
+                    transformed, gold[indexes[case.id]], engine, treatment.config(seed),
+                    directory, resume, retry_failed)
+            else:
+                reports[treatment.name] = report["rows"][indexes[case.id]]
+        return indexes[case.id], reports
+
+    paired_rows = {index: {t.name: initial[t.name]["rows"][index] for t in plan.treatments}
+                   for index in range(len(cases)) if all(initial[t.name] is not None for t in plan.treatments)}
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for index, rows in pool.map(run_pair, pending):
+            paired_rows[index] = rows
+    summaries = []
+    for treatment in plan.treatments:
+        report = initial[treatment.name]
+        if report is None:
+            report = {"provider": engine.provider.name, "model": engine.provider.model,
+                      "simulated": engine.provider.simulated,
+                      "interpretation": ("software-only; no biomedical efficacy claim"
+                                         if engine.provider.simulated else "requires benchmark protocol audit"),
+                      "task": cases[0].task,
+                      "verification_scheme": cases[0].verification_scheme,
+                      "count": len(cases), "config": treatment.config(seed).model_dump(),
+                      "rows": [paired_rows[index][treatment.name] for index in range(len(cases))],
+                      "efficiency": {"estimated_cost_usd": 0.0, "cost_complete": False}}
+        report = summarize(report["rows"], engine, treatment.config(seed), cases)
+        (directories[treatment.name] / "summary.json").write_text(
+            json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+        summaries.append({"treatment": treatment.name, "seed": seed, "report": report})
+    return summaries
 
 
 def analyze(plan: StudyPlan, summaries: list[dict]) -> dict:
@@ -257,8 +330,50 @@ def analyze(plan: StudyPlan, summaries: list[dict]) -> dict:
                       "cost_complete": all(r["efficiency"]["cost_complete"] for r in reports),
                       "usage_incomplete_runs": sum(r["efficiency"]["usage_incomplete_runs"] for r in reports),
                       "delta_vs_reference": comparison})
-    return {"plan": plan.model_dump(), "table": table,
+    groups = {r["case_id"]: r["group_id"] for r in reference[0]["rows"]}
+    all_cases = [row["case_id"] for row in reference[0]["rows"]]
+    by_group = defaultdict(list)
+    for case_id in all_cases:
+        by_group[groups[case_id]].append(case_id)
+    group_profiles = defaultdict(lambda: {"cases": [], "groups": []})
+    for group, ids in by_group.items():
+        signature = tuple(sorted(
+            (t.name, t.config(0).model_dump_json(), t.perturbation) for t in plan.treatments
+        ))
+        group_profiles[signature]["groups"].append(group)
+        group_profiles[signature]["cases"].extend(ids)
+    group_table = []
+    for profile in group_profiles.values():
+        selected = set(profile["cases"])
+        for treatment in plan.treatments:
+            rows = [row for report in by_name[treatment.name]
+                    for row in report["rows"] if row["case_id"] in selected]
+            if not rows:
+                continue
+            metrics = classification_metrics(
+                [row["gold"] for row in rows], [row["prediction"] for row in rows],
+                list(plan_labels(rows)))
+            group_table.append({
+                "group_scope": (sorted(profile["groups"])[0]
+                                if len(profile["groups"]) == 1 else "group_profile"),
+                "groups": sorted(profile["groups"]), "treatment": treatment.name,
+                "count": len(rows), "metrics": metrics,
+                "failed_or_incomplete": sum(row["status"] != "completed" for row in rows),
+                "observed_calls": sum(row.get("usage", row.get("observed_usage", {})).get("calls", 0)
+                                      for row in rows),
+                "observed_input_tokens": sum(row.get("usage", row.get("observed_usage", {})).get("input_tokens", 0)
+                                             for row in rows),
+                "observed_output_tokens": sum(row.get("usage", row.get("observed_usage", {})).get("output_tokens", 0)
+                                              for row in rows),
+                "interpretation": "Grouped metrics retain every failure in the denominator.",
+            })
+    return {"plan": plan.model_dump(), "table": table, "group_table": group_table,
             "inference": "CI clusters by patient/article; repeated seeds averaged within case before bootstrap. Exploratory comparisons are not multiplicity-adjusted."}
+
+
+def plan_labels(rows: list[dict]) -> list[str]:
+    """Stable label universe from observed rows; used only for grouped summaries."""
+    return sorted({row["gold"] for row in rows} | {row["prediction"] for row in rows})
 
 
 def standard_plan(task: str, split: str = "dev", group_limit: int | None = None, smoke: bool = False) -> StudyPlan:
