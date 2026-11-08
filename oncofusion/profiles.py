@@ -26,7 +26,7 @@ def v1_fast_config(backend: str = None) -> RunConfig:
     """Same seven roles and isolation as v1, with server-resolved evidence spans instead of re-emitted quotes."""
     backend = backend or available_backend()
     return RunConfig(workflow_backend=backend, max_total_tokens=200_000, max_output_tokens=5000,
-                     schema_retries=1, evidence_first=True, specialist_contracts=True,
+                     schema_retries=2, evidence_first=True, specialist_contracts=True,
                      latest_role_board=True, routing="fixed", citation_mode="fragment",
                      findings_limit=3, ablations=Ablations(targeted_requery=False))
 

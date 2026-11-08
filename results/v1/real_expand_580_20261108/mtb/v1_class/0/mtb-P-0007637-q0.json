@@ -1,0 +1,2109 @@
+{
+  "schema_version": "1.0",
+  "case_id": "mtb-P-0007637-q0",
+  "patient_id": "P-0007637",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "227d3bc58efba41b98334cd46b2d8574e383cdbdf5b35d08285e8157fe170412",
+  "config": {
+    "mode": "multi",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "claims-v1",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "B",
+    "explanation": "Based on the provided clinical records, the patient's rectal adenocarcinoma has demonstrated a stable clinical course over a documented period spanning from age 53.039 to 55.045. Serial CT scans at ages 53.571, 54.031, and 55.045 explicitly report that the cancer has NOT progressed, and CEA levels remain within a low, stable range (1.3–2.0 ng/ml) [file-af34d42ab94ce38a38bf:f01, file-af34d42ab94ce38a38bf:f02, file-af34d42ab94ce38a38bf:f03]. However, the clinical timeline terminates at age 55.045, leaving the interval to the current age of 55.8 undocumented, and the available material contains no treatment records [context-0:f01, file-af34d42ab94ce38a38bf:f03]. Additionally, no genomic, transcriptomic, or molecular assay data, nor pathology reports, are provided [genomics-01, pathology-01].\n\nReasoning from the documented stable disease status and the absence of progression across multiple imaging and laboratory evaluations, the most plausible near-term outcome is that the cancer will not recur within the next 18 months. This prediction is grounded in the observed clinical stability but carries explicit uncertainty due to the undocumented interval, lack of treatment data, and the inherent unpredictability of disease biology beyond the observation window.",
+    "citations": [
+      {
+        "document_id": "file-af34d42ab94ce38a38bf",
+        "start": 0,
+        "end": 435,
+        "quote": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \n"
+      },
+      {
+        "document_id": "file-af34d42ab94ce38a38bf",
+        "start": 435,
+        "end": 870,
+        "quote": "AGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \n"
+      },
+      {
+        "document_id": "file-af34d42ab94ce38a38bf",
+        "start": 870,
+        "end": 1241,
+        "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+      },
+      {
+        "document_id": "context-0",
+        "start": 0,
+        "end": 272,
+        "quote": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+      }
+    ],
+    "unresolved": [
+      "The clinical timeline terminates at age 55.045, leaving the interval to age 55.8 undocumented.",
+      "No treatment records or molecular/pathology data are available to refine the recurrence risk."
+    ],
+    "confidence": 0.65,
+    "adopted_claim_ids": [
+      "timeline-01",
+      "timeline-02",
+      "timeline-03",
+      "genomics-01",
+      "pathology-01"
+    ],
+    "rejected_claim_ids": []
+  },
+  "reports": [
+    {
+      "role": "literature",
+      "executor": "literature",
+      "output": {
+        "findings": [],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "timeline",
+      "executor": "timeline",
+      "output": {
+        "findings": [
+          {
+            "statement": "The documented clinical timeline spans from age 53.039 to 55.045, comprising serial CEA lab tests and CT scans at ages 53.571, 54.031, and 55.045.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "context-0",
+                "start": 0,
+                "end": 272,
+                "quote": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+              },
+              {
+                "document_id": "file-af34d42ab94ce38a38bf",
+                "start": 870,
+                "end": 1241,
+                "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+              }
+            ],
+            "claim_id": "timeline-01",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "At each recorded CT scan evaluation (ages 53.571, 54.031, and 55.045), the disease status was explicitly documented as having NOT progressed.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "file-af34d42ab94ce38a38bf",
+                "start": 0,
+                "end": 435,
+                "quote": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \n"
+              },
+              {
+                "document_id": "file-af34d42ab94ce38a38bf",
+                "start": 435,
+                "end": 870,
+                "quote": "AGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \n"
+              }
+            ],
+            "claim_id": "timeline-02",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "unknown: the clinical timeline terminates at age 55.045, leaving the interval to age 55.8 undocumented, and the available material contains no treatment records.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "timeline-03",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "absent",
+            "material_status": "unknown",
+            "material_basis": "not_recorded"
+          }
+        ],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "genomics",
+      "executor": "genomics",
+      "output": {
+        "findings": [
+          {
+            "statement": "not_applicable: the provided clinical timeline and source documents contain no genomic, transcriptomic, or molecular assay data for this patient.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "genomics-01",
+            "author_role": "genomics",
+            "used_claim_ids": [],
+            "scope": "molecular",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "not_recorded"
+          }
+        ],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "pathology",
+      "executor": "pathology",
+      "output": {
+        "findings": [
+          {
+            "statement": "not_applicable: the provided clinical records contain no pathology reports, histology slides, or surgical specimen evaluations for this patient with rectal adenocarcinoma.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "pathology-01",
+            "author_role": "pathology",
+            "used_claim_ids": [],
+            "scope": "pathologic",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "not_recorded"
+          }
+        ],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "timeline-01",
+            "verdict": "confirmed",
+            "note": "The documented timeline accurately reflects the age range (53.039 to 55.045) and the serial evaluation dates.",
+            "citations": [],
+            "reviewer_role": "pathology"
+          },
+          {
+            "target_claim_id": "timeline-02",
+            "verdict": "confirmed",
+            "note": "CT scan reports at ages 53.571, 54.031, and 55.045 explicitly state that the cancer has NOT progressed.",
+            "citations": [],
+            "reviewer_role": "pathology"
+          },
+          {
+            "target_claim_id": "timeline-03",
+            "verdict": "confirmed",
+            "note": "The clinical timeline correctly identifies the undocumented interval between age 55.045 and 55.8, and notes the absence of treatment records.",
+            "citations": [],
+            "reviewer_role": "pathology"
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "verdict": "confirmed",
+            "note": "The source documents contain no genomic, transcriptomic, or molecular assay data.",
+            "citations": [],
+            "reviewer_role": "pathology"
+          }
+        ]
+      }
+    },
+    {
+      "role": "drug",
+      "executor": "drug",
+      "output": {
+        "findings": [],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "verifier",
+      "executor": "verifier",
+      "output": {
+        "findings": [],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "timeline-01",
+            "verdict": "confirmed",
+            "note": "Scope: temporal. Evidence level: measured. Material status: present. The source documents explicitly list the clinical timeline from age 53.039 to 55.045, with serial CEA lab tests and CT scans recorded at ages 53.571, 54.031, and 55.045.",
+            "citations": [
+              {
+                "document_id": "context-0",
+                "start": 0,
+                "end": 272,
+                "quote": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+              },
+              {
+                "document_id": "file-af34d42ab94ce38a38bf",
+                "start": 0,
+                "end": 435,
+                "quote": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \n"
+              },
+              {
+                "document_id": "file-af34d42ab94ce38a38bf",
+                "start": 435,
+                "end": 870,
+                "quote": "AGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \n"
+              },
+              {
+                "document_id": "file-af34d42ab94ce38a38bf",
+                "start": 870,
+                "end": 1241,
+                "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "timeline-02",
+            "verdict": "confirmed",
+            "note": "Scope: temporal. Evidence level: measured. Material status: present. At each documented CT scan evaluation (ages 53.571, 54.031, and 55.045), the clinical records explicitly state that the cancer has NOT progressed.",
+            "citations": [
+              {
+                "document_id": "file-af34d42ab94ce38a38bf",
+                "start": 0,
+                "end": 435,
+                "quote": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \n"
+              },
+              {
+                "document_id": "file-af34d42ab94ce38a38bf",
+                "start": 435,
+                "end": 870,
+                "quote": "AGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \n"
+              },
+              {
+                "document_id": "file-af34d42ab94ce38a38bf",
+                "start": 870,
+                "end": 1241,
+                "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "timeline-03",
+            "verdict": "confirmed",
+            "note": "Scope: temporal. Evidence level: absent. Material status: unknown. The clinical timeline terminates at age 55.045, leaving the interval to age 55.8 undocumented. The available material contains no treatment records.",
+            "citations": [
+              {
+                "document_id": "context-0",
+                "start": 0,
+                "end": 272,
+                "quote": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+              },
+              {
+                "document_id": "file-af34d42ab94ce38a38bf",
+                "start": 870,
+                "end": 1241,
+                "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "verdict": "confirmed",
+            "note": "Scope: molecular. Evidence level: absent. Material status: not_applicable. The provided clinical timeline and source documents contain no genomic, transcriptomic, or molecular assay data for this patient.",
+            "citations": [],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "pathology-01",
+            "verdict": "confirmed",
+            "note": "Scope: pathologic. Evidence level: absent. Material status: not_applicable. The provided clinical records contain no pathology reports, histology slides, or surgical specimen evaluations for this patient with rectal adenocarcinoma.",
+            "citations": [],
+            "reviewer_role": "verifier"
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "calls": 7,
+    "http_attempts": 7,
+    "tool_calls": 6,
+    "input_tokens": 31891,
+    "output_tokens": 12926,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "fingerprint": "227d3bc58efba41b98334cd46b2d8574e383cdbdf5b35d08285e8157fe170412",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "claims-v1",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [],
+        "query": "Given that the patient is 55.8 years old, will the cancer have a recurrence in the next 18 months?",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "agent_started",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "payload_sha256": "d1ed02ad928e93568bf54410de64669309999006cd76c82019b71a8e607a28a6",
+        "source_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "token_reservation": 14570,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-af34d42ab94ce38a38bf:f01",
+          "file-af34d42ab94ce38a38bf:f02",
+          "file-af34d42ab94ce38a38bf:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 272,
+              "chars_sent": 272,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-af34d42ab94ce38a38bf": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1241,
+              "chars_sent": 1241,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-af34d42ab94ce38a38bf:f01",
+                "file-af34d42ab94ce38a38bf:f02",
+                "file-af34d42ab94ce38a38bf:f03"
+              ]
+            }
+          },
+          "candidates": 4,
+          "sent": 4,
+          "chars_total": 1513,
+          "chars_sent": 1513,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [],
+          "required": {},
+          "guaranteed_unsent": []
+        },
+        "material_basis": "",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "model_usage",
+      "role": "literature",
+      "details": {
+        "input_tokens": 2968,
+        "output_tokens": 1502,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 19.711,
+        "evidence_fragments": 4
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "agent_reported",
+      "role": "literature",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "agent_completed",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {},
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+            },
+            {
+              "id": "file-af34d42ab94ce38a38bf",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \nAGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \nAGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "payload_sha256": "72f72fad14a4c447981e53ffa1b3d86e5e19ab2b7c5e19bb993e4702d5dd7f4e",
+        "source_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "token_reservation": 16269,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-af34d42ab94ce38a38bf:f01",
+          "file-af34d42ab94ce38a38bf:f02",
+          "file-af34d42ab94ce38a38bf:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 272,
+              "chars_sent": 272,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-af34d42ab94ce38a38bf": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1241,
+              "chars_sent": 1241,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-af34d42ab94ce38a38bf:f01",
+                "file-af34d42ab94ce38a38bf:f02",
+                "file-af34d42ab94ce38a38bf:f03"
+              ]
+            }
+          },
+          "candidates": 4,
+          "sent": 4,
+          "chars_total": 1513,
+          "chars_sent": 1513,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "timeline",
+      "details": {
+        "input_tokens": 3600,
+        "output_tokens": 1976,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 30.514,
+        "evidence_fragments": 4
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "timeline",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The documented clinical timeline spans from age 53.039 to 55.045, comprising serial CEA lab tests and CT scans at ages 53.571, 54.031, and 55.045.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 272,
+                  "quote": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 870,
+                  "end": 1241,
+                  "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+                }
+              ],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "At each recorded CT scan evaluation (ages 53.571, 54.031, and 55.045), the disease status was explicitly documented as having NOT progressed.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 0,
+                  "end": 435,
+                  "quote": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \n"
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 435,
+                  "end": 870,
+                  "quote": "AGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \n"
+                }
+              ],
+              "claim_id": "timeline-02",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "unknown: the clinical timeline terminates at age 55.045, leaving the interval to age 55.8 undocumented, and the available material contains no treatment records.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-03",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "output": {
+          "findings": [
+            {
+              "statement": "The documented clinical timeline spans from age 53.039 to 55.045, comprising serial CEA lab tests and CT scans at ages 53.571, 54.031, and 55.045.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 272,
+                  "quote": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 870,
+                  "end": 1241,
+                  "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+                }
+              ],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "At each recorded CT scan evaluation (ages 53.571, 54.031, and 55.045), the disease status was explicitly documented as having NOT progressed.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 0,
+                  "end": 435,
+                  "quote": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \n"
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 435,
+                  "end": 870,
+                  "quote": "AGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \n"
+                }
+              ],
+              "claim_id": "timeline-02",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "unknown: the clinical timeline terminates at age 55.045, leaving the interval to age 55.8 undocumented, and the available material contains no treatment records.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-03",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown"
+            },
+            "file-af34d42ab94ce38a38bf": {
+              "gene": "unknown",
+              "variant": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+            },
+            {
+              "id": "file-af34d42ab94ce38a38bf",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \nAGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \nAGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "agent_started",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "payload_sha256": "80a58afa378c518ffc456dba53bb0605667533f646ef4c7bfdfb746092ab3178",
+        "source_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "token_reservation": 19399,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-af34d42ab94ce38a38bf:f01",
+          "file-af34d42ab94ce38a38bf:f02",
+          "file-af34d42ab94ce38a38bf:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 272,
+              "chars_sent": 272,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-af34d42ab94ce38a38bf": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1241,
+              "chars_sent": 1241,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-af34d42ab94ce38a38bf:f01",
+                "file-af34d42ab94ce38a38bf:f02",
+                "file-af34d42ab94ce38a38bf:f03"
+              ]
+            }
+          },
+          "candidates": 4,
+          "sent": 4,
+          "chars_total": 1513,
+          "chars_sent": 1513,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "molecular"
+          ],
+          "required": {
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 3,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "model_usage",
+      "role": "genomics",
+      "details": {
+        "input_tokens": 4613,
+        "output_tokens": 1629,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 22.655,
+        "evidence_fragments": 4
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_reported",
+      "role": "genomics",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: the provided clinical timeline and source documents contain no genomic, transcriptomic, or molecular assay data for this patient.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "agent_completed",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: the provided clinical timeline and source documents contain no genomic, transcriptomic, or molecular assay data for this patient.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            },
+            "file-af34d42ab94ce38a38bf": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+            },
+            {
+              "id": "file-af34d42ab94ce38a38bf",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \nAGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \nAGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 18,
+      "kind": "agent_started",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "payload_sha256": "2aca1a1bd6cf98ceb80cc21ca90265a6f3bd032c6bca8dbcd4f78dbd26dd3195",
+        "source_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "token_reservation": 20142,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-af34d42ab94ce38a38bf:f01",
+          "file-af34d42ab94ce38a38bf:f02",
+          "file-af34d42ab94ce38a38bf:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 272,
+              "chars_sent": 272,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-af34d42ab94ce38a38bf": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1241,
+              "chars_sent": 1241,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-af34d42ab94ce38a38bf:f01",
+                "file-af34d42ab94ce38a38bf:f02",
+                "file-af34d42ab94ce38a38bf:f03"
+              ]
+            }
+          },
+          "candidates": 4,
+          "sent": 4,
+          "chars_total": 1513,
+          "chars_sent": 1513,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "pathology"
+          ],
+          "required": {
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 4,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 19,
+      "kind": "model_usage",
+      "role": "pathology",
+      "details": {
+        "input_tokens": 4814,
+        "output_tokens": 1891,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 19.944,
+        "evidence_fragments": 4
+      }
+    },
+    {
+      "sequence": 20,
+      "kind": "agent_reported",
+      "role": "pathology",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: the provided clinical records contain no pathology reports, histology slides, or surgical specimen evaluations for this patient with rectal adenocarcinoma.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "The documented timeline accurately reflects the age range (53.039 to 55.045) and the serial evaluation dates.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            },
+            {
+              "target_claim_id": "timeline-02",
+              "verdict": "confirmed",
+              "note": "CT scan reports at ages 53.571, 54.031, and 55.045 explicitly state that the cancer has NOT progressed.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            },
+            {
+              "target_claim_id": "timeline-03",
+              "verdict": "confirmed",
+              "note": "The clinical timeline correctly identifies the undocumented interval between age 55.045 and 55.8, and notes the absence of treatment records.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The source documents contain no genomic, transcriptomic, or molecular assay data.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 21,
+      "kind": "agent_completed",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: the provided clinical records contain no pathology reports, histology slides, or surgical specimen evaluations for this patient with rectal adenocarcinoma.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "The documented timeline accurately reflects the age range (53.039 to 55.045) and the serial evaluation dates.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            },
+            {
+              "target_claim_id": "timeline-02",
+              "verdict": "confirmed",
+              "note": "CT scan reports at ages 53.571, 54.031, and 55.045 explicitly state that the cancer has NOT progressed.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            },
+            {
+              "target_claim_id": "timeline-03",
+              "verdict": "confirmed",
+              "note": "The clinical timeline correctly identifies the undocumented interval between age 55.045 and 55.8, and notes the absence of treatment records.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The source documents contain no genomic, transcriptomic, or molecular assay data.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 22,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-af34d42ab94ce38a38bf": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+            },
+            {
+              "id": "file-af34d42ab94ce38a38bf",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \nAGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \nAGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "context-0": "unknown",
+            "file-af34d42ab94ce38a38bf": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 23,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "c80ecdcf0c35779da59753a1d04cdb353113806614d5f23203931c8459bcd31e",
+        "source_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "token_reservation": 21236,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-af34d42ab94ce38a38bf:f01",
+          "file-af34d42ab94ce38a38bf:f02",
+          "file-af34d42ab94ce38a38bf:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 272,
+              "chars_sent": 272,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-af34d42ab94ce38a38bf": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1241,
+              "chars_sent": 1241,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-af34d42ab94ce38a38bf:f01",
+                "file-af34d42ab94ce38a38bf:f02",
+                "file-af34d42ab94ce38a38bf:f03"
+              ]
+            }
+          },
+          "candidates": 4,
+          "sent": 4,
+          "chars_total": 1513,
+          "chars_sent": 1513,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 5,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 24,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 5087,
+        "output_tokens": 1502,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 18.708,
+        "evidence_fragments": 4
+      }
+    },
+    {
+      "sequence": 25,
+      "kind": "agent_reported",
+      "role": "drug",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 26,
+      "kind": "agent_completed",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 27,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-af34d42ab94ce38a38bf": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+            },
+            {
+              "id": "file-af34d42ab94ce38a38bf",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \nAGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \nAGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "context-0": "unknown",
+            "file-af34d42ab94ce38a38bf": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 28,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "99356aa91d6a67cf36c75c5697098e9ecb1467c3d97ddd0e8d359580dcdf4c85",
+        "source_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "token_reservation": 20367,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-af34d42ab94ce38a38bf:f01",
+          "file-af34d42ab94ce38a38bf:f02",
+          "file-af34d42ab94ce38a38bf:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 272,
+              "chars_sent": 272,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-af34d42ab94ce38a38bf": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1241,
+              "chars_sent": 1241,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-af34d42ab94ce38a38bf:f01",
+                "file-af34d42ab94ce38a38bf:f02",
+                "file-af34d42ab94ce38a38bf:f03"
+              ]
+            }
+          },
+          "candidates": 4,
+          "sent": 4,
+          "chars_total": 1513,
+          "chars_sent": 1513,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 5,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 29,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 4816,
+        "output_tokens": 2307,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 26.476,
+        "evidence_fragments": 4
+      }
+    },
+    {
+      "sequence": 30,
+      "kind": "agent_reported",
+      "role": "verifier",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "Scope: temporal. Evidence level: measured. Material status: present. The source documents explicitly list the clinical timeline from age 53.039 to 55.045, with serial CEA lab tests and CT scans recorded at ages 53.571, 54.031, and 55.045.",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 272,
+                  "quote": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 0,
+                  "end": 435,
+                  "quote": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \n"
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 435,
+                  "end": 870,
+                  "quote": "AGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \n"
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 870,
+                  "end": 1241,
+                  "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-02",
+              "verdict": "confirmed",
+              "note": "Scope: temporal. Evidence level: measured. Material status: present. At each documented CT scan evaluation (ages 53.571, 54.031, and 55.045), the clinical records explicitly state that the cancer has NOT progressed.",
+              "citations": [
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 0,
+                  "end": 435,
+                  "quote": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \n"
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 435,
+                  "end": 870,
+                  "quote": "AGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \n"
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 870,
+                  "end": 1241,
+                  "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-03",
+              "verdict": "confirmed",
+              "note": "Scope: temporal. Evidence level: absent. Material status: unknown. The clinical timeline terminates at age 55.045, leaving the interval to age 55.8 undocumented. The available material contains no treatment records.",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 272,
+                  "quote": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 870,
+                  "end": 1241,
+                  "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "Scope: molecular. Evidence level: absent. Material status: not_applicable. The provided clinical timeline and source documents contain no genomic, transcriptomic, or molecular assay data for this patient.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "pathology-01",
+              "verdict": "confirmed",
+              "note": "Scope: pathologic. Evidence level: absent. Material status: not_applicable. The provided clinical records contain no pathology reports, histology slides, or surgical specimen evaluations for this patient with rectal adenocarcinoma.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 31,
+      "kind": "agent_completed",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "Scope: temporal. Evidence level: measured. Material status: present. The source documents explicitly list the clinical timeline from age 53.039 to 55.045, with serial CEA lab tests and CT scans recorded at ages 53.571, 54.031, and 55.045.",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 272,
+                  "quote": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 0,
+                  "end": 435,
+                  "quote": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \n"
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 435,
+                  "end": 870,
+                  "quote": "AGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \n"
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 870,
+                  "end": 1241,
+                  "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-02",
+              "verdict": "confirmed",
+              "note": "Scope: temporal. Evidence level: measured. Material status: present. At each documented CT scan evaluation (ages 53.571, 54.031, and 55.045), the clinical records explicitly state that the cancer has NOT progressed.",
+              "citations": [
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 0,
+                  "end": 435,
+                  "quote": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \n"
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 435,
+                  "end": 870,
+                  "quote": "AGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \n"
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 870,
+                  "end": 1241,
+                  "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-03",
+              "verdict": "confirmed",
+              "note": "Scope: temporal. Evidence level: absent. Material status: unknown. The clinical timeline terminates at age 55.045, leaving the interval to age 55.8 undocumented. The available material contains no treatment records.",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 272,
+                  "quote": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+                },
+                {
+                  "document_id": "file-af34d42ab94ce38a38bf",
+                  "start": 870,
+                  "end": 1241,
+                  "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "Scope: molecular. Evidence level: absent. Material status: not_applicable. The provided clinical timeline and source documents contain no genomic, transcriptomic, or molecular assay data for this patient.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "pathology-01",
+              "verdict": "confirmed",
+              "note": "Scope: pathologic. Evidence level: absent. Material status: not_applicable. The provided clinical records contain no pathology reports, histology slides, or surgical specimen evaluations for this patient with rectal adenocarcinoma.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 32,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "fa9b89b64c12e585b8a7e77d4c4afe4800944a0d82ab20c781e35012f2ca7946",
+        "source_ids": [
+          "context-0",
+          "file-af34d42ab94ce38a38bf"
+        ],
+        "token_reservation": 24264,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-af34d42ab94ce38a38bf:f01",
+          "file-af34d42ab94ce38a38bf:f02",
+          "file-af34d42ab94ce38a38bf:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 272,
+              "chars_sent": 272,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-af34d42ab94ce38a38bf": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1241,
+              "chars_sent": 1241,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-af34d42ab94ce38a38bf:f01",
+                "file-af34d42ab94ce38a38bf:f02",
+                "file-af34d42ab94ce38a38bf:f03"
+              ]
+            }
+          },
+          "candidates": 4,
+          "sent": 4,
+          "chars_total": 1513,
+          "chars_sent": 1513,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 5,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 33,
+      "kind": "verification_ledger",
+      "role": "decision",
+      "details": {
+        "entries": [
+          {
+            "target_claim_id": "timeline-01",
+            "claim_author": "timeline",
+            "reviewer": "pathology",
+            "verdict": "confirmed",
+            "reason": "The documented timeline accurately reflects the age range (53.039 to 55.045) and the serial evaluation dates.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "timeline-02",
+            "claim_author": "timeline",
+            "reviewer": "pathology",
+            "verdict": "confirmed",
+            "reason": "CT scan reports at ages 53.571, 54.031, and 55.045 explicitly state that the cancer has NOT progressed.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "timeline-03",
+            "claim_author": "timeline",
+            "reviewer": "pathology",
+            "verdict": "confirmed",
+            "reason": "The clinical timeline correctly identifies the undocumented interval between age 55.045 and 55.8, and notes the absence of treatment records.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "claim_author": "genomics",
+            "reviewer": "pathology",
+            "verdict": "confirmed",
+            "reason": "The source documents contain no genomic, transcriptomic, or molecular assay data.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "timeline-01",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "Scope: temporal. Evidence level: measured. Material status: present. The source documents explicitly list the clinical timeline from age 53.039 to 55.045, with serial CEA lab tests and CT scans recorded at ages 53.571, 54.031, and 55.045.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "context-0:f01"
+              },
+              {
+                "evidence_id": "file-af34d42ab94ce38a38bf:f01"
+              },
+              {
+                "evidence_id": "file-af34d42ab94ce38a38bf:f02"
+              },
+              {
+                "evidence_id": "file-af34d42ab94ce38a38bf:f03"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-02",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "Scope: temporal. Evidence level: measured. Material status: present. At each documented CT scan evaluation (ages 53.571, 54.031, and 55.045), the clinical records explicitly state that the cancer has NOT progressed.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-af34d42ab94ce38a38bf:f01"
+              },
+              {
+                "evidence_id": "file-af34d42ab94ce38a38bf:f02"
+              },
+              {
+                "evidence_id": "file-af34d42ab94ce38a38bf:f03"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-03",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "Scope: temporal. Evidence level: absent. Material status: unknown. The clinical timeline terminates at age 55.045, leaving the interval to age 55.8 undocumented. The available material contains no treatment records.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "context-0:f01"
+              },
+              {
+                "evidence_id": "file-af34d42ab94ce38a38bf:f03"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "claim_author": "genomics",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "Scope: molecular. Evidence level: absent. Material status: not_applicable. The provided clinical timeline and source documents contain no genomic, transcriptomic, or molecular assay data for this patient.",
+            "final": true,
+            "citations": []
+          },
+          {
+            "target_claim_id": "pathology-01",
+            "claim_author": "pathology",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "Scope: pathologic. Evidence level: absent. Material status: not_applicable. The provided clinical records contain no pathology reports, histology slides, or surgical specimen evaluations for this patient with rectal adenocarcinoma.",
+            "final": true,
+            "citations": []
+          }
+        ],
+        "reviews": 9,
+        "claims_reviewed": 5,
+        "final_verdicts": 5,
+        "rejected": [],
+        "insufficient": []
+      }
+    },
+    {
+      "sequence": 34,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 5993,
+        "output_tokens": 2119,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 85.736,
+        "evidence_fragments": 4
+      }
+    },
+    {
+      "sequence": 35,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "B",
+          "explanation": "Based on the provided clinical records, the patient's rectal adenocarcinoma has demonstrated a stable clinical course over a documented period spanning from age 53.039 to 55.045. Serial CT scans at ages 53.571, 54.031, and 55.045 explicitly report that the cancer has NOT progressed, and CEA levels remain within a low, stable range (1.3–2.0 ng/ml) [file-af34d42ab94ce38a38bf:f01, file-af34d42ab94ce38a38bf:f02, file-af34d42ab94ce38a38bf:f03]. However, the clinical timeline terminates at age 55.045, leaving the interval to the current age of 55.8 undocumented, and the available material contains no treatment records [context-0:f01, file-af34d42ab94ce38a38bf:f03]. Additionally, no genomic, transcriptomic, or molecular assay data, nor pathology reports, are provided [genomics-01, pathology-01].\n\nReasoning from the documented stable disease status and the absence of progression across multiple imaging and laboratory evaluations, the most plausible near-term outcome is that the cancer will not recur within the next 18 months. This prediction is grounded in the observed clinical stability but carries explicit uncertainty due to the undocumented interval, lack of treatment data, and the inherent unpredictability of disease biology beyond the observation window.",
+          "citations": [
+            {
+              "document_id": "file-af34d42ab94ce38a38bf",
+              "start": 0,
+              "end": 435,
+              "quote": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \n"
+            },
+            {
+              "document_id": "file-af34d42ab94ce38a38bf",
+              "start": 435,
+              "end": 870,
+              "quote": "AGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \n"
+            },
+            {
+              "document_id": "file-af34d42ab94ce38a38bf",
+              "start": 870,
+              "end": 1241,
+              "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+            },
+            {
+              "document_id": "context-0",
+              "start": 0,
+              "end": 272,
+              "quote": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+            }
+          ],
+          "unresolved": [
+            "The clinical timeline terminates at age 55.045, leaving the interval to age 55.8 undocumented.",
+            "No treatment records or molecular/pathology data are available to refine the recurrence risk."
+          ],
+          "confidence": 0.65,
+          "adopted_claim_ids": [
+            "timeline-01",
+            "timeline-02",
+            "timeline-03",
+            "genomics-01",
+            "pathology-01"
+          ],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 36,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "output": {
+          "answer": "B",
+          "explanation": "Based on the provided clinical records, the patient's rectal adenocarcinoma has demonstrated a stable clinical course over a documented period spanning from age 53.039 to 55.045. Serial CT scans at ages 53.571, 54.031, and 55.045 explicitly report that the cancer has NOT progressed, and CEA levels remain within a low, stable range (1.3–2.0 ng/ml) [file-af34d42ab94ce38a38bf:f01, file-af34d42ab94ce38a38bf:f02, file-af34d42ab94ce38a38bf:f03]. However, the clinical timeline terminates at age 55.045, leaving the interval to the current age of 55.8 undocumented, and the available material contains no treatment records [context-0:f01, file-af34d42ab94ce38a38bf:f03]. Additionally, no genomic, transcriptomic, or molecular assay data, nor pathology reports, are provided [genomics-01, pathology-01].\n\nReasoning from the documented stable disease status and the absence of progression across multiple imaging and laboratory evaluations, the most plausible near-term outcome is that the cancer will not recur within the next 18 months. This prediction is grounded in the observed clinical stability but carries explicit uncertainty due to the undocumented interval, lack of treatment data, and the inherent unpredictability of disease biology beyond the observation window.",
+          "citations": [
+            {
+              "document_id": "file-af34d42ab94ce38a38bf",
+              "start": 0,
+              "end": 435,
+              "quote": "AGE: 53.039, labtest > cea_labs --> CEA: 1.9000 ng/ml          \nAGE: 53.571, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 53.571, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 53.571, labtest > cea_labs --> CEA: 1.7000 ng/ml          \n"
+            },
+            {
+              "document_id": "file-af34d42ab94ce38a38bf",
+              "start": 435,
+              "end": 870,
+              "quote": "AGE: 54.031, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 54.031, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 54.031, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 54.565, labtest > cea_labs --> CEA: 1.3000 ng/ml          \n"
+            },
+            {
+              "document_id": "file-af34d42ab94ce38a38bf",
+              "start": 870,
+              "end": 1241,
+              "quote": "AGE: 55.045, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 55.045, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 55.045, labtest > cea_labs --> CEA: 1.8000 ng/ml          \n"
+            },
+            {
+              "document_id": "context-0",
+              "start": 0,
+              "end": 272,
+              "quote": "The patient is a 53-year-old White male of Non-Hispanic, Non-Spanish ethnicity, diagnosed with rectal adenocarcinoma. Comprehensive clinical history, including details of diagnosis, treatments, and lab tests, is available for the period spanning from age 53 to 55.8 years."
+            }
+          ],
+          "unresolved": [
+            "The clinical timeline terminates at age 55.045, leaving the interval to age 55.8 undocumented.",
+            "No treatment records or molecular/pathology data are available to refine the recurrence risk."
+          ],
+          "confidence": 0.65,
+          "adopted_claim_ids": [
+            "timeline-01",
+            "timeline-02",
+            "timeline-03",
+            "genomics-01",
+            "pathology-01"
+          ],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 37,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "context-0",
+    "file-af34d42ab94ce38a38bf"
+  ],
+  "duration_seconds": 223.858922,
+  "research_only": true
+}

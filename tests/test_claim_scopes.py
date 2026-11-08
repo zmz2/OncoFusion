@@ -45,7 +45,7 @@ def test_missing_material_claim_cannot_cite_or_assert():
                                                      citations=[FragmentCitation(evidence_id=first)],
                                                      scope="pathologic", evidence_level="absent",
                                                      material_status="not_applicable")])
-    with pytest.raises(ValueError, match="missing-material claim"):
+    with pytest.raises(ValueError, match="finding 1 has material_status=not_applicable"):
         build_analysis_output(wire, index, "pathology", True, {}, 3, {"pathologic"})
 
 
@@ -72,6 +72,71 @@ def test_failed_response_leaves_no_claim_ids_behind():
     with pytest.raises(ValueError, match="outside this role"):
         build_analysis_output(wire, {}, "genomics", True, known, 3, {"molecular"})
     assert known == {"timeline-01": "timeline"}, "a rejected response must not register claim ids"
+
+
+def test_output_validation_error_names_the_finding_position():
+    wire = ClaimAnalysisOutput(findings=[
+        ClaimFinding(statement="Valid first claim.", relation="NEI", scope="molecular",
+                     evidence_level="measured", material_status="present"),
+        ClaimFinding(statement="Invalid missing claim.", relation="SUPPORTS", scope="molecular",
+                     evidence_level="curated", material_status="not_applicable")])
+    with pytest.raises(ValueError, match=r"finding 2 has material_status=not_applicable"):
+        build_analysis_output(wire, {}, "genomics", True, {}, 3, {"molecular"})
+
+
+def test_first_claim_role_has_no_verdict_channel(recorder):
+    result = Engine(recorder).run(CASE, v1_class_config("native"))
+    roles = [payload["role"] for payload in recorder.payloads]
+    first = recorder.systems[roles.index("literature")]
+    later = recorder.systems[roles.index("timeline")]
+    verifier = recorder.systems[roles.index("verifier")]
+    assert '"verdicts"' not in first
+    assert "If that list is empty, do not emit verdicts." in first
+    assert "previously committed claim ids: literature-" in later
+    assert '"findings"' not in verifier and '"verdicts"' in verifier
+    assert result.status == "completed"
+
+
+def test_decision_prompt_separates_claim_ids_from_evidence_ids(recorder):
+    Engine(recorder).run(CASE, v1_class_config("native"))
+    decision = recorder.systems[[payload["role"] for payload in recorder.payloads].index("decision")]
+    assert "A roster claim id (for example literature-01) identifies an argument, not a source span." in decision
+
+
+def test_mcq_decision_prompt_excludes_verification_labels(recorder):
+    case = examples()["synthetic-timeline"]
+    Engine(recorder).run(case, v1_class_config("native"))
+    decision = recorder.systems[[payload["role"] for payload in recorder.payloads].index("decision")]
+    assert "A, B, C" in decision
+    assert "never use SUPPORTS, REFUTES, REVISIONS, or NEI" in decision
+    schema = json.JSONDecoder().raw_decode(decision.split("conforming to this schema: ", 1)[1])[0]
+    assert schema["properties"]["answer"]["enum"] == ["A", "B", "C"]
+
+
+def test_role_scope_is_encoded_in_the_response_schema(recorder):
+    Engine(recorder).run(CASE, v1_class_config("native"))
+    timeline = recorder.systems[[payload["role"] for payload in recorder.payloads].index("timeline")]
+    schema_text = timeline.split("conforming to this schema: ", 1)[1]
+    schema = json.JSONDecoder().raw_decode(schema_text)[0]
+    assert schema["$defs"]["ClaimFinding"]["properties"]["scope"]["enum"] == ["temporal"]
+
+
+def test_verdict_citations_are_resolved_then_capped():
+    case, listed, index = finding_case()
+    evidence_id = listed[0]["evidence_id"]
+    wire = ClaimAnalysisOutput(verdicts=[{
+        "target_claim_id": "timeline-01",
+        "verdict": "confirmed",
+        "citations": [{"evidence_id": evidence_id}] * 6,
+    }])
+    events = []
+    output = build_analysis_output(
+        wire, index, "verifier", True, {"timeline-01": "timeline"}, 3, {"verification"},
+        emit=lambda kind, role="", **details: events.append((kind, details)),
+    )
+    assert len(output.verdicts[0].citations) == 4
+    assert ("verdict_citations_capped",
+            {"target_claim_id": "timeline-01", "reported": 6, "kept": 4}) in events
 
 
 def test_claim_ids_continue_across_a_reported_role_round():

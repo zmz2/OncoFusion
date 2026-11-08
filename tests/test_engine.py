@@ -32,11 +32,16 @@ def test_synthetic_fixture_contract(example, answer):
     assert Engine(MockProvider()).run(examples()[example]).decision.answer == answer
 
 
+def _without_runtime_seconds(events):
+    return [{**event.model_dump(), "details": {k: v for k, v in event.details.items() if k != "seconds"}}
+            for event in events]
+
+
 def test_reproducible(case):
     a, b = Engine(MockProvider()).run(case), Engine(MockProvider()).run(case)
     assert a.fingerprint == b.fingerprint
     assert a.decision == b.decision
-    assert a.trace == b.trace
+    assert _without_runtime_seconds(a.trace) == _without_runtime_seconds(b.trace)
     assert Engine(MockProvider()).run(case, RunConfig(seed=3)).fingerprint != a.fingerprint
 
 

@@ -1,0 +1,3884 @@
+{
+  "schema_version": "1.0",
+  "case_id": "mtb-P-0024579-q2",
+  "patient_id": "P-0024579",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "14fa33755dbfd6d7f0c0ae6e97936205b21413a24e97f9cab8a0e89038f0f371",
+  "config": {
+    "mode": "multi",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "claims-v1",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "A",
+    "explanation": "The patient is currently alive at the information cutoff of age 72.9, with the most recent documented clinical event at age 72.865 showing an ECOG performance status of 0 and no evidence of disease progression on recent imaging. The patient has Stage 1-3 pancreatic adenocarcinoma with a high tumor mutational burden and multiple somatic mutations (KRAS, TP53, CDKN2A, SMAD4, NOTCH1), and has received multiple lines of chemotherapy and radiation. While the patient's current clinical status is stable, pancreatic adenocarcinoma carries a high risk of mortality, and the specific outcome at age 73.4 (6 months post-cutoff) is not observable in the provided records. Therefore, the prediction that the patient will still be alive is based on current stability but carries significant uncertainty and cannot be verified from the available data.",
+    "citations": [
+      {
+        "document_id": "file-2a61cf2a53c5ea33f7a0",
+        "start": 2473,
+        "end": 2599,
+        "quote": "AGE: 72.786, treatment > radiation --> SUBTYPE: Radiation Therapy, \nAGE: 72.865, diagnosis > performance_status --> ECOG: 0, \n"
+      },
+      {
+        "document_id": "file-666725191233ff6a9b4d",
+        "start": 2651,
+        "end": 3240,
+        "quote": "AGE: 72.156, samples > clinical_sample --> SAMPLE_ID: P-0024579-T01-IM6, PATIENT_ID: P-0024579, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 939, TUMOR_PURITY: 20.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 0.24, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional Both 2 and 3, ICD_O_HISTOLOGY_DESCRIPTION: Tubular "
+      },
+      {
+        "document_id": "file-2a61cf2a53c5ea33f7a0",
+        "start": 453,
+        "end": 918,
+        "quote": "AGE: 72.260, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.260, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.260, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Liver, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \n"
+      }
+    ],
+    "unresolved": [
+      "The question asks about a future survival outcome (alive at age 73.4), which is outside the temporal scope of the provided clinical timeline and cannot be assumed or looked up.",
+      "Pancreatic adenocarcinoma prognosis is highly variable; while current stability supports a 'Yes' prediction, the actual 6-month survival outcome remains unknown."
+    ],
+    "confidence": 0.5,
+    "adopted_claim_ids": [
+      "timeline-01",
+      "timeline-02",
+      "timeline-03"
+    ],
+    "rejected_claim_ids": [
+      "genomics-01",
+      "genomics-02",
+      "genomics-03",
+      "drug-01",
+      "drug-02"
+    ]
+  },
+  "reports": [
+    {
+      "role": "literature",
+      "executor": "literature",
+      "output": {
+        "findings": [],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "timeline",
+      "executor": "timeline",
+      "output": {
+        "findings": [
+          {
+            "statement": "At the information cutoff of age 72.9, the patient's most recent documented clinical event occurred at age 72.865, recording an ECOG performance status of 0. This follows a course of radiation therapy initiated at age 72.786 and multiple prior chemotherapy lines.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "file-2a61cf2a53c5ea33f7a0",
+                "start": 2473,
+                "end": 2599,
+                "quote": "AGE: 72.786, treatment > radiation --> SUBTYPE: Radiation Therapy, \nAGE: 72.865, diagnosis > performance_status --> ECOG: 0, \n"
+              },
+              {
+                "document_id": "file-2a61cf2a53c5ea33f7a0",
+                "start": 918,
+                "end": 1488,
+                "quote": "AGE: 72.271, treatment > treatment --> STOP_AGE: 72.6928, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 72.271, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.438, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.444, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.444, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.501, diagnosis > performance_status --> ECOG: 1, \n"
+              }
+            ],
+            "claim_id": "timeline-01",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "The patient has a confirmed diagnosis of pancreatic adenocarcinoma (Stage 1-3) with somatic mutations in KRAS, TP53, CDKN2A, SMAD4, and NOTCH1. Prior treatments include Rituximab, Cyclophosphamide, Doxorubicin, Vincristine, Capecitabine, and Gemcitabine, with no documented disease progression on recent imaging.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "file-666725191233ff6a9b4d",
+                "start": 2651,
+                "end": 3240,
+                "quote": "AGE: 72.156, samples > clinical_sample --> SAMPLE_ID: P-0024579-T01-IM6, PATIENT_ID: P-0024579, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 939, TUMOR_PURITY: 20.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 0.24, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional Both 2 and 3, ICD_O_HISTOLOGY_DESCRIPTION: Tubular "
+              },
+              {
+                "document_id": "file-2a61cf2a53c5ea33f7a0",
+                "start": 453,
+                "end": 918,
+                "quote": "AGE: 72.260, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.260, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.260, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Liver, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \n"
+              }
+            ],
+            "claim_id": "timeline-02",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "unknown: The question asks whether the patient will be alive at age 73.4 (6 months after the 72.9 cutoff). This future survival outcome is not visible in the provided clinical timeline, cannot be assumed or looked up, and falls outside the temporal scope of this role.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "timeline-03",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "absent",
+            "material_status": "unknown",
+            "material_basis": "supplied"
+          }
+        ],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "genomics",
+      "executor": "genomics",
+      "output": {
+        "findings": [
+          {
+            "statement": "The tumor sample P-0024579-T01-IM6 harbors a somatic KRAS p.Gly12Val (G12V) missense mutation on transcript ENST00000256078.4 (NM_033360.2), detected via MSK-IMPACT sequencing.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "file-d472647c256ce33ce771",
+                "start": 0,
+                "end": 593,
+                "quote": "Hugo_Symbol,Entrez_Gene_Id,Center,NCBI_Build,Chromosome,Start_Position,End_Position,Strand,Consequence,Variant_Classification,Variant_Type,Reference_Allele,Tumor_Seq_Allele1,Tumor_Seq_Allele2,SAMPLE_ID,Validation_Status,Mutation_Status,Score,t_ref_count,t_alt_count,n_ref_count,n_alt_count,HGVSc,HGVSp,HGVSp_Short,Transcript_ID,RefSeq,Protein_position,Codons\nKRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,941,71,674,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt\n"
+              }
+            ],
+            "claim_id": "genomics-01",
+            "author_role": "genomics",
+            "used_claim_ids": [],
+            "scope": "molecular",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "The tumor sample contains a somatic TP53 p.Val274Gly (V274G) missense mutation on transcript ENST00000269305.4 (NM_001126112.2) and a somatic CDKN2A p.Leu16ProfsTer9 (L16Pfs*9) frameshift deletion on transcript ENST00000304494.5 (NM_000077.4).",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "file-d472647c256ce33ce771",
+                "start": 593,
+                "end": 1088,
+                "quote": "TP53,7157,MSKCC,GRCh37,17,7577117,7577117,+,missense_variant,Missense_Mutation,SNP,A,A,C,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,990,78,669,0,ENST00000269305.4:c.821T>G,p.Val274Gly,p.V274G,ENST00000269305,NM_001126112.2,274.0,gTt/gGt\nCDKN2A,1029,MSKCC,GRCh37,9,21974777,21974780,+,frameshift_variant,Frame_Shift_Del,DEL,GCCA,GCCA,-,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,359,24,243,0,ENST00000304494.5:c.47_50del,p.Leu16ProfsTer9,p.L16Pfs*9,ENST00000304494,NM_000077.4,16.0,cTGGCc/cc\n"
+              }
+            ],
+            "claim_id": "genomics-02",
+            "author_role": "genomics",
+            "used_claim_ids": [],
+            "scope": "molecular",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "The tumor sample harbors a somatic SMAD4 p.Cys324Ter (C324*) nonsense mutation on transcript ENST00000342988.3 (NM_005359.5) and a somatic NOTCH1 p.Cys563Ser (C563S) missense mutation on transcript ENST00000277541.6 (NM_017617.3).",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "file-d472647c256ce33ce771",
+                "start": 1088,
+                "end": 1558,
+                "quote": "SMAD4,0,MSKCC,GRCh37,18,48591809,48591809,+,stop_gained,Nonsense_Mutation,SNP,T,T,A,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,704,72,480,0,ENST00000342988.3:c.972T>A,p.Cys324Ter,p.C324*,ENST00000342988,NM_005359.5,324.0,tgT/tgA\nNOTCH1,0,MSKCC,GRCh37,9,139410151,139410151,+,missense_variant,Missense_Mutation,SNP,A,A,T,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,797,59,574,1,ENST00000277541.6:c.1687T>A,p.Cys563Ser,p.C563S,ENST00000277541,NM_017617.3,563.0,Tgc/Agc\n"
+              }
+            ],
+            "claim_id": "genomics-03",
+            "author_role": "genomics",
+            "used_claim_ids": [],
+            "scope": "molecular",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "pathology",
+      "executor": "pathology",
+      "output": {
+        "findings": [],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "drug",
+      "executor": "drug",
+      "output": {
+        "findings": [
+          {
+            "statement": "The patient's recorded drug exposures include Rituximab, Cyclophosphamide, Doxorubicin, Vincristine, Capecitabine, and Gemcitabine, administered as cytotoxic and biologic therapies between ages 71.7 and 72.8, alongside radiation therapy.",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "file-666725191233ff6a9b4d",
+                "start": 0,
+                "end": 535,
+                "quote": "AGE: 71.734, treatment > prior_meds --> SUBTYPE: Prior Medications to MSK, TREATMENT_TYPE: Medical Therapy, INFERRED_TX_PROB: 0.98, PRIOR_MED_TO_MSK: Prior medications to MSK, STYLE_COLOR: #D62727, \nAGE: 71.753, diagnosis > performance_status --> ECOG: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Biologic, AGENT: RITUXIMAB, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+              },
+              {
+                "document_id": "file-666725191233ff6a9b4d",
+                "start": 535,
+                "end": 1114,
+                "quote": "AGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: VINCRISTINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.942, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 71.942, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+              },
+              {
+                "document_id": "file-2a61cf2a53c5ea33f7a0",
+                "start": 0,
+                "end": 453,
+                "quote": "AGE: 72.213, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.213, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.213, labtest > ca_19-9_labs --> RESULT: 29, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.213, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 72.216, treatment > treatment --> STOP_AGE: 72.827, SUBTYPE: Chemo, AGENT: CAPECITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 72.252, specimen --> SAMPLE_ID: P-0024579-T01-IM6, \n"
+              },
+              {
+                "document_id": "file-2a61cf2a53c5ea33f7a0",
+                "start": 918,
+                "end": 1488,
+                "quote": "AGE: 72.271, treatment > treatment --> STOP_AGE: 72.6928, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 72.271, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.438, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.444, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.444, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.501, diagnosis > performance_status --> ECOG: 1, \n"
+              }
+            ],
+            "claim_id": "drug-01",
+            "author_role": "drug",
+            "used_claim_ids": [],
+            "scope": "exposure",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "The tumor harbors a KRAS p.Gly12Val mutation, which is associated with resistance to EGFR-targeted therapies in literature; however, no molecular-drug sensitivity or resistance relationships are documented for the administered cytotoxic and biologic agents in the provided clinical records.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "file-d472647c256ce33ce771",
+                "start": 0,
+                "end": 593,
+                "quote": "Hugo_Symbol,Entrez_Gene_Id,Center,NCBI_Build,Chromosome,Start_Position,End_Position,Strand,Consequence,Variant_Classification,Variant_Type,Reference_Allele,Tumor_Seq_Allele1,Tumor_Seq_Allele2,SAMPLE_ID,Validation_Status,Mutation_Status,Score,t_ref_count,t_alt_count,n_ref_count,n_alt_count,HGVSc,HGVSp,HGVSp_Short,Transcript_ID,RefSeq,Protein_position,Codons\nKRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,941,71,674,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt\n"
+              }
+            ],
+            "claim_id": "drug-02",
+            "author_role": "drug",
+            "used_claim_ids": [],
+            "scope": "relationship",
+            "evidence_level": "literature",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "The question asks about a future survival outcome (alive at age 73.4), which is outside the scope of the drug role and cannot be predicted from the provided clinical timeline."
+        ],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "verifier",
+      "executor": "verifier",
+      "output": {
+        "findings": [],
+        "unresolved": [
+          "The question asks about a future survival outcome (alive at age 73.4), which is outside the scope of the drug role and cannot be predicted from the provided clinical timeline."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "timeline-01",
+            "verdict": "confirmed",
+            "note": "The timeline record explicitly documents radiation therapy at age 72.786 and an ECOG performance status of 0 at age 72.865, which is the final recorded clinical event before the 72.9 information cutoff. This aligns perfectly with the claim.",
+            "citations": [
+              {
+                "document_id": "file-2a61cf2a53c5ea33f7a0",
+                "start": 2473,
+                "end": 2599,
+                "quote": "AGE: 72.786, treatment > radiation --> SUBTYPE: Radiation Therapy, \nAGE: 72.865, diagnosis > performance_status --> ECOG: 0, \n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "timeline-02",
+            "verdict": "confirmed",
+            "note": "The claim accurately summarizes the patient's diagnosis of pancreatic adenocarcinoma (Stage 1-3), the specific somatic mutations (KRAS, TP53, CDKN2A, SMAD4, NOTCH1), the listed prior chemotherapy and biologic agents, and the absence of documented disease progression on recent imaging. All elements are directly supported by the provided clinical and genomic records.",
+            "citations": [
+              {
+                "document_id": "file-666725191233ff6a9b4d",
+                "start": 2651,
+                "end": 3240,
+                "quote": "AGE: 72.156, samples > clinical_sample --> SAMPLE_ID: P-0024579-T01-IM6, PATIENT_ID: P-0024579, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 939, TUMOR_PURITY: 20.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 0.24, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional Both 2 and 3, ICD_O_HISTOLOGY_DESCRIPTION: Tubular "
+              },
+              {
+                "document_id": "file-d472647c256ce33ce771",
+                "start": 0,
+                "end": 593,
+                "quote": "Hugo_Symbol,Entrez_Gene_Id,Center,NCBI_Build,Chromosome,Start_Position,End_Position,Strand,Consequence,Variant_Classification,Variant_Type,Reference_Allele,Tumor_Seq_Allele1,Tumor_Seq_Allele2,SAMPLE_ID,Validation_Status,Mutation_Status,Score,t_ref_count,t_alt_count,n_ref_count,n_alt_count,HGVSc,HGVSp,HGVSp_Short,Transcript_ID,RefSeq,Protein_position,Codons\nKRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,941,71,674,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt\n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "timeline-03",
+            "verdict": "confirmed",
+            "note": "The claim correctly identifies that the question asks about a future survival outcome (alive at age 73.4, 6 months after the 72.9 cutoff). This future event is outside the temporal scope of the provided clinical timeline and cannot be assumed or predicted from the available data. The NEI relation and absence of citations are appropriate.",
+            "citations": [],
+            "reviewer_role": "verifier"
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "calls": 9,
+    "http_attempts": 9,
+    "tool_calls": 6,
+    "input_tokens": 132792,
+    "output_tokens": 16523,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "fingerprint": "14fa33755dbfd6d7f0c0ae6e97936205b21413a24e97f9cab8a0e89038f0f371",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "claims-v1",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [],
+        "query": "Given that the patient is 72.9 years old, will the patient be still alive in the next 6 months?",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "agent_started",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "payload_sha256": "433b8fbb3d839977305d62b50fc0e5232c9f86123054d66c5d2593f091a464d0",
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "token_reservation": 30458,
+        "evidence_ids": [
+          "context-0:f01",
+          "context-3:f01",
+          "file-2a61cf2a53c5ea33f7a0:f01",
+          "file-2a61cf2a53c5ea33f7a0:f02",
+          "file-2a61cf2a53c5ea33f7a0:f03",
+          "file-2a61cf2a53c5ea33f7a0:f04",
+          "file-2a61cf2a53c5ea33f7a0:f05",
+          "file-2a61cf2a53c5ea33f7a0:f06",
+          "file-2cbc70f028e1d78d9578:f01",
+          "file-666725191233ff6a9b4d:f01",
+          "file-666725191233ff6a9b4d:f02",
+          "file-666725191233ff6a9b4d:f03",
+          "file-666725191233ff6a9b4d:f04",
+          "file-666725191233ff6a9b4d:f05",
+          "file-666725191233ff6a9b4d:f06",
+          "file-666725191233ff6a9b4d:f07",
+          "file-666725191233ff6a9b4d:f08",
+          "file-b00cc139286b698ac1e4:f01",
+          "file-b00cc139286b698ac1e4:f02",
+          "file-d472647c256ce33ce771:f01",
+          "file-d472647c256ce33ce771:f02",
+          "file-d472647c256ce33ce771:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 323,
+              "chars_sent": 323,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-666725191233ff6a9b4d": {
+              "candidates": 8,
+              "sent": 8,
+              "chars_total": 3918,
+              "chars_sent": 3918,
+              "key_records": 3,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-666725191233ff6a9b4d:f01",
+                "file-666725191233ff6a9b4d:f02",
+                "file-666725191233ff6a9b4d:f03",
+                "file-666725191233ff6a9b4d:f04",
+                "file-666725191233ff6a9b4d:f05",
+                "file-666725191233ff6a9b4d:f06",
+                "file-666725191233ff6a9b4d:f07",
+                "file-666725191233ff6a9b4d:f08"
+              ]
+            },
+            "context-3": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 274,
+              "chars_sent": 274,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-3:f01"
+              ]
+            },
+            "file-d472647c256ce33ce771": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1558,
+              "chars_sent": 1558,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-d472647c256ce33ce771:f01",
+                "file-d472647c256ce33ce771:f02",
+                "file-d472647c256ce33ce771:f03"
+              ]
+            },
+            "file-b00cc139286b698ac1e4": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1008,
+              "chars_sent": 1008,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-b00cc139286b698ac1e4:f01",
+                "file-b00cc139286b698ac1e4:f02"
+              ]
+            },
+            "file-2cbc70f028e1d78d9578": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 55,
+              "chars_sent": 55,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2cbc70f028e1d78d9578:f01"
+              ]
+            },
+            "file-2a61cf2a53c5ea33f7a0": {
+              "candidates": 6,
+              "sent": 6,
+              "chars_total": 2599,
+              "chars_sent": 2599,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2a61cf2a53c5ea33f7a0:f01",
+                "file-2a61cf2a53c5ea33f7a0:f02",
+                "file-2a61cf2a53c5ea33f7a0:f03",
+                "file-2a61cf2a53c5ea33f7a0:f04",
+                "file-2a61cf2a53c5ea33f7a0:f05",
+                "file-2a61cf2a53c5ea33f7a0:f06"
+              ]
+            }
+          },
+          "candidates": 22,
+          "sent": 22,
+          "chars_total": 9735,
+          "chars_sent": 9735,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [],
+          "required": {},
+          "guaranteed_unsent": []
+        },
+        "material_basis": "",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "model_usage",
+      "role": "literature",
+      "details": {
+        "input_tokens": 10336,
+        "output_tokens": 1502,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 14.681,
+        "evidence_fragments": 22
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "agent_reported",
+      "role": "literature",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "agent_completed",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {},
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 71.7-year-old White male of non-Spanish, non-Hispanic ethnicity with a diagnosis of pancreatic adenocarcinoma. Comprehensive medical records are available detailing his clinical history, including diagnostic evaluations, treatments, and laboratory tests, covering the period from 71.7 to 72.2 years of age."
+            },
+            {
+              "id": "file-666725191233ff6a9b4d",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 71.734, treatment > prior_meds --> SUBTYPE: Prior Medications to MSK, TREATMENT_TYPE: Medical Therapy, INFERRED_TX_PROB: 0.98, PRIOR_MED_TO_MSK: Prior medications to MSK, STYLE_COLOR: #D62727, \nAGE: 71.753, diagnosis > performance_status --> ECOG: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Biologic, AGENT: RITUXIMAB, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: VINCRISTINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.942, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 71.942, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.027, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: MR, HAS_CANCER: Yes, PROCEDURE_TYPE: MR, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 72.027, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: MR, \nAGE: 72.027, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), MR, TUMOR_SITE: Other, PELVIS: No, OTHER: Yes, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 72.065, labtest > ca_19-9_labs --> RESULT: 17, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.065, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.126, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 72.126, diagnosis > cancer_presence --> HAS CANCER: Indetermi"
+            },
+            {
+              "id": "context-3",
+              "day": null,
+              "stage": 3,
+              "text": "The patient has undergone sample sequencing, with both CNA and mutation data available for analysis. Additionally, a comprehensive patient history is accessible, detailing information on diagnosis, treatments, and lab tests conducted between the ages of 72.2 and 72.9 years."
+            },
+            {
+              "id": "file-2a61cf2a53c5ea33f7a0",
+              "day": null,
+              "stage": 4,
+              "text": "AGE: 72.213, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.213, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.213, labtest > ca_19-9_labs --> RESULT: 29, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.213, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 72.216, treatment > treatment --> STOP_AGE: 72.827, SUBTYPE: Chemo, AGENT: CAPECITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 72.252, specimen --> SAMPLE_ID: P-0024579-T01-IM6, \nAGE: 72.260, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.260, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.260, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Liver, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.271, treatment > treatment --> STOP_AGE: 72.6928, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 72.271, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.438, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.444, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.444, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.501, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.501, labtest > ca_19-9_labs --> RESULT: 18, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.501, labtest > cea_labs --> CEA: 2.9000 ng/ml          \nAGE: 72.567, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.567, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.567, diagnosis > tumor_sites --> SOURCE: Radiology Re"
+            },
+            {
+              "id": "file-2cbc70f028e1d78d9578",
+              "day": null,
+              "stage": 4,
+              "text": "SAMPLE_ID,Hugo_Symbol,VALUE\nP-0024579-T01-IM6,INSR,2.0\n"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "payload_sha256": "634454388bcfc887bc5518a34e299e4bf455807e1bab47bac265a25861868938",
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "token_reservation": 35579,
+        "evidence_ids": [
+          "context-0:f01",
+          "context-3:f01",
+          "file-2a61cf2a53c5ea33f7a0:f01",
+          "file-2a61cf2a53c5ea33f7a0:f02",
+          "file-2a61cf2a53c5ea33f7a0:f03",
+          "file-2a61cf2a53c5ea33f7a0:f04",
+          "file-2a61cf2a53c5ea33f7a0:f05",
+          "file-2a61cf2a53c5ea33f7a0:f06",
+          "file-2cbc70f028e1d78d9578:f01",
+          "file-666725191233ff6a9b4d:f01",
+          "file-666725191233ff6a9b4d:f02",
+          "file-666725191233ff6a9b4d:f03",
+          "file-666725191233ff6a9b4d:f04",
+          "file-666725191233ff6a9b4d:f05",
+          "file-666725191233ff6a9b4d:f06",
+          "file-666725191233ff6a9b4d:f07",
+          "file-666725191233ff6a9b4d:f08",
+          "file-b00cc139286b698ac1e4:f01",
+          "file-b00cc139286b698ac1e4:f02",
+          "file-d472647c256ce33ce771:f01",
+          "file-d472647c256ce33ce771:f02",
+          "file-d472647c256ce33ce771:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 323,
+              "chars_sent": 323,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-666725191233ff6a9b4d": {
+              "candidates": 8,
+              "sent": 8,
+              "chars_total": 3918,
+              "chars_sent": 3918,
+              "key_records": 3,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-666725191233ff6a9b4d:f01",
+                "file-666725191233ff6a9b4d:f02",
+                "file-666725191233ff6a9b4d:f03",
+                "file-666725191233ff6a9b4d:f04",
+                "file-666725191233ff6a9b4d:f05",
+                "file-666725191233ff6a9b4d:f06",
+                "file-666725191233ff6a9b4d:f07",
+                "file-666725191233ff6a9b4d:f08"
+              ]
+            },
+            "context-3": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 274,
+              "chars_sent": 274,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-3:f01"
+              ]
+            },
+            "file-d472647c256ce33ce771": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1558,
+              "chars_sent": 1558,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-d472647c256ce33ce771:f01",
+                "file-d472647c256ce33ce771:f02",
+                "file-d472647c256ce33ce771:f03"
+              ]
+            },
+            "file-b00cc139286b698ac1e4": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1008,
+              "chars_sent": 1008,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-b00cc139286b698ac1e4:f01",
+                "file-b00cc139286b698ac1e4:f02"
+              ]
+            },
+            "file-2cbc70f028e1d78d9578": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 55,
+              "chars_sent": 55,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2cbc70f028e1d78d9578:f01"
+              ]
+            },
+            "file-2a61cf2a53c5ea33f7a0": {
+              "candidates": 6,
+              "sent": 6,
+              "chars_total": 2599,
+              "chars_sent": 2599,
+              "key_records": 2,
+              "required_candidates": 3,
+              "required_sent": 3,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2a61cf2a53c5ea33f7a0:f01",
+                "file-2a61cf2a53c5ea33f7a0:f02",
+                "file-2a61cf2a53c5ea33f7a0:f03",
+                "file-2a61cf2a53c5ea33f7a0:f04",
+                "file-2a61cf2a53c5ea33f7a0:f05",
+                "file-2a61cf2a53c5ea33f7a0:f06"
+              ]
+            }
+          },
+          "candidates": 22,
+          "sent": 22,
+          "chars_total": 9735,
+          "chars_sent": 9735,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 5,
+              "sent": 5,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "timeline",
+      "details": {
+        "input_tokens": 12315,
+        "output_tokens": 2098,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 47.091,
+        "evidence_fragments": 22
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "timeline",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "At the information cutoff of age 72.9, the patient's most recent documented clinical event occurred at age 72.865, recording an ECOG performance status of 0. This follows a course of radiation therapy initiated at age 72.786 and multiple prior chemotherapy lines.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "file-2a61cf2a53c5ea33f7a0",
+                  "start": 2473,
+                  "end": 2599,
+                  "quote": "AGE: 72.786, treatment > radiation --> SUBTYPE: Radiation Therapy, \nAGE: 72.865, diagnosis > performance_status --> ECOG: 0, \n"
+                },
+                {
+                  "document_id": "file-2a61cf2a53c5ea33f7a0",
+                  "start": 918,
+                  "end": 1488,
+                  "quote": "AGE: 72.271, treatment > treatment --> STOP_AGE: 72.6928, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 72.271, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.438, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.444, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.444, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.501, diagnosis > performance_status --> ECOG: 1, \n"
+                }
+              ],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The patient has a confirmed diagnosis of pancreatic adenocarcinoma (Stage 1-3) with somatic mutations in KRAS, TP53, CDKN2A, SMAD4, and NOTCH1. Prior treatments include Rituximab, Cyclophosphamide, Doxorubicin, Vincristine, Capecitabine, and Gemcitabine, with no documented disease progression on recent imaging.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "file-666725191233ff6a9b4d",
+                  "start": 2651,
+                  "end": 3240,
+                  "quote": "AGE: 72.156, samples > clinical_sample --> SAMPLE_ID: P-0024579-T01-IM6, PATIENT_ID: P-0024579, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 939, TUMOR_PURITY: 20.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 0.24, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional Both 2 and 3, ICD_O_HISTOLOGY_DESCRIPTION: Tubular "
+                },
+                {
+                  "document_id": "file-2a61cf2a53c5ea33f7a0",
+                  "start": 453,
+                  "end": 918,
+                  "quote": "AGE: 72.260, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.260, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.260, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Liver, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \n"
+                }
+              ],
+              "claim_id": "timeline-02",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "unknown: The question asks whether the patient will be alive at age 73.4 (6 months after the 72.9 cutoff). This future survival outcome is not visible in the provided clinical timeline, cannot be assumed or looked up, and falls outside the temporal scope of this role.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-03",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "output": {
+          "findings": [
+            {
+              "statement": "At the information cutoff of age 72.9, the patient's most recent documented clinical event occurred at age 72.865, recording an ECOG performance status of 0. This follows a course of radiation therapy initiated at age 72.786 and multiple prior chemotherapy lines.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "file-2a61cf2a53c5ea33f7a0",
+                  "start": 2473,
+                  "end": 2599,
+                  "quote": "AGE: 72.786, treatment > radiation --> SUBTYPE: Radiation Therapy, \nAGE: 72.865, diagnosis > performance_status --> ECOG: 0, \n"
+                },
+                {
+                  "document_id": "file-2a61cf2a53c5ea33f7a0",
+                  "start": 918,
+                  "end": 1488,
+                  "quote": "AGE: 72.271, treatment > treatment --> STOP_AGE: 72.6928, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 72.271, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.438, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.444, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.444, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.501, diagnosis > performance_status --> ECOG: 1, \n"
+                }
+              ],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The patient has a confirmed diagnosis of pancreatic adenocarcinoma (Stage 1-3) with somatic mutations in KRAS, TP53, CDKN2A, SMAD4, and NOTCH1. Prior treatments include Rituximab, Cyclophosphamide, Doxorubicin, Vincristine, Capecitabine, and Gemcitabine, with no documented disease progression on recent imaging.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "file-666725191233ff6a9b4d",
+                  "start": 2651,
+                  "end": 3240,
+                  "quote": "AGE: 72.156, samples > clinical_sample --> SAMPLE_ID: P-0024579-T01-IM6, PATIENT_ID: P-0024579, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 939, TUMOR_PURITY: 20.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 0.24, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional Both 2 and 3, ICD_O_HISTOLOGY_DESCRIPTION: Tubular "
+                },
+                {
+                  "document_id": "file-2a61cf2a53c5ea33f7a0",
+                  "start": 453,
+                  "end": 918,
+                  "quote": "AGE: 72.260, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.260, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.260, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Liver, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \n"
+                }
+              ],
+              "claim_id": "timeline-02",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "unknown: The question asks whether the patient will be alive at age 73.4 (6 months after the 72.9 cutoff). This future survival outcome is not visible in the provided clinical timeline, cannot be assumed or looked up, and falls outside the temporal scope of this role.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-03",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown"
+            },
+            "file-666725191233ff6a9b4d": {
+              "gene": "unknown",
+              "variant": "unknown"
+            },
+            "context-3": {
+              "gene": "unknown",
+              "variant": "unknown"
+            },
+            "file-d472647c256ce33ce771": {
+              "gene": "unknown",
+              "variant": "unknown"
+            },
+            "file-b00cc139286b698ac1e4": {
+              "gene": "unknown",
+              "variant": "unknown"
+            },
+            "file-2cbc70f028e1d78d9578": {
+              "gene": "unknown",
+              "variant": "unknown"
+            },
+            "file-2a61cf2a53c5ea33f7a0": {
+              "gene": "unknown",
+              "variant": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 71.7-year-old White male of non-Spanish, non-Hispanic ethnicity with a diagnosis of pancreatic adenocarcinoma. Comprehensive medical records are available detailing his clinical history, including diagnostic evaluations, treatments, and laboratory tests, covering the period from 71.7 to 72.2 years of age."
+            },
+            {
+              "id": "file-666725191233ff6a9b4d",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 71.734, treatment > prior_meds --> SUBTYPE: Prior Medications to MSK, TREATMENT_TYPE: Medical Therapy, INFERRED_TX_PROB: 0.98, PRIOR_MED_TO_MSK: Prior medications to MSK, STYLE_COLOR: #D62727, \nAGE: 71.753, diagnosis > performance_status --> ECOG: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Biologic, AGENT: RITUXIMAB, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: VINCRISTINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.942, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 71.942, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.027, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: MR, HAS_CANCER: Yes, PROCEDURE_TYPE: MR, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 72.027, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: MR, \nAGE: 72.027, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), MR, TUMOR_SITE: Other, PELVIS: No, OTHER: Yes, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 72.065, labtest > ca_19-9_labs --> RESULT: 17, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.065, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.126, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 72.126, diagnosis > cancer_presence --> HAS CANCER: Indetermi"
+            },
+            {
+              "id": "context-3",
+              "day": null,
+              "stage": 3,
+              "text": "The patient has undergone sample sequencing, with both CNA and mutation data available for analysis. Additionally, a comprehensive patient history is accessible, detailing information on diagnosis, treatments, and lab tests conducted between the ages of 72.2 and 72.9 years."
+            },
+            {
+              "id": "file-2a61cf2a53c5ea33f7a0",
+              "day": null,
+              "stage": 4,
+              "text": "AGE: 72.213, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.213, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.213, labtest > ca_19-9_labs --> RESULT: 29, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.213, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 72.216, treatment > treatment --> STOP_AGE: 72.827, SUBTYPE: Chemo, AGENT: CAPECITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 72.252, specimen --> SAMPLE_ID: P-0024579-T01-IM6, \nAGE: 72.260, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.260, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.260, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Liver, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.271, treatment > treatment --> STOP_AGE: 72.6928, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 72.271, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.438, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.444, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.444, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.501, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.501, labtest > ca_19-9_labs --> RESULT: 18, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.501, labtest > cea_labs --> CEA: 2.9000 ng/ml          \nAGE: 72.567, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.567, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.567, diagnosis > tumor_sites --> SOURCE: Radiology Re"
+            },
+            {
+              "id": "file-2cbc70f028e1d78d9578",
+              "day": null,
+              "stage": 4,
+              "text": "SAMPLE_ID,Hugo_Symbol,VALUE\nP-0024579-T01-IM6,INSR,2.0\n"
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 534,
+              "end": 544,
+              "raw": "p.Gly12Val",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 545,
+              "end": 551,
+              "raw": "p.G12V",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 767,
+              "end": 778,
+              "raw": "p.Val274Gly",
+              "canonical": "V274G"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 779,
+              "end": 786,
+              "raw": "p.V274G",
+              "canonical": "V274G"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 1269,
+              "end": 1276,
+              "raw": "p.C324*",
+              "canonical": "C324*"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 1496,
+              "end": 1507,
+              "raw": "p.Cys563Ser",
+              "canonical": "C563S"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 1508,
+              "end": 1515,
+              "raw": "p.C563S",
+              "canonical": "C563S"
+            }
+          ],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "agent_started",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "payload_sha256": "7d4a14144e78d85716027cc3954fd31def31b8ce0fdfb80d18dfd1a7b27e14da",
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "token_reservation": 40381,
+        "evidence_ids": [
+          "context-0:f01",
+          "context-3:f01",
+          "file-2a61cf2a53c5ea33f7a0:f01",
+          "file-2a61cf2a53c5ea33f7a0:f02",
+          "file-2a61cf2a53c5ea33f7a0:f03",
+          "file-2a61cf2a53c5ea33f7a0:f04",
+          "file-2a61cf2a53c5ea33f7a0:f05",
+          "file-2a61cf2a53c5ea33f7a0:f06",
+          "file-2cbc70f028e1d78d9578:f01",
+          "file-666725191233ff6a9b4d:f01",
+          "file-666725191233ff6a9b4d:f02",
+          "file-666725191233ff6a9b4d:f03",
+          "file-666725191233ff6a9b4d:f04",
+          "file-666725191233ff6a9b4d:f05",
+          "file-666725191233ff6a9b4d:f06",
+          "file-666725191233ff6a9b4d:f07",
+          "file-666725191233ff6a9b4d:f08",
+          "file-b00cc139286b698ac1e4:f01",
+          "file-b00cc139286b698ac1e4:f02",
+          "file-d472647c256ce33ce771:f01",
+          "file-d472647c256ce33ce771:f02",
+          "file-d472647c256ce33ce771:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 323,
+              "chars_sent": 323,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-666725191233ff6a9b4d": {
+              "candidates": 8,
+              "sent": 8,
+              "chars_total": 3918,
+              "chars_sent": 3918,
+              "key_records": 3,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-666725191233ff6a9b4d:f01",
+                "file-666725191233ff6a9b4d:f02",
+                "file-666725191233ff6a9b4d:f03",
+                "file-666725191233ff6a9b4d:f04",
+                "file-666725191233ff6a9b4d:f05",
+                "file-666725191233ff6a9b4d:f06",
+                "file-666725191233ff6a9b4d:f07",
+                "file-666725191233ff6a9b4d:f08"
+              ]
+            },
+            "context-3": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 274,
+              "chars_sent": 274,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-3:f01"
+              ]
+            },
+            "file-d472647c256ce33ce771": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1558,
+              "chars_sent": 1558,
+              "key_records": 2,
+              "required_candidates": 3,
+              "required_sent": 3,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-d472647c256ce33ce771:f01",
+                "file-d472647c256ce33ce771:f02",
+                "file-d472647c256ce33ce771:f03"
+              ]
+            },
+            "file-b00cc139286b698ac1e4": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1008,
+              "chars_sent": 1008,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-b00cc139286b698ac1e4:f01",
+                "file-b00cc139286b698ac1e4:f02"
+              ]
+            },
+            "file-2cbc70f028e1d78d9578": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 55,
+              "chars_sent": 55,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2cbc70f028e1d78d9578:f01"
+              ]
+            },
+            "file-2a61cf2a53c5ea33f7a0": {
+              "candidates": 6,
+              "sent": 6,
+              "chars_total": 2599,
+              "chars_sent": 2599,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2a61cf2a53c5ea33f7a0:f01",
+                "file-2a61cf2a53c5ea33f7a0:f02",
+                "file-2a61cf2a53c5ea33f7a0:f03",
+                "file-2a61cf2a53c5ea33f7a0:f04",
+                "file-2a61cf2a53c5ea33f7a0:f05",
+                "file-2a61cf2a53c5ea33f7a0:f06"
+              ]
+            }
+          },
+          "candidates": 22,
+          "sent": 22,
+          "chars_total": 9735,
+          "chars_sent": 9735,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "molecular"
+          ],
+          "required": {
+            "molecular": {
+              "candidates": 8,
+              "sent": 8,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 3,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "model_usage",
+      "role": "genomics",
+      "details": {
+        "input_tokens": 14030,
+        "output_tokens": 2050,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 78.475,
+        "evidence_fragments": 22
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_reported",
+      "role": "genomics",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The tumor sample P-0024579-T01-IM6 harbors a somatic KRAS p.Gly12Val (G12V) missense mutation on transcript ENST00000256078.4 (NM_033360.2), detected via MSK-IMPACT sequencing.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-d472647c256ce33ce771",
+                  "start": 0,
+                  "end": 593,
+                  "quote": "Hugo_Symbol,Entrez_Gene_Id,Center,NCBI_Build,Chromosome,Start_Position,End_Position,Strand,Consequence,Variant_Classification,Variant_Type,Reference_Allele,Tumor_Seq_Allele1,Tumor_Seq_Allele2,SAMPLE_ID,Validation_Status,Mutation_Status,Score,t_ref_count,t_alt_count,n_ref_count,n_alt_count,HGVSc,HGVSp,HGVSp_Short,Transcript_ID,RefSeq,Protein_position,Codons\nKRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,941,71,674,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt\n"
+                }
+              ],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The tumor sample contains a somatic TP53 p.Val274Gly (V274G) missense mutation on transcript ENST00000269305.4 (NM_001126112.2) and a somatic CDKN2A p.Leu16ProfsTer9 (L16Pfs*9) frameshift deletion on transcript ENST00000304494.5 (NM_000077.4).",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-d472647c256ce33ce771",
+                  "start": 593,
+                  "end": 1088,
+                  "quote": "TP53,7157,MSKCC,GRCh37,17,7577117,7577117,+,missense_variant,Missense_Mutation,SNP,A,A,C,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,990,78,669,0,ENST00000269305.4:c.821T>G,p.Val274Gly,p.V274G,ENST00000269305,NM_001126112.2,274.0,gTt/gGt\nCDKN2A,1029,MSKCC,GRCh37,9,21974777,21974780,+,frameshift_variant,Frame_Shift_Del,DEL,GCCA,GCCA,-,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,359,24,243,0,ENST00000304494.5:c.47_50del,p.Leu16ProfsTer9,p.L16Pfs*9,ENST00000304494,NM_000077.4,16.0,cTGGCc/cc\n"
+                }
+              ],
+              "claim_id": "genomics-02",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The tumor sample harbors a somatic SMAD4 p.Cys324Ter (C324*) nonsense mutation on transcript ENST00000342988.3 (NM_005359.5) and a somatic NOTCH1 p.Cys563Ser (C563S) missense mutation on transcript ENST00000277541.6 (NM_017617.3).",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-d472647c256ce33ce771",
+                  "start": 1088,
+                  "end": 1558,
+                  "quote": "SMAD4,0,MSKCC,GRCh37,18,48591809,48591809,+,stop_gained,Nonsense_Mutation,SNP,T,T,A,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,704,72,480,0,ENST00000342988.3:c.972T>A,p.Cys324Ter,p.C324*,ENST00000342988,NM_005359.5,324.0,tgT/tgA\nNOTCH1,0,MSKCC,GRCh37,9,139410151,139410151,+,missense_variant,Missense_Mutation,SNP,A,A,T,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,797,59,574,1,ENST00000277541.6:c.1687T>A,p.Cys563Ser,p.C563S,ENST00000277541,NM_017617.3,563.0,Tgc/Agc\n"
+                }
+              ],
+              "claim_id": "genomics-03",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "agent_completed",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "output": {
+          "findings": [
+            {
+              "statement": "The tumor sample P-0024579-T01-IM6 harbors a somatic KRAS p.Gly12Val (G12V) missense mutation on transcript ENST00000256078.4 (NM_033360.2), detected via MSK-IMPACT sequencing.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-d472647c256ce33ce771",
+                  "start": 0,
+                  "end": 593,
+                  "quote": "Hugo_Symbol,Entrez_Gene_Id,Center,NCBI_Build,Chromosome,Start_Position,End_Position,Strand,Consequence,Variant_Classification,Variant_Type,Reference_Allele,Tumor_Seq_Allele1,Tumor_Seq_Allele2,SAMPLE_ID,Validation_Status,Mutation_Status,Score,t_ref_count,t_alt_count,n_ref_count,n_alt_count,HGVSc,HGVSp,HGVSp_Short,Transcript_ID,RefSeq,Protein_position,Codons\nKRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,941,71,674,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt\n"
+                }
+              ],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The tumor sample contains a somatic TP53 p.Val274Gly (V274G) missense mutation on transcript ENST00000269305.4 (NM_001126112.2) and a somatic CDKN2A p.Leu16ProfsTer9 (L16Pfs*9) frameshift deletion on transcript ENST00000304494.5 (NM_000077.4).",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-d472647c256ce33ce771",
+                  "start": 593,
+                  "end": 1088,
+                  "quote": "TP53,7157,MSKCC,GRCh37,17,7577117,7577117,+,missense_variant,Missense_Mutation,SNP,A,A,C,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,990,78,669,0,ENST00000269305.4:c.821T>G,p.Val274Gly,p.V274G,ENST00000269305,NM_001126112.2,274.0,gTt/gGt\nCDKN2A,1029,MSKCC,GRCh37,9,21974777,21974780,+,frameshift_variant,Frame_Shift_Del,DEL,GCCA,GCCA,-,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,359,24,243,0,ENST00000304494.5:c.47_50del,p.Leu16ProfsTer9,p.L16Pfs*9,ENST00000304494,NM_000077.4,16.0,cTGGCc/cc\n"
+                }
+              ],
+              "claim_id": "genomics-02",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The tumor sample harbors a somatic SMAD4 p.Cys324Ter (C324*) nonsense mutation on transcript ENST00000342988.3 (NM_005359.5) and a somatic NOTCH1 p.Cys563Ser (C563S) missense mutation on transcript ENST00000277541.6 (NM_017617.3).",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-d472647c256ce33ce771",
+                  "start": 1088,
+                  "end": 1558,
+                  "quote": "SMAD4,0,MSKCC,GRCh37,18,48591809,48591809,+,stop_gained,Nonsense_Mutation,SNP,T,T,A,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,704,72,480,0,ENST00000342988.3:c.972T>A,p.Cys324Ter,p.C324*,ENST00000342988,NM_005359.5,324.0,tgT/tgA\nNOTCH1,0,MSKCC,GRCh37,9,139410151,139410151,+,missense_variant,Missense_Mutation,SNP,A,A,T,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,797,59,574,1,ENST00000277541.6:c.1687T>A,p.Cys563Ser,p.C563S,ENST00000277541,NM_017617.3,563.0,Tgc/Agc\n"
+                }
+              ],
+              "claim_id": "genomics-03",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            },
+            "file-666725191233ff6a9b4d": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            },
+            "context-3": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            },
+            "file-d472647c256ce33ce771": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            },
+            "file-b00cc139286b698ac1e4": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            },
+            "file-2cbc70f028e1d78d9578": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            },
+            "file-2a61cf2a53c5ea33f7a0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 71.7-year-old White male of non-Spanish, non-Hispanic ethnicity with a diagnosis of pancreatic adenocarcinoma. Comprehensive medical records are available detailing his clinical history, including diagnostic evaluations, treatments, and laboratory tests, covering the period from 71.7 to 72.2 years of age."
+            },
+            {
+              "id": "file-666725191233ff6a9b4d",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 71.734, treatment > prior_meds --> SUBTYPE: Prior Medications to MSK, TREATMENT_TYPE: Medical Therapy, INFERRED_TX_PROB: 0.98, PRIOR_MED_TO_MSK: Prior medications to MSK, STYLE_COLOR: #D62727, \nAGE: 71.753, diagnosis > performance_status --> ECOG: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Biologic, AGENT: RITUXIMAB, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: VINCRISTINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.942, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 71.942, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.027, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: MR, HAS_CANCER: Yes, PROCEDURE_TYPE: MR, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 72.027, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: MR, \nAGE: 72.027, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), MR, TUMOR_SITE: Other, PELVIS: No, OTHER: Yes, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 72.065, labtest > ca_19-9_labs --> RESULT: 17, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.065, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.126, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 72.126, diagnosis > cancer_presence --> HAS CANCER: Indetermi"
+            },
+            {
+              "id": "context-3",
+              "day": null,
+              "stage": 3,
+              "text": "The patient has undergone sample sequencing, with both CNA and mutation data available for analysis. Additionally, a comprehensive patient history is accessible, detailing information on diagnosis, treatments, and lab tests conducted between the ages of 72.2 and 72.9 years."
+            },
+            {
+              "id": "file-2a61cf2a53c5ea33f7a0",
+              "day": null,
+              "stage": 4,
+              "text": "AGE: 72.213, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.213, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.213, labtest > ca_19-9_labs --> RESULT: 29, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.213, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 72.216, treatment > treatment --> STOP_AGE: 72.827, SUBTYPE: Chemo, AGENT: CAPECITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 72.252, specimen --> SAMPLE_ID: P-0024579-T01-IM6, \nAGE: 72.260, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.260, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.260, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Liver, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.271, treatment > treatment --> STOP_AGE: 72.6928, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 72.271, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.438, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.444, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.444, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.501, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.501, labtest > ca_19-9_labs --> RESULT: 18, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.501, labtest > cea_labs --> CEA: 2.9000 ng/ml          \nAGE: 72.567, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.567, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.567, diagnosis > tumor_sites --> SOURCE: Radiology Re"
+            },
+            {
+              "id": "file-2cbc70f028e1d78d9578",
+              "day": null,
+              "stage": 4,
+              "text": "SAMPLE_ID,Hugo_Symbol,VALUE\nP-0024579-T01-IM6,INSR,2.0\n"
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 534,
+              "end": 544,
+              "raw": "p.Gly12Val",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 545,
+              "end": 551,
+              "raw": "p.G12V",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 767,
+              "end": 778,
+              "raw": "p.Val274Gly",
+              "canonical": "V274G"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 779,
+              "end": 786,
+              "raw": "p.V274G",
+              "canonical": "V274G"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 1269,
+              "end": 1276,
+              "raw": "p.C324*",
+              "canonical": "C324*"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 1496,
+              "end": 1507,
+              "raw": "p.Cys563Ser",
+              "canonical": "C563S"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 1508,
+              "end": 1515,
+              "raw": "p.C563S",
+              "canonical": "C563S"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [
+            {
+              "document_id": "file-b00cc139286b698ac1e4",
+              "field": "cancer_type",
+              "value": "Pancreatic Cancer",
+              "start": 62,
+              "end": 95
+            },
+            {
+              "document_id": "file-b00cc139286b698ac1e4",
+              "field": "primary_site",
+              "value": "Pancreas",
+              "start": 186,
+              "end": 211
+            },
+            {
+              "document_id": "file-b00cc139286b698ac1e4",
+              "field": "cancer_type_detailed",
+              "value": "Pancreatic Adenocarcinoma",
+              "start": 214,
+              "end": 264
+            },
+            {
+              "document_id": "file-b00cc139286b698ac1e4",
+              "field": "oncotree_code",
+              "value": "PAAD",
+              "start": 340,
+              "end": 362
+            }
+          ],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 18,
+      "kind": "agent_started",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "payload_sha256": "24f9350878093c2f8e39350f4545945f4ae743b0bec028f77cddfcd32959ffc5",
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "token_reservation": 43423,
+        "evidence_ids": [
+          "context-0:f01",
+          "context-3:f01",
+          "file-2a61cf2a53c5ea33f7a0:f01",
+          "file-2a61cf2a53c5ea33f7a0:f02",
+          "file-2a61cf2a53c5ea33f7a0:f03",
+          "file-2a61cf2a53c5ea33f7a0:f04",
+          "file-2a61cf2a53c5ea33f7a0:f05",
+          "file-2a61cf2a53c5ea33f7a0:f06",
+          "file-2cbc70f028e1d78d9578:f01",
+          "file-666725191233ff6a9b4d:f01",
+          "file-666725191233ff6a9b4d:f02",
+          "file-666725191233ff6a9b4d:f03",
+          "file-666725191233ff6a9b4d:f04",
+          "file-666725191233ff6a9b4d:f05",
+          "file-666725191233ff6a9b4d:f06",
+          "file-666725191233ff6a9b4d:f07",
+          "file-666725191233ff6a9b4d:f08",
+          "file-b00cc139286b698ac1e4:f01",
+          "file-b00cc139286b698ac1e4:f02",
+          "file-d472647c256ce33ce771:f01",
+          "file-d472647c256ce33ce771:f02",
+          "file-d472647c256ce33ce771:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 323,
+              "chars_sent": 323,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-666725191233ff6a9b4d": {
+              "candidates": 8,
+              "sent": 8,
+              "chars_total": 3918,
+              "chars_sent": 3918,
+              "key_records": 3,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-666725191233ff6a9b4d:f01",
+                "file-666725191233ff6a9b4d:f02",
+                "file-666725191233ff6a9b4d:f03",
+                "file-666725191233ff6a9b4d:f04",
+                "file-666725191233ff6a9b4d:f05",
+                "file-666725191233ff6a9b4d:f06",
+                "file-666725191233ff6a9b4d:f07",
+                "file-666725191233ff6a9b4d:f08"
+              ]
+            },
+            "context-3": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 274,
+              "chars_sent": 274,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-3:f01"
+              ]
+            },
+            "file-d472647c256ce33ce771": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1558,
+              "chars_sent": 1558,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-d472647c256ce33ce771:f01",
+                "file-d472647c256ce33ce771:f02",
+                "file-d472647c256ce33ce771:f03"
+              ]
+            },
+            "file-b00cc139286b698ac1e4": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1008,
+              "chars_sent": 1008,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-b00cc139286b698ac1e4:f01",
+                "file-b00cc139286b698ac1e4:f02"
+              ]
+            },
+            "file-2cbc70f028e1d78d9578": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 55,
+              "chars_sent": 55,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2cbc70f028e1d78d9578:f01"
+              ]
+            },
+            "file-2a61cf2a53c5ea33f7a0": {
+              "candidates": 6,
+              "sent": 6,
+              "chars_total": 2599,
+              "chars_sent": 2599,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2a61cf2a53c5ea33f7a0:f01",
+                "file-2a61cf2a53c5ea33f7a0:f02",
+                "file-2a61cf2a53c5ea33f7a0:f03",
+                "file-2a61cf2a53c5ea33f7a0:f04",
+                "file-2a61cf2a53c5ea33f7a0:f05",
+                "file-2a61cf2a53c5ea33f7a0:f06"
+              ]
+            }
+          },
+          "candidates": 22,
+          "sent": 22,
+          "chars_total": 9735,
+          "chars_sent": 9735,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "pathology"
+          ],
+          "required": {
+            "pathology": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 6,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 19,
+      "kind": "model_usage",
+      "role": "pathology",
+      "details": {
+        "input_tokens": 15289,
+        "output_tokens": 1502,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 13.285,
+        "evidence_fragments": 22
+      }
+    },
+    {
+      "sequence": 20,
+      "kind": "agent_reported",
+      "role": "pathology",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 21,
+      "kind": "agent_completed",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 22,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-666725191233ff6a9b4d": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "context-3": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-d472647c256ce33ce771": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-b00cc139286b698ac1e4": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-2cbc70f028e1d78d9578": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-2a61cf2a53c5ea33f7a0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 71.7-year-old White male of non-Spanish, non-Hispanic ethnicity with a diagnosis of pancreatic adenocarcinoma. Comprehensive medical records are available detailing his clinical history, including diagnostic evaluations, treatments, and laboratory tests, covering the period from 71.7 to 72.2 years of age."
+            },
+            {
+              "id": "file-666725191233ff6a9b4d",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 71.734, treatment > prior_meds --> SUBTYPE: Prior Medications to MSK, TREATMENT_TYPE: Medical Therapy, INFERRED_TX_PROB: 0.98, PRIOR_MED_TO_MSK: Prior medications to MSK, STYLE_COLOR: #D62727, \nAGE: 71.753, diagnosis > performance_status --> ECOG: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Biologic, AGENT: RITUXIMAB, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: VINCRISTINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.942, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 71.942, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.027, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: MR, HAS_CANCER: Yes, PROCEDURE_TYPE: MR, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 72.027, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: MR, \nAGE: 72.027, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), MR, TUMOR_SITE: Other, PELVIS: No, OTHER: Yes, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 72.065, labtest > ca_19-9_labs --> RESULT: 17, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.065, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.126, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 72.126, diagnosis > cancer_presence --> HAS CANCER: Indetermi"
+            },
+            {
+              "id": "context-3",
+              "day": null,
+              "stage": 3,
+              "text": "The patient has undergone sample sequencing, with both CNA and mutation data available for analysis. Additionally, a comprehensive patient history is accessible, detailing information on diagnosis, treatments, and lab tests conducted between the ages of 72.2 and 72.9 years."
+            },
+            {
+              "id": "file-2a61cf2a53c5ea33f7a0",
+              "day": null,
+              "stage": 4,
+              "text": "AGE: 72.213, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.213, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.213, labtest > ca_19-9_labs --> RESULT: 29, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.213, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 72.216, treatment > treatment --> STOP_AGE: 72.827, SUBTYPE: Chemo, AGENT: CAPECITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 72.252, specimen --> SAMPLE_ID: P-0024579-T01-IM6, \nAGE: 72.260, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.260, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.260, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Liver, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.271, treatment > treatment --> STOP_AGE: 72.6928, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 72.271, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.438, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.444, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.444, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.501, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.501, labtest > ca_19-9_labs --> RESULT: 18, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.501, labtest > cea_labs --> CEA: 2.9000 ng/ml          \nAGE: 72.567, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.567, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.567, diagnosis > tumor_sites --> SOURCE: Radiology Re"
+            },
+            {
+              "id": "file-2cbc70f028e1d78d9578",
+              "day": null,
+              "stage": 4,
+              "text": "SAMPLE_ID,Hugo_Symbol,VALUE\nP-0024579-T01-IM6,INSR,2.0\n"
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 534,
+              "end": 544,
+              "raw": "p.Gly12Val",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 545,
+              "end": 551,
+              "raw": "p.G12V",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 767,
+              "end": 778,
+              "raw": "p.Val274Gly",
+              "canonical": "V274G"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 779,
+              "end": 786,
+              "raw": "p.V274G",
+              "canonical": "V274G"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 1269,
+              "end": 1276,
+              "raw": "p.C324*",
+              "canonical": "C324*"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 1496,
+              "end": 1507,
+              "raw": "p.Cys563Ser",
+              "canonical": "C563S"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 1508,
+              "end": 1515,
+              "raw": "p.C563S",
+              "canonical": "C563S"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [
+            {
+              "document_id": "file-b00cc139286b698ac1e4",
+              "field": "cancer_type",
+              "value": "Pancreatic Cancer",
+              "start": 62,
+              "end": 95
+            },
+            {
+              "document_id": "file-b00cc139286b698ac1e4",
+              "field": "primary_site",
+              "value": "Pancreas",
+              "start": 186,
+              "end": 211
+            },
+            {
+              "document_id": "file-b00cc139286b698ac1e4",
+              "field": "cancer_type_detailed",
+              "value": "Pancreatic Adenocarcinoma",
+              "start": 214,
+              "end": 264
+            },
+            {
+              "document_id": "file-b00cc139286b698ac1e4",
+              "field": "oncotree_code",
+              "value": "PAAD",
+              "start": 340,
+              "end": 362
+            }
+          ],
+          "pathology_field_limit": 100,
+          "directions": {
+            "context-0": "unknown",
+            "file-666725191233ff6a9b4d": "unknown",
+            "context-3": "unknown",
+            "file-d472647c256ce33ce771": "unknown",
+            "file-b00cc139286b698ac1e4": "unknown",
+            "file-2cbc70f028e1d78d9578": "unknown",
+            "file-2a61cf2a53c5ea33f7a0": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 23,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "cd7cf6b64150d5f5067cb1d66236f2921d33ddf86d67f16a7dc0e7ae47509cab",
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "token_reservation": 44090,
+        "evidence_ids": [
+          "context-0:f01",
+          "context-3:f01",
+          "file-2a61cf2a53c5ea33f7a0:f01",
+          "file-2a61cf2a53c5ea33f7a0:f02",
+          "file-2a61cf2a53c5ea33f7a0:f03",
+          "file-2a61cf2a53c5ea33f7a0:f04",
+          "file-2a61cf2a53c5ea33f7a0:f05",
+          "file-2a61cf2a53c5ea33f7a0:f06",
+          "file-2cbc70f028e1d78d9578:f01",
+          "file-666725191233ff6a9b4d:f01",
+          "file-666725191233ff6a9b4d:f02",
+          "file-666725191233ff6a9b4d:f03",
+          "file-666725191233ff6a9b4d:f04",
+          "file-666725191233ff6a9b4d:f05",
+          "file-666725191233ff6a9b4d:f06",
+          "file-666725191233ff6a9b4d:f07",
+          "file-666725191233ff6a9b4d:f08",
+          "file-b00cc139286b698ac1e4:f01",
+          "file-b00cc139286b698ac1e4:f02",
+          "file-d472647c256ce33ce771:f01",
+          "file-d472647c256ce33ce771:f02",
+          "file-d472647c256ce33ce771:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 323,
+              "chars_sent": 323,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-666725191233ff6a9b4d": {
+              "candidates": 8,
+              "sent": 8,
+              "chars_total": 3918,
+              "chars_sent": 3918,
+              "key_records": 3,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-666725191233ff6a9b4d:f01",
+                "file-666725191233ff6a9b4d:f02",
+                "file-666725191233ff6a9b4d:f03",
+                "file-666725191233ff6a9b4d:f04",
+                "file-666725191233ff6a9b4d:f05",
+                "file-666725191233ff6a9b4d:f06",
+                "file-666725191233ff6a9b4d:f07",
+                "file-666725191233ff6a9b4d:f08"
+              ]
+            },
+            "context-3": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 274,
+              "chars_sent": 274,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-3:f01"
+              ]
+            },
+            "file-d472647c256ce33ce771": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1558,
+              "chars_sent": 1558,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-d472647c256ce33ce771:f01",
+                "file-d472647c256ce33ce771:f02",
+                "file-d472647c256ce33ce771:f03"
+              ]
+            },
+            "file-b00cc139286b698ac1e4": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1008,
+              "chars_sent": 1008,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-b00cc139286b698ac1e4:f01",
+                "file-b00cc139286b698ac1e4:f02"
+              ]
+            },
+            "file-2cbc70f028e1d78d9578": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 55,
+              "chars_sent": 55,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2cbc70f028e1d78d9578:f01"
+              ]
+            },
+            "file-2a61cf2a53c5ea33f7a0": {
+              "candidates": 6,
+              "sent": 6,
+              "chars_total": 2599,
+              "chars_sent": 2599,
+              "key_records": 2,
+              "required_candidates": 3,
+              "required_sent": 3,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2a61cf2a53c5ea33f7a0:f01",
+                "file-2a61cf2a53c5ea33f7a0:f02",
+                "file-2a61cf2a53c5ea33f7a0:f03",
+                "file-2a61cf2a53c5ea33f7a0:f04",
+                "file-2a61cf2a53c5ea33f7a0:f05",
+                "file-2a61cf2a53c5ea33f7a0:f06"
+              ]
+            }
+          },
+          "candidates": 22,
+          "sent": 22,
+          "chars_total": 9735,
+          "chars_sent": 9735,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 5,
+              "sent": 5,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 6,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 24,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 15523,
+        "output_tokens": 1904,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 43.236,
+        "evidence_fragments": 22
+      }
+    },
+    {
+      "sequence": 25,
+      "kind": "invalid_model_output",
+      "role": "drug",
+      "details": {
+        "error_type": "ValueError",
+        "previous_output": "{\"findings\": [{\"statement\": \"The patient's recorded drug exposures include Rituximab, Cyclophosphamide, Doxorubicin, Vincristine, Capecitabine, and Gemcitabine, administered as cytotoxic and biologic therapies between ages 71.7 and 72.8, alongside radiation therapy.\", \"scope\": \"exposure\", \"evidence_level\": \"measured\", \"material_status\": \"present\", \"citations\": [{\"evidence_id\": \"file-666725191233ff6a9b4d:f01\"}, {\"evidence_id\": \"file-666725191233ff6a9b4d:f02\"}, {\"evidence_id\": \"file-2a61cf2a53c5ea33f7a0:f01\"}, {\"evidence_id\": \"file-2a61cf2a53c5ea33f7a0:f03\"}]}, {\"statement\": \"The tumor harbors a KRAS p.Gly12Val mutation, which is associated with resistance to EGFR-targeted therapies based on literature; however, the patient did not receive EGFR inhibitors, and no molecular-drug sensitivity or resistance relationships are documented for the administered cytotoxic agents in the provided records.\", \"scope\": \"molecular\", \"evidence_level\": \"literature\", \"material_status\": \"present\", \"citations\": [{\"evidence_id\": \"file-d472647c256ce33ce771:f01\"}]}], \"verdicts\": [], \"unresolved\": [\"The question asks about a future survival outcome (alive at age 73.4), which is outside the scope of the drug role and cannot be predicted from the provided clinical timeline.\"], \"requery\": \"\"}",
+        "validation_errors": [
+          {
+            "msg": "claim scope 'molecular' is outside this role's permitted scopes exposure, relationship"
+          }
+        ],
+        "valid_claim_ids": [
+          "genomics-01",
+          "genomics-02",
+          "genomics-03",
+          "timeline-01",
+          "timeline-02",
+          "timeline-03"
+        ],
+        "output_truncated_in_trace": false
+      }
+    },
+    {
+      "sequence": 26,
+      "kind": "schema_repair_requested",
+      "role": "drug",
+      "details": {
+        "attempt": 1
+      }
+    },
+    {
+      "sequence": 27,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "c21d97f5a7ecb678ce8eae3becfbf502f177c3189ab5e805d3000060330964db",
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "token_reservation": 46054,
+        "evidence_ids": [
+          "context-0:f01",
+          "context-3:f01",
+          "file-2a61cf2a53c5ea33f7a0:f01",
+          "file-2a61cf2a53c5ea33f7a0:f02",
+          "file-2a61cf2a53c5ea33f7a0:f03",
+          "file-2a61cf2a53c5ea33f7a0:f04",
+          "file-2a61cf2a53c5ea33f7a0:f05",
+          "file-2a61cf2a53c5ea33f7a0:f06",
+          "file-2cbc70f028e1d78d9578:f01",
+          "file-666725191233ff6a9b4d:f01",
+          "file-666725191233ff6a9b4d:f02",
+          "file-666725191233ff6a9b4d:f03",
+          "file-666725191233ff6a9b4d:f04",
+          "file-666725191233ff6a9b4d:f05",
+          "file-666725191233ff6a9b4d:f06",
+          "file-666725191233ff6a9b4d:f07",
+          "file-666725191233ff6a9b4d:f08",
+          "file-b00cc139286b698ac1e4:f01",
+          "file-b00cc139286b698ac1e4:f02",
+          "file-d472647c256ce33ce771:f01",
+          "file-d472647c256ce33ce771:f02",
+          "file-d472647c256ce33ce771:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 323,
+              "chars_sent": 323,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-666725191233ff6a9b4d": {
+              "candidates": 8,
+              "sent": 8,
+              "chars_total": 3918,
+              "chars_sent": 3918,
+              "key_records": 3,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-666725191233ff6a9b4d:f01",
+                "file-666725191233ff6a9b4d:f02",
+                "file-666725191233ff6a9b4d:f03",
+                "file-666725191233ff6a9b4d:f04",
+                "file-666725191233ff6a9b4d:f05",
+                "file-666725191233ff6a9b4d:f06",
+                "file-666725191233ff6a9b4d:f07",
+                "file-666725191233ff6a9b4d:f08"
+              ]
+            },
+            "context-3": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 274,
+              "chars_sent": 274,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-3:f01"
+              ]
+            },
+            "file-d472647c256ce33ce771": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1558,
+              "chars_sent": 1558,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-d472647c256ce33ce771:f01",
+                "file-d472647c256ce33ce771:f02",
+                "file-d472647c256ce33ce771:f03"
+              ]
+            },
+            "file-b00cc139286b698ac1e4": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1008,
+              "chars_sent": 1008,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-b00cc139286b698ac1e4:f01",
+                "file-b00cc139286b698ac1e4:f02"
+              ]
+            },
+            "file-2cbc70f028e1d78d9578": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 55,
+              "chars_sent": 55,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2cbc70f028e1d78d9578:f01"
+              ]
+            },
+            "file-2a61cf2a53c5ea33f7a0": {
+              "candidates": 6,
+              "sent": 6,
+              "chars_total": 2599,
+              "chars_sent": 2599,
+              "key_records": 2,
+              "required_candidates": 3,
+              "required_sent": 3,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2a61cf2a53c5ea33f7a0:f01",
+                "file-2a61cf2a53c5ea33f7a0:f02",
+                "file-2a61cf2a53c5ea33f7a0:f03",
+                "file-2a61cf2a53c5ea33f7a0:f04",
+                "file-2a61cf2a53c5ea33f7a0:f05",
+                "file-2a61cf2a53c5ea33f7a0:f06"
+              ]
+            }
+          },
+          "candidates": 22,
+          "sent": 22,
+          "chars_total": 9735,
+          "chars_sent": 9735,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 5,
+              "sent": 5,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 6,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 28,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 16086,
+        "output_tokens": 1997,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 17.305,
+        "evidence_fragments": 22
+      }
+    },
+    {
+      "sequence": 29,
+      "kind": "agent_reported",
+      "role": "drug",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient's recorded drug exposures include Rituximab, Cyclophosphamide, Doxorubicin, Vincristine, Capecitabine, and Gemcitabine, administered as cytotoxic and biologic therapies between ages 71.7 and 72.8, alongside radiation therapy.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "file-666725191233ff6a9b4d",
+                  "start": 0,
+                  "end": 535,
+                  "quote": "AGE: 71.734, treatment > prior_meds --> SUBTYPE: Prior Medications to MSK, TREATMENT_TYPE: Medical Therapy, INFERRED_TX_PROB: 0.98, PRIOR_MED_TO_MSK: Prior medications to MSK, STYLE_COLOR: #D62727, \nAGE: 71.753, diagnosis > performance_status --> ECOG: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Biologic, AGENT: RITUXIMAB, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                },
+                {
+                  "document_id": "file-666725191233ff6a9b4d",
+                  "start": 535,
+                  "end": 1114,
+                  "quote": "AGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: VINCRISTINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.942, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 71.942, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+                },
+                {
+                  "document_id": "file-2a61cf2a53c5ea33f7a0",
+                  "start": 0,
+                  "end": 453,
+                  "quote": "AGE: 72.213, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.213, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.213, labtest > ca_19-9_labs --> RESULT: 29, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.213, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 72.216, treatment > treatment --> STOP_AGE: 72.827, SUBTYPE: Chemo, AGENT: CAPECITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 72.252, specimen --> SAMPLE_ID: P-0024579-T01-IM6, \n"
+                },
+                {
+                  "document_id": "file-2a61cf2a53c5ea33f7a0",
+                  "start": 918,
+                  "end": 1488,
+                  "quote": "AGE: 72.271, treatment > treatment --> STOP_AGE: 72.6928, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 72.271, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.438, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.444, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.444, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.501, diagnosis > performance_status --> ECOG: 1, \n"
+                }
+              ],
+              "claim_id": "drug-01",
+              "author_role": "drug",
+              "used_claim_ids": [],
+              "scope": "exposure",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The tumor harbors a KRAS p.Gly12Val mutation, which is associated with resistance to EGFR-targeted therapies in literature; however, no molecular-drug sensitivity or resistance relationships are documented for the administered cytotoxic and biologic agents in the provided clinical records.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-d472647c256ce33ce771",
+                  "start": 0,
+                  "end": 593,
+                  "quote": "Hugo_Symbol,Entrez_Gene_Id,Center,NCBI_Build,Chromosome,Start_Position,End_Position,Strand,Consequence,Variant_Classification,Variant_Type,Reference_Allele,Tumor_Seq_Allele1,Tumor_Seq_Allele2,SAMPLE_ID,Validation_Status,Mutation_Status,Score,t_ref_count,t_alt_count,n_ref_count,n_alt_count,HGVSc,HGVSp,HGVSp_Short,Transcript_ID,RefSeq,Protein_position,Codons\nKRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,941,71,674,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt\n"
+                }
+              ],
+              "claim_id": "drug-02",
+              "author_role": "drug",
+              "used_claim_ids": [],
+              "scope": "relationship",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "The question asks about a future survival outcome (alive at age 73.4), which is outside the scope of the drug role and cannot be predicted from the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 30,
+      "kind": "agent_completed",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient's recorded drug exposures include Rituximab, Cyclophosphamide, Doxorubicin, Vincristine, Capecitabine, and Gemcitabine, administered as cytotoxic and biologic therapies between ages 71.7 and 72.8, alongside radiation therapy.",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "file-666725191233ff6a9b4d",
+                  "start": 0,
+                  "end": 535,
+                  "quote": "AGE: 71.734, treatment > prior_meds --> SUBTYPE: Prior Medications to MSK, TREATMENT_TYPE: Medical Therapy, INFERRED_TX_PROB: 0.98, PRIOR_MED_TO_MSK: Prior medications to MSK, STYLE_COLOR: #D62727, \nAGE: 71.753, diagnosis > performance_status --> ECOG: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Biologic, AGENT: RITUXIMAB, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                },
+                {
+                  "document_id": "file-666725191233ff6a9b4d",
+                  "start": 535,
+                  "end": 1114,
+                  "quote": "AGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: VINCRISTINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.942, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 71.942, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+                },
+                {
+                  "document_id": "file-2a61cf2a53c5ea33f7a0",
+                  "start": 0,
+                  "end": 453,
+                  "quote": "AGE: 72.213, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.213, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.213, labtest > ca_19-9_labs --> RESULT: 29, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.213, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 72.216, treatment > treatment --> STOP_AGE: 72.827, SUBTYPE: Chemo, AGENT: CAPECITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 72.252, specimen --> SAMPLE_ID: P-0024579-T01-IM6, \n"
+                },
+                {
+                  "document_id": "file-2a61cf2a53c5ea33f7a0",
+                  "start": 918,
+                  "end": 1488,
+                  "quote": "AGE: 72.271, treatment > treatment --> STOP_AGE: 72.6928, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 72.271, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.438, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.444, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.444, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.501, diagnosis > performance_status --> ECOG: 1, \n"
+                }
+              ],
+              "claim_id": "drug-01",
+              "author_role": "drug",
+              "used_claim_ids": [],
+              "scope": "exposure",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The tumor harbors a KRAS p.Gly12Val mutation, which is associated with resistance to EGFR-targeted therapies in literature; however, no molecular-drug sensitivity or resistance relationships are documented for the administered cytotoxic and biologic agents in the provided clinical records.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-d472647c256ce33ce771",
+                  "start": 0,
+                  "end": 593,
+                  "quote": "Hugo_Symbol,Entrez_Gene_Id,Center,NCBI_Build,Chromosome,Start_Position,End_Position,Strand,Consequence,Variant_Classification,Variant_Type,Reference_Allele,Tumor_Seq_Allele1,Tumor_Seq_Allele2,SAMPLE_ID,Validation_Status,Mutation_Status,Score,t_ref_count,t_alt_count,n_ref_count,n_alt_count,HGVSc,HGVSp,HGVSp_Short,Transcript_ID,RefSeq,Protein_position,Codons\nKRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,941,71,674,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt\n"
+                }
+              ],
+              "claim_id": "drug-02",
+              "author_role": "drug",
+              "used_claim_ids": [],
+              "scope": "relationship",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "The question asks about a future survival outcome (alive at age 73.4), which is outside the scope of the drug role and cannot be predicted from the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 31,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-666725191233ff6a9b4d": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "context-3": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-d472647c256ce33ce771": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-b00cc139286b698ac1e4": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-2cbc70f028e1d78d9578": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-2a61cf2a53c5ea33f7a0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 71.7-year-old White male of non-Spanish, non-Hispanic ethnicity with a diagnosis of pancreatic adenocarcinoma. Comprehensive medical records are available detailing his clinical history, including diagnostic evaluations, treatments, and laboratory tests, covering the period from 71.7 to 72.2 years of age."
+            },
+            {
+              "id": "file-666725191233ff6a9b4d",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 71.734, treatment > prior_meds --> SUBTYPE: Prior Medications to MSK, TREATMENT_TYPE: Medical Therapy, INFERRED_TX_PROB: 0.98, PRIOR_MED_TO_MSK: Prior medications to MSK, STYLE_COLOR: #D62727, \nAGE: 71.753, diagnosis > performance_status --> ECOG: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Biologic, AGENT: RITUXIMAB, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.778, treatment > treatment --> STOP_AGE: 72.0654, SUBTYPE: Chemo, AGENT: VINCRISTINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 71.942, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 71.942, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.027, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: MR, HAS_CANCER: Yes, PROCEDURE_TYPE: MR, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 72.027, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: MR, \nAGE: 72.027, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), MR, TUMOR_SITE: Other, PELVIS: No, OTHER: Yes, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 72.065, labtest > ca_19-9_labs --> RESULT: 17, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.065, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.126, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 72.126, diagnosis > cancer_presence --> HAS CANCER: Indetermi"
+            },
+            {
+              "id": "context-3",
+              "day": null,
+              "stage": 3,
+              "text": "The patient has undergone sample sequencing, with both CNA and mutation data available for analysis. Additionally, a comprehensive patient history is accessible, detailing information on diagnosis, treatments, and lab tests conducted between the ages of 72.2 and 72.9 years."
+            },
+            {
+              "id": "file-2a61cf2a53c5ea33f7a0",
+              "day": null,
+              "stage": 4,
+              "text": "AGE: 72.213, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.213, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.213, labtest > ca_19-9_labs --> RESULT: 29, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.213, labtest > cea_labs --> CEA: 2.0000 ng/ml          \nAGE: 72.216, treatment > treatment --> STOP_AGE: 72.827, SUBTYPE: Chemo, AGENT: CAPECITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 72.252, specimen --> SAMPLE_ID: P-0024579-T01-IM6, \nAGE: 72.260, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.260, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.260, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Liver, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.271, treatment > treatment --> STOP_AGE: 72.6928, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 72.271, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.348, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.438, diagnosis > performance_status --> ECOG: 0, \nAGE: 72.444, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.444, labtest > cea_labs --> CEA: 2.5000 ng/ml          \nAGE: 72.501, diagnosis > performance_status --> ECOG: 1, \nAGE: 72.501, labtest > ca_19-9_labs --> RESULT: 18, LR_UNIT_MEASURE: Units/ml, \nAGE: 72.501, labtest > cea_labs --> CEA: 2.9000 ng/ml          \nAGE: 72.567, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.567, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.567, diagnosis > tumor_sites --> SOURCE: Radiology Re"
+            },
+            {
+              "id": "file-2cbc70f028e1d78d9578",
+              "day": null,
+              "stage": 4,
+              "text": "SAMPLE_ID,Hugo_Symbol,VALUE\nP-0024579-T01-IM6,INSR,2.0\n"
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 534,
+              "end": 544,
+              "raw": "p.Gly12Val",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 545,
+              "end": 551,
+              "raw": "p.G12V",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 767,
+              "end": 778,
+              "raw": "p.Val274Gly",
+              "canonical": "V274G"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 779,
+              "end": 786,
+              "raw": "p.V274G",
+              "canonical": "V274G"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 1269,
+              "end": 1276,
+              "raw": "p.C324*",
+              "canonical": "C324*"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 1496,
+              "end": 1507,
+              "raw": "p.Cys563Ser",
+              "canonical": "C563S"
+            },
+            {
+              "document_id": "file-d472647c256ce33ce771",
+              "start": 1508,
+              "end": 1515,
+              "raw": "p.C563S",
+              "canonical": "C563S"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [
+            {
+              "document_id": "file-b00cc139286b698ac1e4",
+              "field": "cancer_type",
+              "value": "Pancreatic Cancer",
+              "start": 62,
+              "end": 95
+            },
+            {
+              "document_id": "file-b00cc139286b698ac1e4",
+              "field": "primary_site",
+              "value": "Pancreas",
+              "start": 186,
+              "end": 211
+            },
+            {
+              "document_id": "file-b00cc139286b698ac1e4",
+              "field": "cancer_type_detailed",
+              "value": "Pancreatic Adenocarcinoma",
+              "start": 214,
+              "end": 264
+            },
+            {
+              "document_id": "file-b00cc139286b698ac1e4",
+              "field": "oncotree_code",
+              "value": "PAAD",
+              "start": 340,
+              "end": 362
+            }
+          ],
+          "pathology_field_limit": 100,
+          "directions": {
+            "context-0": "unknown",
+            "file-666725191233ff6a9b4d": "unknown",
+            "context-3": "unknown",
+            "file-d472647c256ce33ce771": "unknown",
+            "file-b00cc139286b698ac1e4": "unknown",
+            "file-2cbc70f028e1d78d9578": "unknown",
+            "file-2a61cf2a53c5ea33f7a0": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 32,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "1db40803e6f41b5c419ede309d7317442b16b2216fd93516b2503ba29141d298",
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "token_reservation": 45387,
+        "evidence_ids": [
+          "context-0:f01",
+          "context-3:f01",
+          "file-2a61cf2a53c5ea33f7a0:f01",
+          "file-2a61cf2a53c5ea33f7a0:f02",
+          "file-2a61cf2a53c5ea33f7a0:f03",
+          "file-2a61cf2a53c5ea33f7a0:f04",
+          "file-2a61cf2a53c5ea33f7a0:f05",
+          "file-2a61cf2a53c5ea33f7a0:f06",
+          "file-2cbc70f028e1d78d9578:f01",
+          "file-666725191233ff6a9b4d:f01",
+          "file-666725191233ff6a9b4d:f02",
+          "file-666725191233ff6a9b4d:f03",
+          "file-666725191233ff6a9b4d:f04",
+          "file-666725191233ff6a9b4d:f05",
+          "file-666725191233ff6a9b4d:f06",
+          "file-666725191233ff6a9b4d:f07",
+          "file-666725191233ff6a9b4d:f08",
+          "file-b00cc139286b698ac1e4:f01",
+          "file-b00cc139286b698ac1e4:f02",
+          "file-d472647c256ce33ce771:f01",
+          "file-d472647c256ce33ce771:f02",
+          "file-d472647c256ce33ce771:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 323,
+              "chars_sent": 323,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-666725191233ff6a9b4d": {
+              "candidates": 8,
+              "sent": 8,
+              "chars_total": 3918,
+              "chars_sent": 3918,
+              "key_records": 3,
+              "required_candidates": 4,
+              "required_sent": 4,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-666725191233ff6a9b4d:f01",
+                "file-666725191233ff6a9b4d:f02",
+                "file-666725191233ff6a9b4d:f03",
+                "file-666725191233ff6a9b4d:f04",
+                "file-666725191233ff6a9b4d:f05",
+                "file-666725191233ff6a9b4d:f06",
+                "file-666725191233ff6a9b4d:f07",
+                "file-666725191233ff6a9b4d:f08"
+              ]
+            },
+            "context-3": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 274,
+              "chars_sent": 274,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-3:f01"
+              ]
+            },
+            "file-d472647c256ce33ce771": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1558,
+              "chars_sent": 1558,
+              "key_records": 2,
+              "required_candidates": 3,
+              "required_sent": 3,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-d472647c256ce33ce771:f01",
+                "file-d472647c256ce33ce771:f02",
+                "file-d472647c256ce33ce771:f03"
+              ]
+            },
+            "file-b00cc139286b698ac1e4": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1008,
+              "chars_sent": 1008,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-b00cc139286b698ac1e4:f01",
+                "file-b00cc139286b698ac1e4:f02"
+              ]
+            },
+            "file-2cbc70f028e1d78d9578": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 55,
+              "chars_sent": 55,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2cbc70f028e1d78d9578:f01"
+              ]
+            },
+            "file-2a61cf2a53c5ea33f7a0": {
+              "candidates": 6,
+              "sent": 6,
+              "chars_total": 2599,
+              "chars_sent": 2599,
+              "key_records": 2,
+              "required_candidates": 3,
+              "required_sent": 3,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2a61cf2a53c5ea33f7a0:f01",
+                "file-2a61cf2a53c5ea33f7a0:f02",
+                "file-2a61cf2a53c5ea33f7a0:f03",
+                "file-2a61cf2a53c5ea33f7a0:f04",
+                "file-2a61cf2a53c5ea33f7a0:f05",
+                "file-2a61cf2a53c5ea33f7a0:f06"
+              ]
+            }
+          },
+          "candidates": 22,
+          "sent": 22,
+          "chars_total": 9735,
+          "chars_sent": 9735,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 5,
+              "sent": 5,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 8,
+              "sent": 8,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 8,
+        "unresolved_items": 1,
+        "unresolved_by_role": {
+          "drug": 1
+        }
+      }
+    },
+    {
+      "sequence": 33,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 15912,
+        "output_tokens": 2026,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 43.356,
+        "evidence_fragments": 22
+      }
+    },
+    {
+      "sequence": 34,
+      "kind": "agent_reported",
+      "role": "verifier",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "The question asks about a future survival outcome (alive at age 73.4), which is outside the scope of the drug role and cannot be predicted from the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "The timeline record explicitly documents radiation therapy at age 72.786 and an ECOG performance status of 0 at age 72.865, which is the final recorded clinical event before the 72.9 information cutoff. This aligns perfectly with the claim.",
+              "citations": [
+                {
+                  "document_id": "file-2a61cf2a53c5ea33f7a0",
+                  "start": 2473,
+                  "end": 2599,
+                  "quote": "AGE: 72.786, treatment > radiation --> SUBTYPE: Radiation Therapy, \nAGE: 72.865, diagnosis > performance_status --> ECOG: 0, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-02",
+              "verdict": "confirmed",
+              "note": "The claim accurately summarizes the patient's diagnosis of pancreatic adenocarcinoma (Stage 1-3), the specific somatic mutations (KRAS, TP53, CDKN2A, SMAD4, NOTCH1), the listed prior chemotherapy and biologic agents, and the absence of documented disease progression on recent imaging. All elements are directly supported by the provided clinical and genomic records.",
+              "citations": [
+                {
+                  "document_id": "file-666725191233ff6a9b4d",
+                  "start": 2651,
+                  "end": 3240,
+                  "quote": "AGE: 72.156, samples > clinical_sample --> SAMPLE_ID: P-0024579-T01-IM6, PATIENT_ID: P-0024579, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 939, TUMOR_PURITY: 20.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 0.24, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional Both 2 and 3, ICD_O_HISTOLOGY_DESCRIPTION: Tubular "
+                },
+                {
+                  "document_id": "file-d472647c256ce33ce771",
+                  "start": 0,
+                  "end": 593,
+                  "quote": "Hugo_Symbol,Entrez_Gene_Id,Center,NCBI_Build,Chromosome,Start_Position,End_Position,Strand,Consequence,Variant_Classification,Variant_Type,Reference_Allele,Tumor_Seq_Allele1,Tumor_Seq_Allele2,SAMPLE_ID,Validation_Status,Mutation_Status,Score,t_ref_count,t_alt_count,n_ref_count,n_alt_count,HGVSc,HGVSp,HGVSp_Short,Transcript_ID,RefSeq,Protein_position,Codons\nKRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,941,71,674,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt\n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-03",
+              "verdict": "confirmed",
+              "note": "The claim correctly identifies that the question asks about a future survival outcome (alive at age 73.4, 6 months after the 72.9 cutoff). This future event is outside the temporal scope of the provided clinical timeline and cannot be assumed or predicted from the available data. The NEI relation and absence of citations are appropriate.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 35,
+      "kind": "agent_completed",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "The question asks about a future survival outcome (alive at age 73.4), which is outside the scope of the drug role and cannot be predicted from the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "The timeline record explicitly documents radiation therapy at age 72.786 and an ECOG performance status of 0 at age 72.865, which is the final recorded clinical event before the 72.9 information cutoff. This aligns perfectly with the claim.",
+              "citations": [
+                {
+                  "document_id": "file-2a61cf2a53c5ea33f7a0",
+                  "start": 2473,
+                  "end": 2599,
+                  "quote": "AGE: 72.786, treatment > radiation --> SUBTYPE: Radiation Therapy, \nAGE: 72.865, diagnosis > performance_status --> ECOG: 0, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-02",
+              "verdict": "confirmed",
+              "note": "The claim accurately summarizes the patient's diagnosis of pancreatic adenocarcinoma (Stage 1-3), the specific somatic mutations (KRAS, TP53, CDKN2A, SMAD4, NOTCH1), the listed prior chemotherapy and biologic agents, and the absence of documented disease progression on recent imaging. All elements are directly supported by the provided clinical and genomic records.",
+              "citations": [
+                {
+                  "document_id": "file-666725191233ff6a9b4d",
+                  "start": 2651,
+                  "end": 3240,
+                  "quote": "AGE: 72.156, samples > clinical_sample --> SAMPLE_ID: P-0024579-T01-IM6, PATIENT_ID: P-0024579, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 939, TUMOR_PURITY: 20.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 0.24, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional Both 2 and 3, ICD_O_HISTOLOGY_DESCRIPTION: Tubular "
+                },
+                {
+                  "document_id": "file-d472647c256ce33ce771",
+                  "start": 0,
+                  "end": 593,
+                  "quote": "Hugo_Symbol,Entrez_Gene_Id,Center,NCBI_Build,Chromosome,Start_Position,End_Position,Strand,Consequence,Variant_Classification,Variant_Type,Reference_Allele,Tumor_Seq_Allele1,Tumor_Seq_Allele2,SAMPLE_ID,Validation_Status,Mutation_Status,Score,t_ref_count,t_alt_count,n_ref_count,n_alt_count,HGVSc,HGVSp,HGVSp_Short,Transcript_ID,RefSeq,Protein_position,Codons\nKRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,P-0024579-T01-IM6,Unknown,SOMATIC,MSK-IMPACT,941,71,674,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt\n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-03",
+              "verdict": "confirmed",
+              "note": "The claim correctly identifies that the question asks about a future survival outcome (alive at age 73.4, 6 months after the 72.9 cutoff). This future event is outside the temporal scope of the provided clinical timeline and cannot be assumed or predicted from the available data. The NEI relation and absence of citations are appropriate.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 36,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "f7f7e93e78b73c27a7da27c83690257a0cc0f2b5ac8f62208d3a6ed21562ab5e",
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "token_reservation": 47745,
+        "evidence_ids": [
+          "context-0:f01",
+          "context-3:f01",
+          "file-2a61cf2a53c5ea33f7a0:f01",
+          "file-2a61cf2a53c5ea33f7a0:f02",
+          "file-2a61cf2a53c5ea33f7a0:f03",
+          "file-2a61cf2a53c5ea33f7a0:f04",
+          "file-2a61cf2a53c5ea33f7a0:f05",
+          "file-2a61cf2a53c5ea33f7a0:f06",
+          "file-2cbc70f028e1d78d9578:f01",
+          "file-666725191233ff6a9b4d:f01",
+          "file-666725191233ff6a9b4d:f02",
+          "file-666725191233ff6a9b4d:f03",
+          "file-666725191233ff6a9b4d:f04",
+          "file-666725191233ff6a9b4d:f05",
+          "file-666725191233ff6a9b4d:f06",
+          "file-666725191233ff6a9b4d:f07",
+          "file-666725191233ff6a9b4d:f08",
+          "file-b00cc139286b698ac1e4:f01",
+          "file-b00cc139286b698ac1e4:f02",
+          "file-d472647c256ce33ce771:f01",
+          "file-d472647c256ce33ce771:f02",
+          "file-d472647c256ce33ce771:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 323,
+              "chars_sent": 323,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-666725191233ff6a9b4d": {
+              "candidates": 8,
+              "sent": 8,
+              "chars_total": 3918,
+              "chars_sent": 3918,
+              "key_records": 3,
+              "required_candidates": 4,
+              "required_sent": 4,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-666725191233ff6a9b4d:f01",
+                "file-666725191233ff6a9b4d:f02",
+                "file-666725191233ff6a9b4d:f03",
+                "file-666725191233ff6a9b4d:f04",
+                "file-666725191233ff6a9b4d:f05",
+                "file-666725191233ff6a9b4d:f06",
+                "file-666725191233ff6a9b4d:f07",
+                "file-666725191233ff6a9b4d:f08"
+              ]
+            },
+            "context-3": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 274,
+              "chars_sent": 274,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-3:f01"
+              ]
+            },
+            "file-d472647c256ce33ce771": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1558,
+              "chars_sent": 1558,
+              "key_records": 2,
+              "required_candidates": 3,
+              "required_sent": 3,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-d472647c256ce33ce771:f01",
+                "file-d472647c256ce33ce771:f02",
+                "file-d472647c256ce33ce771:f03"
+              ]
+            },
+            "file-b00cc139286b698ac1e4": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1008,
+              "chars_sent": 1008,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-b00cc139286b698ac1e4:f01",
+                "file-b00cc139286b698ac1e4:f02"
+              ]
+            },
+            "file-2cbc70f028e1d78d9578": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 55,
+              "chars_sent": 55,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2cbc70f028e1d78d9578:f01"
+              ]
+            },
+            "file-2a61cf2a53c5ea33f7a0": {
+              "candidates": 6,
+              "sent": 6,
+              "chars_total": 2599,
+              "chars_sent": 2599,
+              "key_records": 2,
+              "required_candidates": 3,
+              "required_sent": 3,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2a61cf2a53c5ea33f7a0:f01",
+                "file-2a61cf2a53c5ea33f7a0:f02",
+                "file-2a61cf2a53c5ea33f7a0:f03",
+                "file-2a61cf2a53c5ea33f7a0:f04",
+                "file-2a61cf2a53c5ea33f7a0:f05",
+                "file-2a61cf2a53c5ea33f7a0:f06"
+              ]
+            }
+          },
+          "candidates": 22,
+          "sent": 22,
+          "chars_total": 9735,
+          "chars_sent": 9735,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 5,
+              "sent": 5,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 8,
+              "sent": 8,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 8,
+        "unresolved_items": 2,
+        "unresolved_by_role": {
+          "drug": 1,
+          "verifier": 1
+        }
+      }
+    },
+    {
+      "sequence": 37,
+      "kind": "verification_ledger",
+      "role": "decision",
+      "details": {
+        "entries": [
+          {
+            "target_claim_id": "timeline-01",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The timeline record explicitly documents radiation therapy at age 72.786 and an ECOG performance status of 0 at age 72.865, which is the final recorded clinical event before the 72.9 information cutoff. This aligns perfectly with the claim.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-2a61cf2a53c5ea33f7a0:f06"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-02",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim accurately summarizes the patient's diagnosis of pancreatic adenocarcinoma (Stage 1-3), the specific somatic mutations (KRAS, TP53, CDKN2A, SMAD4, NOTCH1), the listed prior chemotherapy and biologic agents, and the absence of documented disease progression on recent imaging. All elements are directly supported by the provided clinical and genomic records.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-666725191233ff6a9b4d:f06"
+              },
+              {
+                "evidence_id": "file-d472647c256ce33ce771:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-03",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim correctly identifies that the question asks about a future survival outcome (alive at age 73.4, 6 months after the 72.9 cutoff). This future event is outside the temporal scope of the provided clinical timeline and cannot be assumed or predicted from the available data. The NEI relation and absence of citations are appropriate.",
+            "final": true,
+            "citations": []
+          }
+        ],
+        "reviews": 3,
+        "claims_reviewed": 3,
+        "final_verdicts": 3,
+        "rejected": [],
+        "insufficient": []
+      }
+    },
+    {
+      "sequence": 38,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 16563,
+        "output_tokens": 1502,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 34.66,
+        "evidence_fragments": 22
+      }
+    },
+    {
+      "sequence": 39,
+      "kind": "invalid_model_output",
+      "role": "decision",
+      "details": {
+        "error_type": "ValidationError",
+        "previous_output": "{}",
+        "validation_errors": [
+          {
+            "type": "missing",
+            "loc": [
+              "answer"
+            ],
+            "msg": "Field required"
+          },
+          {
+            "type": "missing",
+            "loc": [
+              "explanation"
+            ],
+            "msg": "Field required"
+          }
+        ],
+        "valid_claim_ids": [
+          "drug-01",
+          "drug-02",
+          "genomics-01",
+          "genomics-02",
+          "genomics-03",
+          "timeline-01",
+          "timeline-02",
+          "timeline-03"
+        ],
+        "output_truncated_in_trace": false
+      }
+    },
+    {
+      "sequence": 40,
+      "kind": "schema_repair_requested",
+      "role": "decision",
+      "details": {
+        "attempt": 1
+      }
+    },
+    {
+      "sequence": 41,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "24ae816bfea80207d184994b6db00cc0cdc9924e883ce7556335210cebe502f7",
+        "source_ids": [
+          "context-0",
+          "file-666725191233ff6a9b4d",
+          "context-3",
+          "file-d472647c256ce33ce771",
+          "file-b00cc139286b698ac1e4",
+          "file-2cbc70f028e1d78d9578",
+          "file-2a61cf2a53c5ea33f7a0"
+        ],
+        "token_reservation": 48418,
+        "evidence_ids": [
+          "context-0:f01",
+          "context-3:f01",
+          "file-2a61cf2a53c5ea33f7a0:f01",
+          "file-2a61cf2a53c5ea33f7a0:f02",
+          "file-2a61cf2a53c5ea33f7a0:f03",
+          "file-2a61cf2a53c5ea33f7a0:f04",
+          "file-2a61cf2a53c5ea33f7a0:f05",
+          "file-2a61cf2a53c5ea33f7a0:f06",
+          "file-2cbc70f028e1d78d9578:f01",
+          "file-666725191233ff6a9b4d:f01",
+          "file-666725191233ff6a9b4d:f02",
+          "file-666725191233ff6a9b4d:f03",
+          "file-666725191233ff6a9b4d:f04",
+          "file-666725191233ff6a9b4d:f05",
+          "file-666725191233ff6a9b4d:f06",
+          "file-666725191233ff6a9b4d:f07",
+          "file-666725191233ff6a9b4d:f08",
+          "file-b00cc139286b698ac1e4:f01",
+          "file-b00cc139286b698ac1e4:f02",
+          "file-d472647c256ce33ce771:f01",
+          "file-d472647c256ce33ce771:f02",
+          "file-d472647c256ce33ce771:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 323,
+              "chars_sent": 323,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-666725191233ff6a9b4d": {
+              "candidates": 8,
+              "sent": 8,
+              "chars_total": 3918,
+              "chars_sent": 3918,
+              "key_records": 3,
+              "required_candidates": 4,
+              "required_sent": 4,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-666725191233ff6a9b4d:f01",
+                "file-666725191233ff6a9b4d:f02",
+                "file-666725191233ff6a9b4d:f03",
+                "file-666725191233ff6a9b4d:f04",
+                "file-666725191233ff6a9b4d:f05",
+                "file-666725191233ff6a9b4d:f06",
+                "file-666725191233ff6a9b4d:f07",
+                "file-666725191233ff6a9b4d:f08"
+              ]
+            },
+            "context-3": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 274,
+              "chars_sent": 274,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "context-3:f01"
+              ]
+            },
+            "file-d472647c256ce33ce771": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1558,
+              "chars_sent": 1558,
+              "key_records": 2,
+              "required_candidates": 3,
+              "required_sent": 3,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-d472647c256ce33ce771:f01",
+                "file-d472647c256ce33ce771:f02",
+                "file-d472647c256ce33ce771:f03"
+              ]
+            },
+            "file-b00cc139286b698ac1e4": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1008,
+              "chars_sent": 1008,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-b00cc139286b698ac1e4:f01",
+                "file-b00cc139286b698ac1e4:f02"
+              ]
+            },
+            "file-2cbc70f028e1d78d9578": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 55,
+              "chars_sent": 55,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2cbc70f028e1d78d9578:f01"
+              ]
+            },
+            "file-2a61cf2a53c5ea33f7a0": {
+              "candidates": 6,
+              "sent": 6,
+              "chars_total": 2599,
+              "chars_sent": 2599,
+              "key_records": 2,
+              "required_candidates": 3,
+              "required_sent": 3,
+              "over_fragment_cap": 0,
+              "share_characters": 1714,
+              "evidence_ids": [
+                "file-2a61cf2a53c5ea33f7a0:f01",
+                "file-2a61cf2a53c5ea33f7a0:f02",
+                "file-2a61cf2a53c5ea33f7a0:f03",
+                "file-2a61cf2a53c5ea33f7a0:f04",
+                "file-2a61cf2a53c5ea33f7a0:f05",
+                "file-2a61cf2a53c5ea33f7a0:f06"
+              ]
+            }
+          },
+          "candidates": 22,
+          "sent": 22,
+          "chars_total": 9735,
+          "chars_sent": 9735,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 5,
+              "sent": 5,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 8,
+              "sent": 8,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 8,
+        "unresolved_items": 2,
+        "unresolved_by_role": {
+          "drug": 1,
+          "verifier": 1
+        }
+      }
+    },
+    {
+      "sequence": 42,
+      "kind": "verification_ledger",
+      "role": "decision",
+      "details": {
+        "entries": [
+          {
+            "target_claim_id": "timeline-01",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The timeline record explicitly documents radiation therapy at age 72.786 and an ECOG performance status of 0 at age 72.865, which is the final recorded clinical event before the 72.9 information cutoff. This aligns perfectly with the claim.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-2a61cf2a53c5ea33f7a0:f06"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-02",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim accurately summarizes the patient's diagnosis of pancreatic adenocarcinoma (Stage 1-3), the specific somatic mutations (KRAS, TP53, CDKN2A, SMAD4, NOTCH1), the listed prior chemotherapy and biologic agents, and the absence of documented disease progression on recent imaging. All elements are directly supported by the provided clinical and genomic records.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-666725191233ff6a9b4d:f06"
+              },
+              {
+                "evidence_id": "file-d472647c256ce33ce771:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-03",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim correctly identifies that the question asks about a future survival outcome (alive at age 73.4, 6 months after the 72.9 cutoff). This future event is outside the temporal scope of the provided clinical timeline and cannot be assumed or predicted from the available data. The NEI relation and absence of citations are appropriate.",
+            "final": true,
+            "citations": []
+          }
+        ],
+        "reviews": 3,
+        "claims_reviewed": 3,
+        "final_verdicts": 3,
+        "rejected": [],
+        "insufficient": []
+      }
+    },
+    {
+      "sequence": 43,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 16738,
+        "output_tokens": 1942,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 44.08,
+        "evidence_fragments": 22
+      }
+    },
+    {
+      "sequence": 44,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "A",
+          "explanation": "The patient is currently alive at the information cutoff of age 72.9, with the most recent documented clinical event at age 72.865 showing an ECOG performance status of 0 and no evidence of disease progression on recent imaging. The patient has Stage 1-3 pancreatic adenocarcinoma with a high tumor mutational burden and multiple somatic mutations (KRAS, TP53, CDKN2A, SMAD4, NOTCH1), and has received multiple lines of chemotherapy and radiation. While the patient's current clinical status is stable, pancreatic adenocarcinoma carries a high risk of mortality, and the specific outcome at age 73.4 (6 months post-cutoff) is not observable in the provided records. Therefore, the prediction that the patient will still be alive is based on current stability but carries significant uncertainty and cannot be verified from the available data.",
+          "citations": [
+            {
+              "document_id": "file-2a61cf2a53c5ea33f7a0",
+              "start": 2473,
+              "end": 2599,
+              "quote": "AGE: 72.786, treatment > radiation --> SUBTYPE: Radiation Therapy, \nAGE: 72.865, diagnosis > performance_status --> ECOG: 0, \n"
+            },
+            {
+              "document_id": "file-666725191233ff6a9b4d",
+              "start": 2651,
+              "end": 3240,
+              "quote": "AGE: 72.156, samples > clinical_sample --> SAMPLE_ID: P-0024579-T01-IM6, PATIENT_ID: P-0024579, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 939, TUMOR_PURITY: 20.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 0.24, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional Both 2 and 3, ICD_O_HISTOLOGY_DESCRIPTION: Tubular "
+            },
+            {
+              "document_id": "file-2a61cf2a53c5ea33f7a0",
+              "start": 453,
+              "end": 918,
+              "quote": "AGE: 72.260, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.260, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.260, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Liver, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \n"
+            }
+          ],
+          "unresolved": [
+            "The question asks about a future survival outcome (alive at age 73.4), which is outside the temporal scope of the provided clinical timeline and cannot be assumed or looked up.",
+            "Pancreatic adenocarcinoma prognosis is highly variable; while current stability supports a 'Yes' prediction, the actual 6-month survival outcome remains unknown."
+          ],
+          "confidence": 0.5,
+          "adopted_claim_ids": [
+            "timeline-01",
+            "timeline-02",
+            "timeline-03"
+          ],
+          "rejected_claim_ids": [
+            "genomics-01",
+            "genomics-02",
+            "genomics-03",
+            "drug-01",
+            "drug-02"
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 45,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "output": {
+          "answer": "A",
+          "explanation": "The patient is currently alive at the information cutoff of age 72.9, with the most recent documented clinical event at age 72.865 showing an ECOG performance status of 0 and no evidence of disease progression on recent imaging. The patient has Stage 1-3 pancreatic adenocarcinoma with a high tumor mutational burden and multiple somatic mutations (KRAS, TP53, CDKN2A, SMAD4, NOTCH1), and has received multiple lines of chemotherapy and radiation. While the patient's current clinical status is stable, pancreatic adenocarcinoma carries a high risk of mortality, and the specific outcome at age 73.4 (6 months post-cutoff) is not observable in the provided records. Therefore, the prediction that the patient will still be alive is based on current stability but carries significant uncertainty and cannot be verified from the available data.",
+          "citations": [
+            {
+              "document_id": "file-2a61cf2a53c5ea33f7a0",
+              "start": 2473,
+              "end": 2599,
+              "quote": "AGE: 72.786, treatment > radiation --> SUBTYPE: Radiation Therapy, \nAGE: 72.865, diagnosis > performance_status --> ECOG: 0, \n"
+            },
+            {
+              "document_id": "file-666725191233ff6a9b4d",
+              "start": 2651,
+              "end": 3240,
+              "quote": "AGE: 72.156, samples > clinical_sample --> SAMPLE_ID: P-0024579-T01-IM6, PATIENT_ID: P-0024579, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 939, TUMOR_PURITY: 20.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 0.24, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional Both 2 and 3, ICD_O_HISTOLOGY_DESCRIPTION: Tubular "
+            },
+            {
+              "document_id": "file-2a61cf2a53c5ea33f7a0",
+              "start": 453,
+              "end": 918,
+              "quote": "AGE: 72.260, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 72.260, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 72.260, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Liver, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \n"
+            }
+          ],
+          "unresolved": [
+            "The question asks about a future survival outcome (alive at age 73.4), which is outside the temporal scope of the provided clinical timeline and cannot be assumed or looked up.",
+            "Pancreatic adenocarcinoma prognosis is highly variable; while current stability supports a 'Yes' prediction, the actual 6-month survival outcome remains unknown."
+          ],
+          "confidence": 0.5,
+          "adopted_claim_ids": [
+            "timeline-01",
+            "timeline-02",
+            "timeline-03"
+          ],
+          "rejected_claim_ids": [
+            "genomics-01",
+            "genomics-02",
+            "genomics-03",
+            "drug-01",
+            "drug-02"
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 46,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "context-0",
+    "file-666725191233ff6a9b4d",
+    "context-3",
+    "file-d472647c256ce33ce771",
+    "file-b00cc139286b698ac1e4",
+    "file-2cbc70f028e1d78d9578",
+    "file-2a61cf2a53c5ea33f7a0"
+  ],
+  "duration_seconds": 336.33257,
+  "research_only": true
+}

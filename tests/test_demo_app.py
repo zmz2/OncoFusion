@@ -299,7 +299,7 @@ def test_demo_config_is_the_verified_fast_profile(client):
     assert demo["name"] == "v1_class"
     config = demo["config"]
     assert config["citation_mode"] == "fragment" and config["max_output_tokens"] == 5000
-    assert config["schema_retries"] == 1 and config["findings_limit"] == 3
+    assert config["schema_retries"] == 2 and config["findings_limit"] == 3
     assert config["ablations"]["targeted_requery"] is False
     assert config["interaction_protocol"] == "claims-v1"
     from importlib.util import find_spec

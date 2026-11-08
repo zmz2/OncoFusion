@@ -1,0 +1,3658 @@
+{
+  "schema_version": "1.0",
+  "case_id": "mtb-P-0022653-q1",
+  "patient_id": "P-0022653",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "646767fc6d535fde69f4ef5df7a3d352a47dbdc90cdf9cc656122847f78a9f55",
+  "config": {
+    "mode": "multi",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "claims-v1",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "A",
+    "explanation": "The patient is a 47.1-year-old female with Stage IIB breast invasive ductal carcinoma, diagnosed at age 40.6, treated with multi-agent chemotherapy and tamoxifen, with imaging at age 46.569 showing no progression. The clinical timeline terminates at age 47.1, leaving a complete absence of post-cutoff follow-up, recurrence status, or survival records for the subsequent 24-month window. Given the early-stage diagnosis, documented response to therapy, and favorable historical prognosis for Stage IIB breast cancer, the most plausible outcome is continued survival, though this is a prediction beyond the verified data window.",
+    "citations": [
+      {
+        "document_id": "context-0",
+        "start": 0,
+        "end": 287,
+        "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+      },
+      {
+        "document_id": "file-e834269f9007ee71db50",
+        "start": 4320,
+        "end": 4889,
+        "quote": "AGE: 44.506, treatment > treatment --> STOP_AGE: 45.0817, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 45.082, treatment > treatment --> STOP_AGE: 46.6434, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 46.569, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: PET, HAS_CANCER: No, PROCEDURE_TYPE: PET, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 46.569, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: PET, \n"
+      },
+      {
+        "document_id": "file-e834269f9007ee71db50",
+        "start": 5893,
+        "end": 6171,
+        "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+      }
+    ],
+    "unresolved": [
+      "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+    ],
+    "confidence": null,
+    "adopted_claim_ids": [
+      "literature-03",
+      "timeline-02",
+      "timeline-01"
+    ],
+    "rejected_claim_ids": [
+      "genomics-02"
+    ]
+  },
+  "reports": [
+    {
+      "role": "literature",
+      "executor": "literature",
+      "output": {
+        "findings": [
+          {
+            "statement": "Document context-0 provides baseline demographic and diagnostic information for a 40.6-year-old female with breast invasive ductal carcinoma, covering the period from age 40.6 to 47.1. It measures initial disease classification and patient history but does not contain longitudinal survival data beyond the cutoff.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "context-0",
+                "start": 0,
+                "end": 287,
+                "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+              }
+            ],
+            "claim_id": "literature-01",
+            "author_role": "literature",
+            "used_claim_ids": [],
+            "scope": "source",
+            "evidence_level": "curated",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "Document file-e834269f9007ee71db50 contains a detailed clinical timeline including tumor registry data, surgical interventions, chemotherapy (doxorubicin, cyclophosphamide, paclitaxel, fluorouracil), hormone therapy (tamoxifen), and serial lab tests (CA 15-3, CEA) up to age 47.1. It measures disease management and monitoring but lacks post-47.1 outcome verification.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 0,
+                "end": 578,
+                "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+              },
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 5893,
+                "end": 6171,
+                "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+              }
+            ],
+            "claim_id": "literature-02",
+            "author_role": "literature",
+            "used_claim_ids": [],
+            "scope": "source",
+            "evidence_level": "curated",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "The provided corpus terminates at age 47.1, leaving a complete absence of clinical follow-up, recurrence status, or survival records for the subsequent 24-month window. This gap prevents any literature-based inference regarding the patient's status at age 49.1.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "literature-03",
+            "author_role": "literature",
+            "used_claim_ids": [],
+            "scope": "source",
+            "evidence_level": "absent",
+            "material_status": "unknown",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+        ],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "timeline",
+      "executor": "timeline",
+      "output": {
+        "findings": [
+          {
+            "statement": "The patient is a 47.1-year-old female with a history of breast invasive ductal carcinoma diagnosed at age 40.6, treated with chemotherapy (doxorubicin, cyclophosphamide, paclitaxel, methotrexate, fluorouracil) and hormone therapy (tamoxifen), with imaging at age 46.569 indicating no progression.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "context-0",
+                "start": 0,
+                "end": 287,
+                "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+              },
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 4320,
+                "end": 4889,
+                "quote": "AGE: 44.506, treatment > treatment --> STOP_AGE: 45.0817, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 45.082, treatment > treatment --> STOP_AGE: 46.6434, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 46.569, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: PET, HAS_CANCER: No, PROCEDURE_TYPE: PET, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 46.569, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: PET, \n"
+              }
+            ],
+            "claim_id": "timeline-01",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "The provided clinical timeline terminates at age 47.1, leaving a complete absence of clinical follow-up, recurrence status, or survival records for the subsequent 24-month window.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "timeline-02",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "absent",
+            "material_status": "unknown",
+            "material_basis": "supplied"
+          },
+          {
+            "statement": "No death event or survival status is documented beyond age 47.1, preventing any inference regarding the patient's status at age 49.1.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "timeline-03",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "absent",
+            "material_status": "unknown",
+            "material_basis": "supplied"
+          }
+        ],
+        "unresolved": [
+          "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "Baseline demographic and diagnostic information is accurately captured.",
+            "citations": [],
+            "reviewer_role": "timeline"
+          },
+          {
+            "target_claim_id": "literature-02",
+            "verdict": "confirmed",
+            "note": "Detailed clinical timeline including treatments and monitoring is accurately captured.",
+            "citations": [],
+            "reviewer_role": "timeline"
+          },
+          {
+            "target_claim_id": "literature-03",
+            "verdict": "confirmed",
+            "note": "The corpus indeed terminates at age 47.1, leaving a gap for the subsequent 24 months.",
+            "citations": [],
+            "reviewer_role": "timeline"
+          }
+        ]
+      }
+    },
+    {
+      "role": "genomics",
+      "executor": "genomics",
+      "output": {
+        "findings": [
+          {
+            "statement": "The provided clinical timeline terminates at age 47.1, leaving a complete absence of clinical follow-up, recurrence status, or survival records for the subsequent 24-month window.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "genomics-01",
+            "author_role": "genomics",
+            "used_claim_ids": [],
+            "scope": "molecular",
+            "evidence_level": "absent",
+            "material_status": "unknown",
+            "material_basis": "supplied"
+          },
+          {
+            "statement": "No molecular profiling, genomic variant calls, or biomarker assays are present in the supplied material to inform prognosis or predict survival outcomes.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "genomics-02",
+            "author_role": "genomics",
+            "used_claim_ids": [],
+            "scope": "molecular",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "supplied"
+          }
+        ],
+        "unresolved": [
+          "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+        ],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "pathology",
+      "executor": "pathology",
+      "output": {
+        "findings": [
+          {
+            "statement": "The patient's diagnosis is breast invasive ductal carcinoma, histologically classified as infiltrating duct carcinoma (M8500/3), originating in the breast.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 0,
+                "end": 578,
+                "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+              },
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 578,
+                "end": 941,
+                "quote": "ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \n"
+              }
+            ],
+            "claim_id": "pathology-01",
+            "author_role": "pathology",
+            "used_claim_ids": [],
+            "scope": "pathologic",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "The disease is staged as AJCC IIB with regional lymph node involvement, and a primary tumor specimen (SAMPLE_ID: P-0022653-T01-IM6) is available.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 0,
+                "end": 578,
+                "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+              },
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 578,
+                "end": 941,
+                "quote": "ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \n"
+              }
+            ],
+            "claim_id": "pathology-02",
+            "author_role": "pathology",
+            "used_claim_ids": [],
+            "scope": "pathologic",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "Molecular profiling using the IMPACT468 panel shows microsatellite stability (MSS) and a TMB of 4.32, which aligns with the established breast invasive ductal carcinoma diagnosis.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 0,
+                "end": 578,
+                "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+              }
+            ],
+            "claim_id": "pathology-03",
+            "author_role": "pathology",
+            "used_claim_ids": [],
+            "scope": "pathologic",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+        ],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "drug",
+      "executor": "drug",
+      "output": {
+        "findings": [
+          {
+            "statement": "The patient was exposed to chemotherapy agents doxorubicin, cyclophosphamide, paclitaxel, methotrexate, and fluorouracil, and hormone therapy with tamoxifen, as documented in the clinical timeline.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 2058,
+                "end": 2606,
+                "quote": "AGE: 40.958, treatment > treatment --> STOP_AGE: 41.0735, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 40.958, treatment > treatment --> STOP_AGE: 41.0735, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 41.112, treatment > treatment --> STOP_AGE: 41.2269, SUBTYPE: Chemo, AGENT: PACLITAXEL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 41.331, treatment > treatment --> STOP_AGE: 41.3338, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \n"
+              },
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 5893,
+                "end": 6171,
+                "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+              }
+            ],
+            "claim_id": "drug-01",
+            "author_role": "drug",
+            "used_claim_ids": [],
+            "scope": "exposure",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "unknown: molecular-drug relationships (sensitivity or resistance) are not documented in the supplied material.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "drug-02",
+            "author_role": "drug",
+            "used_claim_ids": [],
+            "scope": "relationship",
+            "evidence_level": "absent",
+            "material_status": "unknown",
+            "material_basis": "supplied"
+          }
+        ],
+        "unresolved": [
+          "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+        ],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "verifier",
+      "executor": "verifier",
+      "output": {
+        "findings": [],
+        "unresolved": [
+          "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The statement accurately reflects context-0:f01, which establishes the patient's age (40.6), sex, ethnicity, diagnosis (breast invasive ductal carcinoma), and the documented time window (40.6 to 47.1 years).",
+            "citations": [
+              {
+                "document_id": "context-0",
+                "start": 0,
+                "end": 287,
+                "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "literature-02",
+            "verdict": "confirmed",
+            "note": "The claim correctly summarizes the contents of file-e834269f9007ee71db50, including tumor registry data, specific chemotherapy agents (doxorubicin, cyclophosphamide, paclitaxel, fluorouracil), hormone therapy (tamoxifen), and serial lab tests (CA 15-3, CEA) up to age 47.1.",
+            "citations": [
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 0,
+                "end": 578,
+                "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+              },
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 5893,
+                "end": 6171,
+                "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "literature-03",
+            "verdict": "confirmed",
+            "note": "The corpus explicitly terminates at age 47.1 (e.g., treatment records stop at 47.0653). There is a complete absence of clinical follow-up, recurrence status, or survival data for the subsequent 24-month window.",
+            "citations": [
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 5893,
+                "end": 6171,
+                "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "timeline-01",
+            "verdict": "confirmed",
+            "note": "The claim accurately synthesizes the patient's demographic and clinical history from the provided sources, including the diagnosis at age 40.6, the specific chemotherapy and hormone regimens, and the age 46.569 PET scan showing no progression.",
+            "citations": [
+              {
+                "document_id": "context-0",
+                "start": 0,
+                "end": 287,
+                "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+              },
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 4320,
+                "end": 4889,
+                "quote": "AGE: 44.506, treatment > treatment --> STOP_AGE: 45.0817, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 45.082, treatment > treatment --> STOP_AGE: 46.6434, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 46.569, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: PET, HAS_CANCER: No, PROCEDURE_TYPE: PET, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 46.569, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: PET, \n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "timeline-02",
+            "verdict": "confirmed",
+            "note": "The clinical timeline provided in the evidence ends at age 47.1. No post-47.1 follow-up, recurrence, or survival records are present in the supplied material.",
+            "citations": [
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 5893,
+                "end": 6171,
+                "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "timeline-03",
+            "verdict": "confirmed",
+            "note": "No death events or survival status updates are documented beyond age 47.1 in the provided timeline, preventing any inference regarding the patient's status at age 49.1.",
+            "citations": [],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "genomics-02",
+            "verdict": "rejected",
+            "note": "The claim incorrectly states that no molecular profiling is present. The evidence explicitly documents molecular profiling using the IMPACT468 panel, including microsatellite stability (MSS) and a TMB of 4.32.",
+            "citations": [
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 0,
+                "end": 578,
+                "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "pathology-01",
+            "verdict": "confirmed",
+            "note": "The diagnosis of breast invasive ductal carcinoma is confirmed by context-0:f01, and the histological classification as infiltrating duct carcinoma (M8500/3) is confirmed by file-e834269f9007ee71db50:f02.",
+            "citations": [
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 0,
+                "end": 578,
+                "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+              },
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 578,
+                "end": 941,
+                "quote": "ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "pathology-02",
+            "verdict": "confirmed",
+            "note": "The disease stage is documented as AJCC IIB with regional lymph node involvement, and the primary tumor specimen ID (P-0022653-T01-IM6) is explicitly listed in the evidence.",
+            "citations": [
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 0,
+                "end": 578,
+                "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+              },
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 578,
+                "end": 941,
+                "quote": "ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "pathology-03",
+            "verdict": "confirmed",
+            "note": "The claim correctly identifies the use of the IMPACT468 panel, microsatellite stability (MSS), and a TMB of 4.32, all of which are explicitly stated in the provided molecular pathology evidence.",
+            "citations": [
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 0,
+                "end": 578,
+                "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "drug-01",
+            "verdict": "confirmed",
+            "note": "The claim accurately lists the documented chemotherapy agents (doxorubicin, cyclophosphamide, paclitaxel, methotrexate, fluorouracil) and hormone therapy (tamoxifen) as recorded in the clinical timeline.",
+            "citations": [
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 2058,
+                "end": 2606,
+                "quote": "AGE: 40.958, treatment > treatment --> STOP_AGE: 41.0735, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 40.958, treatment > treatment --> STOP_AGE: 41.0735, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 41.112, treatment > treatment --> STOP_AGE: 41.2269, SUBTYPE: Chemo, AGENT: PACLITAXEL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 41.331, treatment > treatment --> STOP_AGE: 41.3338, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \n"
+              },
+              {
+                "document_id": "file-e834269f9007ee71db50",
+                "start": 5893,
+                "end": 6171,
+                "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "drug-02",
+            "verdict": "confirmed",
+            "note": "The claim correctly notes that molecular-drug relationships (sensitivity or resistance) are not documented in the supplied material, which is consistent with the available evidence.",
+            "citations": [],
+            "reviewer_role": "verifier"
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "calls": 10,
+    "http_attempts": 10,
+    "tool_calls": 6,
+    "input_tokens": 86506,
+    "output_tokens": 19835,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "fingerprint": "646767fc6d535fde69f4ef5df7a3d352a47dbdc90cdf9cc656122847f78a9f55",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "claims-v1",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [],
+        "query": "Given that the patient is 47.1 years old, will the patient be still alive in the next 24 months?",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "agent_started",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "payload_sha256": "3e0e55b0fd66230711864cfd8c9b3b5ccc197cd6e15ddaef17dd69bf733711e6",
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "token_reservation": 18798,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-e834269f9007ee71db50:f01",
+          "file-e834269f9007ee71db50:f02",
+          "file-e834269f9007ee71db50:f03",
+          "file-e834269f9007ee71db50:f04",
+          "file-e834269f9007ee71db50:f05",
+          "file-e834269f9007ee71db50:f06",
+          "file-e834269f9007ee71db50:f07",
+          "file-e834269f9007ee71db50:f12"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 287,
+              "chars_sent": 287,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-e834269f9007ee71db50": {
+              "candidates": 12,
+              "sent": 8,
+              "chars_total": 6171,
+              "chars_sent": 4031,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-e834269f9007ee71db50:f01",
+                "file-e834269f9007ee71db50:f02",
+                "file-e834269f9007ee71db50:f03",
+                "file-e834269f9007ee71db50:f04",
+                "file-e834269f9007ee71db50:f05",
+                "file-e834269f9007ee71db50:f06",
+                "file-e834269f9007ee71db50:f07",
+                "file-e834269f9007ee71db50:f12"
+              ]
+            }
+          },
+          "candidates": 13,
+          "sent": 9,
+          "chars_total": 6458,
+          "chars_sent": 4318,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [],
+          "required": {},
+          "guaranteed_unsent": []
+        },
+        "material_basis": "",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "model_usage",
+      "role": "literature",
+      "details": {
+        "input_tokens": 4902,
+        "output_tokens": 2072,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 96.686,
+        "evidence_fragments": 9
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "agent_reported",
+      "role": "literature",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "Document context-0 provides baseline demographic and diagnostic information for a 40.6-year-old female with breast invasive ductal carcinoma, covering the period from age 40.6 to 47.1. It measures initial disease classification and patient history but does not contain longitudinal survival data beyond the cutoff.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 287,
+                  "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "curated",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "Document file-e834269f9007ee71db50 contains a detailed clinical timeline including tumor registry data, surgical interventions, chemotherapy (doxorubicin, cyclophosphamide, paclitaxel, fluorouracil), hormone therapy (tamoxifen), and serial lab tests (CA 15-3, CEA) up to age 47.1. It measures disease management and monitoring but lacks post-47.1 outcome verification.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 5893,
+                  "end": 6171,
+                  "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "claim_id": "literature-02",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "curated",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The provided corpus terminates at age 47.1, leaving a complete absence of clinical follow-up, recurrence status, or survival records for the subsequent 24-month window. This gap prevents any literature-based inference regarding the patient's status at age 49.1.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "literature-03",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "agent_completed",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "output": {
+          "findings": [
+            {
+              "statement": "Document context-0 provides baseline demographic and diagnostic information for a 40.6-year-old female with breast invasive ductal carcinoma, covering the period from age 40.6 to 47.1. It measures initial disease classification and patient history but does not contain longitudinal survival data beyond the cutoff.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 287,
+                  "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "curated",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "Document file-e834269f9007ee71db50 contains a detailed clinical timeline including tumor registry data, surgical interventions, chemotherapy (doxorubicin, cyclophosphamide, paclitaxel, fluorouracil), hormone therapy (tamoxifen), and serial lab tests (CA 15-3, CEA) up to age 47.1. It measures disease management and monitoring but lacks post-47.1 outcome verification.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 5893,
+                  "end": 6171,
+                  "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "claim_id": "literature-02",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "curated",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The provided corpus terminates at age 47.1, leaving a complete absence of clinical follow-up, recurrence status, or survival records for the subsequent 24-month window. This gap prevents any literature-based inference regarding the patient's status at age 49.1.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "literature-03",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {},
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+            },
+            {
+              "id": "file-e834269f9007ee71db50",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \nAGE: 40.663, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA | BREAST, NOS (M8500/3 | C509), AJCC: IIB, CLINICAL_GROUP: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, \nAGE: 40.720, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 40.720, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 40.794, surgery --> SUBTYPE: SAMPLE, \nAGE: 40.794, surgery --> SUBTYPE: PROCEDURE, \nAGE: 40.920, labtest > ca_15-3_labs --> RESULT: 20, LR_UNIT_MEASURE: Units/ml, \nAGE: 40.920, labtest > cea_labs --> CEA: 1.3000 ng/ml          \nAGE: 40.947, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 40.947, diagnosis > p"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "payload_sha256": "0536b8882cf74a4a58b635e341c0bd17768df0050ab851441efc71c600f4bbb4",
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "token_reservation": 24818,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-e834269f9007ee71db50:f01",
+          "file-e834269f9007ee71db50:f02",
+          "file-e834269f9007ee71db50:f05",
+          "file-e834269f9007ee71db50:f07",
+          "file-e834269f9007ee71db50:f08",
+          "file-e834269f9007ee71db50:f09",
+          "file-e834269f9007ee71db50:f11",
+          "file-e834269f9007ee71db50:f12"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 287,
+              "chars_sent": 287,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-e834269f9007ee71db50": {
+              "candidates": 12,
+              "sent": 8,
+              "chars_total": 6171,
+              "chars_sent": 4036,
+              "key_records": 2,
+              "required_candidates": 6,
+              "required_sent": 6,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-e834269f9007ee71db50:f01",
+                "file-e834269f9007ee71db50:f02",
+                "file-e834269f9007ee71db50:f05",
+                "file-e834269f9007ee71db50:f07",
+                "file-e834269f9007ee71db50:f08",
+                "file-e834269f9007ee71db50:f09",
+                "file-e834269f9007ee71db50:f11",
+                "file-e834269f9007ee71db50:f12"
+              ]
+            }
+          },
+          "candidates": 13,
+          "sent": 9,
+          "chars_total": 6458,
+          "chars_sent": 4323,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 6,
+              "sent": 6,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 3,
+        "unresolved_items": 1,
+        "unresolved_by_role": {
+          "literature": 1
+        }
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "timeline",
+      "details": {
+        "input_tokens": 6907,
+        "output_tokens": 2111,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 67.183,
+        "evidence_fragments": 9
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "timeline",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient is a 47.1-year-old female with a history of breast invasive ductal carcinoma diagnosed at age 40.6, treated with chemotherapy (doxorubicin, cyclophosphamide, paclitaxel, methotrexate, fluorouracil) and hormone therapy (tamoxifen), with imaging at age 46.569 indicating no progression.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 287,
+                  "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 4320,
+                  "end": 4889,
+                  "quote": "AGE: 44.506, treatment > treatment --> STOP_AGE: 45.0817, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 45.082, treatment > treatment --> STOP_AGE: 46.6434, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 46.569, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: PET, HAS_CANCER: No, PROCEDURE_TYPE: PET, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 46.569, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: PET, \n"
+                }
+              ],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The provided clinical timeline terminates at age 47.1, leaving a complete absence of clinical follow-up, recurrence status, or survival records for the subsequent 24-month window.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-02",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            },
+            {
+              "statement": "No death event or survival status is documented beyond age 47.1, preventing any inference regarding the patient's status at age 49.1.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-03",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "Baseline demographic and diagnostic information is accurately captured.",
+              "citations": [],
+              "reviewer_role": "timeline"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "Detailed clinical timeline including treatments and monitoring is accurately captured.",
+              "citations": [],
+              "reviewer_role": "timeline"
+            },
+            {
+              "target_claim_id": "literature-03",
+              "verdict": "confirmed",
+              "note": "The corpus indeed terminates at age 47.1, leaving a gap for the subsequent 24 months.",
+              "citations": [],
+              "reviewer_role": "timeline"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient is a 47.1-year-old female with a history of breast invasive ductal carcinoma diagnosed at age 40.6, treated with chemotherapy (doxorubicin, cyclophosphamide, paclitaxel, methotrexate, fluorouracil) and hormone therapy (tamoxifen), with imaging at age 46.569 indicating no progression.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 287,
+                  "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 4320,
+                  "end": 4889,
+                  "quote": "AGE: 44.506, treatment > treatment --> STOP_AGE: 45.0817, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 45.082, treatment > treatment --> STOP_AGE: 46.6434, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 46.569, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: PET, HAS_CANCER: No, PROCEDURE_TYPE: PET, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 46.569, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: PET, \n"
+                }
+              ],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The provided clinical timeline terminates at age 47.1, leaving a complete absence of clinical follow-up, recurrence status, or survival records for the subsequent 24-month window.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-02",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            },
+            {
+              "statement": "No death event or survival status is documented beyond age 47.1, preventing any inference regarding the patient's status at age 49.1.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-03",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "Baseline demographic and diagnostic information is accurately captured.",
+              "citations": [],
+              "reviewer_role": "timeline"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "Detailed clinical timeline including treatments and monitoring is accurately captured.",
+              "citations": [],
+              "reviewer_role": "timeline"
+            },
+            {
+              "target_claim_id": "literature-03",
+              "verdict": "confirmed",
+              "note": "The corpus indeed terminates at age 47.1, leaving a gap for the subsequent 24 months.",
+              "citations": [],
+              "reviewer_role": "timeline"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown"
+            },
+            "file-e834269f9007ee71db50": {
+              "gene": "unknown",
+              "variant": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+            },
+            {
+              "id": "file-e834269f9007ee71db50",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \nAGE: 40.663, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA | BREAST, NOS (M8500/3 | C509), AJCC: IIB, CLINICAL_GROUP: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, \nAGE: 40.720, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 40.720, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 40.794, surgery --> SUBTYPE: SAMPLE, \nAGE: 40.794, surgery --> SUBTYPE: PROCEDURE, \nAGE: 40.920, labtest > ca_15-3_labs --> RESULT: 20, LR_UNIT_MEASURE: Units/ml, \nAGE: 40.920, labtest > cea_labs --> CEA: 1.3000 ng/ml          \nAGE: 40.947, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 40.947, diagnosis > p"
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "agent_started",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "payload_sha256": "f09d59b9953d8f394d7c39be41f1bc8d2b5e87a78256e64103babc458898b7f4",
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "token_reservation": 27538,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-e834269f9007ee71db50:f01",
+          "file-e834269f9007ee71db50:f02",
+          "file-e834269f9007ee71db50:f03",
+          "file-e834269f9007ee71db50:f04",
+          "file-e834269f9007ee71db50:f05",
+          "file-e834269f9007ee71db50:f06",
+          "file-e834269f9007ee71db50:f07",
+          "file-e834269f9007ee71db50:f12"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 287,
+              "chars_sent": 287,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-e834269f9007ee71db50": {
+              "candidates": 12,
+              "sent": 8,
+              "chars_total": 6171,
+              "chars_sent": 4031,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-e834269f9007ee71db50:f01",
+                "file-e834269f9007ee71db50:f02",
+                "file-e834269f9007ee71db50:f03",
+                "file-e834269f9007ee71db50:f04",
+                "file-e834269f9007ee71db50:f05",
+                "file-e834269f9007ee71db50:f06",
+                "file-e834269f9007ee71db50:f07",
+                "file-e834269f9007ee71db50:f12"
+              ]
+            }
+          },
+          "candidates": 13,
+          "sent": 9,
+          "chars_total": 6458,
+          "chars_sent": 4318,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "molecular"
+          ],
+          "required": {
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 6,
+        "unresolved_items": 2,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1
+        }
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "model_usage",
+      "role": "genomics",
+      "details": {
+        "input_tokens": 7604,
+        "output_tokens": 1700,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 59.39,
+        "evidence_fragments": 9
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_reported",
+      "role": "genomics",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided clinical timeline terminates at age 47.1, leaving a complete absence of clinical follow-up, recurrence status, or survival records for the subsequent 24-month window.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            },
+            {
+              "statement": "No molecular profiling, genomic variant calls, or biomarker assays are present in the supplied material to inform prognosis or predict survival outcomes.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "genomics-02",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "agent_completed",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided clinical timeline terminates at age 47.1, leaving a complete absence of clinical follow-up, recurrence status, or survival records for the subsequent 24-month window.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            },
+            {
+              "statement": "No molecular profiling, genomic variant calls, or biomarker assays are present in the supplied material to inform prognosis or predict survival outcomes.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "genomics-02",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            },
+            "file-e834269f9007ee71db50": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+            },
+            {
+              "id": "file-e834269f9007ee71db50",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \nAGE: 40.663, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA | BREAST, NOS (M8500/3 | C509), AJCC: IIB, CLINICAL_GROUP: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, \nAGE: 40.720, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 40.720, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 40.794, surgery --> SUBTYPE: SAMPLE, \nAGE: 40.794, surgery --> SUBTYPE: PROCEDURE, \nAGE: 40.920, labtest > ca_15-3_labs --> RESULT: 20, LR_UNIT_MEASURE: Units/ml, \nAGE: 40.920, labtest > cea_labs --> CEA: 1.3000 ng/ml          \nAGE: 40.947, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 40.947, diagnosis > p"
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 18,
+      "kind": "agent_started",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "payload_sha256": "9f291497409d7fbc68ccaf1f7a985afcf43d04552b8e76d02648001de34fa350",
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "token_reservation": 28750,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-e834269f9007ee71db50:f01",
+          "file-e834269f9007ee71db50:f02",
+          "file-e834269f9007ee71db50:f03",
+          "file-e834269f9007ee71db50:f04",
+          "file-e834269f9007ee71db50:f05",
+          "file-e834269f9007ee71db50:f06",
+          "file-e834269f9007ee71db50:f07",
+          "file-e834269f9007ee71db50:f12"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 287,
+              "chars_sent": 287,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-e834269f9007ee71db50": {
+              "candidates": 12,
+              "sent": 8,
+              "chars_total": 6171,
+              "chars_sent": 4031,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-e834269f9007ee71db50:f01",
+                "file-e834269f9007ee71db50:f02",
+                "file-e834269f9007ee71db50:f03",
+                "file-e834269f9007ee71db50:f04",
+                "file-e834269f9007ee71db50:f05",
+                "file-e834269f9007ee71db50:f06",
+                "file-e834269f9007ee71db50:f07",
+                "file-e834269f9007ee71db50:f12"
+              ]
+            }
+          },
+          "candidates": 13,
+          "sent": 9,
+          "chars_total": 6458,
+          "chars_sent": 4318,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "pathology"
+          ],
+          "required": {
+            "pathology": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 7,
+        "unresolved_items": 3,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "kind": "model_usage",
+      "role": "pathology",
+      "details": {
+        "input_tokens": 7918,
+        "output_tokens": 2072,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 54.516,
+        "evidence_fragments": 9
+      }
+    },
+    {
+      "sequence": 20,
+      "kind": "agent_reported",
+      "role": "pathology",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient's diagnosis is breast invasive ductal carcinoma, histologically classified as infiltrating duct carcinoma (M8500/3), originating in the breast.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 578,
+                  "end": 941,
+                  "quote": "ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \n"
+                }
+              ],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The disease is staged as AJCC IIB with regional lymph node involvement, and a primary tumor specimen (SAMPLE_ID: P-0022653-T01-IM6) is available.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 578,
+                  "end": 941,
+                  "quote": "ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \n"
+                }
+              ],
+              "claim_id": "pathology-02",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "Molecular profiling using the IMPACT468 panel shows microsatellite stability (MSS) and a TMB of 4.32, which aligns with the established breast invasive ductal carcinoma diagnosis.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                }
+              ],
+              "claim_id": "pathology-03",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 21,
+      "kind": "agent_completed",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient's diagnosis is breast invasive ductal carcinoma, histologically classified as infiltrating duct carcinoma (M8500/3), originating in the breast.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 578,
+                  "end": 941,
+                  "quote": "ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \n"
+                }
+              ],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The disease is staged as AJCC IIB with regional lymph node involvement, and a primary tumor specimen (SAMPLE_ID: P-0022653-T01-IM6) is available.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 578,
+                  "end": 941,
+                  "quote": "ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \n"
+                }
+              ],
+              "claim_id": "pathology-02",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "Molecular profiling using the IMPACT468 panel shows microsatellite stability (MSS) and a TMB of 4.32, which aligns with the established breast invasive ductal carcinoma diagnosis.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                }
+              ],
+              "claim_id": "pathology-03",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 22,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-e834269f9007ee71db50": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+            },
+            {
+              "id": "file-e834269f9007ee71db50",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \nAGE: 40.663, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA | BREAST, NOS (M8500/3 | C509), AJCC: IIB, CLINICAL_GROUP: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, \nAGE: 40.720, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 40.720, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 40.794, surgery --> SUBTYPE: SAMPLE, \nAGE: 40.794, surgery --> SUBTYPE: PROCEDURE, \nAGE: 40.920, labtest > ca_15-3_labs --> RESULT: 20, LR_UNIT_MEASURE: Units/ml, \nAGE: 40.920, labtest > cea_labs --> CEA: 1.3000 ng/ml          \nAGE: 40.947, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 40.947, diagnosis > p"
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "context-0": "unknown",
+            "file-e834269f9007ee71db50": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 23,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "aa4e70131682e42d4d29f9a05577310ee6106f27db4fbd6e7bfbc85a975288dd",
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "token_reservation": 31606,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-e834269f9007ee71db50:f01",
+          "file-e834269f9007ee71db50:f02",
+          "file-e834269f9007ee71db50:f05",
+          "file-e834269f9007ee71db50:f07",
+          "file-e834269f9007ee71db50:f08",
+          "file-e834269f9007ee71db50:f09",
+          "file-e834269f9007ee71db50:f11",
+          "file-e834269f9007ee71db50:f12"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 287,
+              "chars_sent": 287,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-e834269f9007ee71db50": {
+              "candidates": 12,
+              "sent": 8,
+              "chars_total": 6171,
+              "chars_sent": 4036,
+              "key_records": 2,
+              "required_candidates": 6,
+              "required_sent": 6,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-e834269f9007ee71db50:f01",
+                "file-e834269f9007ee71db50:f02",
+                "file-e834269f9007ee71db50:f05",
+                "file-e834269f9007ee71db50:f07",
+                "file-e834269f9007ee71db50:f08",
+                "file-e834269f9007ee71db50:f09",
+                "file-e834269f9007ee71db50:f11",
+                "file-e834269f9007ee71db50:f12"
+              ]
+            }
+          },
+          "candidates": 13,
+          "sent": 9,
+          "chars_total": 6458,
+          "chars_sent": 4323,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 6,
+              "sent": 6,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 10,
+        "unresolved_items": 4,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1
+        }
+      }
+    },
+    {
+      "sequence": 24,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 8833,
+        "output_tokens": 1850,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 31.045,
+        "evidence_fragments": 9
+      }
+    },
+    {
+      "sequence": 25,
+      "kind": "invalid_model_output",
+      "role": "drug",
+      "details": {
+        "error_type": "ValueError",
+        "previous_output": "{\n  \"findings\": [\n    {\n      \"statement\": \"The patient was exposed to chemotherapy agents doxorubicin, cyclophosphamide, paclitaxel, methotrexate, and fluorouracil, and hormone therapy with tamoxifen, as documented in the clinical timeline.\",\n      \"relation\": \"NEI\",\n      \"citations\": [\n        {\"evidence_id\": \"file-e834269f9007ee71db50:f05\"},\n        {\"evidence_id\": \"file-e834269f9007ee71db50:f12\"}\n      ],\n      \"used_claim_ids\": [],\n      \"scope\": \"exposure\",\n      \"evidence_level\": \"measured\",\n      \"material_status\": \"present\"\n    },\n    {\n      \"statement\": \"No molecular profiling, genomic variant calls, or biomarker assays are present in the supplied material to inform prognosis or predict survival outcomes, leaving molecular-drug relationships (sensitivity or resistance) undetermined.\",\n      \"relation\": \"NEI\",\n      \"citations\": [],\n      \"used_claim_ids\": [],\n      \"scope\": \"molecular\",\n      \"evidence_level\": \"absent\",\n      \"material_status\": \"not_applicable\"\n    }\n  ],\n  \"verdicts\": [],\n  \"unresolved\": [\n    \"Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline.\"\n  ],\n  \"requery\": \"\"\n}",
+        "validation_errors": [
+          {
+            "msg": "claim scope 'molecular' is outside this role's permitted scopes exposure, relationship"
+          }
+        ],
+        "valid_claim_ids": [
+          "genomics-01",
+          "genomics-02",
+          "literature-01",
+          "literature-02",
+          "literature-03",
+          "pathology-01",
+          "pathology-02",
+          "pathology-03",
+          "timeline-01",
+          "timeline-02",
+          "timeline-03"
+        ],
+        "output_truncated_in_trace": false
+      }
+    },
+    {
+      "sequence": 26,
+      "kind": "schema_repair_requested",
+      "role": "drug",
+      "details": {
+        "attempt": 1
+      }
+    },
+    {
+      "sequence": 27,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "ea13e6d9efa7e20d70fe9f00f3cae6138d03f5b35b800999284f22ab5ae3f458",
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "token_reservation": 33578,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-e834269f9007ee71db50:f01",
+          "file-e834269f9007ee71db50:f02",
+          "file-e834269f9007ee71db50:f05",
+          "file-e834269f9007ee71db50:f07",
+          "file-e834269f9007ee71db50:f08",
+          "file-e834269f9007ee71db50:f09",
+          "file-e834269f9007ee71db50:f11",
+          "file-e834269f9007ee71db50:f12"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 287,
+              "chars_sent": 287,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-e834269f9007ee71db50": {
+              "candidates": 12,
+              "sent": 8,
+              "chars_total": 6171,
+              "chars_sent": 4036,
+              "key_records": 2,
+              "required_candidates": 6,
+              "required_sent": 6,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-e834269f9007ee71db50:f01",
+                "file-e834269f9007ee71db50:f02",
+                "file-e834269f9007ee71db50:f05",
+                "file-e834269f9007ee71db50:f07",
+                "file-e834269f9007ee71db50:f08",
+                "file-e834269f9007ee71db50:f09",
+                "file-e834269f9007ee71db50:f11",
+                "file-e834269f9007ee71db50:f12"
+              ]
+            }
+          },
+          "candidates": 13,
+          "sent": 9,
+          "chars_total": 6458,
+          "chars_sent": 4323,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 6,
+              "sent": 6,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 10,
+        "unresolved_items": 4,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1
+        }
+      }
+    },
+    {
+      "sequence": 28,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 9381,
+        "output_tokens": 1829,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 33.734,
+        "evidence_fragments": 9
+      }
+    },
+    {
+      "sequence": 29,
+      "kind": "invalid_model_output",
+      "role": "drug",
+      "details": {
+        "error_type": "ValueError",
+        "previous_output": "{\n  \"findings\": [\n    {\n      \"statement\": \"The patient was exposed to chemotherapy agents doxorubicin, cyclophosphamide, paclitaxel, methotrexate, and fluorouracil, and hormone therapy with tamoxifen, as documented in the clinical timeline.\",\n      \"relation\": \"NEI\",\n      \"citations\": [\n        {\"evidence_id\": \"file-e8834269f9007ee71db50:f05\"},\n        {\"evidence_id\": \"file-e8834269f9007ee71db50:f12\"}\n      ],\n      \"used_claim_ids\": [],\n      \"scope\": \"exposure\",\n      \"evidence_level\": \"measured\",\n      \"material_status\": \"present\"\n    },\n    {\n      \"statement\": \"unknown: molecular-drug relationships (sensitivity or resistance) are not documented in the supplied material.\",\n      \"relation\": \"NEI\",\n      \"citations\": [],\n      \"used_claim_ids\": [],\n      \"scope\": \"relationship\",\n      \"evidence_level\": \"absent\",\n      \"material_status\": \"unknown\"\n    }\n  ],\n  \"verdicts\": [],\n  \"unresolved\": [\n    \"Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline.\"\n  ],\n  \"requery\": \"\"\n}",
+        "validation_errors": [
+          {
+            "msg": "citation refers to an evidence fragment that was not supplied for this stage"
+          }
+        ],
+        "valid_claim_ids": [
+          "genomics-01",
+          "genomics-02",
+          "literature-01",
+          "literature-02",
+          "literature-03",
+          "pathology-01",
+          "pathology-02",
+          "pathology-03",
+          "timeline-01",
+          "timeline-02",
+          "timeline-03"
+        ],
+        "output_truncated_in_trace": false
+      }
+    },
+    {
+      "sequence": 30,
+      "kind": "schema_repair_requested",
+      "role": "drug",
+      "details": {
+        "attempt": 2
+      }
+    },
+    {
+      "sequence": 31,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "59e1dd102514f934e29eda477626005b003042a9c752cc06af45d26e3a14f325",
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "token_reservation": 33444,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-e834269f9007ee71db50:f01",
+          "file-e834269f9007ee71db50:f02",
+          "file-e834269f9007ee71db50:f05",
+          "file-e834269f9007ee71db50:f07",
+          "file-e834269f9007ee71db50:f08",
+          "file-e834269f9007ee71db50:f09",
+          "file-e834269f9007ee71db50:f11",
+          "file-e834269f9007ee71db50:f12"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 287,
+              "chars_sent": 287,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-e834269f9007ee71db50": {
+              "candidates": 12,
+              "sent": 8,
+              "chars_total": 6171,
+              "chars_sent": 4036,
+              "key_records": 2,
+              "required_candidates": 6,
+              "required_sent": 6,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-e834269f9007ee71db50:f01",
+                "file-e834269f9007ee71db50:f02",
+                "file-e834269f9007ee71db50:f05",
+                "file-e834269f9007ee71db50:f07",
+                "file-e834269f9007ee71db50:f08",
+                "file-e834269f9007ee71db50:f09",
+                "file-e834269f9007ee71db50:f11",
+                "file-e834269f9007ee71db50:f12"
+              ]
+            }
+          },
+          "candidates": 13,
+          "sent": 9,
+          "chars_total": 6458,
+          "chars_sent": 4323,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 6,
+              "sent": 6,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 10,
+        "unresolved_items": 4,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1
+        }
+      }
+    },
+    {
+      "sequence": 32,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 9357,
+        "output_tokens": 1839,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 52.839,
+        "evidence_fragments": 9
+      }
+    },
+    {
+      "sequence": 33,
+      "kind": "agent_reported",
+      "role": "drug",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient was exposed to chemotherapy agents doxorubicin, cyclophosphamide, paclitaxel, methotrexate, and fluorouracil, and hormone therapy with tamoxifen, as documented in the clinical timeline.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 2058,
+                  "end": 2606,
+                  "quote": "AGE: 40.958, treatment > treatment --> STOP_AGE: 41.0735, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 40.958, treatment > treatment --> STOP_AGE: 41.0735, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 41.112, treatment > treatment --> STOP_AGE: 41.2269, SUBTYPE: Chemo, AGENT: PACLITAXEL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 41.331, treatment > treatment --> STOP_AGE: 41.3338, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \n"
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 5893,
+                  "end": 6171,
+                  "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "claim_id": "drug-01",
+              "author_role": "drug",
+              "used_claim_ids": [],
+              "scope": "exposure",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "unknown: molecular-drug relationships (sensitivity or resistance) are not documented in the supplied material.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "drug-02",
+              "author_role": "drug",
+              "used_claim_ids": [],
+              "scope": "relationship",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 34,
+      "kind": "agent_completed",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient was exposed to chemotherapy agents doxorubicin, cyclophosphamide, paclitaxel, methotrexate, and fluorouracil, and hormone therapy with tamoxifen, as documented in the clinical timeline.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 2058,
+                  "end": 2606,
+                  "quote": "AGE: 40.958, treatment > treatment --> STOP_AGE: 41.0735, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 40.958, treatment > treatment --> STOP_AGE: 41.0735, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 41.112, treatment > treatment --> STOP_AGE: 41.2269, SUBTYPE: Chemo, AGENT: PACLITAXEL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 41.331, treatment > treatment --> STOP_AGE: 41.3338, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \n"
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 5893,
+                  "end": 6171,
+                  "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "claim_id": "drug-01",
+              "author_role": "drug",
+              "used_claim_ids": [],
+              "scope": "exposure",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "unknown: molecular-drug relationships (sensitivity or resistance) are not documented in the supplied material.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "drug-02",
+              "author_role": "drug",
+              "used_claim_ids": [],
+              "scope": "relationship",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 35,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-e834269f9007ee71db50": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+            },
+            {
+              "id": "file-e834269f9007ee71db50",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \nAGE: 40.663, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA | BREAST, NOS (M8500/3 | C509), AJCC: IIB, CLINICAL_GROUP: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, \nAGE: 40.720, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 40.720, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 40.794, surgery --> SUBTYPE: SAMPLE, \nAGE: 40.794, surgery --> SUBTYPE: PROCEDURE, \nAGE: 40.920, labtest > ca_15-3_labs --> RESULT: 20, LR_UNIT_MEASURE: Units/ml, \nAGE: 40.920, labtest > cea_labs --> CEA: 1.3000 ng/ml          \nAGE: 40.947, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 40.947, diagnosis > p"
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "context-0": "unknown",
+            "file-e834269f9007ee71db50": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 36,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "7ebfcd474cbf1d2682b3509c5dfaeccc076e7a1e1b62f77bd381044f7611c4e2",
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "token_reservation": 32321,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-e834269f9007ee71db50:f01",
+          "file-e834269f9007ee71db50:f02",
+          "file-e834269f9007ee71db50:f05",
+          "file-e834269f9007ee71db50:f07",
+          "file-e834269f9007ee71db50:f08",
+          "file-e834269f9007ee71db50:f09",
+          "file-e834269f9007ee71db50:f11",
+          "file-e834269f9007ee71db50:f12"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 287,
+              "chars_sent": 287,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-e834269f9007ee71db50": {
+              "candidates": 12,
+              "sent": 8,
+              "chars_total": 6171,
+              "chars_sent": 4036,
+              "key_records": 2,
+              "required_candidates": 8,
+              "required_sent": 8,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-e834269f9007ee71db50:f01",
+                "file-e834269f9007ee71db50:f02",
+                "file-e834269f9007ee71db50:f05",
+                "file-e834269f9007ee71db50:f07",
+                "file-e834269f9007ee71db50:f08",
+                "file-e834269f9007ee71db50:f09",
+                "file-e834269f9007ee71db50:f11",
+                "file-e834269f9007ee71db50:f12"
+              ]
+            }
+          },
+          "candidates": 13,
+          "sent": 9,
+          "chars_total": 6458,
+          "chars_sent": 4323,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 6,
+              "sent": 6,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 12,
+        "unresolved_items": 5,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1,
+          "drug": 1
+        }
+      }
+    },
+    {
+      "sequence": 37,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 9023,
+        "output_tokens": 2775,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 71.737,
+        "evidence_fragments": 9
+      }
+    },
+    {
+      "sequence": 38,
+      "kind": "agent_reported",
+      "role": "verifier",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The statement accurately reflects context-0:f01, which establishes the patient's age (40.6), sex, ethnicity, diagnosis (breast invasive ductal carcinoma), and the documented time window (40.6 to 47.1 years).",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 287,
+                  "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "The claim correctly summarizes the contents of file-e834269f9007ee71db50, including tumor registry data, specific chemotherapy agents (doxorubicin, cyclophosphamide, paclitaxel, fluorouracil), hormone therapy (tamoxifen), and serial lab tests (CA 15-3, CEA) up to age 47.1.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 5893,
+                  "end": 6171,
+                  "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "literature-03",
+              "verdict": "confirmed",
+              "note": "The corpus explicitly terminates at age 47.1 (e.g., treatment records stop at 47.0653). There is a complete absence of clinical follow-up, recurrence status, or survival data for the subsequent 24-month window.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 5893,
+                  "end": 6171,
+                  "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "The claim accurately synthesizes the patient's demographic and clinical history from the provided sources, including the diagnosis at age 40.6, the specific chemotherapy and hormone regimens, and the age 46.569 PET scan showing no progression.",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 287,
+                  "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 4320,
+                  "end": 4889,
+                  "quote": "AGE: 44.506, treatment > treatment --> STOP_AGE: 45.0817, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 45.082, treatment > treatment --> STOP_AGE: 46.6434, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 46.569, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: PET, HAS_CANCER: No, PROCEDURE_TYPE: PET, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 46.569, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: PET, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-02",
+              "verdict": "confirmed",
+              "note": "The clinical timeline provided in the evidence ends at age 47.1. No post-47.1 follow-up, recurrence, or survival records are present in the supplied material.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 5893,
+                  "end": 6171,
+                  "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-03",
+              "verdict": "confirmed",
+              "note": "No death events or survival status updates are documented beyond age 47.1 in the provided timeline, preventing any inference regarding the patient's status at age 49.1.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-02",
+              "verdict": "rejected",
+              "note": "The claim incorrectly states that no molecular profiling is present. The evidence explicitly documents molecular profiling using the IMPACT468 panel, including microsatellite stability (MSS) and a TMB of 4.32.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "pathology-01",
+              "verdict": "confirmed",
+              "note": "The diagnosis of breast invasive ductal carcinoma is confirmed by context-0:f01, and the histological classification as infiltrating duct carcinoma (M8500/3) is confirmed by file-e834269f9007ee71db50:f02.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 578,
+                  "end": 941,
+                  "quote": "ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "pathology-02",
+              "verdict": "confirmed",
+              "note": "The disease stage is documented as AJCC IIB with regional lymph node involvement, and the primary tumor specimen ID (P-0022653-T01-IM6) is explicitly listed in the evidence.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 578,
+                  "end": 941,
+                  "quote": "ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "pathology-03",
+              "verdict": "confirmed",
+              "note": "The claim correctly identifies the use of the IMPACT468 panel, microsatellite stability (MSS), and a TMB of 4.32, all of which are explicitly stated in the provided molecular pathology evidence.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "drug-01",
+              "verdict": "confirmed",
+              "note": "The claim accurately lists the documented chemotherapy agents (doxorubicin, cyclophosphamide, paclitaxel, methotrexate, fluorouracil) and hormone therapy (tamoxifen) as recorded in the clinical timeline.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 2058,
+                  "end": 2606,
+                  "quote": "AGE: 40.958, treatment > treatment --> STOP_AGE: 41.0735, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 40.958, treatment > treatment --> STOP_AGE: 41.0735, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 41.112, treatment > treatment --> STOP_AGE: 41.2269, SUBTYPE: Chemo, AGENT: PACLITAXEL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 41.331, treatment > treatment --> STOP_AGE: 41.3338, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \n"
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 5893,
+                  "end": 6171,
+                  "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "drug-02",
+              "verdict": "confirmed",
+              "note": "The claim correctly notes that molecular-drug relationships (sensitivity or resistance) are not documented in the supplied material, which is consistent with the available evidence.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 39,
+      "kind": "agent_completed",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The statement accurately reflects context-0:f01, which establishes the patient's age (40.6), sex, ethnicity, diagnosis (breast invasive ductal carcinoma), and the documented time window (40.6 to 47.1 years).",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 287,
+                  "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "The claim correctly summarizes the contents of file-e834269f9007ee71db50, including tumor registry data, specific chemotherapy agents (doxorubicin, cyclophosphamide, paclitaxel, fluorouracil), hormone therapy (tamoxifen), and serial lab tests (CA 15-3, CEA) up to age 47.1.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 5893,
+                  "end": 6171,
+                  "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "literature-03",
+              "verdict": "confirmed",
+              "note": "The corpus explicitly terminates at age 47.1 (e.g., treatment records stop at 47.0653). There is a complete absence of clinical follow-up, recurrence status, or survival data for the subsequent 24-month window.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 5893,
+                  "end": 6171,
+                  "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "The claim accurately synthesizes the patient's demographic and clinical history from the provided sources, including the diagnosis at age 40.6, the specific chemotherapy and hormone regimens, and the age 46.569 PET scan showing no progression.",
+              "citations": [
+                {
+                  "document_id": "context-0",
+                  "start": 0,
+                  "end": 287,
+                  "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 4320,
+                  "end": 4889,
+                  "quote": "AGE: 44.506, treatment > treatment --> STOP_AGE: 45.0817, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 45.082, treatment > treatment --> STOP_AGE: 46.6434, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 46.569, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: PET, HAS_CANCER: No, PROCEDURE_TYPE: PET, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 46.569, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: PET, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-02",
+              "verdict": "confirmed",
+              "note": "The clinical timeline provided in the evidence ends at age 47.1. No post-47.1 follow-up, recurrence, or survival records are present in the supplied material.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 5893,
+                  "end": 6171,
+                  "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-03",
+              "verdict": "confirmed",
+              "note": "No death events or survival status updates are documented beyond age 47.1 in the provided timeline, preventing any inference regarding the patient's status at age 49.1.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-02",
+              "verdict": "rejected",
+              "note": "The claim incorrectly states that no molecular profiling is present. The evidence explicitly documents molecular profiling using the IMPACT468 panel, including microsatellite stability (MSS) and a TMB of 4.32.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "pathology-01",
+              "verdict": "confirmed",
+              "note": "The diagnosis of breast invasive ductal carcinoma is confirmed by context-0:f01, and the histological classification as infiltrating duct carcinoma (M8500/3) is confirmed by file-e834269f9007ee71db50:f02.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 578,
+                  "end": 941,
+                  "quote": "ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "pathology-02",
+              "verdict": "confirmed",
+              "note": "The disease stage is documented as AJCC IIB with regional lymph node involvement, and the primary tumor specimen ID (P-0022653-T01-IM6) is explicitly listed in the evidence.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 578,
+                  "end": 941,
+                  "quote": "ICD_O_HISTOLOGY_DESCRIPTION: Infiltrating Duct Carcinoma, DIAGNOSIS_DESCRIPTION: Breast, TMB_NONSYNONYMOUS: 4.323490475, DX_DESCRIPTION: INFILTRATING DUCT CARCINOMA, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: IIB, CLINICAL_GROUP_y: 2B, PATH_GROUP: 2B, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, lymph nodes only, ICD_10: C50.9, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "pathology-03",
+              "verdict": "confirmed",
+              "note": "The claim correctly identifies the use of the IMPACT468 panel, microsatellite stability (MSS), and a TMB of 4.32, all of which are explicitly stated in the provided molecular pathology evidence.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 0,
+                  "end": 578,
+                  "quote": "AGE: 40.663, samples > clinical_sample --> SAMPLE_ID: P-0022653-T01-IM6, PATIENT_ID: P-0022653, CANCER_TYPE: Breast Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Breast, CANCER_TYPE_DETAILED: Breast Invasive Ductal Carcinoma, GENE_PANEL: IMPACT468, SAMPLE_COVERAGE: 691, TUMOR_PURITY: 40.0, ONCOTREE_CODE: IDC, MSI_COMMENT: MICROSATELLITE STABLE (MSS). See MSI note below., MSI_SCORE: 1.57, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 2.0, CLINICAL_SUMMARY: Regional,Lymph Nodes Only, "
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "drug-01",
+              "verdict": "confirmed",
+              "note": "The claim accurately lists the documented chemotherapy agents (doxorubicin, cyclophosphamide, paclitaxel, methotrexate, fluorouracil) and hormone therapy (tamoxifen) as recorded in the clinical timeline.",
+              "citations": [
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 2058,
+                  "end": 2606,
+                  "quote": "AGE: 40.958, treatment > treatment --> STOP_AGE: 41.0735, SUBTYPE: Chemo, AGENT: DOXORUBICIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 40.958, treatment > treatment --> STOP_AGE: 41.0735, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 41.112, treatment > treatment --> STOP_AGE: 41.2269, SUBTYPE: Chemo, AGENT: PACLITAXEL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 41.331, treatment > treatment --> STOP_AGE: 41.3338, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \n"
+                },
+                {
+                  "document_id": "file-e834269f9007ee71db50",
+                  "start": 5893,
+                  "end": 6171,
+                  "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "drug-02",
+              "verdict": "confirmed",
+              "note": "The claim correctly notes that molecular-drug relationships (sensitivity or resistance) are not documented in the supplied material, which is consistent with the available evidence.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 40,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "334e3955976a4fab72528df7a41eb55cd6851d7c280be697d155b6e3d0f54e4c",
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "token_reservation": 38993,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-e834269f9007ee71db50:f01",
+          "file-e834269f9007ee71db50:f02",
+          "file-e834269f9007ee71db50:f05",
+          "file-e834269f9007ee71db50:f07",
+          "file-e834269f9007ee71db50:f08",
+          "file-e834269f9007ee71db50:f09",
+          "file-e834269f9007ee71db50:f11",
+          "file-e834269f9007ee71db50:f12"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 287,
+              "chars_sent": 287,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-e834269f9007ee71db50": {
+              "candidates": 12,
+              "sent": 8,
+              "chars_total": 6171,
+              "chars_sent": 4036,
+              "key_records": 2,
+              "required_candidates": 8,
+              "required_sent": 8,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-e834269f9007ee71db50:f01",
+                "file-e834269f9007ee71db50:f02",
+                "file-e834269f9007ee71db50:f05",
+                "file-e834269f9007ee71db50:f07",
+                "file-e834269f9007ee71db50:f08",
+                "file-e834269f9007ee71db50:f09",
+                "file-e834269f9007ee71db50:f11",
+                "file-e834269f9007ee71db50:f12"
+              ]
+            }
+          },
+          "candidates": 13,
+          "sent": 9,
+          "chars_total": 6458,
+          "chars_sent": 4323,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 6,
+              "sent": 6,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 12,
+        "unresolved_items": 6,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1,
+          "drug": 1,
+          "verifier": 1
+        }
+      }
+    },
+    {
+      "sequence": 41,
+      "kind": "verification_ledger",
+      "role": "decision",
+      "details": {
+        "entries": [
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "timeline",
+            "verdict": "confirmed",
+            "reason": "Baseline demographic and diagnostic information is accurately captured.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-02",
+            "claim_author": "literature",
+            "reviewer": "timeline",
+            "verdict": "confirmed",
+            "reason": "Detailed clinical timeline including treatments and monitoring is accurately captured.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-03",
+            "claim_author": "literature",
+            "reviewer": "timeline",
+            "verdict": "confirmed",
+            "reason": "The corpus indeed terminates at age 47.1, leaving a gap for the subsequent 24 months.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The statement accurately reflects context-0:f01, which establishes the patient's age (40.6), sex, ethnicity, diagnosis (breast invasive ductal carcinoma), and the documented time window (40.6 to 47.1 years).",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "context-0:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "literature-02",
+            "claim_author": "literature",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim correctly summarizes the contents of file-e834269f9007ee71db50, including tumor registry data, specific chemotherapy agents (doxorubicin, cyclophosphamide, paclitaxel, fluorouracil), hormone therapy (tamoxifen), and serial lab tests (CA 15-3, CEA) up to age 47.1.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f01"
+              },
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f12"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "literature-03",
+            "claim_author": "literature",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The corpus explicitly terminates at age 47.1 (e.g., treatment records stop at 47.0653). There is a complete absence of clinical follow-up, recurrence status, or survival data for the subsequent 24-month window.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f12"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-01",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim accurately synthesizes the patient's demographic and clinical history from the provided sources, including the diagnosis at age 40.6, the specific chemotherapy and hormone regimens, and the age 46.569 PET scan showing no progression.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "context-0:f01"
+              },
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f09"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-02",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The clinical timeline provided in the evidence ends at age 47.1. No post-47.1 follow-up, recurrence, or survival records are present in the supplied material.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f12"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-03",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "No death events or survival status updates are documented beyond age 47.1 in the provided timeline, preventing any inference regarding the patient's status at age 49.1.",
+            "final": true,
+            "citations": []
+          },
+          {
+            "target_claim_id": "genomics-02",
+            "claim_author": "genomics",
+            "reviewer": "verifier",
+            "verdict": "rejected",
+            "reason": "The claim incorrectly states that no molecular profiling is present. The evidence explicitly documents molecular profiling using the IMPACT468 panel, including microsatellite stability (MSS) and a TMB of 4.32.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "pathology-01",
+            "claim_author": "pathology",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The diagnosis of breast invasive ductal carcinoma is confirmed by context-0:f01, and the histological classification as infiltrating duct carcinoma (M8500/3) is confirmed by file-e834269f9007ee71db50:f02.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f01"
+              },
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f02"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "pathology-02",
+            "claim_author": "pathology",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The disease stage is documented as AJCC IIB with regional lymph node involvement, and the primary tumor specimen ID (P-0022653-T01-IM6) is explicitly listed in the evidence.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f01"
+              },
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f02"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "pathology-03",
+            "claim_author": "pathology",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim correctly identifies the use of the IMPACT468 panel, microsatellite stability (MSS), and a TMB of 4.32, all of which are explicitly stated in the provided molecular pathology evidence.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "drug-01",
+            "claim_author": "drug",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim accurately lists the documented chemotherapy agents (doxorubicin, cyclophosphamide, paclitaxel, methotrexate, fluorouracil) and hormone therapy (tamoxifen) as recorded in the clinical timeline.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f05"
+              },
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f12"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "drug-02",
+            "claim_author": "drug",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim correctly notes that molecular-drug relationships (sensitivity or resistance) are not documented in the supplied material, which is consistent with the available evidence.",
+            "final": true,
+            "citations": []
+          }
+        ],
+        "reviews": 15,
+        "claims_reviewed": 12,
+        "final_verdicts": 12,
+        "rejected": [
+          "genomics-02"
+        ],
+        "insufficient": []
+      }
+    },
+    {
+      "sequence": 42,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 11042,
+        "output_tokens": 1795,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 32.031,
+        "evidence_fragments": 9
+      }
+    },
+    {
+      "sequence": 43,
+      "kind": "invalid_model_output",
+      "role": "decision",
+      "details": {
+        "error_type": "ValueError",
+        "previous_output": "{\n  \"answer\": \"NEI\",\n  \"explanation\": \"The provided clinical timeline and source documents explicitly terminate at age 47.1, documenting a complete absence of clinical follow-up, recurrence status, or survival records for the subsequent 24-month window. While the patient has a documented history of stage IIB breast invasive ductal carcinoma diagnosed at age 40.6, treated with multiple chemotherapy regimens and hormone therapy, with imaging at age 46.569 showing no progression, the lack of longitudinal data beyond the cutoff prevents any inference regarding survival status at age 49.1. Consequently, the requested outcome is not addressable from the available evidence.\",\n  \"citations\": [\n    {\"evidence_id\": \"literature-03\"},\n    {\"evidence_id\": \"timeline-02\"},\n    {\"evidence_id\": \"timeline-03\"}\n  ],\n  \"unresolved\": [\n    \"Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline.\"\n  ],\n  \"confidence\": null,\n  \"adopted_claim_ids\": [\n    \"literature-03\",\n    \"timeline-02\",\n    \"timeline-03\"\n  ],\n  \"rejected_claim_ids\": [\n    \"genomics-02\"\n  ]\n}",
+        "validation_errors": [
+          {
+            "msg": "citation refers to an evidence fragment that was not supplied for this stage"
+          }
+        ],
+        "valid_claim_ids": [
+          "drug-01",
+          "drug-02",
+          "genomics-01",
+          "genomics-02",
+          "literature-01",
+          "literature-02",
+          "literature-03",
+          "pathology-01",
+          "pathology-02",
+          "pathology-03",
+          "timeline-01",
+          "timeline-02",
+          "timeline-03"
+        ],
+        "output_truncated_in_trace": false
+      }
+    },
+    {
+      "sequence": 44,
+      "kind": "schema_repair_requested",
+      "role": "decision",
+      "details": {
+        "attempt": 1
+      }
+    },
+    {
+      "sequence": 45,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "eaaada0ee462eedad61654aa5e38f4c54908c0f1cd502539cd237b9e40ad097f",
+        "source_ids": [
+          "context-0",
+          "file-e834269f9007ee71db50"
+        ],
+        "token_reservation": 40874,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-e834269f9007ee71db50:f01",
+          "file-e834269f9007ee71db50:f02",
+          "file-e834269f9007ee71db50:f05",
+          "file-e834269f9007ee71db50:f07",
+          "file-e834269f9007ee71db50:f08",
+          "file-e834269f9007ee71db50:f09",
+          "file-e834269f9007ee71db50:f11",
+          "file-e834269f9007ee71db50:f12"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 287,
+              "chars_sent": 287,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-e834269f9007ee71db50": {
+              "candidates": 12,
+              "sent": 8,
+              "chars_total": 6171,
+              "chars_sent": 4036,
+              "key_records": 2,
+              "required_candidates": 8,
+              "required_sent": 8,
+              "over_fragment_cap": 0,
+              "share_characters": 6000,
+              "evidence_ids": [
+                "file-e834269f9007ee71db50:f01",
+                "file-e834269f9007ee71db50:f02",
+                "file-e834269f9007ee71db50:f05",
+                "file-e834269f9007ee71db50:f07",
+                "file-e834269f9007ee71db50:f08",
+                "file-e834269f9007ee71db50:f09",
+                "file-e834269f9007ee71db50:f11",
+                "file-e834269f9007ee71db50:f12"
+              ]
+            }
+          },
+          "candidates": 13,
+          "sent": 9,
+          "chars_total": 6458,
+          "chars_sent": 4323,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 6,
+              "sent": 6,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 12,
+        "unresolved_items": 6,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1,
+          "drug": 1,
+          "verifier": 1
+        }
+      }
+    },
+    {
+      "sequence": 46,
+      "kind": "verification_ledger",
+      "role": "decision",
+      "details": {
+        "entries": [
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "timeline",
+            "verdict": "confirmed",
+            "reason": "Baseline demographic and diagnostic information is accurately captured.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-02",
+            "claim_author": "literature",
+            "reviewer": "timeline",
+            "verdict": "confirmed",
+            "reason": "Detailed clinical timeline including treatments and monitoring is accurately captured.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-03",
+            "claim_author": "literature",
+            "reviewer": "timeline",
+            "verdict": "confirmed",
+            "reason": "The corpus indeed terminates at age 47.1, leaving a gap for the subsequent 24 months.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The statement accurately reflects context-0:f01, which establishes the patient's age (40.6), sex, ethnicity, diagnosis (breast invasive ductal carcinoma), and the documented time window (40.6 to 47.1 years).",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "context-0:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "literature-02",
+            "claim_author": "literature",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim correctly summarizes the contents of file-e834269f9007ee71db50, including tumor registry data, specific chemotherapy agents (doxorubicin, cyclophosphamide, paclitaxel, fluorouracil), hormone therapy (tamoxifen), and serial lab tests (CA 15-3, CEA) up to age 47.1.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f01"
+              },
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f12"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "literature-03",
+            "claim_author": "literature",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The corpus explicitly terminates at age 47.1 (e.g., treatment records stop at 47.0653). There is a complete absence of clinical follow-up, recurrence status, or survival data for the subsequent 24-month window.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f12"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-01",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim accurately synthesizes the patient's demographic and clinical history from the provided sources, including the diagnosis at age 40.6, the specific chemotherapy and hormone regimens, and the age 46.569 PET scan showing no progression.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "context-0:f01"
+              },
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f09"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-02",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The clinical timeline provided in the evidence ends at age 47.1. No post-47.1 follow-up, recurrence, or survival records are present in the supplied material.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f12"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-03",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "No death events or survival status updates are documented beyond age 47.1 in the provided timeline, preventing any inference regarding the patient's status at age 49.1.",
+            "final": true,
+            "citations": []
+          },
+          {
+            "target_claim_id": "genomics-02",
+            "claim_author": "genomics",
+            "reviewer": "verifier",
+            "verdict": "rejected",
+            "reason": "The claim incorrectly states that no molecular profiling is present. The evidence explicitly documents molecular profiling using the IMPACT468 panel, including microsatellite stability (MSS) and a TMB of 4.32.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "pathology-01",
+            "claim_author": "pathology",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The diagnosis of breast invasive ductal carcinoma is confirmed by context-0:f01, and the histological classification as infiltrating duct carcinoma (M8500/3) is confirmed by file-e834269f9007ee71db50:f02.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f01"
+              },
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f02"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "pathology-02",
+            "claim_author": "pathology",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The disease stage is documented as AJCC IIB with regional lymph node involvement, and the primary tumor specimen ID (P-0022653-T01-IM6) is explicitly listed in the evidence.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f01"
+              },
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f02"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "pathology-03",
+            "claim_author": "pathology",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim correctly identifies the use of the IMPACT468 panel, microsatellite stability (MSS), and a TMB of 4.32, all of which are explicitly stated in the provided molecular pathology evidence.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "drug-01",
+            "claim_author": "drug",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim accurately lists the documented chemotherapy agents (doxorubicin, cyclophosphamide, paclitaxel, methotrexate, fluorouracil) and hormone therapy (tamoxifen) as recorded in the clinical timeline.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f05"
+              },
+              {
+                "evidence_id": "file-e834269f9007ee71db50:f12"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "drug-02",
+            "claim_author": "drug",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim correctly notes that molecular-drug relationships (sensitivity or resistance) are not documented in the supplied material, which is consistent with the available evidence.",
+            "final": true,
+            "citations": []
+          }
+        ],
+        "reviews": 15,
+        "claims_reviewed": 12,
+        "final_verdicts": 12,
+        "rejected": [
+          "genomics-02"
+        ],
+        "insufficient": []
+      }
+    },
+    {
+      "sequence": 47,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 11539,
+        "output_tokens": 1792,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 38.668,
+        "evidence_fragments": 9
+      }
+    },
+    {
+      "sequence": 48,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "A",
+          "explanation": "The patient is a 47.1-year-old female with Stage IIB breast invasive ductal carcinoma, diagnosed at age 40.6, treated with multi-agent chemotherapy and tamoxifen, with imaging at age 46.569 showing no progression. The clinical timeline terminates at age 47.1, leaving a complete absence of post-cutoff follow-up, recurrence status, or survival records for the subsequent 24-month window. Given the early-stage diagnosis, documented response to therapy, and favorable historical prognosis for Stage IIB breast cancer, the most plausible outcome is continued survival, though this is a prediction beyond the verified data window.",
+          "citations": [
+            {
+              "document_id": "context-0",
+              "start": 0,
+              "end": 287,
+              "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+            },
+            {
+              "document_id": "file-e834269f9007ee71db50",
+              "start": 4320,
+              "end": 4889,
+              "quote": "AGE: 44.506, treatment > treatment --> STOP_AGE: 45.0817, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 45.082, treatment > treatment --> STOP_AGE: 46.6434, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 46.569, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: PET, HAS_CANCER: No, PROCEDURE_TYPE: PET, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 46.569, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: PET, \n"
+            },
+            {
+              "document_id": "file-e834269f9007ee71db50",
+              "start": 5893,
+              "end": 6171,
+              "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+            }
+          ],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "confidence": null,
+          "adopted_claim_ids": [
+            "literature-03",
+            "timeline-02",
+            "timeline-01"
+          ],
+          "rejected_claim_ids": [
+            "genomics-02"
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 49,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "output": {
+          "answer": "A",
+          "explanation": "The patient is a 47.1-year-old female with Stage IIB breast invasive ductal carcinoma, diagnosed at age 40.6, treated with multi-agent chemotherapy and tamoxifen, with imaging at age 46.569 showing no progression. The clinical timeline terminates at age 47.1, leaving a complete absence of post-cutoff follow-up, recurrence status, or survival records for the subsequent 24-month window. Given the early-stage diagnosis, documented response to therapy, and favorable historical prognosis for Stage IIB breast cancer, the most plausible outcome is continued survival, though this is a prediction beyond the verified data window.",
+          "citations": [
+            {
+              "document_id": "context-0",
+              "start": 0,
+              "end": 287,
+              "quote": "The patient is a 40.6-year-old White female of non-Hispanic ethnicity with a diagnosis of breast invasive ductal carcinoma. Comprehensive medical history, including details on diagnosis, treatments, and lab tests, is available for the time period spanning from 40.6 to 47.1 years of age."
+            },
+            {
+              "document_id": "file-e834269f9007ee71db50",
+              "start": 4320,
+              "end": 4889,
+              "quote": "AGE: 44.506, treatment > treatment --> STOP_AGE: 45.0817, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 45.082, treatment > treatment --> STOP_AGE: 46.6434, SUBTYPE: Hormone, AGENT: TAMOXIFEN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 1, \nAGE: 46.569, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: PET, HAS_CANCER: No, PROCEDURE_TYPE: PET, PELVIS: No, OTHER: Yes, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: No, \nAGE: 46.569, diagnosis > progression --> PROGRESSION: N, PROCEDURE_TYPE: PET, \n"
+            },
+            {
+              "document_id": "file-e834269f9007ee71db50",
+              "start": 5893,
+              "end": 6171,
+              "quote": "AGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: FLUOROURACIL, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \nAGE: 46.731, treatment > treatment --> STOP_AGE: 47.0653, SUBTYPE: Chemo, AGENT: CYCLOPHOSPHAMIDE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+            }
+          ],
+          "unresolved": [
+            "Post-47.1 survival status and disease progression trajectory are not documented in the provided clinical timeline."
+          ],
+          "confidence": null,
+          "adopted_claim_ids": [
+            "literature-03",
+            "timeline-02",
+            "timeline-01"
+          ],
+          "rejected_claim_ids": [
+            "genomics-02"
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 50,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "context-0",
+    "file-e834269f9007ee71db50"
+  ],
+  "duration_seconds": 538.028819,
+  "research_only": true
+}

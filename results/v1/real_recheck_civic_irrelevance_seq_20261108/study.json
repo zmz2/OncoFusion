@@ -1,0 +1,172 @@
+{
+  "plan": {
+    "schema_version": "1.0",
+    "name": "v1_recheck_civic_irrelevance",
+    "task": "verification",
+    "split": "test",
+    "seeds": [
+      0
+    ],
+    "group_limit": null,
+    "case_ids": [
+      "civic-00693f9a-e755-4b1a-a158-c6ea8d40247b"
+    ],
+    "treatments": [
+      {
+        "name": "v1_class",
+        "preset": "full",
+        "overrides": {
+          "mode": "multi",
+          "ablations": {
+            "variant_normalization": true,
+            "disease_matching": true,
+            "drug_polarity": true,
+            "retrieval_reranking": true,
+            "timeline_structure": true,
+            "external_verification": true,
+            "source_deduplication": true,
+            "structured_board": true,
+            "targeted_requery": false
+          },
+          "delegated_roles": [],
+          "routing": "fixed",
+          "workflow_backend": "langgraph",
+          "evidence_first": true,
+          "specialist_contracts": true,
+          "latest_role_board": true,
+          "max_calls": 12,
+          "max_tool_calls": 12,
+          "max_total_tokens": 260000,
+          "max_output_tokens": 5000,
+          "citation_mode": "fragment",
+          "fragment_chars": 600,
+          "max_fragments_per_document": 8,
+          "fragment_budget": 12000,
+          "findings_limit": 3,
+          "interaction_protocol": "claims-v1",
+          "schema_retries": 2,
+          "top_k": 6,
+          "candidate_k": 20,
+          "seed": 0,
+          "temperature": 0.0
+        },
+        "perturbation": "none"
+      },
+      {
+        "name": "single_tools_shared_evidence",
+        "preset": "single_tools",
+        "overrides": {
+          "mode": "single_tools",
+          "ablations": {
+            "variant_normalization": true,
+            "disease_matching": true,
+            "drug_polarity": true,
+            "retrieval_reranking": true,
+            "timeline_structure": true,
+            "external_verification": true,
+            "source_deduplication": true,
+            "structured_board": true,
+            "targeted_requery": false
+          },
+          "delegated_roles": [],
+          "routing": "fixed",
+          "workflow_backend": "langgraph",
+          "evidence_first": true,
+          "specialist_contracts": false,
+          "latest_role_board": false,
+          "max_calls": 12,
+          "max_tool_calls": 12,
+          "max_total_tokens": 260000,
+          "max_output_tokens": 5000,
+          "citation_mode": "fragment",
+          "fragment_chars": 600,
+          "max_fragments_per_document": 8,
+          "fragment_budget": 12000,
+          "findings_limit": 3,
+          "interaction_protocol": "legacy",
+          "schema_retries": 2,
+          "top_k": 6,
+          "candidate_k": 20,
+          "seed": 0,
+          "temperature": 0.0
+        },
+        "perturbation": "none"
+      }
+    ],
+    "reference": "v1_class",
+    "bootstrap_repeats": 2000
+  },
+  "table": [
+    {
+      "treatment": "v1_class",
+      "preset": "full",
+      "perturbation": "none",
+      "accuracy_mean": 1.0,
+      "accuracy_std": 0,
+      "macro_f1_mean": 0.3333333333333333,
+      "failed_or_incomplete": 0,
+      "observed_calls": 8,
+      "observed_input_tokens": 22693,
+      "observed_output_tokens": 13449,
+      "known_cost_usd": 0.0,
+      "cost_complete": false,
+      "usage_incomplete_runs": 0,
+      "delta_vs_reference": {
+        "mean_delta": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "groups": 1,
+        "repeats": 2000,
+        "seed": 0
+      }
+    },
+    {
+      "treatment": "single_tools_shared_evidence",
+      "preset": "single_tools",
+      "perturbation": "none",
+      "accuracy_mean": 1.0,
+      "accuracy_std": 0,
+      "macro_f1_mean": 0.3333333333333333,
+      "failed_or_incomplete": 0,
+      "observed_calls": 1,
+      "observed_input_tokens": 1643,
+      "observed_output_tokens": 942,
+      "known_cost_usd": 0.0,
+      "cost_complete": false,
+      "usage_incomplete_runs": 0,
+      "delta_vs_reference": {
+        "mean_delta": 0,
+        "ci95": [
+          0,
+          0
+        ],
+        "groups": 1,
+        "repeats": 2000,
+        "seed": 0
+      }
+    }
+  ],
+  "inference": "CI clusters by patient/article; repeated seeds averaged within case before bootstrap. Exploratory comparisons are not multiplicity-adjusted.",
+  "identity": "2c498a6a0d910dde3a0cb97f87fef21876a36d103a86cc8763cb49914855a870",
+  "simulated": false,
+  "case_count": 1,
+  "group_count": 1,
+  "role_coverage": {
+    "cases": 1,
+    "patient_or_article_groups": 1,
+    "heterogeneous_input_cases": 0,
+    "multi_candidate_retrieval_cases": 0,
+    "explicit_role_input_cases": {
+      "timeline": 0,
+      "genomics": 1,
+      "pathology": 1,
+      "drug": 1,
+      "literature": 1,
+      "verifier": 1,
+      "decision": 1
+    },
+    "interpretation": "Counts are structural eligibility signals, not agent-importance labels. Report task-appropriate subsets and independent retrieval results."
+  }
+}

@@ -50,7 +50,7 @@ ssh -N -o ServerAliveInterval=20 -L 18180:127.0.0.1:8180 server21-direct
 PR 目前无法自动创建：本机可用凭据只有 zmz2 的 **SSH 身份**（keychain 无 HTTPS 令牌、`gh` 未登录），
 分支可推送但 GitHub 的 PR 只能经 HTTPS API/CLI 建；需 `gh auth login` 或 fine-grained 令牌后代开。
 
-`/v1/configs/demo` 返回课堂配置 `v1_class`（七角色、片段引用、供应商输出上限 5000、统一一次结构修复，
+`/v1/configs/demo` 返回课堂配置 `v1_class`（七角色、片段引用、供应商输出上限 5000、统一最多两次结构修复，
 外加 claims-v1 协作协议），并附上本机实际使用的 `workflow_backend` 与 `graph_installed`，
 所以核心安装（native）与装了 LangGraph 的安装都能自证。设置 `ONCOFUSION_DEMO_REQUIRE_REAL=1` 后，
 provider 落成 mock 时进程直接拒绝启动；页面徽章取 `/healthz` 与每条结果自带的 `simulated`，

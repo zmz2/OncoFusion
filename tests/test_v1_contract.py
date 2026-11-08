@@ -163,9 +163,10 @@ def test_mcq_gold_must_be_in_its_own_case_not_another_cases_options(recorder):
 
 def test_schema_repair_uses_original_invalid_output_and_validation_errors(recorder):
     original = recorder.complete
-    seen = []
+    seen, systems = [], []
     def complete(system, payload, *args):
         seen.append(payload)
+        systems.append(system)
         if len(seen) == 1:
             return ModelReply('{"bad_field":"test"}',10,5)
         return original(system,payload,*args)
@@ -176,7 +177,9 @@ def test_schema_repair_uses_original_invalid_output_and_validation_errors(record
     repair = seen[1]['repair']
     assert repair['previous_output'] == '{"bad_field":"test"}'
     assert repair['validation_errors'] and not repair['output_truncated_in_trace']
+    assert repair['valid_claim_ids'] == []
     assert all('input' not in e for e in repair['validation_errors'])
+    assert 'an empty object is invalid' in systems[1]
 
 
 @pytest.mark.parametrize('value', [{'choices':[]}, {'choices':[{'message':{'content':None}}]},

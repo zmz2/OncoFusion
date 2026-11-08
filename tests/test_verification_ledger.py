@@ -33,12 +33,14 @@ class ScriptedProvider:
         self.verdict = verdict
         self.decision_both = decision_both
         self.payloads = []
+        self.systems = []
         self.calls = []
 
     def complete(self, system, payload, max_tokens, temperature, seed):
         role = payload["role"]
         self.calls.append(role)
         self.payloads.append((role, payload))
+        self.systems.append((role, payload, system))
         ids = payload.get("evidence_ids") or []
         roster = payload.get("claim_roster") or []
         if role == "decision":
@@ -51,7 +53,7 @@ class ScriptedProvider:
                     "citations": [], "unresolved": [], "confidence": None,
                     "adopted_claim_ids": adopt, "rejected_claim_ids": reject}
         elif role == "verifier":
-            body = {"findings": [], "unresolved": [], "requery": "",
+            body = {"unresolved": [], "requery": "",
                     "verdicts": [{"target_claim_id": entry["claim_id"], "verdict": self.verdict,
                                   "note": "scripted " + self.verdict,
                                   "citations": [{"evidence_id": ids[0]}] if ids else []}
@@ -134,6 +136,15 @@ def test_ledger_rows_name_reviewer_verdict_reason_and_citations():
     event = next(e for e in result.trace if e.kind == "verification_ledger")
     assert event.details["entries"] == ledger
     assert event.details["claims_reviewed"] == len({row["target_claim_id"] for row in ledger})
+
+
+def test_decision_must_judge_the_question_after_confirming_an_irrelevance_claim():
+    provider = ScriptedProvider("confirmed")
+    result = run(provider)
+    system = next(system for role, payload, system in provider.systems if role == "decision")
+    assert "A claim being confirmed makes that claim trustworthy" in system
+    assert "supports NEI, not SUPPORTS" in system
+    assert result.decision.answer == "NEI"
 
 
 def test_adopted_and_rejected_are_mutually_exclusive():

@@ -1,0 +1,1576 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-00693f9a-e755-4b1a-a158-c6ea8d40247b",
+  "patient_id": "article-31160355",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "83633bf6eec32c1d03c1e4061ed3bfda24f887f604dc1cda6f9d6cb7f65dc3ce",
+  "config": {
+    "mode": "multi",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "claims-v1",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The claim (literature-01) operates at the source layer. Its scope is source, evidence level is literature, and material status is present. The provided evidence fragment (pmid-31160355:f01) explicitly describes a CHD7-BEND2 fusion in a metastatic well-differentiated grade 3 pancreatic neuroendocrine tumor (PanNET). It contains no mention of lung occult squamous cell carcinoma, BRAF V525R, or dabrafenib/trametinib resistance. Consequently, the claim correctly identifies the mismatch and inapplicability of the source to the benchmark question. The evidence fully supports the claim as written.",
+    "citations": [
+      {
+        "document_id": "pmid-31160355",
+        "start": 0,
+        "end": 104,
+        "quote": "In a patient with a metastatic well-differentiated grade 3 PanNET . . . showed a novel CHD7-BEND2 fusion"
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [
+      "literature-01"
+    ],
+    "rejected_claim_ids": []
+  },
+  "reports": [
+    {
+      "role": "literature",
+      "executor": "literature",
+      "output": {
+        "findings": [
+          {
+            "statement": "The provided literature (pmid-31160355) directly measures genomic alterations in a pancreatic neuroendocrine tumor, specifically a CHD7-BEND2 fusion. It does not address lung occult squamous cell carcinoma, BRAF V525R, or dabrafenib/trametinib resistance, rendering it inapplicable to the claim.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-31160355",
+                "start": 0,
+                "end": 104,
+                "quote": "In a patient with a metastatic well-differentiated grade 3 PanNET . . . showed a novel CHD7-BEND2 fusion"
+              }
+            ],
+            "claim_id": "literature-01",
+            "author_role": "literature",
+            "used_claim_ids": [],
+            "scope": "source",
+            "evidence_level": "literature",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+        ],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "timeline",
+      "executor": "timeline",
+      "output": {
+        "findings": [
+          {
+            "statement": "unknown: the provided evidence lacks temporal data, dates, or event ordering to establish a timeline.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "timeline-01",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "absent",
+            "material_status": "unknown",
+            "material_basis": "not_recorded"
+          }
+        ],
+        "unresolved": [
+          "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The literature finding correctly identifies the source as irrelevant to the claim's disease, molecular profile, and therapies.",
+            "citations": [],
+            "reviewer_role": "timeline"
+          }
+        ]
+      }
+    },
+    {
+      "role": "genomics",
+      "executor": "genomics",
+      "output": {
+        "findings": [
+          {
+            "statement": "unknown: the provided evidence lacks molecular data for BRAF V525R in lung occult squamous cell carcinoma; it reports a CHD7-BEND2 fusion in a pancreatic neuroendocrine tumor.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "genomics-01",
+            "author_role": "genomics",
+            "used_claim_ids": [],
+            "scope": "molecular",
+            "evidence_level": "absent",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+        ],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "pathology",
+      "executor": "pathology",
+      "output": {
+        "findings": [
+          {
+            "statement": "not_applicable: No pathology records exist in the provided material to assess lung occult squamous cell carcinoma; the input contains only literature on a pancreatic neuroendocrine tumor.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "pathology-01",
+            "author_role": "pathology",
+            "used_claim_ids": [],
+            "scope": "pathologic",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "not_recorded"
+          }
+        ],
+        "unresolved": [
+          "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+        ],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "drug",
+      "executor": "drug",
+      "output": {
+        "findings": [],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "verifier",
+      "executor": "verifier",
+      "output": {
+        "findings": [],
+        "unresolved": [
+          "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+        ],
+        "requery": "Query for literature reporting BRAF V525R somatic variants in lung occult squamous cell carcinoma and their association with dabrafenib/trametinib resistance.",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "Scope: source. Evidence level: literature. Material status: present. The provided text explicitly describes a CHD7-BEND2 fusion in a pancreatic neuroendocrine tumor (PanNET) and contains no mention of lung occult squamous cell carcinoma, BRAF V525R, or dabrafenib/trametinib. The claim correctly identifies the mismatch and inapplicability.",
+            "citations": [
+              {
+                "document_id": "pmid-31160355",
+                "start": 0,
+                "end": 104,
+                "quote": "In a patient with a metastatic well-differentiated grade 3 PanNET . . . showed a novel CHD7-BEND2 fusion"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "timeline-01",
+            "verdict": "confirmed",
+            "note": "Scope: temporal. Evidence level: absent. Material status: unknown. The single evidence fragment contains no dates, event ordering, or temporal markers. The claim correctly notes the absence of timeline data.",
+            "citations": [],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "verdict": "confirmed",
+            "note": "Scope: molecular. Evidence level: absent. Material status: present. The evidence reports a CHD7-BEND2 fusion in PanNET, not BRAF V525R in lung occult squamous cell carcinoma. The claim accurately reflects the missing molecular target.",
+            "citations": [],
+            "reviewer_role": "verifier"
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "calls": 8,
+    "http_attempts": 8,
+    "tool_calls": 6,
+    "input_tokens": 25285,
+    "output_tokens": 14232,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-31160355"
+        ],
+        "fingerprint": "83633bf6eec32c1d03c1e4061ed3bfda24f887f604dc1cda6f9d6cb7f65dc3ce",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "claims-v1",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-31160355"
+        ],
+        "query": "{\n  \"disease\": \"lung occult squamous cell carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BRAF V525R\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Dabrafenib\",\n    \"Trametinib\"\n  ],\n  \"therapyInteractionType\": \"COMBINATION\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "agent_started",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "payload_sha256": "8d7069067ff86205ae254729e84661f21ec1cc7a581ff3223b9b6398ec088cd6",
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "token_reservation": 12469,
+        "evidence_ids": [
+          "pmid-31160355:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31160355": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 104,
+              "chars_sent": 104,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31160355:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 104,
+          "chars_sent": 104,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [],
+          "required": {},
+          "guaranteed_unsent": []
+        },
+        "material_basis": "",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "model_usage",
+      "role": "literature",
+      "details": {
+        "input_tokens": 2048,
+        "output_tokens": 1735,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 21.778,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "agent_reported",
+      "role": "literature",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided literature (pmid-31160355) directly measures genomic alterations in a pancreatic neuroendocrine tumor, specifically a CHD7-BEND2 fusion. It does not address lung occult squamous cell carcinoma, BRAF V525R, or dabrafenib/trametinib resistance, rendering it inapplicable to the claim.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-31160355",
+                  "start": 0,
+                  "end": 104,
+                  "quote": "In a patient with a metastatic well-differentiated grade 3 PanNET . . . showed a novel CHD7-BEND2 fusion"
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "agent_completed",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided literature (pmid-31160355) directly measures genomic alterations in a pancreatic neuroendocrine tumor, specifically a CHD7-BEND2 fusion. It does not address lung occult squamous cell carcinoma, BRAF V525R, or dabrafenib/trametinib resistance, rendering it inapplicable to the claim.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-31160355",
+                  "start": 0,
+                  "end": 104,
+                  "quote": "In a patient with a metastatic well-differentiated grade 3 PanNET . . . showed a novel CHD7-BEND2 fusion"
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "literature",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {},
+          "timeline": []
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "payload_sha256": "1fea6aff02fb1e4d6ab9deff45f35fc795b51a4eff6dca4615c93f3146acbb5f",
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "token_reservation": 14149,
+        "evidence_ids": [
+          "pmid-31160355:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31160355": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 104,
+              "chars_sent": 104,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31160355:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 104,
+          "chars_sent": 104,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 1,
+        "unresolved_items": 1,
+        "unresolved_by_role": {
+          "literature": 1
+        }
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "timeline",
+      "details": {
+        "input_tokens": 2583,
+        "output_tokens": 1713,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 29.354,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "timeline",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "unknown: the provided evidence lacks temporal data, dates, or event ordering to establish a timeline.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [
+            "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The literature finding correctly identifies the source as irrelevant to the claim's disease, molecular profile, and therapies.",
+              "citations": [],
+              "reviewer_role": "timeline"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "output": {
+          "findings": [
+            {
+              "statement": "unknown: the provided evidence lacks temporal data, dates, or event ordering to establish a timeline.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [
+            "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The literature finding correctly identifies the source as irrelevant to the claim's disease, molecular profile, and therapies.",
+              "citations": [],
+              "reviewer_role": "timeline"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-31160355": {
+              "gene": "unknown",
+              "variant": "unknown"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "V525R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "agent_started",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "payload_sha256": "5d258c81418da6ecf3624fb51cbc0668ad04a0031bd74dde9196fa726a7374d4",
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "token_reservation": 15125,
+        "evidence_ids": [
+          "pmid-31160355:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31160355": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 104,
+              "chars_sent": 104,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31160355:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 104,
+          "chars_sent": 104,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "molecular"
+          ],
+          "required": {
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 2,
+        "unresolved_items": 2,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1
+        }
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "model_usage",
+      "role": "genomics",
+      "details": {
+        "input_tokens": 2843,
+        "output_tokens": 1621,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 28.781,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_reported",
+      "role": "genomics",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "unknown: the provided evidence lacks molecular data for BRAF V525R in lung occult squamous cell carcinoma; it reports a CHD7-BEND2 fusion in a pancreatic neuroendocrine tumor.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "agent_completed",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "output": {
+          "findings": [
+            {
+              "statement": "unknown: the provided evidence lacks molecular data for BRAF V525R in lung occult squamous cell carcinoma; it reports a CHD7-BEND2 fusion in a pancreatic neuroendocrine tumor.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-31160355": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "V525R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 18,
+      "kind": "agent_started",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "payload_sha256": "c81b851049774d7c4fb9214ef85204a5c5b218d671cd2730f8ee63868dda2eb9",
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "token_reservation": 16016,
+        "evidence_ids": [
+          "pmid-31160355:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31160355": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 104,
+              "chars_sent": 104,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31160355:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 104,
+          "chars_sent": 104,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "pathology"
+          ],
+          "required": {
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 3,
+        "unresolved_items": 3,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "kind": "model_usage",
+      "role": "pathology",
+      "details": {
+        "input_tokens": 3101,
+        "output_tokens": 1671,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 53.258,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 20,
+      "kind": "agent_reported",
+      "role": "pathology",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: No pathology records exist in the provided material to assess lung occult squamous cell carcinoma; the input contains only literature on a pancreatic neuroendocrine tumor.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [
+            "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 21,
+      "kind": "agent_completed",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: No pathology records exist in the provided material to assess lung occult squamous cell carcinoma; the input contains only literature on a pancreatic neuroendocrine tumor.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [
+            "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 22,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-31160355": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "V525R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-31160355": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 23,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "7c714c3f0142909ca15772818ca1ce866deca4dcdabd711b2608bc55cc6dd461",
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "token_reservation": 17217,
+        "evidence_ids": [
+          "pmid-31160355:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31160355": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 104,
+              "chars_sent": 104,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31160355:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 104,
+          "chars_sent": 104,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 4,
+        "unresolved_items": 4,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1
+        }
+      }
+    },
+    {
+      "sequence": 24,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 3395,
+        "output_tokens": 2316,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 16.472,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 25,
+      "kind": "invalid_model_output",
+      "role": "drug",
+      "details": {
+        "error_type": "ValidationError",
+        "previous_output": "{\"$defs\": {\"ClaimFinding\": {\"additionalProperties\": false, \"properties\": {\"statement\": {\"maxLength\": 4000, \"minLength\": 1, \"title\": \"Statement\", \"type\": \"string\"}, \"relation\": {\"default\": \"NEI\", \"enum\": [\"SUPPORTS\", \"REVISIONS\", \"NEI\"], \"title\": \"Relation\", \"type\": \"string\"}, \"citations\": {\"items\": {\"$ref\": \"#/$defs/FragmentCitation\"}, \"maxItems\": 30, \"title\": \"Citations\", \"type\": \"array\"}, \"used_claim_ids\": {\"items\": {\"maxLength\": 120, \"minLength\": 1, \"pattern\": \"^[A-Za-z0-9][A-Za-z0-9_.:-]*$\", \"type\": \"string\"}, \"maxItems\": 30, \"title\": \"Used Claim Ids\", \"type\": \"array\"}, \"scope\": {\"enum\": [\"temporal\", \"molecular\", \"pathologic\", \"exposure\", \"relationship\", \"source\", \"verification\", \"outcome_prediction\"], \"title\": \"Scope\", \"type\": \"string\"}, \"evidence_level\": {\"enum\": [\"measured\", \"curated\", \"literature\", \"inferred\", \"absent\"], \"title\": \"Evidence Level\", \"type\": \"string\"}, \"material_status\": {\"enum\": [\"present\", \"not_applicable\", \"unknown\"], \"title\": \"Material Status\", \"type\": \"string\"}}, \"required\": [\"statement\", \"scope\", \"evidence_level\", \"material_status\"], \"title\": \"ClaimFinding\", \"type\": \"object\"}, \"ClaimVerdictEntry\": {\"additionalProperties\": false, \"properties\": {\"target_claim_id\": {\"maxLength\": 120, \"minLength\": 1, \"pattern\": \"^[A-Za-z0-9][A-Za-z0-9_.:-]*$\", \"title\": \"Target Claim Id\", \"type\": \"string\"}, \"verdict\": {\"enum\": [\"confirmed\", \"corrected\", \"rejected\", \"insufficient\"], \"title\": \"Verdict\", \"type\": \"string\"}, \"note\": {\"default\": \"\", \"maxLength\": 2000, \"title\": \"Note\", \"type\": \"string\"}, \"citations\": {\"items\": {\"$ref\": \"#/$defs/FragmentCitation\"}, \"maxItems\": 4, \"title\": \"Citations\", \"type\": \"array\"}}, \"required\": [\"target_claim_id\", \"verdict\"], \"title\": \"ClaimVerdictEntry\", \"type\": \"object\"}, \"FragmentCitation\": {\"additionalProperties\": false, \"properties\": {\"evidence_id\": {\"maxLength\": 120, \"minLength\": 1, \"pattern\": \"^[A-Za-z0-9][A-Za-z0-9_.:-]*$\", \"title\": \"Evidence Id\", \"type\": \"string\"}}, \"required\": [\"evidence_id\"], \"title\": \"FragmentCitation\", \"type\": \"object\"}}, \"additionalProperties\": false, \"properties\": {\"findings\": {\"items\": {\"$ref\": \"#/$defs/ClaimFinding\"}, \"maxItems\": 30, \"title\": \"Findings\", \"type\": \"array\"}, \"verdicts\": {\"items\": {\"$ref\": \"#/$defs/ClaimVerdictEntry\"}, \"maxItems\": 60, \"title\": \"Verdicts\", \"type\": \"array\"}, \"unresolved\": {\"items\": {\"type\": \"string\"}, \"maxItems\": 20, \"title\": \"Unresolved\", \"type\": \"array\"}, \"requery\": {\"default\": \"\", \"maxLength\": 1000, \"title\": \"Requery\", \"type\": \"string\"}}, \"title\": \"ClaimAnalysisOutput\", \"type\": \"object\"}",
+        "validation_errors": [
+          {
+            "type": "extra_forbidden",
+            "loc": [
+              "$defs"
+            ],
+            "msg": "Extra inputs are not permitted"
+          },
+          {
+            "type": "extra_forbidden",
+            "loc": [
+              "additionalProperties"
+            ],
+            "msg": "Extra inputs are not permitted"
+          },
+          {
+            "type": "extra_forbidden",
+            "loc": [
+              "properties"
+            ],
+            "msg": "Extra inputs are not permitted"
+          },
+          {
+            "type": "extra_forbidden",
+            "loc": [
+              "title"
+            ],
+            "msg": "Extra inputs are not permitted"
+          },
+          {
+            "type": "extra_forbidden",
+            "loc": [
+              "type"
+            ],
+            "msg": "Extra inputs are not permitted"
+          }
+        ],
+        "valid_claim_ids": [
+          "genomics-01",
+          "literature-01",
+          "pathology-01",
+          "timeline-01"
+        ],
+        "output_truncated_in_trace": false
+      }
+    },
+    {
+      "sequence": 26,
+      "kind": "schema_repair_requested",
+      "role": "drug",
+      "details": {
+        "attempt": 1
+      }
+    },
+    {
+      "sequence": 27,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "0d84170546d60b69a7c5e26c29ee61a8f979286b382ab58b6e431970b7d4a8a5",
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "token_reservation": 21078,
+        "evidence_ids": [
+          "pmid-31160355:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31160355": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 104,
+              "chars_sent": 104,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31160355:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 104,
+          "chars_sent": 104,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 4,
+        "unresolved_items": 4,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1
+        }
+      }
+    },
+    {
+      "sequence": 28,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 4519,
+        "output_tokens": 1502,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 14.911,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 29,
+      "kind": "agent_reported",
+      "role": "drug",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 30,
+      "kind": "agent_completed",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "output": {
+          "findings": [],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 31,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-31160355": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [],
+          "canonical_variant": "V525R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-31160355": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 32,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "a605c9d5a49dbfaf06f586dd36b87f48a66fb94290f311e9389a6dce0e75c7db",
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "token_reservation": 16366,
+        "evidence_ids": [
+          "pmid-31160355:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31160355": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 104,
+              "chars_sent": 104,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31160355:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 104,
+          "chars_sent": 104,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 4,
+        "unresolved_items": 4,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1
+        }
+      }
+    },
+    {
+      "sequence": 33,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 3130,
+        "output_tokens": 1927,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 25.071,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 34,
+      "kind": "agent_reported",
+      "role": "verifier",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+          ],
+          "requery": "Query for literature reporting BRAF V525R somatic variants in lung occult squamous cell carcinoma and their association with dabrafenib/trametinib resistance.",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "Scope: source. Evidence level: literature. Material status: present. The provided text explicitly describes a CHD7-BEND2 fusion in a pancreatic neuroendocrine tumor (PanNET) and contains no mention of lung occult squamous cell carcinoma, BRAF V525R, or dabrafenib/trametinib. The claim correctly identifies the mismatch and inapplicability.",
+              "citations": [
+                {
+                  "document_id": "pmid-31160355",
+                  "start": 0,
+                  "end": 104,
+                  "quote": "In a patient with a metastatic well-differentiated grade 3 PanNET . . . showed a novel CHD7-BEND2 fusion"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "Scope: temporal. Evidence level: absent. Material status: unknown. The single evidence fragment contains no dates, event ordering, or temporal markers. The claim correctly notes the absence of timeline data.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "Scope: molecular. Evidence level: absent. Material status: present. The evidence reports a CHD7-BEND2 fusion in PanNET, not BRAF V525R in lung occult squamous cell carcinoma. The claim accurately reflects the missing molecular target.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 35,
+      "kind": "agent_completed",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "Relevance of BRAF V525R to lung occult squamous cell carcinoma and dabrafenib/trametinib resistance"
+          ],
+          "requery": "Query for literature reporting BRAF V525R somatic variants in lung occult squamous cell carcinoma and their association with dabrafenib/trametinib resistance.",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "Scope: source. Evidence level: literature. Material status: present. The provided text explicitly describes a CHD7-BEND2 fusion in a pancreatic neuroendocrine tumor (PanNET) and contains no mention of lung occult squamous cell carcinoma, BRAF V525R, or dabrafenib/trametinib. The claim correctly identifies the mismatch and inapplicability.",
+              "citations": [
+                {
+                  "document_id": "pmid-31160355",
+                  "start": 0,
+                  "end": 104,
+                  "quote": "In a patient with a metastatic well-differentiated grade 3 PanNET . . . showed a novel CHD7-BEND2 fusion"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "Scope: temporal. Evidence level: absent. Material status: unknown. The single evidence fragment contains no dates, event ordering, or temporal markers. The claim correctly notes the absence of timeline data.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "Scope: molecular. Evidence level: absent. Material status: present. The evidence reports a CHD7-BEND2 fusion in PanNET, not BRAF V525R in lung occult squamous cell carcinoma. The claim accurately reflects the missing molecular target.",
+              "citations": [],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 36,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "abbce912a4f85769833c590644e0a91ce9ca38a38dd2508deae10485669549a9",
+        "source_ids": [
+          "pmid-31160355"
+        ],
+        "token_reservation": 18297,
+        "evidence_ids": [
+          "pmid-31160355:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31160355": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 104,
+              "chars_sent": 104,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31160355:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 104,
+          "chars_sent": 104,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 4,
+        "unresolved_items": 5,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1,
+          "verifier": 1
+        }
+      }
+    },
+    {
+      "sequence": 37,
+      "kind": "verification_ledger",
+      "role": "decision",
+      "details": {
+        "entries": [
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "timeline",
+            "verdict": "confirmed",
+            "reason": "The literature finding correctly identifies the source as irrelevant to the claim's disease, molecular profile, and therapies.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "Scope: source. Evidence level: literature. Material status: present. The provided text explicitly describes a CHD7-BEND2 fusion in a pancreatic neuroendocrine tumor (PanNET) and contains no mention of lung occult squamous cell carcinoma, BRAF V525R, or dabrafenib/trametinib. The claim correctly identifies the mismatch and inapplicability.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "pmid-31160355:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "timeline-01",
+            "claim_author": "timeline",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "Scope: temporal. Evidence level: absent. Material status: unknown. The single evidence fragment contains no dates, event ordering, or temporal markers. The claim correctly notes the absence of timeline data.",
+            "final": true,
+            "citations": []
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "claim_author": "genomics",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "Scope: molecular. Evidence level: absent. Material status: present. The evidence reports a CHD7-BEND2 fusion in PanNET, not BRAF V525R in lung occult squamous cell carcinoma. The claim accurately reflects the missing molecular target.",
+            "final": true,
+            "citations": []
+          }
+        ],
+        "reviews": 4,
+        "claims_reviewed": 3,
+        "final_verdicts": 3,
+        "rejected": [],
+        "insufficient": []
+      }
+    },
+    {
+      "sequence": 38,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 3666,
+        "output_tokens": 1747,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 17.922,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 39,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The claim (literature-01) operates at the source layer. Its scope is source, evidence level is literature, and material status is present. The provided evidence fragment (pmid-31160355:f01) explicitly describes a CHD7-BEND2 fusion in a metastatic well-differentiated grade 3 pancreatic neuroendocrine tumor (PanNET). It contains no mention of lung occult squamous cell carcinoma, BRAF V525R, or dabrafenib/trametinib resistance. Consequently, the claim correctly identifies the mismatch and inapplicability of the source to the benchmark question. The evidence fully supports the claim as written.",
+          "citations": [
+            {
+              "document_id": "pmid-31160355",
+              "start": 0,
+              "end": 104,
+              "quote": "In a patient with a metastatic well-differentiated grade 3 PanNET . . . showed a novel CHD7-BEND2 fusion"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [
+            "literature-01"
+          ],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 40,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The claim (literature-01) operates at the source layer. Its scope is source, evidence level is literature, and material status is present. The provided evidence fragment (pmid-31160355:f01) explicitly describes a CHD7-BEND2 fusion in a metastatic well-differentiated grade 3 pancreatic neuroendocrine tumor (PanNET). It contains no mention of lung occult squamous cell carcinoma, BRAF V525R, or dabrafenib/trametinib resistance. Consequently, the claim correctly identifies the mismatch and inapplicability of the source to the benchmark question. The evidence fully supports the claim as written.",
+          "citations": [
+            {
+              "document_id": "pmid-31160355",
+              "start": 0,
+              "end": 104,
+              "quote": "In a patient with a metastatic well-differentiated grade 3 PanNET . . . showed a novel CHD7-BEND2 fusion"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [
+            "literature-01"
+          ],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 41,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-31160355"
+  ],
+  "duration_seconds": 208.747299,
+  "research_only": true
+}

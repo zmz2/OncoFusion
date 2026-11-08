@@ -1,0 +1,435 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-d2956c41-9709-44ff-923d-9991d7f00a54",
+  "patient_id": "article-20979473",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "c8a0fb2ba77dbdf5141183ee78a7a1b29601b6524fd2fec650e6f65f8dc9b99a",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The supplied evidence directly supports the claim. A clinical case report details a patient with stage lung adenocarcinoma harboring an EML4-ALK fusion who developed resistance to crizotinib after 5 months of treatment. Molecular analysis at disease progression identified the ALK C1156Y mutation, which was absent prior to therapy. Complementary in vitro assays using Ba/F3 cells expressing EML4-ALK C1156Y demonstrated increased resistance to crizotinib compared to wildtype, and immunoblotting confirmed that crizotinib failed to reduce tyrosine phosphorylation of the C1156Y fusion. These findings collectively establish that the ALK C1156Y variant within the EML4-ALK fusion context mediates acquired resistance to crizotinib in lung adenocarcinoma.",
+    "citations": [
+      {
+        "document_id": "pmid-20979473",
+        "start": 0,
+        "end": 594,
+        "quote": "A 28 year-old patient with T4N3M1 stage lung adenocarcinoma harboring an EML4-ALK variant 1 fusion was treated with crizotinib after failing conventional therapy. The patient achieved a partial response, but progressed after 5 months of treatment. Molecular analysis at relapse identified C1156Y in the ALK kinase domain of the fusion at an allele frequency of 41.8%. This variant was undetected by Sanger sequencing in the tumor collected before crizotinib treatment. Cytotoxicity assays revealed Ba/F3 cells expressing EML4-ALK C1156Y were more resistant to crizontinib than those expressing "
+      },
+      {
+        "document_id": "pmid-20979473",
+        "start": 594,
+        "end": 741,
+        "quote": "EML4-ALK wildtype. Immunoblot demonstrated crizontinib reduced tyrosine phosphorylation of the wildtype fusion, but not the EML4-ALK C1156Y fusion."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2038,
+    "output_tokens": 1787,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-20979473"
+        ],
+        "fingerprint": "c8a0fb2ba77dbdf5141183ee78a7a1b29601b6524fd2fec650e6f65f8dc9b99a",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-20979473"
+        ],
+        "query": "{\n  \"disease\": \"Lung Adenocarcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"EML4::ALK Fusion AND ALK C1156Y\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Crizotinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-20979473"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-20979473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-20979473",
+              "start": 289,
+              "end": 295,
+              "raw": "C1156Y",
+              "canonical": "C1156Y"
+            },
+            {
+              "document_id": "pmid-20979473",
+              "start": 530,
+              "end": 536,
+              "raw": "C1156Y",
+              "canonical": "C1156Y"
+            },
+            {
+              "document_id": "pmid-20979473",
+              "start": 727,
+              "end": 733,
+              "raw": "C1156Y",
+              "canonical": "C1156Y"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-20979473": "mixed"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-20979473"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-20979473": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-20979473",
+              "start": 289,
+              "end": 295,
+              "raw": "C1156Y",
+              "canonical": "C1156Y"
+            },
+            {
+              "document_id": "pmid-20979473",
+              "start": 530,
+              "end": 536,
+              "raw": "C1156Y",
+              "canonical": "C1156Y"
+            },
+            {
+              "document_id": "pmid-20979473",
+              "start": 727,
+              "end": 733,
+              "raw": "C1156Y",
+              "canonical": "C1156Y"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-20979473": "mixed"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "d20fa9b8ba1e20a1942471e727159c9813f9a402e995250997c399961f50952d",
+        "source_ids": [
+          "pmid-20979473"
+        ],
+        "token_reservation": 11157,
+        "evidence_ids": [
+          "pmid-20979473:f01",
+          "pmid-20979473:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-20979473": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 741,
+              "chars_sent": 741,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-20979473:f01",
+                "pmid-20979473:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 741,
+          "chars_sent": 741,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2038,
+        "output_tokens": 1787,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 15.233,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The supplied evidence directly supports the claim. A clinical case report details a patient with stage lung adenocarcinoma harboring an EML4-ALK fusion who developed resistance to crizotinib after 5 months of treatment. Molecular analysis at disease progression identified the ALK C1156Y mutation, which was absent prior to therapy. Complementary in vitro assays using Ba/F3 cells expressing EML4-ALK C1156Y demonstrated increased resistance to crizotinib compared to wildtype, and immunoblotting confirmed that crizotinib failed to reduce tyrosine phosphorylation of the C1156Y fusion. These findings collectively establish that the ALK C1156Y variant within the EML4-ALK fusion context mediates acquired resistance to crizotinib in lung adenocarcinoma.",
+          "citations": [
+            {
+              "document_id": "pmid-20979473",
+              "start": 0,
+              "end": 594,
+              "quote": "A 28 year-old patient with T4N3M1 stage lung adenocarcinoma harboring an EML4-ALK variant 1 fusion was treated with crizotinib after failing conventional therapy. The patient achieved a partial response, but progressed after 5 months of treatment. Molecular analysis at relapse identified C1156Y in the ALK kinase domain of the fusion at an allele frequency of 41.8%. This variant was undetected by Sanger sequencing in the tumor collected before crizotinib treatment. Cytotoxicity assays revealed Ba/F3 cells expressing EML4-ALK C1156Y were more resistant to crizontinib than those expressing "
+            },
+            {
+              "document_id": "pmid-20979473",
+              "start": 594,
+              "end": 741,
+              "quote": "EML4-ALK wildtype. Immunoblot demonstrated crizontinib reduced tyrosine phosphorylation of the wildtype fusion, but not the EML4-ALK C1156Y fusion."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The supplied evidence directly supports the claim. A clinical case report details a patient with stage lung adenocarcinoma harboring an EML4-ALK fusion who developed resistance to crizotinib after 5 months of treatment. Molecular analysis at disease progression identified the ALK C1156Y mutation, which was absent prior to therapy. Complementary in vitro assays using Ba/F3 cells expressing EML4-ALK C1156Y demonstrated increased resistance to crizotinib compared to wildtype, and immunoblotting confirmed that crizotinib failed to reduce tyrosine phosphorylation of the C1156Y fusion. These findings collectively establish that the ALK C1156Y variant within the EML4-ALK fusion context mediates acquired resistance to crizotinib in lung adenocarcinoma.",
+          "citations": [
+            {
+              "document_id": "pmid-20979473",
+              "start": 0,
+              "end": 594,
+              "quote": "A 28 year-old patient with T4N3M1 stage lung adenocarcinoma harboring an EML4-ALK variant 1 fusion was treated with crizotinib after failing conventional therapy. The patient achieved a partial response, but progressed after 5 months of treatment. Molecular analysis at relapse identified C1156Y in the ALK kinase domain of the fusion at an allele frequency of 41.8%. This variant was undetected by Sanger sequencing in the tumor collected before crizotinib treatment. Cytotoxicity assays revealed Ba/F3 cells expressing EML4-ALK C1156Y were more resistant to crizontinib than those expressing "
+            },
+            {
+              "document_id": "pmid-20979473",
+              "start": 594,
+              "end": 741,
+              "quote": "EML4-ALK wildtype. Immunoblot demonstrated crizontinib reduced tyrosine phosphorylation of the wildtype fusion, but not the EML4-ALK C1156Y fusion."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-20979473"
+  ],
+  "duration_seconds": 15.244801,
+  "research_only": true
+}

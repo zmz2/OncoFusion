@@ -5,6 +5,7 @@ import hashlib
 import json
 import random
 import statistics
+from collections import Counter
 from pathlib import Path
 from typing import Literal
 
@@ -55,7 +56,7 @@ class StudyPlan(StrictModel):
     group_limit: int | None = Field(default=None, ge=1)
     # Pin the exact cases a run must cover (classroom demos, defect reproductions). Empty keeps
     # the task/split/group sampling behaviour every existing plan relies on.
-    case_ids: list[str] = Field(default_factory=list, max_length=64)
+    case_ids: list[str] = Field(default_factory=list, max_length=500)
     treatments: list[Treatment] = Field(min_length=1, max_length=200)
     reference: str = "full"
     bootstrap_repeats: int = Field(default=2000, ge=100, le=10000)
@@ -68,6 +69,63 @@ class StudyPlan(StrictModel):
         if len(self.seeds) != len(set(self.seeds)) or any(s < 0 for s in self.seeds):
             raise ValueError("seeds must be unique nonnegative integers")
         return self
+
+
+def stratified_case_ids(cases: list[CaseInput], gold: list[GoldRecord], *, task: str,
+                        split: str, per_label: int, max_per_group: int,
+                        sampling_seed: int = 0) -> list[str]:
+    """Choose a balanced, article-capped test subset before any model call.
+
+    Candidates are ordered by a digest of the fixed sampling seed and case ID. Labels are then
+    admitted round-robin, which prevents a large article or the dataset's source order from
+    deciding the subset.
+    """
+    if per_label < 1 or max_per_group < 1:
+        raise ValueError("per_label and max_per_group must be positive")
+    labels_by_id = {record.case_id: record for record in gold}
+    eligible = [case for case in cases
+                if case.task == task and case.id in labels_by_id
+                and labels_by_id[case.id].split == split]
+    labels = sorted({labels_by_id[case.id].label for case in eligible})
+    if not labels:
+        raise ValueError("no eligible cases for the requested task and split")
+
+    queues = {}
+    for label in labels:
+        rows = [case for case in eligible if labels_by_id[case.id].label == label]
+        queues[label] = sorted(
+            rows,
+            key=lambda case: hashlib.sha256(
+                f"{sampling_seed}:{label}:{case.id}".encode()
+            ).digest(),
+        )
+    target = per_label * len(labels)
+    selected: list[str] = []
+    label_counts = Counter()
+    group_counts = Counter()
+    cursors = Counter()
+    while len(selected) < target:
+        progressed = False
+        for label in labels:
+            if label_counts[label] >= per_label:
+                continue
+            queue = queues[label]
+            while cursors[label] < len(queue):
+                case = queue[cursors[label]]
+                cursors[label] += 1
+                group = labels_by_id[case.id].group_id
+                if group_counts[group] >= max_per_group:
+                    continue
+                selected.append(case.id)
+                label_counts[label] += 1
+                group_counts[group] += 1
+                progressed = True
+                break
+        if not progressed:
+            raise ValueError(
+                f"only {len(selected)} of {target} cases remain after group cap {max_per_group}"
+            )
+    return sorted(selected)
 
 
 def perturb(case: CaseInput, name: str, seed: int) -> CaseInput:

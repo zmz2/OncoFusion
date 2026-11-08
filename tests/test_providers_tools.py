@@ -265,3 +265,22 @@ def test_thinking_budget_from_env_and_identity(monkeypatch):
     monkeypatch.setenv("ONCOFUSION_THINKING_TOKEN_BUDGET", "not-a-number")
     with pytest.raises(ValueError):
         provider_from_env()
+
+
+def test_zero_thinking_budget_is_forwarded_and_included_in_identity(monkeypatch):
+    monkeypatch.setenv("ONCOFUSION_PROVIDER", "openai_compatible")
+    monkeypatch.setenv("ONCOFUSION_BASE_URL", "http://127.0.0.1:9/v1")
+    monkeypatch.setenv("ONCOFUSION_MODEL", "m")
+    monkeypatch.setenv("ONCOFUSION_API_KEY", "k")
+    monkeypatch.setenv("ONCOFUSION_THINKING_TOKEN_BUDGET", "0")
+    captured = []
+
+    def handler(request):
+        captured.append(json.loads(request.content))
+        return httpx.Response(200, json=envelope())
+
+    provider = provider_from_env()
+    provider.transport = httpx.MockTransport(handler)
+    provider.complete("s", {}, 5000, 0, 0)
+    assert provider.thinking_token_budget == 0
+    assert captured[0]["thinking_token_budget"] == 0

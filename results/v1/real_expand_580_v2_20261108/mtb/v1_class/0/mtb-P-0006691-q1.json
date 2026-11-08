@@ -1,0 +1,3855 @@
+{
+  "schema_version": "1.0",
+  "case_id": "mtb-P-0006691-q1",
+  "patient_id": "P-0006691",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "4cee10dbb59f3259a2212a06ebfa89cd4aaa377a98743821377300c5156f58c8",
+  "config": {
+    "mode": "multi",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "claims-v1",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "B",
+    "explanation": "The provided clinical evidence ends at age 63.859, which is prior to the patient reaching age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months. The available data shows the patient was disease-free on CT scans with decreasing tumor markers (CA 19-9: 120 to 19 U/mL; CEA: 3.9 to 2.1 ng/mL) up to age 63.859. However, because the outcome of interest (recurrence after age 64) is not visible in the source material, the question cannot be answered with SUPPORTS or REFUTES based on observed data. The absence of predictive models or recurrence probabilities in the source material further precludes a calculated risk assessment. Therefore, the outcome is not determinable from the provided evidence.",
+    "citations": [
+      {
+        "document_id": "file-22c1fc5d746235ccec6c",
+        "start": 5035,
+        "end": 5373,
+        "quote": "AGE: 63.829, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.829, labtest > cea_labs --> CEA: 2.1000 ng/ml          \nAGE: 63.840, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.859, treatment > treatment --> STOP_AGE: 63.9746, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+      },
+      {
+        "document_id": "file-22c1fc5d746235ccec6c",
+        "start": 3308,
+        "end": 3882,
+        "quote": "AGE: 63.523, labtest > cea_labs --> CEA: 3.9000 ng/ml          \nAGE: 63.610, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.610, labtest > ca_19-9_labs --> RESULT: 75, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.610, labtest > cea_labs --> CEA: 3.2000 ng/ml          \nAGE: 63.638, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.638, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+      }
+    ],
+    "unresolved": [
+      "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+    ],
+    "confidence": 0.95,
+    "adopted_claim_ids": [
+      "literature-02",
+      "genomics-01"
+    ],
+    "rejected_claim_ids": [
+      "literature-01"
+    ]
+  },
+  "reports": [
+    {
+      "role": "literature",
+      "executor": "literature",
+      "output": {
+        "findings": [
+          {
+            "statement": "The patient is a 63-year-old male with AJCC Stage III pancreatic adenocarcinoma (Regional, extension and nodes) harboring a somatic KRAS p.G12V mutation. At age 63.703, the patient underwent surgery, and subsequent clinical records from age 63.722 to 63.859 indicate no evidence of cancer on CT scans with stable/decreasing tumor markers (CA 19-9: 120 to 14 to 19 U/mL; CEA: 3.9 to 1.8 to 2.1 ng/mL).",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "file-22c1fc5d746235ccec6c",
+                "start": 595,
+                "end": 1165,
+                "quote": "DIAGNOSIS_DESCRIPTION: Pancreas, TMB_NONSYNONYMOUS: 0.978719698, DX_DESCRIPTION: ADENOCARCINOMA, NOS, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: III, CLINICAL_GROUP_y: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, ICD_10: C25.0, \nAGE: 63.254, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: ADENOCARCINOMA, NOS | PANCREAS, HEAD (M8140/3 | C250), AJCC: III, CLINICAL_GROUP: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, \n"
+              },
+              {
+                "document_id": "file-60a19e5cdc1a1b76db06",
+                "start": 379,
+                "end": 635,
+                "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+              },
+              {
+                "document_id": "file-22c1fc5d746235ccec6c",
+                "start": 4442,
+                "end": 5035,
+                "quote": "AGE: 63.722, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 63.783, diagnosis > performance_status --> ECOG: 1, \nAGE: 63.783, labtest > ca_19-9_labs --> RESULT: 14, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.783, labtest > cea_labs --> CEA: 1.8000 ng/ml          \nAGE: 63.829, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 63.829, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+              }
+            ],
+            "claim_id": "literature-01",
+            "author_role": "literature",
+            "used_claim_ids": [],
+            "scope": "source",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "The provided clinical timeline ends at age 63.859, which is before the patient reaches age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "literature-02",
+            "author_role": "literature",
+            "used_claim_ids": [],
+            "scope": "source",
+            "evidence_level": "absent",
+            "material_status": "unknown",
+            "material_basis": ""
+          },
+          {
+            "statement": "Not applicable: The source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "literature-03",
+            "author_role": "literature",
+            "used_claim_ids": [],
+            "scope": "source",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+        ],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "timeline",
+      "executor": "timeline",
+      "output": {
+        "findings": [
+          {
+            "statement": "The patient is a 63-year-old male with AJCC Stage III pancreatic adenocarcinoma (Regional, extension and nodes) harboring a somatic KRAS p.G12V mutation. At age 63.703, the patient underwent surgery, and subsequent clinical records from age 63.722 to 63.859 indicate no evidence of cancer on CT scans with stable/decreasing tumor markers (CA 19-9: 120 to 14 to 19 U/mL; CEA: 3.9 to 1.8 to 2.1 ng/mL).",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "file-22c1fc5d746235ccec6c",
+                "start": 3882,
+                "end": 4442,
+                "quote": "AGE: 63.638, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.703, surgery --> SUBTYPE: PROCEDURE, \nAGE: 63.703, specimen_surgery --> SAMPLE_ID: P-0006691-T01-IM5, SEQ_DATE: 0, \nAGE: 63.703, specimen --> SAMPLE_ID: P-0006691-T01-IM5, \nAGE: 63.722, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: No, \n"
+              },
+              {
+                "document_id": "file-22c1fc5d746235ccec6c",
+                "start": 5035,
+                "end": 5373,
+                "quote": "AGE: 63.829, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.829, labtest > cea_labs --> CEA: 2.1000 ng/ml          \nAGE: 63.840, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.859, treatment > treatment --> STOP_AGE: 63.9746, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+              },
+              {
+                "document_id": "file-60a19e5cdc1a1b76db06",
+                "start": 379,
+                "end": 635,
+                "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+              }
+            ],
+            "claim_id": "timeline-01",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "The provided clinical timeline ends at age 63.859, which is before the patient reaches age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "timeline-02",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "absent",
+            "material_status": "unknown",
+            "material_basis": "supplied"
+          },
+          {
+            "statement": "Not applicable: The source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "timeline-03",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "supplied"
+          }
+        ],
+        "unresolved": [
+          "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The clinical timeline and genomic data confirm the patient's age, diagnosis, stage, mutation status, and post-surgical disease-free interval up to age 63.859.",
+            "citations": [
+              {
+                "document_id": "file-22c1fc5d746235ccec6c",
+                "start": 3882,
+                "end": 4442,
+                "quote": "AGE: 63.638, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.703, surgery --> SUBTYPE: PROCEDURE, \nAGE: 63.703, specimen_surgery --> SAMPLE_ID: P-0006691-T01-IM5, SEQ_DATE: 0, \nAGE: 63.703, specimen --> SAMPLE_ID: P-0006691-T01-IM5, \nAGE: 63.722, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: No, \n"
+              },
+              {
+                "document_id": "file-60a19e5cdc1a1b76db06",
+                "start": 379,
+                "end": 635,
+                "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+              }
+            ],
+            "reviewer_role": "timeline"
+          },
+          {
+            "target_claim_id": "literature-02",
+            "verdict": "confirmed",
+            "note": "The clinical data explicitly ends at age 63.859, leaving a gap before the patient reaches age 64 and no data beyond that point.",
+            "citations": [],
+            "reviewer_role": "timeline"
+          },
+          {
+            "target_claim_id": "literature-03",
+            "verdict": "confirmed",
+            "note": "No predictive models or recurrence probabilities are present in the source material.",
+            "citations": [],
+            "reviewer_role": "timeline"
+          }
+        ]
+      }
+    },
+    {
+      "role": "genomics",
+      "executor": "genomics",
+      "output": {
+        "findings": [
+          {
+            "statement": "The patient has a somatic KRAS p.G12V (G12V) missense mutation detected in a primary pancreatic adenocarcinoma tumor sample (IMPACT410 panel, transcript ENST00000256078.4).",
+            "relation": "SUPPORTS",
+            "citations": [
+              {
+                "document_id": "file-60a19e5cdc1a1b76db06",
+                "start": 379,
+                "end": 635,
+                "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+              }
+            ],
+            "claim_id": "genomics-01",
+            "author_role": "genomics",
+            "used_claim_ids": [
+              "literature-01"
+            ],
+            "scope": "molecular",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "The available clinical timeline ends at age 63.859, which is prior to the patient reaching age 64; consequently, there is no observed disease status or recurrence data for the period after age 64.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "genomics-02",
+            "author_role": "genomics",
+            "used_claim_ids": [
+              "literature-02"
+            ],
+            "scope": "molecular",
+            "evidence_level": "absent",
+            "material_status": "unknown",
+            "material_basis": "supplied"
+          },
+          {
+            "statement": "Not applicable: The provided source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "genomics-03",
+            "author_role": "genomics",
+            "used_claim_ids": [
+              "literature-03"
+            ],
+            "scope": "molecular",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "supplied"
+          }
+        ],
+        "unresolved": [
+          "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The molecular finding of somatic KRAS p.G12V is supported by the genomics evidence file-60a19e5cdc1a1b76db06:f02.",
+            "citations": [],
+            "reviewer_role": "genomics"
+          },
+          {
+            "target_claim_id": "literature-02",
+            "verdict": "confirmed",
+            "note": "The timeline evidence ends at age 63.859, confirming the absence of data beyond this point.",
+            "citations": [],
+            "reviewer_role": "genomics"
+          },
+          {
+            "target_claim_id": "literature-03",
+            "verdict": "confirmed",
+            "note": "No predictive models or recurrence probabilities are present in the source material.",
+            "citations": [],
+            "reviewer_role": "genomics"
+          }
+        ]
+      }
+    },
+    {
+      "role": "pathology",
+      "executor": "pathology",
+      "output": {
+        "findings": [
+          {
+            "statement": "The patient is a 63-year-old male with AJCC Stage III pancreatic adenocarcinoma (Regional, extension and nodes) harboring a somatic KRAS p.G12V mutation. At age 63.703, the patient underwent surgery, and subsequent clinical records from age 63.722 to 63.859 indicate no evidence of cancer on CT scans with stable/decreasing tumor markers (CA 19-9: 120 to 14 to 19 U/mL; CEA: 3.9 to 1.8 to 2.1 ng/mL).",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "file-22c1fc5d746235ccec6c",
+                "start": 595,
+                "end": 1165,
+                "quote": "DIAGNOSIS_DESCRIPTION: Pancreas, TMB_NONSYNONYMOUS: 0.978719698, DX_DESCRIPTION: ADENOCARCINOMA, NOS, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: III, CLINICAL_GROUP_y: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, ICD_10: C25.0, \nAGE: 63.254, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: ADENOCARCINOMA, NOS | PANCREAS, HEAD (M8140/3 | C250), AJCC: III, CLINICAL_GROUP: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, \n"
+              },
+              {
+                "document_id": "file-60a19e5cdc1a1b76db06",
+                "start": 379,
+                "end": 635,
+                "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+              },
+              {
+                "document_id": "file-22c1fc5d746235ccec6c",
+                "start": 4442,
+                "end": 5035,
+                "quote": "AGE: 63.722, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 63.783, diagnosis > performance_status --> ECOG: 1, \nAGE: 63.783, labtest > ca_19-9_labs --> RESULT: 14, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.783, labtest > cea_labs --> CEA: 1.8000 ng/ml          \nAGE: 63.829, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 63.829, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+              }
+            ],
+            "claim_id": "pathology-01",
+            "author_role": "pathology",
+            "used_claim_ids": [
+              "literature-01"
+            ],
+            "scope": "pathologic",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "The provided clinical timeline ends at age 63.859, which is before the patient reaches age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "pathology-02",
+            "author_role": "pathology",
+            "used_claim_ids": [
+              "literature-02"
+            ],
+            "scope": "pathologic",
+            "evidence_level": "absent",
+            "material_status": "unknown",
+            "material_basis": "supplied"
+          },
+          {
+            "statement": "Not applicable: The source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "pathology-03",
+            "author_role": "pathology",
+            "used_claim_ids": [
+              "literature-03"
+            ],
+            "scope": "pathologic",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "supplied"
+          }
+        ],
+        "unresolved": [
+          "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The clinical and genomic data confirm the patient's diagnosis, stage, mutation status, and post-surgical status as of age 63.859.",
+            "citations": [],
+            "reviewer_role": "pathology"
+          },
+          {
+            "target_claim_id": "literature-02",
+            "verdict": "confirmed",
+            "note": "The timeline data explicitly ends at age 63.859, confirming the absence of data for the period after age 64.",
+            "citations": [],
+            "reviewer_role": "pathology"
+          },
+          {
+            "target_claim_id": "literature-03",
+            "verdict": "confirmed",
+            "note": "No predictive models or recurrence probabilities are present in the source material.",
+            "citations": [],
+            "reviewer_role": "pathology"
+          }
+        ]
+      }
+    },
+    {
+      "role": "drug",
+      "executor": "drug",
+      "output": {
+        "findings": [
+          {
+            "statement": "The patient is a 63-year-old male with AJCC Stage III pancreatic adenocarcinoma harboring a somatic KRAS p.G12V mutation. At age 63.703, the patient underwent surgery, and subsequent clinical records from age 63.722 to 63.859 indicate no evidence of cancer on CT scans with stable/decreasing tumor markers (CA 19-9: 120 to 14 to 19 U/mL; CEA: 3.9 to 1.8 to 2.1 ng/mL).",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "file-22c1fc5d746235ccec6c",
+                "start": 3882,
+                "end": 4442,
+                "quote": "AGE: 63.638, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.703, surgery --> SUBTYPE: PROCEDURE, \nAGE: 63.703, specimen_surgery --> SAMPLE_ID: P-0006691-T01-IM5, SEQ_DATE: 0, \nAGE: 63.703, specimen --> SAMPLE_ID: P-0006691-T01-IM5, \nAGE: 63.722, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: No, \n"
+              },
+              {
+                "document_id": "file-22c1fc5d746235ccec6c",
+                "start": 5035,
+                "end": 5373,
+                "quote": "AGE: 63.829, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.829, labtest > cea_labs --> CEA: 2.1000 ng/ml          \nAGE: 63.840, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.859, treatment > treatment --> STOP_AGE: 63.9746, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+              }
+            ],
+            "claim_id": "drug-01",
+            "author_role": "drug",
+            "used_claim_ids": [
+              "literature-01",
+              "timeline-01"
+            ],
+            "scope": "exposure",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          },
+          {
+            "statement": "The provided clinical timeline ends at age 63.859, which is before the patient reaches age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "drug-02",
+            "author_role": "drug",
+            "used_claim_ids": [
+              "literature-02",
+              "timeline-02"
+            ],
+            "scope": "exposure",
+            "evidence_level": "absent",
+            "material_status": "unknown",
+            "material_basis": "supplied"
+          },
+          {
+            "statement": "Not applicable: The source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "drug-03",
+            "author_role": "drug",
+            "used_claim_ids": [
+              "literature-03",
+              "timeline-03"
+            ],
+            "scope": "relationship",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "supplied"
+          }
+        ],
+        "unresolved": [
+          "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "confirmed",
+            "note": "The clinical timeline and genomic data confirm the patient's history, surgery, and molecular profile as stated.",
+            "citations": [],
+            "reviewer_role": "drug"
+          },
+          {
+            "target_claim_id": "literature-02",
+            "verdict": "confirmed",
+            "note": "The evidence explicitly ends at age 63.859, confirming the absence of data for the period after age 64.",
+            "citations": [],
+            "reviewer_role": "drug"
+          },
+          {
+            "target_claim_id": "literature-03",
+            "verdict": "confirmed",
+            "note": "No predictive models or recurrence probabilities are present in the source material.",
+            "citations": [],
+            "reviewer_role": "drug"
+          },
+          {
+            "target_claim_id": "timeline-01",
+            "verdict": "confirmed",
+            "note": "The timeline data supports the statement regarding the patient's status post-surgery.",
+            "citations": [],
+            "reviewer_role": "drug"
+          },
+          {
+            "target_claim_id": "timeline-02",
+            "verdict": "confirmed",
+            "note": "The timeline data confirms the end of the record at age 63.859.",
+            "citations": [],
+            "reviewer_role": "drug"
+          },
+          {
+            "target_claim_id": "timeline-03",
+            "verdict": "confirmed",
+            "note": "No predictive models are present in the timeline data.",
+            "citations": [],
+            "reviewer_role": "drug"
+          }
+        ]
+      }
+    },
+    {
+      "role": "verifier",
+      "executor": "verifier",
+      "output": {
+        "findings": [],
+        "unresolved": [
+          "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "corrected",
+            "note": "The claim asserts surgery at age 63.703, but evidence file-22c1fc5d746235ccec6c:f04 records surgery at age 63.322. The claim also cites tumor marker values (CA 19-9: 120 to 14 to 19; CEA: 3.9 to 1.8 to 2.1) that do not match the source data (CA 19-9: 120 to 75 to 19; CEA: 3.9 to 3.2 to 2.1).",
+            "citations": [
+              {
+                "document_id": "file-22c1fc5d746235ccec6c",
+                "start": 1726,
+                "end": 2210,
+                "quote": "AGE: 63.303, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.303, labtest > ca_19-9_labs --> RESULT: 655, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.303, labtest > cea_labs --> CEA: 6.8000 ng/ml          \nAGE: 63.322, surgery --> SUBTYPE: PROCEDURE, \nAGE: 63.325, treatment > treatment --> STOP_AGE: 63.6102, SUBTYPE: Chemo, AGENT: OXALIPLATIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+              },
+              {
+                "document_id": "file-22c1fc5d746235ccec6c",
+                "start": 3308,
+                "end": 3882,
+                "quote": "AGE: 63.523, labtest > cea_labs --> CEA: 3.9000 ng/ml          \nAGE: 63.610, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.610, labtest > ca_19-9_labs --> RESULT: 75, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.610, labtest > cea_labs --> CEA: 3.2000 ng/ml          \nAGE: 63.638, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.638, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "literature-02",
+            "verdict": "confirmed",
+            "note": "The claim correctly states that the clinical timeline ends at age 63.859 (file-22c1fc5d746235ccec6c:f10), which is before the patient reaches age 64, and no data is available for the period after that point.",
+            "citations": [
+              {
+                "document_id": "file-22c1fc5d746235ccec6c",
+                "start": 5035,
+                "end": 5373,
+                "quote": "AGE: 63.829, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.829, labtest > cea_labs --> CEA: 2.1000 ng/ml          \nAGE: 63.840, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.859, treatment > treatment --> STOP_AGE: 63.9746, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "verdict": "confirmed",
+            "note": "The claim correctly identifies the somatic KRAS p.G12V mutation in the primary pancreatic adenocarcinoma sample using the IMPACT410 panel and transcript ENST00000256078.4, as confirmed by the genomic evidence.",
+            "citations": [
+              {
+                "document_id": "file-60a19e5cdc1a1b76db06",
+                "start": 379,
+                "end": 635,
+                "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+              }
+            ],
+            "reviewer_role": "verifier"
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "calls": 9,
+    "http_attempts": 9,
+    "tool_calls": 6,
+    "input_tokens": 97597,
+    "output_tokens": 6805,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "fingerprint": "4cee10dbb59f3259a2212a06ebfa89cd4aaa377a98743821377300c5156f58c8",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "claims-v1",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [],
+        "query": "Given that the patient is 64 years old, will the cancer have a recurrence in the next 6 months?",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "agent_started",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "payload_sha256": "925b6671cf74191cae552b3e08488d8b4a74316803e38010f1f5fcca73328c79",
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "token_reservation": 22994,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-22c1fc5d746235ccec6c:f01",
+          "file-22c1fc5d746235ccec6c:f02",
+          "file-22c1fc5d746235ccec6c:f03",
+          "file-22c1fc5d746235ccec6c:f06",
+          "file-22c1fc5d746235ccec6c:f07",
+          "file-22c1fc5d746235ccec6c:f08",
+          "file-22c1fc5d746235ccec6c:f09",
+          "file-22c1fc5d746235ccec6c:f10",
+          "file-60a19e5cdc1a1b76db06:f01",
+          "file-60a19e5cdc1a1b76db06:f02",
+          "file-7b709aaa678467e9557c:f01",
+          "file-7b709aaa678467e9557c:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 348,
+              "chars_sent": 348,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-22c1fc5d746235ccec6c": {
+              "candidates": 10,
+              "sent": 8,
+              "chars_total": 5373,
+              "chars_sent": 4337,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-22c1fc5d746235ccec6c:f01",
+                "file-22c1fc5d746235ccec6c:f02",
+                "file-22c1fc5d746235ccec6c:f03",
+                "file-22c1fc5d746235ccec6c:f06",
+                "file-22c1fc5d746235ccec6c:f07",
+                "file-22c1fc5d746235ccec6c:f08",
+                "file-22c1fc5d746235ccec6c:f09",
+                "file-22c1fc5d746235ccec6c:f10"
+              ]
+            },
+            "file-7b709aaa678467e9557c": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1012,
+              "chars_sent": 1012,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-7b709aaa678467e9557c:f01",
+                "file-7b709aaa678467e9557c:f02"
+              ]
+            },
+            "file-60a19e5cdc1a1b76db06": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 635,
+              "chars_sent": 635,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-60a19e5cdc1a1b76db06:f01",
+                "file-60a19e5cdc1a1b76db06:f02"
+              ]
+            }
+          },
+          "candidates": 15,
+          "sent": 13,
+          "chars_total": 7368,
+          "chars_sent": 6332,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [],
+          "required": {},
+          "guaranteed_unsent": []
+        },
+        "material_basis": "",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "model_usage",
+      "role": "literature",
+      "details": {
+        "input_tokens": 6684,
+        "output_tokens": 675,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 10.024,
+        "evidence_fragments": 13
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "agent_reported",
+      "role": "literature",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient is a 63-year-old male with AJCC Stage III pancreatic adenocarcinoma (Regional, extension and nodes) harboring a somatic KRAS p.G12V mutation. At age 63.703, the patient underwent surgery, and subsequent clinical records from age 63.722 to 63.859 indicate no evidence of cancer on CT scans with stable/decreasing tumor markers (CA 19-9: 120 to 14 to 19 U/mL; CEA: 3.9 to 1.8 to 2.1 ng/mL).",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 595,
+                  "end": 1165,
+                  "quote": "DIAGNOSIS_DESCRIPTION: Pancreas, TMB_NONSYNONYMOUS: 0.978719698, DX_DESCRIPTION: ADENOCARCINOMA, NOS, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: III, CLINICAL_GROUP_y: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, ICD_10: C25.0, \nAGE: 63.254, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: ADENOCARCINOMA, NOS | PANCREAS, HEAD (M8140/3 | C250), AJCC: III, CLINICAL_GROUP: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, \n"
+                },
+                {
+                  "document_id": "file-60a19e5cdc1a1b76db06",
+                  "start": 379,
+                  "end": 635,
+                  "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+                },
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 4442,
+                  "end": 5035,
+                  "quote": "AGE: 63.722, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 63.783, diagnosis > performance_status --> ECOG: 1, \nAGE: 63.783, labtest > ca_19-9_labs --> RESULT: 14, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.783, labtest > cea_labs --> CEA: 1.8000 ng/ml          \nAGE: 63.829, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 63.829, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The provided clinical timeline ends at age 63.859, which is before the patient reaches age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "literature-02",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": ""
+            },
+            {
+              "statement": "Not applicable: The source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "literature-03",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "agent_completed",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient is a 63-year-old male with AJCC Stage III pancreatic adenocarcinoma (Regional, extension and nodes) harboring a somatic KRAS p.G12V mutation. At age 63.703, the patient underwent surgery, and subsequent clinical records from age 63.722 to 63.859 indicate no evidence of cancer on CT scans with stable/decreasing tumor markers (CA 19-9: 120 to 14 to 19 U/mL; CEA: 3.9 to 1.8 to 2.1 ng/mL).",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 595,
+                  "end": 1165,
+                  "quote": "DIAGNOSIS_DESCRIPTION: Pancreas, TMB_NONSYNONYMOUS: 0.978719698, DX_DESCRIPTION: ADENOCARCINOMA, NOS, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: III, CLINICAL_GROUP_y: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, ICD_10: C25.0, \nAGE: 63.254, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: ADENOCARCINOMA, NOS | PANCREAS, HEAD (M8140/3 | C250), AJCC: III, CLINICAL_GROUP: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, \n"
+                },
+                {
+                  "document_id": "file-60a19e5cdc1a1b76db06",
+                  "start": 379,
+                  "end": 635,
+                  "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+                },
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 4442,
+                  "end": 5035,
+                  "quote": "AGE: 63.722, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 63.783, diagnosis > performance_status --> ECOG: 1, \nAGE: 63.783, labtest > ca_19-9_labs --> RESULT: 14, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.783, labtest > cea_labs --> CEA: 1.8000 ng/ml          \nAGE: 63.829, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 63.829, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The provided clinical timeline ends at age 63.859, which is before the patient reaches age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "literature-02",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": ""
+            },
+            {
+              "statement": "Not applicable: The source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "literature-03",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "requery": "",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {},
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 63-year-old White male of non-Hispanic ethnicity with a diagnosis of pancreatic adenocarcinoma. A sample from the patient has been sequenced, and mutation data is available for review. Comprehensive patient history, including details on diagnosis, treatments, and lab tests, is accessible for the period from 63 to 64 years of age."
+            },
+            {
+              "id": "file-22c1fc5d746235ccec6c",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 63.254, samples > clinical_sample --> SAMPLE_ID: P-0006691-T01-IM5, PATIENT_ID: P-0006691, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT410, SAMPLE_COVERAGE: 745, TUMOR_PURITY: 30.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: Not Available, MSI_SCORE: 0.0, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 3.0, CLINICAL_SUMMARY: Regional,Extension and Nodes, ICD_O_HISTOLOGY_DESCRIPTION: Adenocarcinoma, Nos, DIAGNOSIS_DESCRIPTION: Pancreas, TMB_NONSYNONYMOUS: 0.978719698, DX_DESCRIPTION: ADENOCARCINOMA, NOS, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: III, CLINICAL_GROUP_y: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, ICD_10: C25.0, \nAGE: 63.254, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: ADENOCARCINOMA, NOS | PANCREAS, HEAD (M8140/3 | C250), AJCC: III, CLINICAL_GROUP: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, \nAGE: 63.303, treatment > prior_meds --> SUBTYPE: Prior Medications to MSK, TREATMENT_TYPE: Medical Therapy, INFERRED_TX_PROB: 0.02, PRIOR_MED_TO_MSK: No prior medications, STYLE_COLOR: #2AA02B, \nAGE: 63.303, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.303, diagnosis > performance_status --> ECOG: 1, \nAGE: 63.303, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 63.303, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.303, labtest > ca_19-9_labs --> RESULT: 655, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.303, labtest > cea_labs --> "
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "payload_sha256": "c065dc3efa68045a497436c15c5f9becd816987181ec1e9514fa33626386b9a0",
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "token_reservation": 29183,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-22c1fc5d746235ccec6c:f01",
+          "file-22c1fc5d746235ccec6c:f03",
+          "file-22c1fc5d746235ccec6c:f04",
+          "file-22c1fc5d746235ccec6c:f05",
+          "file-22c1fc5d746235ccec6c:f06",
+          "file-22c1fc5d746235ccec6c:f07",
+          "file-22c1fc5d746235ccec6c:f08",
+          "file-22c1fc5d746235ccec6c:f10",
+          "file-60a19e5cdc1a1b76db06:f01",
+          "file-60a19e5cdc1a1b76db06:f02",
+          "file-7b709aaa678467e9557c:f01",
+          "file-7b709aaa678467e9557c:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 348,
+              "chars_sent": 348,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-22c1fc5d746235ccec6c": {
+              "candidates": 10,
+              "sent": 8,
+              "chars_total": 5373,
+              "chars_sent": 4210,
+              "key_records": 2,
+              "required_candidates": 3,
+              "required_sent": 3,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-22c1fc5d746235ccec6c:f01",
+                "file-22c1fc5d746235ccec6c:f03",
+                "file-22c1fc5d746235ccec6c:f04",
+                "file-22c1fc5d746235ccec6c:f05",
+                "file-22c1fc5d746235ccec6c:f06",
+                "file-22c1fc5d746235ccec6c:f07",
+                "file-22c1fc5d746235ccec6c:f08",
+                "file-22c1fc5d746235ccec6c:f10"
+              ]
+            },
+            "file-7b709aaa678467e9557c": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1012,
+              "chars_sent": 1012,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-7b709aaa678467e9557c:f01",
+                "file-7b709aaa678467e9557c:f02"
+              ]
+            },
+            "file-60a19e5cdc1a1b76db06": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 635,
+              "chars_sent": 635,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-60a19e5cdc1a1b76db06:f01",
+                "file-60a19e5cdc1a1b76db06:f02"
+              ]
+            }
+          },
+          "candidates": 15,
+          "sent": 13,
+          "chars_total": 7368,
+          "chars_sent": 6205,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 3,
+        "unresolved_items": 1,
+        "unresolved_by_role": {
+          "literature": 1
+        }
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "timeline",
+      "details": {
+        "input_tokens": 8777,
+        "output_tokens": 975,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 20.896,
+        "evidence_fragments": 13
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "timeline",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient is a 63-year-old male with AJCC Stage III pancreatic adenocarcinoma (Regional, extension and nodes) harboring a somatic KRAS p.G12V mutation. At age 63.703, the patient underwent surgery, and subsequent clinical records from age 63.722 to 63.859 indicate no evidence of cancer on CT scans with stable/decreasing tumor markers (CA 19-9: 120 to 14 to 19 U/mL; CEA: 3.9 to 1.8 to 2.1 ng/mL).",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 3882,
+                  "end": 4442,
+                  "quote": "AGE: 63.638, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.703, surgery --> SUBTYPE: PROCEDURE, \nAGE: 63.703, specimen_surgery --> SAMPLE_ID: P-0006691-T01-IM5, SEQ_DATE: 0, \nAGE: 63.703, specimen --> SAMPLE_ID: P-0006691-T01-IM5, \nAGE: 63.722, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: No, \n"
+                },
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 5035,
+                  "end": 5373,
+                  "quote": "AGE: 63.829, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.829, labtest > cea_labs --> CEA: 2.1000 ng/ml          \nAGE: 63.840, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.859, treatment > treatment --> STOP_AGE: 63.9746, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                },
+                {
+                  "document_id": "file-60a19e5cdc1a1b76db06",
+                  "start": 379,
+                  "end": 635,
+                  "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+                }
+              ],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The provided clinical timeline ends at age 63.859, which is before the patient reaches age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-02",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            },
+            {
+              "statement": "Not applicable: The source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-03",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The clinical timeline and genomic data confirm the patient's age, diagnosis, stage, mutation status, and post-surgical disease-free interval up to age 63.859.",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 3882,
+                  "end": 4442,
+                  "quote": "AGE: 63.638, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.703, surgery --> SUBTYPE: PROCEDURE, \nAGE: 63.703, specimen_surgery --> SAMPLE_ID: P-0006691-T01-IM5, SEQ_DATE: 0, \nAGE: 63.703, specimen --> SAMPLE_ID: P-0006691-T01-IM5, \nAGE: 63.722, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: No, \n"
+                },
+                {
+                  "document_id": "file-60a19e5cdc1a1b76db06",
+                  "start": 379,
+                  "end": 635,
+                  "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+                }
+              ],
+              "reviewer_role": "timeline"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "The clinical data explicitly ends at age 63.859, leaving a gap before the patient reaches age 64 and no data beyond that point.",
+              "citations": [],
+              "reviewer_role": "timeline"
+            },
+            {
+              "target_claim_id": "literature-03",
+              "verdict": "confirmed",
+              "note": "No predictive models or recurrence probabilities are present in the source material.",
+              "citations": [],
+              "reviewer_role": "timeline"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "timeline",
+      "details": {
+        "executor": "timeline",
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient is a 63-year-old male with AJCC Stage III pancreatic adenocarcinoma (Regional, extension and nodes) harboring a somatic KRAS p.G12V mutation. At age 63.703, the patient underwent surgery, and subsequent clinical records from age 63.722 to 63.859 indicate no evidence of cancer on CT scans with stable/decreasing tumor markers (CA 19-9: 120 to 14 to 19 U/mL; CEA: 3.9 to 1.8 to 2.1 ng/mL).",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 3882,
+                  "end": 4442,
+                  "quote": "AGE: 63.638, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.703, surgery --> SUBTYPE: PROCEDURE, \nAGE: 63.703, specimen_surgery --> SAMPLE_ID: P-0006691-T01-IM5, SEQ_DATE: 0, \nAGE: 63.703, specimen --> SAMPLE_ID: P-0006691-T01-IM5, \nAGE: 63.722, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: No, \n"
+                },
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 5035,
+                  "end": 5373,
+                  "quote": "AGE: 63.829, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.829, labtest > cea_labs --> CEA: 2.1000 ng/ml          \nAGE: 63.840, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.859, treatment > treatment --> STOP_AGE: 63.9746, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                },
+                {
+                  "document_id": "file-60a19e5cdc1a1b76db06",
+                  "start": 379,
+                  "end": 635,
+                  "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+                }
+              ],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The provided clinical timeline ends at age 63.859, which is before the patient reaches age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-02",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            },
+            {
+              "statement": "Not applicable: The source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-03",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The clinical timeline and genomic data confirm the patient's age, diagnosis, stage, mutation status, and post-surgical disease-free interval up to age 63.859.",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 3882,
+                  "end": 4442,
+                  "quote": "AGE: 63.638, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.703, surgery --> SUBTYPE: PROCEDURE, \nAGE: 63.703, specimen_surgery --> SAMPLE_ID: P-0006691-T01-IM5, SEQ_DATE: 0, \nAGE: 63.703, specimen --> SAMPLE_ID: P-0006691-T01-IM5, \nAGE: 63.722, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: No, \n"
+                },
+                {
+                  "document_id": "file-60a19e5cdc1a1b76db06",
+                  "start": 379,
+                  "end": 635,
+                  "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+                }
+              ],
+              "reviewer_role": "timeline"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "The clinical data explicitly ends at age 63.859, leaving a gap before the patient reaches age 64 and no data beyond that point.",
+              "citations": [],
+              "reviewer_role": "timeline"
+            },
+            {
+              "target_claim_id": "literature-03",
+              "verdict": "confirmed",
+              "note": "No predictive models or recurrence probabilities are present in the source material.",
+              "citations": [],
+              "reviewer_role": "timeline"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown"
+            },
+            "file-22c1fc5d746235ccec6c": {
+              "gene": "unknown",
+              "variant": "unknown"
+            },
+            "file-7b709aaa678467e9557c": {
+              "gene": "unknown",
+              "variant": "unknown"
+            },
+            "file-60a19e5cdc1a1b76db06": {
+              "gene": "unknown",
+              "variant": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 63-year-old White male of non-Hispanic ethnicity with a diagnosis of pancreatic adenocarcinoma. A sample from the patient has been sequenced, and mutation data is available for review. Comprehensive patient history, including details on diagnosis, treatments, and lab tests, is accessible for the period from 63 to 64 years of age."
+            },
+            {
+              "id": "file-22c1fc5d746235ccec6c",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 63.254, samples > clinical_sample --> SAMPLE_ID: P-0006691-T01-IM5, PATIENT_ID: P-0006691, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT410, SAMPLE_COVERAGE: 745, TUMOR_PURITY: 30.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: Not Available, MSI_SCORE: 0.0, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 3.0, CLINICAL_SUMMARY: Regional,Extension and Nodes, ICD_O_HISTOLOGY_DESCRIPTION: Adenocarcinoma, Nos, DIAGNOSIS_DESCRIPTION: Pancreas, TMB_NONSYNONYMOUS: 0.978719698, DX_DESCRIPTION: ADENOCARCINOMA, NOS, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: III, CLINICAL_GROUP_y: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, ICD_10: C25.0, \nAGE: 63.254, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: ADENOCARCINOMA, NOS | PANCREAS, HEAD (M8140/3 | C250), AJCC: III, CLINICAL_GROUP: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, \nAGE: 63.303, treatment > prior_meds --> SUBTYPE: Prior Medications to MSK, TREATMENT_TYPE: Medical Therapy, INFERRED_TX_PROB: 0.02, PRIOR_MED_TO_MSK: No prior medications, STYLE_COLOR: #2AA02B, \nAGE: 63.303, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.303, diagnosis > performance_status --> ECOG: 1, \nAGE: 63.303, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 63.303, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.303, labtest > ca_19-9_labs --> RESULT: 655, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.303, labtest > cea_labs --> "
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "file-60a19e5cdc1a1b76db06",
+              "start": 566,
+              "end": 576,
+              "raw": "p.Gly12Val",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "file-60a19e5cdc1a1b76db06",
+              "start": 577,
+              "end": 583,
+              "raw": "p.G12V",
+              "canonical": "G12V"
+            }
+          ],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "agent_started",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "payload_sha256": "6bc4e7f4d54e974b8353f69e4b9329ed202f979db9a612d55ff161bf6d403fd9",
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "token_reservation": 32096,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-22c1fc5d746235ccec6c:f01",
+          "file-22c1fc5d746235ccec6c:f02",
+          "file-22c1fc5d746235ccec6c:f03",
+          "file-22c1fc5d746235ccec6c:f06",
+          "file-22c1fc5d746235ccec6c:f07",
+          "file-22c1fc5d746235ccec6c:f08",
+          "file-22c1fc5d746235ccec6c:f09",
+          "file-22c1fc5d746235ccec6c:f10",
+          "file-60a19e5cdc1a1b76db06:f01",
+          "file-60a19e5cdc1a1b76db06:f02",
+          "file-7b709aaa678467e9557c:f01",
+          "file-7b709aaa678467e9557c:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 348,
+              "chars_sent": 348,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-22c1fc5d746235ccec6c": {
+              "candidates": 10,
+              "sent": 8,
+              "chars_total": 5373,
+              "chars_sent": 4337,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-22c1fc5d746235ccec6c:f01",
+                "file-22c1fc5d746235ccec6c:f02",
+                "file-22c1fc5d746235ccec6c:f03",
+                "file-22c1fc5d746235ccec6c:f06",
+                "file-22c1fc5d746235ccec6c:f07",
+                "file-22c1fc5d746235ccec6c:f08",
+                "file-22c1fc5d746235ccec6c:f09",
+                "file-22c1fc5d746235ccec6c:f10"
+              ]
+            },
+            "file-7b709aaa678467e9557c": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1012,
+              "chars_sent": 1012,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-7b709aaa678467e9557c:f01",
+                "file-7b709aaa678467e9557c:f02"
+              ]
+            },
+            "file-60a19e5cdc1a1b76db06": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 635,
+              "chars_sent": 635,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-60a19e5cdc1a1b76db06:f01",
+                "file-60a19e5cdc1a1b76db06:f02"
+              ]
+            }
+          },
+          "candidates": 15,
+          "sent": 13,
+          "chars_total": 7368,
+          "chars_sent": 6332,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "molecular"
+          ],
+          "required": {
+            "molecular": {
+              "candidates": 7,
+              "sent": 7,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 4,
+        "unresolved_items": 2,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1
+        }
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "model_usage",
+      "role": "genomics",
+      "details": {
+        "input_tokens": 9651,
+        "output_tokens": 744,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 10.032,
+        "evidence_fragments": 13
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_reported",
+      "role": "genomics",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient has a somatic KRAS p.G12V (G12V) missense mutation detected in a primary pancreatic adenocarcinoma tumor sample (IMPACT410 panel, transcript ENST00000256078.4).",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "file-60a19e5cdc1a1b76db06",
+                  "start": 379,
+                  "end": 635,
+                  "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+                }
+              ],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "molecular",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The available clinical timeline ends at age 63.859, which is prior to the patient reaching age 64; consequently, there is no observed disease status or recurrence data for the period after age 64.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "genomics-02",
+              "author_role": "genomics",
+              "used_claim_ids": [
+                "literature-02"
+              ],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            },
+            {
+              "statement": "Not applicable: The provided source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "genomics-03",
+              "author_role": "genomics",
+              "used_claim_ids": [
+                "literature-03"
+              ],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The molecular finding of somatic KRAS p.G12V is supported by the genomics evidence file-60a19e5cdc1a1b76db06:f02.",
+              "citations": [],
+              "reviewer_role": "genomics"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "The timeline evidence ends at age 63.859, confirming the absence of data beyond this point.",
+              "citations": [],
+              "reviewer_role": "genomics"
+            },
+            {
+              "target_claim_id": "literature-03",
+              "verdict": "confirmed",
+              "note": "No predictive models or recurrence probabilities are present in the source material.",
+              "citations": [],
+              "reviewer_role": "genomics"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "agent_completed",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient has a somatic KRAS p.G12V (G12V) missense mutation detected in a primary pancreatic adenocarcinoma tumor sample (IMPACT410 panel, transcript ENST00000256078.4).",
+              "relation": "SUPPORTS",
+              "citations": [
+                {
+                  "document_id": "file-60a19e5cdc1a1b76db06",
+                  "start": 379,
+                  "end": 635,
+                  "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+                }
+              ],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "molecular",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The available clinical timeline ends at age 63.859, which is prior to the patient reaching age 64; consequently, there is no observed disease status or recurrence data for the period after age 64.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "genomics-02",
+              "author_role": "genomics",
+              "used_claim_ids": [
+                "literature-02"
+              ],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            },
+            {
+              "statement": "Not applicable: The provided source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "genomics-03",
+              "author_role": "genomics",
+              "used_claim_ids": [
+                "literature-03"
+              ],
+              "scope": "molecular",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The molecular finding of somatic KRAS p.G12V is supported by the genomics evidence file-60a19e5cdc1a1b76db06:f02.",
+              "citations": [],
+              "reviewer_role": "genomics"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "The timeline evidence ends at age 63.859, confirming the absence of data beyond this point.",
+              "citations": [],
+              "reviewer_role": "genomics"
+            },
+            {
+              "target_claim_id": "literature-03",
+              "verdict": "confirmed",
+              "note": "No predictive models or recurrence probabilities are present in the source material.",
+              "citations": [],
+              "reviewer_role": "genomics"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            },
+            "file-22c1fc5d746235ccec6c": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            },
+            "file-7b709aaa678467e9557c": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            },
+            "file-60a19e5cdc1a1b76db06": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 63-year-old White male of non-Hispanic ethnicity with a diagnosis of pancreatic adenocarcinoma. A sample from the patient has been sequenced, and mutation data is available for review. Comprehensive patient history, including details on diagnosis, treatments, and lab tests, is accessible for the period from 63 to 64 years of age."
+            },
+            {
+              "id": "file-22c1fc5d746235ccec6c",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 63.254, samples > clinical_sample --> SAMPLE_ID: P-0006691-T01-IM5, PATIENT_ID: P-0006691, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT410, SAMPLE_COVERAGE: 745, TUMOR_PURITY: 30.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: Not Available, MSI_SCORE: 0.0, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 3.0, CLINICAL_SUMMARY: Regional,Extension and Nodes, ICD_O_HISTOLOGY_DESCRIPTION: Adenocarcinoma, Nos, DIAGNOSIS_DESCRIPTION: Pancreas, TMB_NONSYNONYMOUS: 0.978719698, DX_DESCRIPTION: ADENOCARCINOMA, NOS, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: III, CLINICAL_GROUP_y: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, ICD_10: C25.0, \nAGE: 63.254, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: ADENOCARCINOMA, NOS | PANCREAS, HEAD (M8140/3 | C250), AJCC: III, CLINICAL_GROUP: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, \nAGE: 63.303, treatment > prior_meds --> SUBTYPE: Prior Medications to MSK, TREATMENT_TYPE: Medical Therapy, INFERRED_TX_PROB: 0.02, PRIOR_MED_TO_MSK: No prior medications, STYLE_COLOR: #2AA02B, \nAGE: 63.303, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.303, diagnosis > performance_status --> ECOG: 1, \nAGE: 63.303, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 63.303, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.303, labtest > ca_19-9_labs --> RESULT: 655, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.303, labtest > cea_labs --> "
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "file-60a19e5cdc1a1b76db06",
+              "start": 566,
+              "end": 576,
+              "raw": "p.Gly12Val",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "file-60a19e5cdc1a1b76db06",
+              "start": 577,
+              "end": 583,
+              "raw": "p.G12V",
+              "canonical": "G12V"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [
+            {
+              "document_id": "file-7b709aaa678467e9557c",
+              "field": "cancer_type",
+              "value": "Pancreatic Cancer",
+              "start": 62,
+              "end": 95
+            },
+            {
+              "document_id": "file-7b709aaa678467e9557c",
+              "field": "primary_site",
+              "value": "Pancreas",
+              "start": 186,
+              "end": 211
+            },
+            {
+              "document_id": "file-7b709aaa678467e9557c",
+              "field": "cancer_type_detailed",
+              "value": "Pancreatic Adenocarcinoma",
+              "start": 214,
+              "end": 264
+            },
+            {
+              "document_id": "file-7b709aaa678467e9557c",
+              "field": "oncotree_code",
+              "value": "PAAD",
+              "start": 340,
+              "end": 362
+            }
+          ],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 18,
+      "kind": "agent_started",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "payload_sha256": "97d0ae41ff6098e7f00b2048e3c4c74ed5b10d88c055ae0ee70a4a0c2a727a30",
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "token_reservation": 35430,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-22c1fc5d746235ccec6c:f01",
+          "file-22c1fc5d746235ccec6c:f02",
+          "file-22c1fc5d746235ccec6c:f03",
+          "file-22c1fc5d746235ccec6c:f06",
+          "file-22c1fc5d746235ccec6c:f07",
+          "file-22c1fc5d746235ccec6c:f08",
+          "file-22c1fc5d746235ccec6c:f09",
+          "file-22c1fc5d746235ccec6c:f10",
+          "file-60a19e5cdc1a1b76db06:f01",
+          "file-60a19e5cdc1a1b76db06:f02",
+          "file-7b709aaa678467e9557c:f01",
+          "file-7b709aaa678467e9557c:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 348,
+              "chars_sent": 348,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-22c1fc5d746235ccec6c": {
+              "candidates": 10,
+              "sent": 8,
+              "chars_total": 5373,
+              "chars_sent": 4337,
+              "key_records": 2,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-22c1fc5d746235ccec6c:f01",
+                "file-22c1fc5d746235ccec6c:f02",
+                "file-22c1fc5d746235ccec6c:f03",
+                "file-22c1fc5d746235ccec6c:f06",
+                "file-22c1fc5d746235ccec6c:f07",
+                "file-22c1fc5d746235ccec6c:f08",
+                "file-22c1fc5d746235ccec6c:f09",
+                "file-22c1fc5d746235ccec6c:f10"
+              ]
+            },
+            "file-7b709aaa678467e9557c": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1012,
+              "chars_sent": 1012,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-7b709aaa678467e9557c:f01",
+                "file-7b709aaa678467e9557c:f02"
+              ]
+            },
+            "file-60a19e5cdc1a1b76db06": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 635,
+              "chars_sent": 635,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-60a19e5cdc1a1b76db06:f01",
+                "file-60a19e5cdc1a1b76db06:f02"
+              ]
+            }
+          },
+          "candidates": 15,
+          "sent": 13,
+          "chars_total": 7368,
+          "chars_sent": 6332,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "pathology"
+          ],
+          "required": {
+            "pathology": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 7,
+        "unresolved_items": 3,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "kind": "model_usage",
+      "role": "pathology",
+      "details": {
+        "input_tokens": 10698,
+        "output_tokens": 904,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 24.929,
+        "evidence_fragments": 13
+      }
+    },
+    {
+      "sequence": 20,
+      "kind": "agent_reported",
+      "role": "pathology",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient is a 63-year-old male with AJCC Stage III pancreatic adenocarcinoma (Regional, extension and nodes) harboring a somatic KRAS p.G12V mutation. At age 63.703, the patient underwent surgery, and subsequent clinical records from age 63.722 to 63.859 indicate no evidence of cancer on CT scans with stable/decreasing tumor markers (CA 19-9: 120 to 14 to 19 U/mL; CEA: 3.9 to 1.8 to 2.1 ng/mL).",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 595,
+                  "end": 1165,
+                  "quote": "DIAGNOSIS_DESCRIPTION: Pancreas, TMB_NONSYNONYMOUS: 0.978719698, DX_DESCRIPTION: ADENOCARCINOMA, NOS, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: III, CLINICAL_GROUP_y: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, ICD_10: C25.0, \nAGE: 63.254, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: ADENOCARCINOMA, NOS | PANCREAS, HEAD (M8140/3 | C250), AJCC: III, CLINICAL_GROUP: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, \n"
+                },
+                {
+                  "document_id": "file-60a19e5cdc1a1b76db06",
+                  "start": 379,
+                  "end": 635,
+                  "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+                },
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 4442,
+                  "end": 5035,
+                  "quote": "AGE: 63.722, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 63.783, diagnosis > performance_status --> ECOG: 1, \nAGE: 63.783, labtest > ca_19-9_labs --> RESULT: 14, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.783, labtest > cea_labs --> CEA: 1.8000 ng/ml          \nAGE: 63.829, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 63.829, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+                }
+              ],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "pathologic",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The provided clinical timeline ends at age 63.859, which is before the patient reaches age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-02",
+              "author_role": "pathology",
+              "used_claim_ids": [
+                "literature-02"
+              ],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            },
+            {
+              "statement": "Not applicable: The source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-03",
+              "author_role": "pathology",
+              "used_claim_ids": [
+                "literature-03"
+              ],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The clinical and genomic data confirm the patient's diagnosis, stage, mutation status, and post-surgical status as of age 63.859.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "The timeline data explicitly ends at age 63.859, confirming the absence of data for the period after age 64.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            },
+            {
+              "target_claim_id": "literature-03",
+              "verdict": "confirmed",
+              "note": "No predictive models or recurrence probabilities are present in the source material.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 21,
+      "kind": "agent_completed",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient is a 63-year-old male with AJCC Stage III pancreatic adenocarcinoma (Regional, extension and nodes) harboring a somatic KRAS p.G12V mutation. At age 63.703, the patient underwent surgery, and subsequent clinical records from age 63.722 to 63.859 indicate no evidence of cancer on CT scans with stable/decreasing tumor markers (CA 19-9: 120 to 14 to 19 U/mL; CEA: 3.9 to 1.8 to 2.1 ng/mL).",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 595,
+                  "end": 1165,
+                  "quote": "DIAGNOSIS_DESCRIPTION: Pancreas, TMB_NONSYNONYMOUS: 0.978719698, DX_DESCRIPTION: ADENOCARCINOMA, NOS, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: III, CLINICAL_GROUP_y: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, ICD_10: C25.0, \nAGE: 63.254, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: ADENOCARCINOMA, NOS | PANCREAS, HEAD (M8140/3 | C250), AJCC: III, CLINICAL_GROUP: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, \n"
+                },
+                {
+                  "document_id": "file-60a19e5cdc1a1b76db06",
+                  "start": 379,
+                  "end": 635,
+                  "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+                },
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 4442,
+                  "end": 5035,
+                  "quote": "AGE: 63.722, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 63.783, diagnosis > performance_status --> ECOG: 1, \nAGE: 63.783, labtest > ca_19-9_labs --> RESULT: 14, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.783, labtest > cea_labs --> CEA: 1.8000 ng/ml          \nAGE: 63.829, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: Yes, \nAGE: 63.829, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+                }
+              ],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "pathologic",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The provided clinical timeline ends at age 63.859, which is before the patient reaches age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-02",
+              "author_role": "pathology",
+              "used_claim_ids": [
+                "literature-02"
+              ],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            },
+            {
+              "statement": "Not applicable: The source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "pathology-03",
+              "author_role": "pathology",
+              "used_claim_ids": [
+                "literature-03"
+              ],
+              "scope": "pathologic",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The clinical and genomic data confirm the patient's diagnosis, stage, mutation status, and post-surgical status as of age 63.859.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "The timeline data explicitly ends at age 63.859, confirming the absence of data for the period after age 64.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            },
+            {
+              "target_claim_id": "literature-03",
+              "verdict": "confirmed",
+              "note": "No predictive models or recurrence probabilities are present in the source material.",
+              "citations": [],
+              "reviewer_role": "pathology"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 22,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-22c1fc5d746235ccec6c": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-7b709aaa678467e9557c": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-60a19e5cdc1a1b76db06": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 63-year-old White male of non-Hispanic ethnicity with a diagnosis of pancreatic adenocarcinoma. A sample from the patient has been sequenced, and mutation data is available for review. Comprehensive patient history, including details on diagnosis, treatments, and lab tests, is accessible for the period from 63 to 64 years of age."
+            },
+            {
+              "id": "file-22c1fc5d746235ccec6c",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 63.254, samples > clinical_sample --> SAMPLE_ID: P-0006691-T01-IM5, PATIENT_ID: P-0006691, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT410, SAMPLE_COVERAGE: 745, TUMOR_PURITY: 30.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: Not Available, MSI_SCORE: 0.0, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 3.0, CLINICAL_SUMMARY: Regional,Extension and Nodes, ICD_O_HISTOLOGY_DESCRIPTION: Adenocarcinoma, Nos, DIAGNOSIS_DESCRIPTION: Pancreas, TMB_NONSYNONYMOUS: 0.978719698, DX_DESCRIPTION: ADENOCARCINOMA, NOS, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: III, CLINICAL_GROUP_y: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, ICD_10: C25.0, \nAGE: 63.254, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: ADENOCARCINOMA, NOS | PANCREAS, HEAD (M8140/3 | C250), AJCC: III, CLINICAL_GROUP: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, \nAGE: 63.303, treatment > prior_meds --> SUBTYPE: Prior Medications to MSK, TREATMENT_TYPE: Medical Therapy, INFERRED_TX_PROB: 0.02, PRIOR_MED_TO_MSK: No prior medications, STYLE_COLOR: #2AA02B, \nAGE: 63.303, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.303, diagnosis > performance_status --> ECOG: 1, \nAGE: 63.303, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 63.303, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.303, labtest > ca_19-9_labs --> RESULT: 655, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.303, labtest > cea_labs --> "
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "file-60a19e5cdc1a1b76db06",
+              "start": 566,
+              "end": 576,
+              "raw": "p.Gly12Val",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "file-60a19e5cdc1a1b76db06",
+              "start": 577,
+              "end": 583,
+              "raw": "p.G12V",
+              "canonical": "G12V"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [
+            {
+              "document_id": "file-7b709aaa678467e9557c",
+              "field": "cancer_type",
+              "value": "Pancreatic Cancer",
+              "start": 62,
+              "end": 95
+            },
+            {
+              "document_id": "file-7b709aaa678467e9557c",
+              "field": "primary_site",
+              "value": "Pancreas",
+              "start": 186,
+              "end": 211
+            },
+            {
+              "document_id": "file-7b709aaa678467e9557c",
+              "field": "cancer_type_detailed",
+              "value": "Pancreatic Adenocarcinoma",
+              "start": 214,
+              "end": 264
+            },
+            {
+              "document_id": "file-7b709aaa678467e9557c",
+              "field": "oncotree_code",
+              "value": "PAAD",
+              "start": 340,
+              "end": 362
+            }
+          ],
+          "pathology_field_limit": 100,
+          "directions": {
+            "context-0": "unknown",
+            "file-22c1fc5d746235ccec6c": "unknown",
+            "file-7b709aaa678467e9557c": "unknown",
+            "file-60a19e5cdc1a1b76db06": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 23,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "f23934bbef9e3493e9d571b1084c31d154764f9b79de1a319b07bf5a6f33ac6a",
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "token_reservation": 37186,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-22c1fc5d746235ccec6c:f01",
+          "file-22c1fc5d746235ccec6c:f03",
+          "file-22c1fc5d746235ccec6c:f04",
+          "file-22c1fc5d746235ccec6c:f05",
+          "file-22c1fc5d746235ccec6c:f06",
+          "file-22c1fc5d746235ccec6c:f07",
+          "file-22c1fc5d746235ccec6c:f08",
+          "file-22c1fc5d746235ccec6c:f10",
+          "file-60a19e5cdc1a1b76db06:f01",
+          "file-60a19e5cdc1a1b76db06:f02",
+          "file-7b709aaa678467e9557c:f01",
+          "file-7b709aaa678467e9557c:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 348,
+              "chars_sent": 348,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-22c1fc5d746235ccec6c": {
+              "candidates": 10,
+              "sent": 8,
+              "chars_total": 5373,
+              "chars_sent": 4210,
+              "key_records": 2,
+              "required_candidates": 3,
+              "required_sent": 3,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-22c1fc5d746235ccec6c:f01",
+                "file-22c1fc5d746235ccec6c:f03",
+                "file-22c1fc5d746235ccec6c:f04",
+                "file-22c1fc5d746235ccec6c:f05",
+                "file-22c1fc5d746235ccec6c:f06",
+                "file-22c1fc5d746235ccec6c:f07",
+                "file-22c1fc5d746235ccec6c:f08",
+                "file-22c1fc5d746235ccec6c:f10"
+              ]
+            },
+            "file-7b709aaa678467e9557c": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1012,
+              "chars_sent": 1012,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-7b709aaa678467e9557c:f01",
+                "file-7b709aaa678467e9557c:f02"
+              ]
+            },
+            "file-60a19e5cdc1a1b76db06": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 635,
+              "chars_sent": 635,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-60a19e5cdc1a1b76db06:f01",
+                "file-60a19e5cdc1a1b76db06:f02"
+              ]
+            }
+          },
+          "candidates": 15,
+          "sent": 13,
+          "chars_total": 7368,
+          "chars_sent": 6205,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 7,
+        "unresolved_items": 4,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1
+        }
+      }
+    },
+    {
+      "sequence": 24,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 11268,
+        "output_tokens": 1016,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 20.542,
+        "evidence_fragments": 13
+      }
+    },
+    {
+      "sequence": 25,
+      "kind": "agent_reported",
+      "role": "drug",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient is a 63-year-old male with AJCC Stage III pancreatic adenocarcinoma harboring a somatic KRAS p.G12V mutation. At age 63.703, the patient underwent surgery, and subsequent clinical records from age 63.722 to 63.859 indicate no evidence of cancer on CT scans with stable/decreasing tumor markers (CA 19-9: 120 to 14 to 19 U/mL; CEA: 3.9 to 1.8 to 2.1 ng/mL).",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 3882,
+                  "end": 4442,
+                  "quote": "AGE: 63.638, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.703, surgery --> SUBTYPE: PROCEDURE, \nAGE: 63.703, specimen_surgery --> SAMPLE_ID: P-0006691-T01-IM5, SEQ_DATE: 0, \nAGE: 63.703, specimen --> SAMPLE_ID: P-0006691-T01-IM5, \nAGE: 63.722, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: No, \n"
+                },
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 5035,
+                  "end": 5373,
+                  "quote": "AGE: 63.829, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.829, labtest > cea_labs --> CEA: 2.1000 ng/ml          \nAGE: 63.840, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.859, treatment > treatment --> STOP_AGE: 63.9746, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "claim_id": "drug-01",
+              "author_role": "drug",
+              "used_claim_ids": [
+                "literature-01",
+                "timeline-01"
+              ],
+              "scope": "exposure",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The provided clinical timeline ends at age 63.859, which is before the patient reaches age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "drug-02",
+              "author_role": "drug",
+              "used_claim_ids": [
+                "literature-02",
+                "timeline-02"
+              ],
+              "scope": "exposure",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            },
+            {
+              "statement": "Not applicable: The source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "drug-03",
+              "author_role": "drug",
+              "used_claim_ids": [
+                "literature-03",
+                "timeline-03"
+              ],
+              "scope": "relationship",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The clinical timeline and genomic data confirm the patient's history, surgery, and molecular profile as stated.",
+              "citations": [],
+              "reviewer_role": "drug"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "The evidence explicitly ends at age 63.859, confirming the absence of data for the period after age 64.",
+              "citations": [],
+              "reviewer_role": "drug"
+            },
+            {
+              "target_claim_id": "literature-03",
+              "verdict": "confirmed",
+              "note": "No predictive models or recurrence probabilities are present in the source material.",
+              "citations": [],
+              "reviewer_role": "drug"
+            },
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "The timeline data supports the statement regarding the patient's status post-surgery.",
+              "citations": [],
+              "reviewer_role": "drug"
+            },
+            {
+              "target_claim_id": "timeline-02",
+              "verdict": "confirmed",
+              "note": "The timeline data confirms the end of the record at age 63.859.",
+              "citations": [],
+              "reviewer_role": "drug"
+            },
+            {
+              "target_claim_id": "timeline-03",
+              "verdict": "confirmed",
+              "note": "No predictive models are present in the timeline data.",
+              "citations": [],
+              "reviewer_role": "drug"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 26,
+      "kind": "agent_completed",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "output": {
+          "findings": [
+            {
+              "statement": "The patient is a 63-year-old male with AJCC Stage III pancreatic adenocarcinoma harboring a somatic KRAS p.G12V mutation. At age 63.703, the patient underwent surgery, and subsequent clinical records from age 63.722 to 63.859 indicate no evidence of cancer on CT scans with stable/decreasing tumor markers (CA 19-9: 120 to 14 to 19 U/mL; CEA: 3.9 to 1.8 to 2.1 ng/mL).",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 3882,
+                  "end": 4442,
+                  "quote": "AGE: 63.638, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.703, surgery --> SUBTYPE: PROCEDURE, \nAGE: 63.703, specimen_surgery --> SAMPLE_ID: P-0006691-T01-IM5, SEQ_DATE: 0, \nAGE: 63.703, specimen --> SAMPLE_ID: P-0006691-T01-IM5, \nAGE: 63.722, diagnosis > cancer_presence --> HAS CANCER: No, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: No, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: Yes, CHEST: No, \n"
+                },
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 5035,
+                  "end": 5373,
+                  "quote": "AGE: 63.829, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.829, labtest > cea_labs --> CEA: 2.1000 ng/ml          \nAGE: 63.840, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.859, treatment > treatment --> STOP_AGE: 63.9746, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "claim_id": "drug-01",
+              "author_role": "drug",
+              "used_claim_ids": [
+                "literature-01",
+                "timeline-01"
+              ],
+              "scope": "exposure",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            },
+            {
+              "statement": "The provided clinical timeline ends at age 63.859, which is before the patient reaches age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "drug-02",
+              "author_role": "drug",
+              "used_claim_ids": [
+                "literature-02",
+                "timeline-02"
+              ],
+              "scope": "exposure",
+              "evidence_level": "absent",
+              "material_status": "unknown",
+              "material_basis": "supplied"
+            },
+            {
+              "statement": "Not applicable: The source material does not contain any predictive models, recurrence risk scores, or literature-based recurrence probabilities for Stage III pancreatic adenocarcinoma post-surgery that could be applied to this patient's case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "drug-03",
+              "author_role": "drug",
+              "used_claim_ids": [
+                "literature-03",
+                "timeline-03"
+              ],
+              "scope": "relationship",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "supplied"
+            }
+          ],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "confirmed",
+              "note": "The clinical timeline and genomic data confirm the patient's history, surgery, and molecular profile as stated.",
+              "citations": [],
+              "reviewer_role": "drug"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "The evidence explicitly ends at age 63.859, confirming the absence of data for the period after age 64.",
+              "citations": [],
+              "reviewer_role": "drug"
+            },
+            {
+              "target_claim_id": "literature-03",
+              "verdict": "confirmed",
+              "note": "No predictive models or recurrence probabilities are present in the source material.",
+              "citations": [],
+              "reviewer_role": "drug"
+            },
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "confirmed",
+              "note": "The timeline data supports the statement regarding the patient's status post-surgery.",
+              "citations": [],
+              "reviewer_role": "drug"
+            },
+            {
+              "target_claim_id": "timeline-02",
+              "verdict": "confirmed",
+              "note": "The timeline data confirms the end of the record at age 63.859.",
+              "citations": [],
+              "reviewer_role": "drug"
+            },
+            {
+              "target_claim_id": "timeline-03",
+              "verdict": "confirmed",
+              "note": "No predictive models are present in the timeline data.",
+              "citations": [],
+              "reviewer_role": "drug"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 27,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "context-0": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-22c1fc5d746235ccec6c": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-7b709aaa678467e9557c": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            },
+            "file-60a19e5cdc1a1b76db06": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "timeline": [
+            {
+              "id": "context-0",
+              "day": null,
+              "stage": 0,
+              "text": "The patient is a 63-year-old White male of non-Hispanic ethnicity with a diagnosis of pancreatic adenocarcinoma. A sample from the patient has been sequenced, and mutation data is available for review. Comprehensive patient history, including details on diagnosis, treatments, and lab tests, is accessible for the period from 63 to 64 years of age."
+            },
+            {
+              "id": "file-22c1fc5d746235ccec6c",
+              "day": null,
+              "stage": 1,
+              "text": "AGE: 63.254, samples > clinical_sample --> SAMPLE_ID: P-0006691-T01-IM5, PATIENT_ID: P-0006691, CANCER_TYPE: Pancreatic Cancer, SAMPLE_TYPE: Primary, SAMPLE_CLASS: Tumor, METASTATIC_SITE: Not Applicable, PRIMARY_SITE: Pancreas, CANCER_TYPE_DETAILED: Pancreatic Adenocarcinoma, GENE_PANEL: IMPACT410, SAMPLE_COVERAGE: 745, TUMOR_PURITY: 30.0, ONCOTREE_CODE: PAAD, MSI_COMMENT: Not Available, MSI_SCORE: 0.0, MSI_TYPE: Stable, SOMATIC_STATUS: Matched, CLINICAL_GROUP_x: 2B, PATHOLOGICAL_GROUP: 3.0, CLINICAL_SUMMARY: Regional,Extension and Nodes, ICD_O_HISTOLOGY_DESCRIPTION: Adenocarcinoma, Nos, DIAGNOSIS_DESCRIPTION: Pancreas, TMB_NONSYNONYMOUS: 0.978719698, DX_DESCRIPTION: ADENOCARCINOMA, NOS, EVENT_TYPE: Diagnosis, SUBTYPE: Primary, SOURCE: Tumor Registry, AJCC: III, CLINICAL_GROUP_y: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, ICD_10: C25.0, \nAGE: 63.254, diagnosis > diagnosis --> SUBTYPE: Primary, SOURCE: Tumor Registry, DX_DESCRIPTION: ADENOCARCINOMA, NOS | PANCREAS, HEAD (M8140/3 | C250), AJCC: III, CLINICAL_GROUP: 2B, PATH_GROUP: 3, STAGE_CDM_DERIVED: Stage 1-3, SUMMARY: Regional, extension and nodes, \nAGE: 63.303, treatment > prior_meds --> SUBTYPE: Prior Medications to MSK, TREATMENT_TYPE: Medical Therapy, INFERRED_TX_PROB: 0.02, PRIOR_MED_TO_MSK: No prior medications, STYLE_COLOR: #2AA02B, \nAGE: 63.303, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.303, diagnosis > performance_status --> ECOG: 1, \nAGE: 63.303, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\nAGE: 63.303, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.303, labtest > ca_19-9_labs --> RESULT: 655, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.303, labtest > cea_labs --> "
+            }
+          ],
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "file-60a19e5cdc1a1b76db06",
+              "start": 566,
+              "end": 576,
+              "raw": "p.Gly12Val",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "file-60a19e5cdc1a1b76db06",
+              "start": 577,
+              "end": 583,
+              "raw": "p.G12V",
+              "canonical": "G12V"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [
+            {
+              "document_id": "file-7b709aaa678467e9557c",
+              "field": "cancer_type",
+              "value": "Pancreatic Cancer",
+              "start": 62,
+              "end": 95
+            },
+            {
+              "document_id": "file-7b709aaa678467e9557c",
+              "field": "primary_site",
+              "value": "Pancreas",
+              "start": 186,
+              "end": 211
+            },
+            {
+              "document_id": "file-7b709aaa678467e9557c",
+              "field": "cancer_type_detailed",
+              "value": "Pancreatic Adenocarcinoma",
+              "start": 214,
+              "end": 264
+            },
+            {
+              "document_id": "file-7b709aaa678467e9557c",
+              "field": "oncotree_code",
+              "value": "PAAD",
+              "start": 340,
+              "end": 362
+            }
+          ],
+          "pathology_field_limit": 100,
+          "directions": {
+            "context-0": "unknown",
+            "file-22c1fc5d746235ccec6c": "unknown",
+            "file-7b709aaa678467e9557c": "unknown",
+            "file-60a19e5cdc1a1b76db06": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 28,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "c7aa0fb6e7da7b8b7bc8356d0f8dc8ff29039b8b9214443e5c7559cefe5ca2f3",
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "token_reservation": 38556,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-22c1fc5d746235ccec6c:f01",
+          "file-22c1fc5d746235ccec6c:f02",
+          "file-22c1fc5d746235ccec6c:f03",
+          "file-22c1fc5d746235ccec6c:f04",
+          "file-22c1fc5d746235ccec6c:f05",
+          "file-22c1fc5d746235ccec6c:f06",
+          "file-22c1fc5d746235ccec6c:f07",
+          "file-22c1fc5d746235ccec6c:f10",
+          "file-60a19e5cdc1a1b76db06:f01",
+          "file-60a19e5cdc1a1b76db06:f02",
+          "file-7b709aaa678467e9557c:f01",
+          "file-7b709aaa678467e9557c:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 348,
+              "chars_sent": 348,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-22c1fc5d746235ccec6c": {
+              "candidates": 10,
+              "sent": 8,
+              "chars_total": 5373,
+              "chars_sent": 4220,
+              "key_records": 2,
+              "required_candidates": 5,
+              "required_sent": 5,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-22c1fc5d746235ccec6c:f01",
+                "file-22c1fc5d746235ccec6c:f02",
+                "file-22c1fc5d746235ccec6c:f03",
+                "file-22c1fc5d746235ccec6c:f04",
+                "file-22c1fc5d746235ccec6c:f05",
+                "file-22c1fc5d746235ccec6c:f06",
+                "file-22c1fc5d746235ccec6c:f07",
+                "file-22c1fc5d746235ccec6c:f10"
+              ]
+            },
+            "file-7b709aaa678467e9557c": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1012,
+              "chars_sent": 1012,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-7b709aaa678467e9557c:f01",
+                "file-7b709aaa678467e9557c:f02"
+              ]
+            },
+            "file-60a19e5cdc1a1b76db06": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 635,
+              "chars_sent": 635,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-60a19e5cdc1a1b76db06:f01",
+                "file-60a19e5cdc1a1b76db06:f02"
+              ]
+            }
+          },
+          "candidates": 15,
+          "sent": 13,
+          "chars_total": 7368,
+          "chars_sent": 6215,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 7,
+              "sent": 7,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 8,
+        "unresolved_items": 5,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1,
+          "drug": 1
+        }
+      }
+    },
+    {
+      "sequence": 29,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 11664,
+        "output_tokens": 680,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 14.68,
+        "evidence_fragments": 13
+      }
+    },
+    {
+      "sequence": 30,
+      "kind": "invalid_model_output",
+      "role": "verifier",
+      "details": {
+        "error_type": "ValueError",
+        "previous_output": "{\n  \"verdicts\": [\n    {\n      \"target_claim_id\": \"literature-01\",\n      \"verdict\": \"corrected\",\n      \"note\": \"The claim asserts the patient underwent surgery at age 63.703. The source evidence (file-22c1fc5d746235ccec6c:f04) records the surgery event at age 63.322. The claim also cites tumor marker values (CA 19-9: 120 to 14 to 19; CEA: 3.9 to 1.8 to 2.1) that do not match the source data (CA 19-9: 120 to 75 to 19; CEA: 3.9 to 3.2 to 2.1).\",\n      \"citations\": [\n        {\n          \"evidence_id\": \"file-22c1fc5d746235ccec6c:f04\"\n        },\n        {\n          \"evidence_id\": \"file-22c1fc5d746235ccec6c:f07\"\n        }\n      ]\n    },\n    {\n      \"target_claim_id\": \"literature-02\",\n      \"verdict\": \"confirmed\",\n      \"note\": \"The claim correctly states that the clinical timeline ends at age 63.859 (file-22c1fc5d746235ccec6c:f10), which is before the patient reaches age 64, and no data is available for the period after that point.\",\n      \"citations\": [\n        {\n          \"evidence_id\": \"file-22c1fc5d746235ccec6c:f10\"\n        }\n      ]\n    },\n    {\n      \"target_claim_id\": \"genomics-01\",\n      \"verdict\": \"confirmed\",\n      \"note\": \"The claim correctly identifies the somatic KRAS p.G12V mutation in the primary pancreatic adenocarcinoma sample using the IMPACT410 panel and transcript ENST00000256078.4, as confirmed by the genomic evidence.\",\n      \"citations\": [\n        {\n          \"evidence_id\": \"file-60a19e5cdc1b76db06:f02\"\n        }\n      ]\n    }\n  ],\n  \"unresolved\": [\n    \"The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material.\"\n  ],\n  \"requery\": \"\"\n}",
+        "validation_errors": [
+          {
+            "msg": "citation refers to an evidence fragment that was not supplied for this stage"
+          }
+        ],
+        "valid_claim_ids": [
+          "drug-01",
+          "drug-02",
+          "drug-03",
+          "genomics-01",
+          "genomics-02",
+          "genomics-03",
+          "literature-01",
+          "literature-02",
+          "literature-03",
+          "pathology-01",
+          "pathology-02",
+          "pathology-03",
+          "timeline-01",
+          "timeline-02",
+          "timeline-03"
+        ],
+        "output_truncated_in_trace": false
+      }
+    },
+    {
+      "sequence": 31,
+      "kind": "schema_repair_requested",
+      "role": "verifier",
+      "details": {
+        "attempt": 1
+      }
+    },
+    {
+      "sequence": 32,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "d8cab03898a7fc27818d4838d60cfe2f1c2b01c6cded33b49b1ea8d81385580d",
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "token_reservation": 41395,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-22c1fc5d746235ccec6c:f01",
+          "file-22c1fc5d746235ccec6c:f02",
+          "file-22c1fc5d746235ccec6c:f03",
+          "file-22c1fc5d746235ccec6c:f04",
+          "file-22c1fc5d746235ccec6c:f05",
+          "file-22c1fc5d746235ccec6c:f06",
+          "file-22c1fc5d746235ccec6c:f07",
+          "file-22c1fc5d746235ccec6c:f10",
+          "file-60a19e5cdc1a1b76db06:f01",
+          "file-60a19e5cdc1a1b76db06:f02",
+          "file-7b709aaa678467e9557c:f01",
+          "file-7b709aaa678467e9557c:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 348,
+              "chars_sent": 348,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-22c1fc5d746235ccec6c": {
+              "candidates": 10,
+              "sent": 8,
+              "chars_total": 5373,
+              "chars_sent": 4220,
+              "key_records": 2,
+              "required_candidates": 5,
+              "required_sent": 5,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-22c1fc5d746235ccec6c:f01",
+                "file-22c1fc5d746235ccec6c:f02",
+                "file-22c1fc5d746235ccec6c:f03",
+                "file-22c1fc5d746235ccec6c:f04",
+                "file-22c1fc5d746235ccec6c:f05",
+                "file-22c1fc5d746235ccec6c:f06",
+                "file-22c1fc5d746235ccec6c:f07",
+                "file-22c1fc5d746235ccec6c:f10"
+              ]
+            },
+            "file-7b709aaa678467e9557c": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1012,
+              "chars_sent": 1012,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-7b709aaa678467e9557c:f01",
+                "file-7b709aaa678467e9557c:f02"
+              ]
+            },
+            "file-60a19e5cdc1a1b76db06": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 635,
+              "chars_sent": 635,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-60a19e5cdc1a1b76db06:f01",
+                "file-60a19e5cdc1a1b76db06:f02"
+              ]
+            }
+          },
+          "candidates": 15,
+          "sent": 13,
+          "chars_total": 7368,
+          "chars_sent": 6215,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 7,
+              "sent": 7,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 8,
+        "unresolved_items": 5,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1,
+          "drug": 1
+        }
+      }
+    },
+    {
+      "sequence": 33,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 12578,
+        "output_tokens": 672,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 7.956,
+        "evidence_fragments": 13
+      }
+    },
+    {
+      "sequence": 34,
+      "kind": "invalid_model_output",
+      "role": "verifier",
+      "details": {
+        "error_type": "ValueError",
+        "previous_output": "{\n  \"verdicts\": [\n    {\n      \"target_claim_id\": \"literature-01\",\n      \"verdict\": \"corrected\",\n      \"note\": \"The claim asserts surgery at age 63.703, but evidence file-22c1fc5d746235ccec6c:f04 records surgery at age 63.322. The claim also cites tumor marker values (CA 19-9: 120 to 14 to 19; CEA: 3.9 to 1.8 to 2.1) that do not match the source data (CA 19-9: 120 to 75 to 19; CEA: 3.9 to 3.2 to 2.1).\",\n      \"citations\": [\n        {\n          \"evidence_id\": \"file-22c1fc5d746235ccec6c:f04\"\n        },\n        {\n          \"evidence_id\": \"file-22c1fc5d746235ccec6c:f07\"\n        }\n      ]\n    },\n    {\n      \"target_claim_id\": \"literature-02\",\n      \"verdict\": \"confirmed\",\n      \"note\": \"The claim correctly states that the clinical timeline ends at age 63.859 (file-22c1fc5d746235ccec6c:f10), which is before the patient reaches age 64, and no data is available for the period after that point.\",\n      \"citations\": [\n        {\n          \"evidence_id\": \"file-22c1fc5d746235ccec6c:f10\"\n        }\n      ]\n    },\n    {\n      \"target_claim_id\": \"genomics-01\",\n      \"verdict\": \"confirmed\",\n      \"note\": \"The claim correctly identifies the somatic KRAS p.G12V mutation in the primary pancreatic adenocarcinoma sample using the IMPACT410 panel and transcript ENST00000256078.4, as confirmed by the genomic evidence.\",\n      \"citations\": [\n        {\n          \"evidence_id\": \"file-60a19e5cdc1b76db06:f02\"\n        }\n      ]\n    }\n  ],\n  \"unresolved\": [\n    \"The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material.\"\n  ],\n  \"requery\": \"\"\n}",
+        "validation_errors": [
+          {
+            "msg": "citation refers to an evidence fragment that was not supplied for this stage"
+          }
+        ],
+        "valid_claim_ids": [
+          "drug-01",
+          "drug-02",
+          "drug-03",
+          "genomics-01",
+          "genomics-02",
+          "genomics-03",
+          "literature-01",
+          "literature-02",
+          "literature-03",
+          "pathology-01",
+          "pathology-02",
+          "pathology-03",
+          "timeline-01",
+          "timeline-02",
+          "timeline-03"
+        ],
+        "output_truncated_in_trace": false
+      }
+    },
+    {
+      "sequence": 35,
+      "kind": "schema_repair_requested",
+      "role": "verifier",
+      "details": {
+        "attempt": 2
+      }
+    },
+    {
+      "sequence": 36,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "56f384956a4d5daaa2ff511af5bdabe191cba836962c995ff15c1a43202c356e",
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "token_reservation": 41354,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-22c1fc5d746235ccec6c:f01",
+          "file-22c1fc5d746235ccec6c:f02",
+          "file-22c1fc5d746235ccec6c:f03",
+          "file-22c1fc5d746235ccec6c:f04",
+          "file-22c1fc5d746235ccec6c:f05",
+          "file-22c1fc5d746235ccec6c:f06",
+          "file-22c1fc5d746235ccec6c:f07",
+          "file-22c1fc5d746235ccec6c:f10",
+          "file-60a19e5cdc1a1b76db06:f01",
+          "file-60a19e5cdc1a1b76db06:f02",
+          "file-7b709aaa678467e9557c:f01",
+          "file-7b709aaa678467e9557c:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 348,
+              "chars_sent": 348,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-22c1fc5d746235ccec6c": {
+              "candidates": 10,
+              "sent": 8,
+              "chars_total": 5373,
+              "chars_sent": 4220,
+              "key_records": 2,
+              "required_candidates": 5,
+              "required_sent": 5,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-22c1fc5d746235ccec6c:f01",
+                "file-22c1fc5d746235ccec6c:f02",
+                "file-22c1fc5d746235ccec6c:f03",
+                "file-22c1fc5d746235ccec6c:f04",
+                "file-22c1fc5d746235ccec6c:f05",
+                "file-22c1fc5d746235ccec6c:f06",
+                "file-22c1fc5d746235ccec6c:f07",
+                "file-22c1fc5d746235ccec6c:f10"
+              ]
+            },
+            "file-7b709aaa678467e9557c": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1012,
+              "chars_sent": 1012,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-7b709aaa678467e9557c:f01",
+                "file-7b709aaa678467e9557c:f02"
+              ]
+            },
+            "file-60a19e5cdc1a1b76db06": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 635,
+              "chars_sent": 635,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-60a19e5cdc1a1b76db06:f01",
+                "file-60a19e5cdc1a1b76db06:f02"
+              ]
+            }
+          },
+          "candidates": 15,
+          "sent": 13,
+          "chars_total": 7368,
+          "chars_sent": 6215,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 7,
+              "sent": 7,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 8,
+        "unresolved_items": 5,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1,
+          "drug": 1
+        }
+      }
+    },
+    {
+      "sequence": 37,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 12570,
+        "output_tokens": 674,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 12.476,
+        "evidence_fragments": 13
+      }
+    },
+    {
+      "sequence": 38,
+      "kind": "agent_reported",
+      "role": "verifier",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "corrected",
+              "note": "The claim asserts surgery at age 63.703, but evidence file-22c1fc5d746235ccec6c:f04 records surgery at age 63.322. The claim also cites tumor marker values (CA 19-9: 120 to 14 to 19; CEA: 3.9 to 1.8 to 2.1) that do not match the source data (CA 19-9: 120 to 75 to 19; CEA: 3.9 to 3.2 to 2.1).",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 1726,
+                  "end": 2210,
+                  "quote": "AGE: 63.303, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.303, labtest > ca_19-9_labs --> RESULT: 655, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.303, labtest > cea_labs --> CEA: 6.8000 ng/ml          \nAGE: 63.322, surgery --> SUBTYPE: PROCEDURE, \nAGE: 63.325, treatment > treatment --> STOP_AGE: 63.6102, SUBTYPE: Chemo, AGENT: OXALIPLATIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                },
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 3308,
+                  "end": 3882,
+                  "quote": "AGE: 63.523, labtest > cea_labs --> CEA: 3.9000 ng/ml          \nAGE: 63.610, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.610, labtest > ca_19-9_labs --> RESULT: 75, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.610, labtest > cea_labs --> CEA: 3.2000 ng/ml          \nAGE: 63.638, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.638, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "The claim correctly states that the clinical timeline ends at age 63.859 (file-22c1fc5d746235ccec6c:f10), which is before the patient reaches age 64, and no data is available for the period after that point.",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 5035,
+                  "end": 5373,
+                  "quote": "AGE: 63.829, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.829, labtest > cea_labs --> CEA: 2.1000 ng/ml          \nAGE: 63.840, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.859, treatment > treatment --> STOP_AGE: 63.9746, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The claim correctly identifies the somatic KRAS p.G12V mutation in the primary pancreatic adenocarcinoma sample using the IMPACT410 panel and transcript ENST00000256078.4, as confirmed by the genomic evidence.",
+              "citations": [
+                {
+                  "document_id": "file-60a19e5cdc1a1b76db06",
+                  "start": 379,
+                  "end": 635,
+                  "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 39,
+      "kind": "agent_completed",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "corrected",
+              "note": "The claim asserts surgery at age 63.703, but evidence file-22c1fc5d746235ccec6c:f04 records surgery at age 63.322. The claim also cites tumor marker values (CA 19-9: 120 to 14 to 19; CEA: 3.9 to 1.8 to 2.1) that do not match the source data (CA 19-9: 120 to 75 to 19; CEA: 3.9 to 3.2 to 2.1).",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 1726,
+                  "end": 2210,
+                  "quote": "AGE: 63.303, diagnosis > tumor_sites --> SOURCE: Radiology Reports (NLP), CT, TUMOR_SITE: Other, PELVIS: Yes, OTHER: No, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.303, labtest > ca_19-9_labs --> RESULT: 655, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.303, labtest > cea_labs --> CEA: 6.8000 ng/ml          \nAGE: 63.322, surgery --> SUBTYPE: PROCEDURE, \nAGE: 63.325, treatment > treatment --> STOP_AGE: 63.6102, SUBTYPE: Chemo, AGENT: OXALIPLATIN, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                },
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 3308,
+                  "end": 3882,
+                  "quote": "AGE: 63.523, labtest > cea_labs --> CEA: 3.9000 ng/ml          \nAGE: 63.610, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.610, labtest > ca_19-9_labs --> RESULT: 75, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.610, labtest > cea_labs --> CEA: 3.2000 ng/ml          \nAGE: 63.638, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.638, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "literature-02",
+              "verdict": "confirmed",
+              "note": "The claim correctly states that the clinical timeline ends at age 63.859 (file-22c1fc5d746235ccec6c:f10), which is before the patient reaches age 64, and no data is available for the period after that point.",
+              "citations": [
+                {
+                  "document_id": "file-22c1fc5d746235ccec6c",
+                  "start": 5035,
+                  "end": 5373,
+                  "quote": "AGE: 63.829, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.829, labtest > cea_labs --> CEA: 2.1000 ng/ml          \nAGE: 63.840, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.859, treatment > treatment --> STOP_AGE: 63.9746, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The claim correctly identifies the somatic KRAS p.G12V mutation in the primary pancreatic adenocarcinoma sample using the IMPACT410 panel and transcript ENST00000256078.4, as confirmed by the genomic evidence.",
+              "citations": [
+                {
+                  "document_id": "file-60a19e5cdc1a1b76db06",
+                  "start": 379,
+                  "end": 635,
+                  "quote": "KRAS,3845,MSKCC,GRCh37,12,25398284,25398284,+,missense_variant,Missense_Mutation,SNP,C,C,A,rs121913529,P-0006691-T01-IM5,Unknown,SOMATIC,MSK-IMPACT,521,40,338,0,ENST00000256078.4:c.35G>T,p.Gly12Val,p.G12V,ENST00000256078,NM_033360.2,12.0,gGt/gTt,NEWRECORD\n"
+                }
+              ],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 40,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "9950ca3d52e7f20e4a2b6fed9563cf7ab26df83ddfe6bc016dba00bcf7a5fc23",
+        "source_ids": [
+          "context-0",
+          "file-22c1fc5d746235ccec6c",
+          "file-7b709aaa678467e9557c",
+          "file-60a19e5cdc1a1b76db06"
+        ],
+        "token_reservation": 45337,
+        "evidence_ids": [
+          "context-0:f01",
+          "file-22c1fc5d746235ccec6c:f01",
+          "file-22c1fc5d746235ccec6c:f02",
+          "file-22c1fc5d746235ccec6c:f03",
+          "file-22c1fc5d746235ccec6c:f04",
+          "file-22c1fc5d746235ccec6c:f05",
+          "file-22c1fc5d746235ccec6c:f06",
+          "file-22c1fc5d746235ccec6c:f07",
+          "file-22c1fc5d746235ccec6c:f10",
+          "file-60a19e5cdc1a1b76db06:f01",
+          "file-60a19e5cdc1a1b76db06:f02",
+          "file-7b709aaa678467e9557c:f01",
+          "file-7b709aaa678467e9557c:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "context-0": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 348,
+              "chars_sent": 348,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "context-0:f01"
+              ]
+            },
+            "file-22c1fc5d746235ccec6c": {
+              "candidates": 10,
+              "sent": 8,
+              "chars_total": 5373,
+              "chars_sent": 4220,
+              "key_records": 2,
+              "required_candidates": 5,
+              "required_sent": 5,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-22c1fc5d746235ccec6c:f01",
+                "file-22c1fc5d746235ccec6c:f02",
+                "file-22c1fc5d746235ccec6c:f03",
+                "file-22c1fc5d746235ccec6c:f04",
+                "file-22c1fc5d746235ccec6c:f05",
+                "file-22c1fc5d746235ccec6c:f06",
+                "file-22c1fc5d746235ccec6c:f07",
+                "file-22c1fc5d746235ccec6c:f10"
+              ]
+            },
+            "file-7b709aaa678467e9557c": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 1012,
+              "chars_sent": 1012,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-7b709aaa678467e9557c:f01",
+                "file-7b709aaa678467e9557c:f02"
+              ]
+            },
+            "file-60a19e5cdc1a1b76db06": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 635,
+              "chars_sent": 635,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 3000,
+              "evidence_ids": [
+                "file-60a19e5cdc1a1b76db06:f01",
+                "file-60a19e5cdc1a1b76db06:f02"
+              ]
+            }
+          },
+          "candidates": 15,
+          "sent": 13,
+          "chars_total": 7368,
+          "chars_sent": 6215,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": true,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 7,
+              "sent": 7,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 3,
+              "sent": 3,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 8,
+        "unresolved_items": 6,
+        "unresolved_by_role": {
+          "literature": 1,
+          "timeline": 1,
+          "genomics": 1,
+          "pathology": 1,
+          "drug": 1,
+          "verifier": 1
+        }
+      }
+    },
+    {
+      "sequence": 41,
+      "kind": "verification_ledger",
+      "role": "decision",
+      "details": {
+        "entries": [
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "timeline",
+            "verdict": "confirmed",
+            "reason": "The clinical timeline and genomic data confirm the patient's age, diagnosis, stage, mutation status, and post-surgical disease-free interval up to age 63.859.",
+            "final": false,
+            "citations": [
+              {
+                "document_id": "file-22c1fc5d746235ccec6c",
+                "start": 3882,
+                "end": 4442
+              },
+              {
+                "evidence_id": "file-60a19e5cdc1a1b76db06:f02"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "literature-02",
+            "claim_author": "literature",
+            "reviewer": "timeline",
+            "verdict": "confirmed",
+            "reason": "The clinical data explicitly ends at age 63.859, leaving a gap before the patient reaches age 64 and no data beyond that point.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-03",
+            "claim_author": "literature",
+            "reviewer": "timeline",
+            "verdict": "confirmed",
+            "reason": "No predictive models or recurrence probabilities are present in the source material.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "genomics",
+            "verdict": "confirmed",
+            "reason": "The molecular finding of somatic KRAS p.G12V is supported by the genomics evidence file-60a19e5cdc1a1b76db06:f02.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-02",
+            "claim_author": "literature",
+            "reviewer": "genomics",
+            "verdict": "confirmed",
+            "reason": "The timeline evidence ends at age 63.859, confirming the absence of data beyond this point.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-03",
+            "claim_author": "literature",
+            "reviewer": "genomics",
+            "verdict": "confirmed",
+            "reason": "No predictive models or recurrence probabilities are present in the source material.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "pathology",
+            "verdict": "confirmed",
+            "reason": "The clinical and genomic data confirm the patient's diagnosis, stage, mutation status, and post-surgical status as of age 63.859.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-02",
+            "claim_author": "literature",
+            "reviewer": "pathology",
+            "verdict": "confirmed",
+            "reason": "The timeline data explicitly ends at age 63.859, confirming the absence of data for the period after age 64.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-03",
+            "claim_author": "literature",
+            "reviewer": "pathology",
+            "verdict": "confirmed",
+            "reason": "No predictive models or recurrence probabilities are present in the source material.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "drug",
+            "verdict": "confirmed",
+            "reason": "The clinical timeline and genomic data confirm the patient's history, surgery, and molecular profile as stated.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-02",
+            "claim_author": "literature",
+            "reviewer": "drug",
+            "verdict": "confirmed",
+            "reason": "The evidence explicitly ends at age 63.859, confirming the absence of data for the period after age 64.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-03",
+            "claim_author": "literature",
+            "reviewer": "drug",
+            "verdict": "confirmed",
+            "reason": "No predictive models or recurrence probabilities are present in the source material.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "timeline-01",
+            "claim_author": "timeline",
+            "reviewer": "drug",
+            "verdict": "confirmed",
+            "reason": "The timeline data supports the statement regarding the patient's status post-surgery.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "timeline-02",
+            "claim_author": "timeline",
+            "reviewer": "drug",
+            "verdict": "confirmed",
+            "reason": "The timeline data confirms the end of the record at age 63.859.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "timeline-03",
+            "claim_author": "timeline",
+            "reviewer": "drug",
+            "verdict": "confirmed",
+            "reason": "No predictive models are present in the timeline data.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "verifier",
+            "verdict": "corrected",
+            "reason": "The claim asserts surgery at age 63.703, but evidence file-22c1fc5d746235ccec6c:f04 records surgery at age 63.322. The claim also cites tumor marker values (CA 19-9: 120 to 14 to 19; CEA: 3.9 to 1.8 to 2.1) that do not match the source data (CA 19-9: 120 to 75 to 19; CEA: 3.9 to 3.2 to 2.1).",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-22c1fc5d746235ccec6c:f04"
+              },
+              {
+                "evidence_id": "file-22c1fc5d746235ccec6c:f07"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "literature-02",
+            "claim_author": "literature",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim correctly states that the clinical timeline ends at age 63.859 (file-22c1fc5d746235ccec6c:f10), which is before the patient reaches age 64, and no data is available for the period after that point.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-22c1fc5d746235ccec6c:f10"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "claim_author": "genomics",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The claim correctly identifies the somatic KRAS p.G12V mutation in the primary pancreatic adenocarcinoma sample using the IMPACT410 panel and transcript ENST00000256078.4, as confirmed by the genomic evidence.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "file-60a19e5cdc1a1b76db06:f02"
+              }
+            ]
+          }
+        ],
+        "reviews": 18,
+        "claims_reviewed": 7,
+        "final_verdicts": 3,
+        "rejected": [],
+        "insufficient": []
+      }
+    },
+    {
+      "sequence": 42,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 13707,
+        "output_tokens": 465,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 20.65,
+        "evidence_fragments": 13
+      }
+    },
+    {
+      "sequence": 43,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "B",
+          "explanation": "The provided clinical evidence ends at age 63.859, which is prior to the patient reaching age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months. The available data shows the patient was disease-free on CT scans with decreasing tumor markers (CA 19-9: 120 to 19 U/mL; CEA: 3.9 to 2.1 ng/mL) up to age 63.859. However, because the outcome of interest (recurrence after age 64) is not visible in the source material, the question cannot be answered with SUPPORTS or REFUTES based on observed data. The absence of predictive models or recurrence probabilities in the source material further precludes a calculated risk assessment. Therefore, the outcome is not determinable from the provided evidence.",
+          "citations": [
+            {
+              "document_id": "file-22c1fc5d746235ccec6c",
+              "start": 5035,
+              "end": 5373,
+              "quote": "AGE: 63.829, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.829, labtest > cea_labs --> CEA: 2.1000 ng/ml          \nAGE: 63.840, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.859, treatment > treatment --> STOP_AGE: 63.9746, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+            },
+            {
+              "document_id": "file-22c1fc5d746235ccec6c",
+              "start": 3308,
+              "end": 3882,
+              "quote": "AGE: 63.523, labtest > cea_labs --> CEA: 3.9000 ng/ml          \nAGE: 63.610, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.610, labtest > ca_19-9_labs --> RESULT: 75, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.610, labtest > cea_labs --> CEA: 3.2000 ng/ml          \nAGE: 63.638, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.638, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+            }
+          ],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "confidence": 0.95,
+          "adopted_claim_ids": [
+            "literature-02",
+            "genomics-01"
+          ],
+          "rejected_claim_ids": [
+            "literature-01"
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 44,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "output": {
+          "answer": "B",
+          "explanation": "The provided clinical evidence ends at age 63.859, which is prior to the patient reaching age 64. There is no clinical data available for the period after age 63.859 to assess disease status at age 64 or to determine recurrence within the next 6 months. The available data shows the patient was disease-free on CT scans with decreasing tumor markers (CA 19-9: 120 to 19 U/mL; CEA: 3.9 to 2.1 ng/mL) up to age 63.859. However, because the outcome of interest (recurrence after age 64) is not visible in the source material, the question cannot be answered with SUPPORTS or REFUTES based on observed data. The absence of predictive models or recurrence probabilities in the source material further precludes a calculated risk assessment. Therefore, the outcome is not determinable from the provided evidence.",
+          "citations": [
+            {
+              "document_id": "file-22c1fc5d746235ccec6c",
+              "start": 5035,
+              "end": 5373,
+              "quote": "AGE: 63.829, labtest > ca_19-9_labs --> RESULT: 19, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.829, labtest > cea_labs --> CEA: 2.1000 ng/ml          \nAGE: 63.840, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.859, treatment > treatment --> STOP_AGE: 63.9746, SUBTYPE: Chemo, AGENT: GEMCITABINE, RX_INVESTIGATIVE: N, FLAG_OROTOPICAL: 0, \n"
+            },
+            {
+              "document_id": "file-22c1fc5d746235ccec6c",
+              "start": 3308,
+              "end": 3882,
+              "quote": "AGE: 63.523, labtest > cea_labs --> CEA: 3.9000 ng/ml          \nAGE: 63.610, diagnosis > performance_status --> ECOG: 0, \nAGE: 63.610, labtest > ca_19-9_labs --> RESULT: 75, LR_UNIT_MEASURE: Units/ml, \nAGE: 63.610, labtest > cea_labs --> CEA: 3.2000 ng/ml          \nAGE: 63.638, diagnosis > cancer_presence --> HAS CANCER: Yes, SUBTYPE: HasCancer, PROCEDURE_TYPE: CT, HAS_CANCER: Yes, PROCEDURE_TYPE: CT scan, PELVIS: Yes, OTHER: No, SUBTYPE: HasCancer, HEAD: No, ABDOMEN: No, CHEST: Yes, \nAGE: 63.638, diagnosis > progression --> CT scan reveals cancer has NOT progressed.\n"
+            }
+          ],
+          "unresolved": [
+            "The question asks for a prediction of recurrence in the next 6 months after the patient turns 64. The available evidence ends at age 63.859, leaving a gap of approximately 0.14 years (approx. 50 days) before the patient reaches age 64, and no data beyond that point. Therefore, the outcome is not visible and cannot be determined from the provided source material."
+          ],
+          "confidence": 0.95,
+          "adopted_claim_ids": [
+            "literature-02",
+            "genomics-01"
+          ],
+          "rejected_claim_ids": [
+            "literature-01"
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 45,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "context-0",
+    "file-22c1fc5d746235ccec6c",
+    "file-7b709aaa678467e9557c",
+    "file-60a19e5cdc1a1b76db06"
+  ],
+  "duration_seconds": 142.430838,
+  "research_only": true
+}

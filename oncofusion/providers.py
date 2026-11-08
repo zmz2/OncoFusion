@@ -134,6 +134,13 @@ class MockProvider:
                 if roster:
                     body["adopted_claim_ids"] = [entry["claim_id"] for entry in roster[:2]]
                     body["rejected_claim_ids"] = [entry["claim_id"] for entry in roster[2:3]]
+            elif payload["role"] == "verifier" and roster:
+                body = {"verdicts": [
+                    {"target_claim_id": entry["claim_id"], "verdict": "confirmed",
+                     "note": "simulated source check, not a biomedical judgement",
+                     "citations": [{"evidence_id": ids[0]}] if ids else []}
+                    for entry in roster
+                ], "unresolved": out.unresolved, "requery": out.requery}
             else:
                 body = {"findings": [{"statement": f.statement, "relation": f.relation,
                                       "citations": [{"evidence_id": e} for e in ids[:1]]}
@@ -154,10 +161,6 @@ class MockProvider:
                 if roster and body["findings"]:
                     # The simulator only ever leans on the first earlier claim, but it must name it.
                     body["findings"][0]["used_claim_ids"] = [roster[0]["claim_id"]]
-                if roster and ids and payload["role"] == "verifier":
-                    body["verdicts"] = [{"target_claim_id": entry["claim_id"], "verdict": "confirmed",
-                                         "note": "simulated source check, not a biomedical judgement",
-                                         "citations": [{"evidence_id": ids[0]}]} for entry in roster]
             return json.dumps(body, ensure_ascii=False)
 
         content = render()

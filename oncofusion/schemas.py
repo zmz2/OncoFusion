@@ -242,15 +242,24 @@ class ClaimAnalysisOutput(StrictModel):
     requery: str = Field(default="", max_length=1000)
 
 
+class ClaimFindingsOnlyOutput(StrictModel):
+    """First claims-v1 role: no earlier claim exists, so no verdict can be valid yet."""
+    findings: list[ClaimFinding] = Field(default_factory=list, max_length=30)
+    unresolved: list[str] = Field(default_factory=list, max_length=20)
+    requery: str = Field(default="", max_length=1000)
+
+
 class ClaimVerdictEntry(StrictModel):
     target_claim_id: Identifier
     verdict: Literal["confirmed", "corrected", "rejected", "insufficient"]
     note: str = Field(default="", max_length=2000)
-    citations: list[FragmentCitation] = Field(default_factory=list, max_length=4)
+    # The model may over-supply supporting spans. The engine resolves every supplied id for
+    # source integrity, then keeps the first four in the final verdict ledger.
+    citations: list[FragmentCitation] = Field(default_factory=list, max_length=30)
 
 
 class ClaimVerificationOutput(StrictModel):
-    findings: list[ClaimFinding] = Field(default_factory=list, max_length=30)
+    """Verifier output is a verdict ledger, never a second set of specialist claims."""
     verdicts: list[ClaimVerdictEntry] = Field(default_factory=list, max_length=60)
     unresolved: list[str] = Field(default_factory=list, max_length=20)
     requery: str = Field(default="", max_length=1000)
