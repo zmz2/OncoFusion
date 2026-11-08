@@ -1,0 +1,1810 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-54cda2e7-f5ed-46ab-9146-9495eb7d6a05",
+  "patient_id": "article-31871216",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "cdd4807b0efb03bfc0300cf8d7a004b46089cae7bc58987e224e9b10531c1f74",
+  "config": {
+    "mode": "multi",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": true,
+    "latest_role_board": true,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "claims-v1",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The provided evidence (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the head and neck with a somatic DPYD exon 11-19 deletion fusion that showed a rapid and sustained response to Fluorouracil and Leucovorin. The claim specifies 'basaloid squamous cell carcinoma' as the disease. The evidence explicitly identifies the tumor as 'well-differentiated squamous cell carcinoma', not 'basaloid'. While the molecular profile (DPYD exon 11-19 deletion), therapy (Fluorouracil/Leucovorin), and direction (sensitivity/response) are supported, the specific histological subtype 'basaloid' is not present in the source and is contradicted by the 'well-differentiated' descriptor. Therefore, the claim requires revision to align with the documented pathology. The claim is not fully supported as written (SUPPORTS) nor is it entirely irrelevant (NEI); it is partially supported but factually incorrect regarding the histology, necessitating a REVISIONS verdict.",
+    "citations": [
+      {
+        "document_id": "pmid-31871216",
+        "start": 0,
+        "end": 599,
+        "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+      },
+      {
+        "document_id": "pmid-31871216",
+        "start": 599,
+        "end": 689,
+        "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+      }
+    ],
+    "unresolved": [
+      "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+      "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+    ],
+    "confidence": 0.9,
+    "adopted_claim_ids": [
+      "genomics-01"
+    ],
+    "rejected_claim_ids": [
+      "literature-01",
+      "timeline-01",
+      "pathology-01",
+      "drug-01"
+    ]
+  },
+  "reports": [
+    {
+      "role": "literature",
+      "executor": "literature",
+      "output": {
+        "findings": [
+          {
+            "statement": "The provided literature (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the alveolar ridge and maxillary sinus with a somatic DPYD exon 11-19 deletion fusion, which showed a rapid and sustained response to Fluorouracil and Leucovorin. However, the specific histological subtype 'basaloid' is not mentioned in the provided text, and the disease site (head and neck) is broader than the specific claim of 'basaloid squamous cell carcinoma'.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-31871216",
+                "start": 0,
+                "end": 599,
+                "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+              },
+              {
+                "document_id": "pmid-31871216",
+                "start": 599,
+                "end": 689,
+                "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+              }
+            ],
+            "claim_id": "literature-01",
+            "author_role": "literature",
+            "used_claim_ids": [],
+            "scope": "source",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+          "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+        ],
+        "requery": "Confirm if the squamous cell carcinoma in pmid-31871216 is explicitly diagnosed as the 'basaloid' subtype.",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "timeline",
+      "executor": "timeline",
+      "output": {
+        "findings": [
+          {
+            "statement": "not_applicable: no timeline input was supplied for this case.",
+            "relation": "NEI",
+            "citations": [],
+            "claim_id": "timeline-01",
+            "author_role": "timeline",
+            "used_claim_ids": [],
+            "scope": "temporal",
+            "evidence_level": "absent",
+            "material_status": "not_applicable",
+            "material_basis": "not_recorded"
+          }
+        ],
+        "unresolved": [],
+        "requery": "",
+        "verdicts": []
+      }
+    },
+    {
+      "role": "genomics",
+      "executor": "genomics",
+      "output": {
+        "findings": [
+          {
+            "statement": "The provided literature (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the alveolar ridge and maxillary sinus with a somatic DPYD exon 11-19 deletion fusion, which showed a rapid and sustained response to Fluorouracil and Leucovorin. However, the specific histological subtype 'basaloid' is not mentioned in the provided text, and the disease site (head and neck) is broader than the specific claim of 'basaloid squamous cell carcinoma'.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-31871216",
+                "start": 0,
+                "end": 599,
+                "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+              },
+              {
+                "document_id": "pmid-31871216",
+                "start": 599,
+                "end": 689,
+                "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+              }
+            ],
+            "claim_id": "genomics-01",
+            "author_role": "genomics",
+            "used_claim_ids": [],
+            "scope": "molecular",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+          "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "insufficient",
+            "note": "The evidence supports the presence of the DPYD variant and response to therapy in a squamous cell carcinoma, but does not confirm the specific 'basaloid' histological subtype required by the claim.",
+            "citations": [],
+            "reviewer_role": "genomics"
+          },
+          {
+            "target_claim_id": "timeline-01",
+            "verdict": "insufficient",
+            "note": "No timeline input was supplied for this case.",
+            "citations": [],
+            "reviewer_role": "genomics"
+          }
+        ]
+      }
+    },
+    {
+      "role": "pathology",
+      "executor": "pathology",
+      "output": {
+        "findings": [
+          {
+            "statement": "The provided literature (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the alveolar ridge and maxillary sinus with a somatic DPYD exon 11-19 deletion fusion, which showed a rapid and sustained response to Fluorouracil and Leucovorin. However, the specific histological subtype 'basaloid' is not mentioned in the provided text, and the disease site (head and neck) is broader than the specific claim of 'basaloid squamous cell carcinoma'.",
+            "relation": "NEI",
+            "citations": [
+              {
+                "document_id": "pmid-31871216",
+                "start": 0,
+                "end": 599,
+                "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+              },
+              {
+                "document_id": "pmid-31871216",
+                "start": 599,
+                "end": 689,
+                "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+              }
+            ],
+            "claim_id": "pathology-01",
+            "author_role": "pathology",
+            "used_claim_ids": [],
+            "scope": "pathologic",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+          "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "insufficient",
+            "note": "The evidence describes well-differentiated squamous cell carcinoma, not specifically basaloid squamous cell carcinoma. The histological subtype 'basaloid' is not confirmed in the provided source text.",
+            "citations": [
+              {
+                "document_id": "pmid-31871216",
+                "start": 0,
+                "end": 599,
+                "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+              }
+            ],
+            "reviewer_role": "pathology"
+          }
+        ]
+      }
+    },
+    {
+      "role": "drug",
+      "executor": "drug",
+      "output": {
+        "findings": [
+          {
+            "statement": "The provided literature (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the alveolar ridge and maxillary sinus with a somatic DPYD exon 11-19 deletion fusion, which showed a rapid and sustained response to Fluorouracil and Leucovorin. However, the specific histological subtype 'basaloid' is not mentioned in the provided text, and the disease site (head and neck) is broader than the specific claim of 'basaloid squamous cell carcinoma'.",
+            "relation": "REVISIONS",
+            "citations": [
+              {
+                "document_id": "pmid-31871216",
+                "start": 0,
+                "end": 599,
+                "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+              },
+              {
+                "document_id": "pmid-31871216",
+                "start": 599,
+                "end": 689,
+                "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+              }
+            ],
+            "claim_id": "drug-01",
+            "author_role": "drug",
+            "used_claim_ids": [
+              "literature-01"
+            ],
+            "scope": "relationship",
+            "evidence_level": "measured",
+            "material_status": "present",
+            "material_basis": ""
+          }
+        ],
+        "unresolved": [
+          "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+          "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "corrected",
+            "note": "The evidence supports sensitivity to Fluorouracil and Leucovorin in a somatic DPYD exon 11-19 deletion case, but the disease is specified as well-differentiated squamous cell carcinoma, not basaloid squamous cell carcinoma.",
+            "citations": [
+              {
+                "document_id": "pmid-31871216",
+                "start": 0,
+                "end": 599,
+                "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+              },
+              {
+                "document_id": "pmid-31871216",
+                "start": 599,
+                "end": 689,
+                "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+              }
+            ],
+            "reviewer_role": "drug"
+          }
+        ]
+      }
+    },
+    {
+      "role": "verifier",
+      "executor": "verifier",
+      "output": {
+        "findings": [],
+        "unresolved": [
+          "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes 'well-differentiated squamous cell carcinoma'. The specific histological subtype 'basaloid' is not confirmed in the provided source text."
+        ],
+        "requery": "",
+        "verdicts": [
+          {
+            "target_claim_id": "literature-01",
+            "verdict": "corrected",
+            "note": "The source text (pmid-31871216:f01) explicitly identifies the tumor as 'well-differentiated squamous cell carcinoma', not 'basaloid squamous cell carcinoma' as claimed. The claim's disease specification is factually incorrect based on the provided evidence.",
+            "citations": [
+              {
+                "document_id": "pmid-31871216",
+                "start": 0,
+                "end": 599,
+                "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "verdict": "confirmed",
+            "note": "The evidence (pmid-31871216:f01, f02) confirms a somatic DPYD exon 11-19 deletion fusion. The variant origin is somatic, and the specific genomic alteration matches the claim.",
+            "citations": [
+              {
+                "document_id": "pmid-31871216",
+                "start": 0,
+                "end": 599,
+                "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+              },
+              {
+                "document_id": "pmid-31871216",
+                "start": 599,
+                "end": 689,
+                "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+              }
+            ],
+            "reviewer_role": "verifier"
+          },
+          {
+            "target_claim_id": "pathology-01",
+            "verdict": "corrected",
+            "note": "The claim asserts 'basaloid' histology. The source text (pmid-31871216:f01) states 'well-differentiated squamous cell carcinoma'. The specific histological subtype 'basaloid' is not supported and is contradicted by the 'well-differentiated' descriptor.",
+            "citations": [
+              {
+                "document_id": "pmid-31871216",
+                "start": 0,
+                "end": 599,
+                "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+              }
+            ],
+            "reviewer_role": "verifier"
+          }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "calls": 6,
+    "http_attempts": 6,
+    "tool_calls": 5,
+    "input_tokens": 21263,
+    "output_tokens": 2885,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-31871216"
+        ],
+        "fingerprint": "cdd4807b0efb03bfc0300cf8d7a004b46089cae7bc58987e224e9b10531c1f74",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "claims-v1",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-31871216"
+        ],
+        "query": "{\n  \"disease\": \"basaloid squamous cell carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"DPYD EXON 11-19 DELETION\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Fluorouracil\",\n    \"Leucovorin\"\n  ],\n  \"therapyInteractionType\": \"COMBINATION\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-31871216"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "agent_started",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "payload_sha256": "8c3817098d899d872b24df1b9d8543052877ea66ce01aa1d6f328a6a3cdde17b",
+        "source_ids": [
+          "pmid-31871216"
+        ],
+        "token_reservation": 13234,
+        "evidence_ids": [
+          "pmid-31871216:f01",
+          "pmid-31871216:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31871216": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 689,
+              "chars_sent": 689,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31871216:f01",
+                "pmid-31871216:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 689,
+          "chars_sent": 689,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [],
+          "required": {},
+          "guaranteed_unsent": []
+        },
+        "material_basis": "",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "model_usage",
+      "role": "literature",
+      "details": {
+        "input_tokens": 2322,
+        "output_tokens": 383,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 8.026,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "agent_reported",
+      "role": "literature",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided literature (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the alveolar ridge and maxillary sinus with a somatic DPYD exon 11-19 deletion fusion, which showed a rapid and sustained response to Fluorouracil and Leucovorin. However, the specific histological subtype 'basaloid' is not mentioned in the provided text, and the disease site (head and neck) is broader than the specific claim of 'basaloid squamous cell carcinoma'.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                },
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 599,
+                  "end": 689,
+                  "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+            "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+          ],
+          "requery": "Confirm if the squamous cell carcinoma in pmid-31871216 is explicitly diagnosed as the 'basaloid' subtype.",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "agent_completed",
+      "role": "literature",
+      "details": {
+        "executor": "literature",
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided literature (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the alveolar ridge and maxillary sinus with a somatic DPYD exon 11-19 deletion fusion, which showed a rapid and sustained response to Fluorouracil and Leucovorin. However, the specific histological subtype 'basaloid' is not mentioned in the provided text, and the disease site (head and neck) is broader than the specific claim of 'basaloid squamous cell carcinoma'.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                },
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 599,
+                  "end": 689,
+                  "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+                }
+              ],
+              "claim_id": "literature-01",
+              "author_role": "literature",
+              "used_claim_ids": [],
+              "scope": "source",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+            "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+          ],
+          "requery": "Confirm if the squamous cell carcinoma in pmid-31871216 is explicitly diagnosed as the 'basaloid' subtype.",
+          "verdicts": []
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "agent_skipped",
+      "role": "timeline",
+      "details": {
+        "reason": "no matching input modality"
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_reported",
+      "role": "timeline",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "not_applicable: no timeline input was supplied for this case.",
+              "relation": "NEI",
+              "citations": [],
+              "claim_id": "timeline-01",
+              "author_role": "timeline",
+              "used_claim_ids": [],
+              "scope": "temporal",
+              "evidence_level": "absent",
+              "material_status": "not_applicable",
+              "material_basis": "not_recorded"
+            }
+          ],
+          "unresolved": [],
+          "requery": "",
+          "verdicts": []
+        },
+        "synthesized_not_applicable": true
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [
+          "pmid-31871216"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-31871216": {
+              "gene": "unknown",
+              "variant": "unknown"
+            }
+          },
+          "canonical_variant": "EXON 11-19 DELETION",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_started",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "payload_sha256": "aca72eb63c6940dda0067d1d7cce2f820dd1702cd0a2272b11088bfcc3ffe4d0",
+        "source_ids": [
+          "pmid-31871216"
+        ],
+        "token_reservation": 16148,
+        "evidence_ids": [
+          "pmid-31871216:f01",
+          "pmid-31871216:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31871216": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 689,
+              "chars_sent": 689,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31871216:f01",
+                "pmid-31871216:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 689,
+          "chars_sent": 689,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "molecular"
+          ],
+          "required": {
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 2,
+        "unresolved_items": 2,
+        "unresolved_by_role": {
+          "literature": 2
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "model_usage",
+      "role": "genomics",
+      "details": {
+        "input_tokens": 3190,
+        "output_tokens": 485,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 4.404,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "agent_reported",
+      "role": "genomics",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided literature (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the alveolar ridge and maxillary sinus with a somatic DPYD exon 11-19 deletion fusion, which showed a rapid and sustained response to Fluorouracil and Leucovorin. However, the specific histological subtype 'basaloid' is not mentioned in the provided text, and the disease site (head and neck) is broader than the specific claim of 'basaloid squamous cell carcinoma'.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                },
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 599,
+                  "end": 689,
+                  "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+                }
+              ],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+            "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "insufficient",
+              "note": "The evidence supports the presence of the DPYD variant and response to therapy in a squamous cell carcinoma, but does not confirm the specific 'basaloid' histological subtype required by the claim.",
+              "citations": [],
+              "reviewer_role": "genomics"
+            },
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "insufficient",
+              "note": "No timeline input was supplied for this case.",
+              "citations": [],
+              "reviewer_role": "genomics"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 13,
+      "kind": "agent_completed",
+      "role": "genomics",
+      "details": {
+        "executor": "genomics",
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided literature (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the alveolar ridge and maxillary sinus with a somatic DPYD exon 11-19 deletion fusion, which showed a rapid and sustained response to Fluorouracil and Leucovorin. However, the specific histological subtype 'basaloid' is not mentioned in the provided text, and the disease site (head and neck) is broader than the specific claim of 'basaloid squamous cell carcinoma'.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                },
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 599,
+                  "end": 689,
+                  "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+                }
+              ],
+              "claim_id": "genomics-01",
+              "author_role": "genomics",
+              "used_claim_ids": [],
+              "scope": "molecular",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+            "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "insufficient",
+              "note": "The evidence supports the presence of the DPYD variant and response to therapy in a squamous cell carcinoma, but does not confirm the specific 'basaloid' histological subtype required by the claim.",
+              "citations": [],
+              "reviewer_role": "genomics"
+            },
+            {
+              "target_claim_id": "timeline-01",
+              "verdict": "insufficient",
+              "note": "No timeline input was supplied for this case.",
+              "citations": [],
+              "reviewer_role": "genomics"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 14,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [
+          "pmid-31871216"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-31871216": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown"
+            }
+          },
+          "canonical_variant": "EXON 11-19 DELETION",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 15,
+      "kind": "agent_started",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "payload_sha256": "373f7319af7b590be48f6a9c0d44a03582137753a3628c4ef1cd3bffd54cd0d2",
+        "source_ids": [
+          "pmid-31871216"
+        ],
+        "token_reservation": 16866,
+        "evidence_ids": [
+          "pmid-31871216:f01",
+          "pmid-31871216:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31871216": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 689,
+              "chars_sent": 689,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31871216:f01",
+                "pmid-31871216:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 689,
+          "chars_sent": 689,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "pathology"
+          ],
+          "required": {
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 2,
+        "unresolved_items": 4,
+        "unresolved_by_role": {
+          "literature": 2,
+          "genomics": 2
+        }
+      }
+    },
+    {
+      "sequence": 16,
+      "kind": "model_usage",
+      "role": "pathology",
+      "details": {
+        "input_tokens": 3388,
+        "output_tokens": 478,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 23.404,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 17,
+      "kind": "agent_reported",
+      "role": "pathology",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided literature (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the alveolar ridge and maxillary sinus with a somatic DPYD exon 11-19 deletion fusion, which showed a rapid and sustained response to Fluorouracil and Leucovorin. However, the specific histological subtype 'basaloid' is not mentioned in the provided text, and the disease site (head and neck) is broader than the specific claim of 'basaloid squamous cell carcinoma'.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                },
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 599,
+                  "end": 689,
+                  "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+                }
+              ],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+            "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "insufficient",
+              "note": "The evidence describes well-differentiated squamous cell carcinoma, not specifically basaloid squamous cell carcinoma. The histological subtype 'basaloid' is not confirmed in the provided source text.",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                }
+              ],
+              "reviewer_role": "pathology"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 18,
+      "kind": "agent_completed",
+      "role": "pathology",
+      "details": {
+        "executor": "pathology",
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided literature (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the alveolar ridge and maxillary sinus with a somatic DPYD exon 11-19 deletion fusion, which showed a rapid and sustained response to Fluorouracil and Leucovorin. However, the specific histological subtype 'basaloid' is not mentioned in the provided text, and the disease site (head and neck) is broader than the specific claim of 'basaloid squamous cell carcinoma'.",
+              "relation": "NEI",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                },
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 599,
+                  "end": 689,
+                  "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+                }
+              ],
+              "claim_id": "pathology-01",
+              "author_role": "pathology",
+              "used_claim_ids": [],
+              "scope": "pathologic",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+            "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "insufficient",
+              "note": "The evidence describes well-differentiated squamous cell carcinoma, not specifically basaloid squamous cell carcinoma. The histological subtype 'basaloid' is not confirmed in the provided source text.",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                }
+              ],
+              "reviewer_role": "pathology"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [
+          "pmid-31871216"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-31871216": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "EXON 11-19 DELETION",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-31871216": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 20,
+      "kind": "agent_started",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "payload_sha256": "7bbc933d82edf9af22a46863923b02756df2d96e7cc09d8726860c41b37e8505",
+        "source_ids": [
+          "pmid-31871216"
+        ],
+        "token_reservation": 17883,
+        "evidence_ids": [
+          "pmid-31871216:f01",
+          "pmid-31871216:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31871216": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 689,
+              "chars_sent": 689,
+              "key_records": 2,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31871216:f01",
+                "pmid-31871216:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 689,
+          "chars_sent": 689,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 2,
+        "unresolved_items": 6,
+        "unresolved_by_role": {
+          "literature": 2,
+          "genomics": 2,
+          "pathology": 2
+        }
+      }
+    },
+    {
+      "sequence": 21,
+      "kind": "model_usage",
+      "role": "drug",
+      "details": {
+        "input_tokens": 3638,
+        "output_tokens": 535,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 15.172,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 22,
+      "kind": "agent_reported",
+      "role": "drug",
+      "details": {
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided literature (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the alveolar ridge and maxillary sinus with a somatic DPYD exon 11-19 deletion fusion, which showed a rapid and sustained response to Fluorouracil and Leucovorin. However, the specific histological subtype 'basaloid' is not mentioned in the provided text, and the disease site (head and neck) is broader than the specific claim of 'basaloid squamous cell carcinoma'.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                },
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 599,
+                  "end": 689,
+                  "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+                }
+              ],
+              "claim_id": "drug-01",
+              "author_role": "drug",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "relationship",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+            "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "corrected",
+              "note": "The evidence supports sensitivity to Fluorouracil and Leucovorin in a somatic DPYD exon 11-19 deletion case, but the disease is specified as well-differentiated squamous cell carcinoma, not basaloid squamous cell carcinoma.",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                },
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 599,
+                  "end": 689,
+                  "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+                }
+              ],
+              "reviewer_role": "drug"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 23,
+      "kind": "agent_completed",
+      "role": "drug",
+      "details": {
+        "executor": "drug",
+        "output": {
+          "findings": [
+            {
+              "statement": "The provided literature (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the alveolar ridge and maxillary sinus with a somatic DPYD exon 11-19 deletion fusion, which showed a rapid and sustained response to Fluorouracil and Leucovorin. However, the specific histological subtype 'basaloid' is not mentioned in the provided text, and the disease site (head and neck) is broader than the specific claim of 'basaloid squamous cell carcinoma'.",
+              "relation": "REVISIONS",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                },
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 599,
+                  "end": 689,
+                  "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+                }
+              ],
+              "claim_id": "drug-01",
+              "author_role": "drug",
+              "used_claim_ids": [
+                "literature-01"
+              ],
+              "scope": "relationship",
+              "evidence_level": "measured",
+              "material_status": "present",
+              "material_basis": ""
+            }
+          ],
+          "unresolved": [
+            "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+            "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "corrected",
+              "note": "The evidence supports sensitivity to Fluorouracil and Leucovorin in a somatic DPYD exon 11-19 deletion case, but the disease is specified as well-differentiated squamous cell carcinoma, not basaloid squamous cell carcinoma.",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                },
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 599,
+                  "end": 689,
+                  "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+                }
+              ],
+              "reviewer_role": "drug"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 24,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-31871216"
+        ],
+        "query": "",
+        "signals": {
+          "matches": {
+            "pmid-31871216": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "EXON 11-19 DELETION",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-31871216": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 25,
+      "kind": "agent_started",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "payload_sha256": "b4c6aad2d9de4829ab1ae483711e7e8389feaad77a9e5deb358204c852416457",
+        "source_ids": [
+          "pmid-31871216"
+        ],
+        "token_reservation": 18604,
+        "evidence_ids": [
+          "pmid-31871216:f01",
+          "pmid-31871216:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31871216": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 689,
+              "chars_sent": 689,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31871216:f01",
+                "pmid-31871216:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 689,
+          "chars_sent": 689,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 3,
+        "unresolved_items": 8,
+        "unresolved_by_role": {
+          "literature": 2,
+          "genomics": 2,
+          "pathology": 2,
+          "drug": 2
+        }
+      }
+    },
+    {
+      "sequence": 26,
+      "kind": "model_usage",
+      "role": "verifier",
+      "details": {
+        "input_tokens": 3808,
+        "output_tokens": 519,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 12.007,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 27,
+      "kind": "agent_reported",
+      "role": "verifier",
+      "details": {
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes 'well-differentiated squamous cell carcinoma'. The specific histological subtype 'basaloid' is not confirmed in the provided source text."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "corrected",
+              "note": "The source text (pmid-31871216:f01) explicitly identifies the tumor as 'well-differentiated squamous cell carcinoma', not 'basaloid squamous cell carcinoma' as claimed. The claim's disease specification is factually incorrect based on the provided evidence.",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The evidence (pmid-31871216:f01, f02) confirms a somatic DPYD exon 11-19 deletion fusion. The variant origin is somatic, and the specific genomic alteration matches the claim.",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                },
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 599,
+                  "end": 689,
+                  "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "pathology-01",
+              "verdict": "corrected",
+              "note": "The claim asserts 'basaloid' histology. The source text (pmid-31871216:f01) states 'well-differentiated squamous cell carcinoma'. The specific histological subtype 'basaloid' is not supported and is contradicted by the 'well-differentiated' descriptor.",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                }
+              ],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 28,
+      "kind": "agent_completed",
+      "role": "verifier",
+      "details": {
+        "executor": "verifier",
+        "output": {
+          "findings": [],
+          "unresolved": [
+            "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes 'well-differentiated squamous cell carcinoma'. The specific histological subtype 'basaloid' is not confirmed in the provided source text."
+          ],
+          "requery": "",
+          "verdicts": [
+            {
+              "target_claim_id": "literature-01",
+              "verdict": "corrected",
+              "note": "The source text (pmid-31871216:f01) explicitly identifies the tumor as 'well-differentiated squamous cell carcinoma', not 'basaloid squamous cell carcinoma' as claimed. The claim's disease specification is factually incorrect based on the provided evidence.",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "genomics-01",
+              "verdict": "confirmed",
+              "note": "The evidence (pmid-31871216:f01, f02) confirms a somatic DPYD exon 11-19 deletion fusion. The variant origin is somatic, and the specific genomic alteration matches the claim.",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                },
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 599,
+                  "end": 689,
+                  "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+                }
+              ],
+              "reviewer_role": "verifier"
+            },
+            {
+              "target_claim_id": "pathology-01",
+              "verdict": "corrected",
+              "note": "The claim asserts 'basaloid' histology. The source text (pmid-31871216:f01) states 'well-differentiated squamous cell carcinoma'. The specific histological subtype 'basaloid' is not supported and is contradicted by the 'well-differentiated' descriptor.",
+              "citations": [
+                {
+                  "document_id": "pmid-31871216",
+                  "start": 0,
+                  "end": 599,
+                  "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+                }
+              ],
+              "reviewer_role": "verifier"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 29,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "payload_sha256": "6ce771aa3f18213b256672a7741f7197b2ee7ba0135f72ec07fe45175efdd329",
+        "source_ids": [
+          "pmid-31871216"
+        ],
+        "token_reservation": 22524,
+        "evidence_ids": [
+          "pmid-31871216:f01",
+          "pmid-31871216:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31871216": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 689,
+              "chars_sent": 689,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31871216:f01",
+                "pmid-31871216:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 689,
+          "chars_sent": 689,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 3,
+        "unresolved_items": 9,
+        "unresolved_by_role": {
+          "literature": 2,
+          "genomics": 2,
+          "pathology": 2,
+          "drug": 2,
+          "verifier": 1
+        }
+      }
+    },
+    {
+      "sequence": 30,
+      "kind": "verification_ledger",
+      "role": "decision",
+      "details": {
+        "entries": [
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "genomics",
+            "verdict": "insufficient",
+            "reason": "The evidence supports the presence of the DPYD variant and response to therapy in a squamous cell carcinoma, but does not confirm the specific 'basaloid' histological subtype required by the claim.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "timeline-01",
+            "claim_author": "timeline",
+            "reviewer": "genomics",
+            "verdict": "insufficient",
+            "reason": "No timeline input was supplied for this case.",
+            "final": false,
+            "citations": []
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "pathology",
+            "verdict": "insufficient",
+            "reason": "The evidence describes well-differentiated squamous cell carcinoma, not specifically basaloid squamous cell carcinoma. The histological subtype 'basaloid' is not confirmed in the provided source text.",
+            "final": false,
+            "citations": [
+              {
+                "evidence_id": "pmid-31871216:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "drug",
+            "verdict": "corrected",
+            "reason": "The evidence supports sensitivity to Fluorouracil and Leucovorin in a somatic DPYD exon 11-19 deletion case, but the disease is specified as well-differentiated squamous cell carcinoma, not basaloid squamous cell carcinoma.",
+            "final": false,
+            "citations": [
+              {
+                "evidence_id": "pmid-31871216:f01"
+              },
+              {
+                "evidence_id": "pmid-31871216:f02"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "literature-01",
+            "claim_author": "literature",
+            "reviewer": "verifier",
+            "verdict": "corrected",
+            "reason": "The source text (pmid-31871216:f01) explicitly identifies the tumor as 'well-differentiated squamous cell carcinoma', not 'basaloid squamous cell carcinoma' as claimed. The claim's disease specification is factually incorrect based on the provided evidence.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "pmid-31871216:f01"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "genomics-01",
+            "claim_author": "genomics",
+            "reviewer": "verifier",
+            "verdict": "confirmed",
+            "reason": "The evidence (pmid-31871216:f01, f02) confirms a somatic DPYD exon 11-19 deletion fusion. The variant origin is somatic, and the specific genomic alteration matches the claim.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "pmid-31871216:f01"
+              },
+              {
+                "evidence_id": "pmid-31871216:f02"
+              }
+            ]
+          },
+          {
+            "target_claim_id": "pathology-01",
+            "claim_author": "pathology",
+            "reviewer": "verifier",
+            "verdict": "corrected",
+            "reason": "The claim asserts 'basaloid' histology. The source text (pmid-31871216:f01) states 'well-differentiated squamous cell carcinoma'. The specific histological subtype 'basaloid' is not supported and is contradicted by the 'well-differentiated' descriptor.",
+            "final": true,
+            "citations": [
+              {
+                "evidence_id": "pmid-31871216:f01"
+              }
+            ]
+          }
+        ],
+        "reviews": 7,
+        "claims_reviewed": 4,
+        "final_verdicts": 3,
+        "rejected": [],
+        "insufficient": []
+      }
+    },
+    {
+      "sequence": 31,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 4917,
+        "output_tokens": 485,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 23.995,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 32,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The provided evidence (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the head and neck with a somatic DPYD exon 11-19 deletion fusion that showed a rapid and sustained response to Fluorouracil and Leucovorin. The claim specifies 'basaloid squamous cell carcinoma' as the disease. The evidence explicitly identifies the tumor as 'well-differentiated squamous cell carcinoma', not 'basaloid'. While the molecular profile (DPYD exon 11-19 deletion), therapy (Fluorouracil/Leucovorin), and direction (sensitivity/response) are supported, the specific histological subtype 'basaloid' is not present in the source and is contradicted by the 'well-differentiated' descriptor. Therefore, the claim requires revision to align with the documented pathology. The claim is not fully supported as written (SUPPORTS) nor is it entirely irrelevant (NEI); it is partially supported but factually incorrect regarding the histology, necessitating a REVISIONS verdict.",
+          "citations": [
+            {
+              "document_id": "pmid-31871216",
+              "start": 0,
+              "end": 599,
+              "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+            },
+            {
+              "document_id": "pmid-31871216",
+              "start": 599,
+              "end": 689,
+              "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+            }
+          ],
+          "unresolved": [
+            "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+            "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+          ],
+          "confidence": 0.9,
+          "adopted_claim_ids": [
+            "genomics-01"
+          ],
+          "rejected_claim_ids": [
+            "literature-01",
+            "timeline-01",
+            "pathology-01",
+            "drug-01"
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 33,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "decision",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The provided evidence (pmid-31871216) describes a case of well-differentiated squamous cell carcinoma of the head and neck with a somatic DPYD exon 11-19 deletion fusion that showed a rapid and sustained response to Fluorouracil and Leucovorin. The claim specifies 'basaloid squamous cell carcinoma' as the disease. The evidence explicitly identifies the tumor as 'well-differentiated squamous cell carcinoma', not 'basaloid'. While the molecular profile (DPYD exon 11-19 deletion), therapy (Fluorouracil/Leucovorin), and direction (sensitivity/response) are supported, the specific histological subtype 'basaloid' is not present in the source and is contradicted by the 'well-differentiated' descriptor. Therefore, the claim requires revision to align with the documented pathology. The claim is not fully supported as written (SUPPORTS) nor is it entirely irrelevant (NEI); it is partially supported but factually incorrect regarding the histology, necessitating a REVISIONS verdict.",
+          "citations": [
+            {
+              "document_id": "pmid-31871216",
+              "start": 0,
+              "end": 599,
+              "quote": "Pathology evaluation of the resected ulcer (with a right hemimaxillectomy and right-sided neck dissection) identified a 3.5-cm well-differentiated squamous cell carcinoma involving the alveolar ridge and maxillary sinus with bone invasion; level I and II (but not III/IV) nodes were involved . . . Based on the findings of the POG analysis, treatment with weekly 5-FU (500 mg/m2) and leucovorin (20 mg/m2) was initiated. He had a rapid response (Fig. 1) both clinically and radiographically that was sustained for 17 wk. . . . A somatic fusion deletion event in the DPYD gene predicted to result in "
+            },
+            {
+              "document_id": "pmid-31871216",
+              "start": 599,
+              "end": 689,
+              "quote": "an in-frame deletion of exons 11-19 was detected in the genome and transcriptome (Fig. 2)."
+            }
+          ],
+          "unresolved": [
+            "The specific histological subtype 'basaloid' is not confirmed in the provided source text, which only states 'well-differentiated squamous cell carcinoma'.",
+            "The claim specifies 'basaloid squamous cell carcinoma', but the evidence describes a general 'squamous cell carcinoma' of the head and neck without specifying the basaloid variant."
+          ],
+          "confidence": 0.9,
+          "adopted_claim_ids": [
+            "genomics-01"
+          ],
+          "rejected_claim_ids": [
+            "literature-01",
+            "timeline-01",
+            "pathology-01",
+            "drug-01"
+          ]
+        }
+      }
+    },
+    {
+      "sequence": 34,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-31871216"
+  ],
+  "duration_seconds": 87.132628,
+  "research_only": true
+}
