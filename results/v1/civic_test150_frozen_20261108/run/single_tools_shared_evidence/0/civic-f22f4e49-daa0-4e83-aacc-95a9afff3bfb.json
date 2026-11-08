@@ -1,0 +1,377 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-f22f4e49-daa0-4e83-aacc-95a9afff3bfb",
+  "patient_id": "article-29948154",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "b642aa6ec9d08b405ca7a03d0a3fff14ba714342a3419381f129d31b5d0b3855",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-29948154:f01) discusses pediatric low-grade gliomas (PLGGs) and the KIAA1549-BRAF fusion as a prognostic marker. It does not contain any information regarding lung non-small cell carcinoma, the EGFR L435P variant, or sensitivity/response to EGFR-targeting agents. The disease, molecular profile, and therapeutic context are entirely mismatched with the source document. Therefore, there is insufficient evidence to support, revise, or refute the claim.",
+    "citations": [
+      {
+        "document_id": "pmid-29948154",
+        "start": 0,
+        "end": 148,
+        "quote": "we evaluated in a large cohort of 289 PLGGs . . . KIAA1549-BRAF fusion was a good prognostic marker for longer PFS (p = 0.0017) and OS (p = 0.0029)."
+      }
+    ],
+    "unresolved": [
+      "No evidence found for EGFR L435P in lung non-small cell carcinoma."
+    ],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1645,
+    "output_tokens": 233,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-29948154"
+        ],
+        "fingerprint": "b642aa6ec9d08b405ca7a03d0a3fff14ba714342a3419381f129d31b5d0b3855",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L435P",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L435P",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L435P",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-29948154"
+        ],
+        "query": "{\n  \"disease\": \"lung non-small cell carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"EGFR L435P\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"EGFR-targeting Agent\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-29948154": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "L435P",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-29948154": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-29948154": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "L435P",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-29948154": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "7e94137963358eb6c65c3d2ae8f256531cb70f3eb2f8b8e74817ef28c7793f60",
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "token_reservation": 10134,
+        "evidence_ids": [
+          "pmid-29948154:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-29948154": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 148,
+              "chars_sent": 148,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-29948154:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 148,
+          "chars_sent": 148,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1645,
+        "output_tokens": 233,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 8.699,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-29948154:f01) discusses pediatric low-grade gliomas (PLGGs) and the KIAA1549-BRAF fusion as a prognostic marker. It does not contain any information regarding lung non-small cell carcinoma, the EGFR L435P variant, or sensitivity/response to EGFR-targeting agents. The disease, molecular profile, and therapeutic context are entirely mismatched with the source document. Therefore, there is insufficient evidence to support, revise, or refute the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 0,
+              "end": 148,
+              "quote": "we evaluated in a large cohort of 289 PLGGs . . . KIAA1549-BRAF fusion was a good prognostic marker for longer PFS (p = 0.0017) and OS (p = 0.0029)."
+            }
+          ],
+          "unresolved": [
+            "No evidence found for EGFR L435P in lung non-small cell carcinoma."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-29948154:f01) discusses pediatric low-grade gliomas (PLGGs) and the KIAA1549-BRAF fusion as a prognostic marker. It does not contain any information regarding lung non-small cell carcinoma, the EGFR L435P variant, or sensitivity/response to EGFR-targeting agents. The disease, molecular profile, and therapeutic context are entirely mismatched with the source document. Therefore, there is insufficient evidence to support, revise, or refute the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 0,
+              "end": 148,
+              "quote": "we evaluated in a large cohort of 289 PLGGs . . . KIAA1549-BRAF fusion was a good prognostic marker for longer PFS (p = 0.0017) and OS (p = 0.0029)."
+            }
+          ],
+          "unresolved": [
+            "No evidence found for EGFR L435P in lung non-small cell carcinoma."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-29948154"
+  ],
+  "duration_seconds": 8.715821,
+  "research_only": true
+}

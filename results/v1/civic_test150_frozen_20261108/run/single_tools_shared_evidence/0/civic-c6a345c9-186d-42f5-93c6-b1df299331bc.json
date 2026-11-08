@@ -1,0 +1,377 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-c6a345c9-186d-42f5-93c6-b1df299331bc",
+  "patient_id": "article-20560986",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "278841c927ef571d16cf42dae8ac3fe115003104f0f514ff987b69cbf73b869e",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The evidence supports the association of the VHL *214L (c.641G>T) variant with pheochromocytoma and pancreatic tumors, consistent with the claim's listed phenotypes. However, the evidence does not mention hemangioma or retinal capillary hemangioma. VHL-associated retinal hemangiomas are a known phenotype, but this specific source fragment does not provide evidence for their occurrence in this patient or generally for this variant. Therefore, the claim regarding hemangioma is unsupported by this specific evidence, requiring a revision to exclude it or mark it as unverified.",
+    "citations": [
+      {
+        "document_id": "pmid-20560986",
+        "start": 0,
+        "end": 353,
+        "quote": "20-year-old female referred for cancer genetics consultation due to a personal history of two synchronous primary tumors (a second primary pheochromocytoma and a malignant neuroendocrine tumor of the pancreas) and a family history of early-onset pheochromocytomas. . . . proband's mother identified a point mutation (X214L) in exon three of the VHL gene"
+      }
+    ],
+    "unresolved": [
+      "Evidence for retinal capillary hemangioma associated with VHL *214L is missing from the provided source."
+    ],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1725,
+    "output_tokens": 251,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-20560986"
+        ],
+        "fingerprint": "278841c927ef571d16cf42dae8ac3fe115003104f0f514ff987b69cbf73b869e",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "*214L (c.641G>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "*214L (c.641G>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "*214L (c.641G>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-20560986"
+        ],
+        "query": "{\n  \"disease\": \"hemangioma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDISPOSING\",\n  \"molecularProfile\": \"VHL *214L (c.641G>T)\",\n  \"phenotypes\": [\n    \"Pheochromocytoma\",\n    \"Retinal capillary hemangioma\",\n    \"Pancreatic endocrine tumor\"\n  ],\n  \"significance\": \"predisposition\",\n  \"variantOrigin\": \"RARE_GERMLINE\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-20560986"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-20560986": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "*214L (c.641G>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-20560986": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-20560986"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-20560986": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "*214L (c.641G>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-20560986": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "d9f3038508a93e3a9f1081cd4bcc580bf44a8388bedef7b1fa99b1ba2bed0c96",
+        "source_ids": [
+          "pmid-20560986"
+        ],
+        "token_reservation": 10461,
+        "evidence_ids": [
+          "pmid-20560986:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-20560986": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 353,
+              "chars_sent": 353,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-20560986:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 353,
+          "chars_sent": 353,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1725,
+        "output_tokens": 251,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 2.914,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence supports the association of the VHL *214L (c.641G>T) variant with pheochromocytoma and pancreatic tumors, consistent with the claim's listed phenotypes. However, the evidence does not mention hemangioma or retinal capillary hemangioma. VHL-associated retinal hemangiomas are a known phenotype, but this specific source fragment does not provide evidence for their occurrence in this patient or generally for this variant. Therefore, the claim regarding hemangioma is unsupported by this specific evidence, requiring a revision to exclude it or mark it as unverified.",
+          "citations": [
+            {
+              "document_id": "pmid-20560986",
+              "start": 0,
+              "end": 353,
+              "quote": "20-year-old female referred for cancer genetics consultation due to a personal history of two synchronous primary tumors (a second primary pheochromocytoma and a malignant neuroendocrine tumor of the pancreas) and a family history of early-onset pheochromocytomas. . . . proband's mother identified a point mutation (X214L) in exon three of the VHL gene"
+            }
+          ],
+          "unresolved": [
+            "Evidence for retinal capillary hemangioma associated with VHL *214L is missing from the provided source."
+          ],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence supports the association of the VHL *214L (c.641G>T) variant with pheochromocytoma and pancreatic tumors, consistent with the claim's listed phenotypes. However, the evidence does not mention hemangioma or retinal capillary hemangioma. VHL-associated retinal hemangiomas are a known phenotype, but this specific source fragment does not provide evidence for their occurrence in this patient or generally for this variant. Therefore, the claim regarding hemangioma is unsupported by this specific evidence, requiring a revision to exclude it or mark it as unverified.",
+          "citations": [
+            {
+              "document_id": "pmid-20560986",
+              "start": 0,
+              "end": 353,
+              "quote": "20-year-old female referred for cancer genetics consultation due to a personal history of two synchronous primary tumors (a second primary pheochromocytoma and a malignant neuroendocrine tumor of the pancreas) and a family history of early-onset pheochromocytomas. . . . proband's mother identified a point mutation (X214L) in exon three of the VHL gene"
+            }
+          ],
+          "unresolved": [
+            "Evidence for retinal capillary hemangioma associated with VHL *214L is missing from the provided source."
+          ],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-20560986"
+  ],
+  "duration_seconds": 2.927011,
+  "research_only": true
+}

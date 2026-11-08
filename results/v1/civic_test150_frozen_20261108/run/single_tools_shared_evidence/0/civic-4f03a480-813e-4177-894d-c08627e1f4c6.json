@@ -1,0 +1,393 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-4f03a480-813e-4177-894d-c08627e1f4c6",
+  "patient_id": "article-29948154",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "800a1f4845a288ef94c3766304c4a79ec73182afb3b6ad66db296bea8bd1d153",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim posits that the BRAF V600E somatic variant in Childhood Low-grade Glioma (PLGG) is associated with poor outcome in pediatric and early young adult onset. The provided evidence (pmid-29948154:f01) confirms that BRAF V600E is associated with shorter Progression-Free Survival (PFS) and Overall Survival (OS) in a subset of PLGGs, which supports the 'poor outcome' aspect. However, the evidence does not explicitly stratify the cohort by 'Pediatric onset' vs 'Early young adult onset' to confirm the specific phenotypes listed in the claim, nor does it explicitly state the variant origin is somatic in the text snippet (though implied by context of PLGGs, the text itself just says 'BRAF V600E'). More critically, the claim lists specific phenotypes ('Pediatric onset', 'Early young adult onset') as part of the condition definition. The evidence states the association is in a 'subset of PLGGs', implying heterogeneity. The claim asserts the association generally for the disease with those phenotypes. The evidence supports the prognostic value but does not fully validate the specific phenotypic stratification or the universal nature of the 'poor outcome' for all cases with those phenotypes, suggesting a revision might be needed to specify 'in a subset' or to clarify the phenotypic scope. However, the most direct mismatch is that the evidence confirms the prognostic significance (poor outcome) but the claim's specific phenotypic constraints are not explicitly validated by the text snippet provided. The evidence supports the core prognostic claim but the phenotypic specificity is not fully addressed. Thus, REVISIONS is appropriate as the claim is partially supported but lacks explicit confirmation of the phenotypic stratification mentioned.",
+    "citations": [
+      {
+        "document_id": "pmid-29948154",
+        "start": 0,
+        "end": 145,
+        "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+      }
+    ],
+    "unresolved": [
+      "The evidence does not explicitly confirm the 'Early young adult onset' phenotype or the specific 'Pediatric onset' stratification mentioned in the claim."
+    ],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1690,
+    "output_tokens": 514,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-29948154"
+        ],
+        "fingerprint": "800a1f4845a288ef94c3766304c4a79ec73182afb3b6ad66db296bea8bd1d153",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-29948154"
+        ],
+        "query": "{\n  \"disease\": \"Childhood Low-grade Glioma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PROGNOSTIC\",\n  \"molecularProfile\": \"BRAF V600E\",\n  \"phenotypes\": [\n    \"Pediatric onset\",\n    \"Early young adult onset\"\n  ],\n  \"significance\": \"poor outcome\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-29948154": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 55,
+              "end": 60,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-29948154": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-29948154": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 55,
+              "end": 60,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-29948154": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "6e041d8f55781997c3441235c547bba11e2d3cfb3c823530286d2b5dc1c08438",
+        "source_ids": [
+          "pmid-29948154"
+        ],
+        "token_reservation": 10210,
+        "evidence_ids": [
+          "pmid-29948154:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-29948154": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 145,
+              "chars_sent": 145,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-29948154:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 145,
+          "chars_sent": 145,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1690,
+        "output_tokens": 514,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 14.857,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that the BRAF V600E somatic variant in Childhood Low-grade Glioma (PLGG) is associated with poor outcome in pediatric and early young adult onset. The provided evidence (pmid-29948154:f01) confirms that BRAF V600E is associated with shorter Progression-Free Survival (PFS) and Overall Survival (OS) in a subset of PLGGs, which supports the 'poor outcome' aspect. However, the evidence does not explicitly stratify the cohort by 'Pediatric onset' vs 'Early young adult onset' to confirm the specific phenotypes listed in the claim, nor does it explicitly state the variant origin is somatic in the text snippet (though implied by context of PLGGs, the text itself just says 'BRAF V600E'). More critically, the claim lists specific phenotypes ('Pediatric onset', 'Early young adult onset') as part of the condition definition. The evidence states the association is in a 'subset of PLGGs', implying heterogeneity. The claim asserts the association generally for the disease with those phenotypes. The evidence supports the prognostic value but does not fully validate the specific phenotypic stratification or the universal nature of the 'poor outcome' for all cases with those phenotypes, suggesting a revision might be needed to specify 'in a subset' or to clarify the phenotypic scope. However, the most direct mismatch is that the evidence confirms the prognostic significance (poor outcome) but the claim's specific phenotypic constraints are not explicitly validated by the text snippet provided. The evidence supports the core prognostic claim but the phenotypic specificity is not fully addressed. Thus, REVISIONS is appropriate as the claim is partially supported but lacks explicit confirmation of the phenotypic stratification mentioned.",
+          "citations": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 0,
+              "end": 145,
+              "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+            }
+          ],
+          "unresolved": [
+            "The evidence does not explicitly confirm the 'Early young adult onset' phenotype or the specific 'Pediatric onset' stratification mentioned in the claim."
+          ],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that the BRAF V600E somatic variant in Childhood Low-grade Glioma (PLGG) is associated with poor outcome in pediatric and early young adult onset. The provided evidence (pmid-29948154:f01) confirms that BRAF V600E is associated with shorter Progression-Free Survival (PFS) and Overall Survival (OS) in a subset of PLGGs, which supports the 'poor outcome' aspect. However, the evidence does not explicitly stratify the cohort by 'Pediatric onset' vs 'Early young adult onset' to confirm the specific phenotypes listed in the claim, nor does it explicitly state the variant origin is somatic in the text snippet (though implied by context of PLGGs, the text itself just says 'BRAF V600E'). More critically, the claim lists specific phenotypes ('Pediatric onset', 'Early young adult onset') as part of the condition definition. The evidence states the association is in a 'subset of PLGGs', implying heterogeneity. The claim asserts the association generally for the disease with those phenotypes. The evidence supports the prognostic value but does not fully validate the specific phenotypic stratification or the universal nature of the 'poor outcome' for all cases with those phenotypes, suggesting a revision might be needed to specify 'in a subset' or to clarify the phenotypic scope. However, the most direct mismatch is that the evidence confirms the prognostic significance (poor outcome) but the claim's specific phenotypic constraints are not explicitly validated by the text snippet provided. The evidence supports the core prognostic claim but the phenotypic specificity is not fully addressed. Thus, REVISIONS is appropriate as the claim is partially supported but lacks explicit confirmation of the phenotypic stratification mentioned.",
+          "citations": [
+            {
+              "document_id": "pmid-29948154",
+              "start": 0,
+              "end": 145,
+              "quote": "we evaluated in a large cohort of 289 PLGGs . . . BRAF V600E was associated with shorter PFS (p = 0.011) and OS (p = 0.032) in a subset of PLGGs."
+            }
+          ],
+          "unresolved": [
+            "The evidence does not explicitly confirm the 'Early young adult onset' phenotype or the specific 'Pediatric onset' stratification mentioned in the claim."
+          ],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-29948154"
+  ],
+  "duration_seconds": 14.867113,
+  "research_only": true
+}

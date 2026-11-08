@@ -1,0 +1,387 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-400d7ece-0b3d-4e59-b363-e15373f94f42",
+  "patient_id": "article-20147967",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "99cda8ff8c756036761148e0fb90c3fd63c33b1e2bcb1a0616edce73253995be",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-20147967:f01) states that the Arg164Gln (R164Q) mutation was 'phenotypically equivalent to wt K-Ras'. This finding suggests a lack of oncogenic activity or equivalence to wild-type, which contradicts the claim of oncogenicity. However, the evidence is extremely limited (a single short fragment) and does not provide comprehensive functional data or context to definitively refute or support the oncogenic potential in all cancer types. The claim requires evidence of oncogenicity, but the available data indicates equivalence to wild-type, which is insufficient to support the claim as written. Therefore, the stance is Not Enough Information (NEI) because the evidence does not support the oncogenic claim and is too sparse to fully revise or refute it without more context.",
+    "citations": [
+      {
+        "document_id": "pmid-20147967",
+        "start": 0,
+        "end": 60,
+        "quote": "Arg164Gln mutation was phenotypically equivalent to wt K-Ras"
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.5,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1647,
+    "output_tokens": 269,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-20147967"
+        ],
+        "fingerprint": "99cda8ff8c756036761148e0fb90c3fd63c33b1e2bcb1a0616edce73253995be",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R164Q (exon 5b)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R164Q (exon 5b)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R164Q (exon 5b)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-20147967"
+        ],
+        "query": "{\n  \"disease\": \"cancer\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"ONCOGENIC\",\n  \"molecularProfile\": \"KRAS R164Q (exon 5b)\",\n  \"significance\": \"oncogenicity\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-20147967"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-20147967": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R164Q (exon 5b)",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-20147967",
+              "start": 0,
+              "end": 9,
+              "raw": "Arg164Gln",
+              "canonical": "R164Q"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-20147967": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-20147967"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-20147967": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R164Q (exon 5b)",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-20147967",
+              "start": 0,
+              "end": 9,
+              "raw": "Arg164Gln",
+              "canonical": "R164Q"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-20147967": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "7dc9b4f7c573318a8b156bdfc067519c1ed8dbc629ff96dd608c2c0e080d2c4e",
+        "source_ids": [
+          "pmid-20147967"
+        ],
+        "token_reservation": 10116,
+        "evidence_ids": [
+          "pmid-20147967:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-20147967": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 60,
+              "chars_sent": 60,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-20147967:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 60,
+          "chars_sent": 60,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1647,
+        "output_tokens": 269,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 7.761,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-20147967:f01) states that the Arg164Gln (R164Q) mutation was 'phenotypically equivalent to wt K-Ras'. This finding suggests a lack of oncogenic activity or equivalence to wild-type, which contradicts the claim of oncogenicity. However, the evidence is extremely limited (a single short fragment) and does not provide comprehensive functional data or context to definitively refute or support the oncogenic potential in all cancer types. The claim requires evidence of oncogenicity, but the available data indicates equivalence to wild-type, which is insufficient to support the claim as written. Therefore, the stance is Not Enough Information (NEI) because the evidence does not support the oncogenic claim and is too sparse to fully revise or refute it without more context.",
+          "citations": [
+            {
+              "document_id": "pmid-20147967",
+              "start": 0,
+              "end": 60,
+              "quote": "Arg164Gln mutation was phenotypically equivalent to wt K-Ras"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.5,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-20147967:f01) states that the Arg164Gln (R164Q) mutation was 'phenotypically equivalent to wt K-Ras'. This finding suggests a lack of oncogenic activity or equivalence to wild-type, which contradicts the claim of oncogenicity. However, the evidence is extremely limited (a single short fragment) and does not provide comprehensive functional data or context to definitively refute or support the oncogenic potential in all cancer types. The claim requires evidence of oncogenicity, but the available data indicates equivalence to wild-type, which is insufficient to support the claim as written. Therefore, the stance is Not Enough Information (NEI) because the evidence does not support the oncogenic claim and is too sparse to fully revise or refute it without more context.",
+          "citations": [
+            {
+              "document_id": "pmid-20147967",
+              "start": 0,
+              "end": 60,
+              "quote": "Arg164Gln mutation was phenotypically equivalent to wt K-Ras"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.5,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-20147967"
+  ],
+  "duration_seconds": 7.776605,
+  "research_only": true
+}

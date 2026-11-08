@@ -1,0 +1,371 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-c12fbaee-8b02-4f65-a1fa-80d0f66d8760",
+  "patient_id": "article-26829751",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "d5dad07f948f29ad94e437bab3f58fb84447180c017351b56e308668104aa55e",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The provided evidence from pmid-26829751 explicitly states that all 19 profiled Angiocentric Gliomas displayed MYB alterations, and in the majority of cases where the fusion partner was detectable, MYB was fused to QKI. The text further notes that MYB-QKI rearrangements appeared specific to Angiocentric Glioma, with none found in 147 non-Angiocentric Gliomas. This directly supports the claim that MYB::QKI fusion is associated with Angiocentric Glioma. The evidence confirms the molecular profile (MYB::QKI Fusion) and the disease (Angiocentric Glioma). While the specific phenotypes (Childhood/Juvenile onset) and variant origin (SOMATIC) are not explicitly detailed in this specific fragment, the strong association of the fusion with the specific tumor type supports the core diagnostic claim. The evidence is sufficient to support the diagnostic association.",
+    "citations": [
+      {
+        "document_id": "pmid-26829751",
+        "start": 0,
+        "end": 398,
+        "quote": "In total, all 19 Angiocentric Gliomas profiled by WGS, RNA-seq, WES, FISH, or aCGH displayed MYB alterations, and in six of the seven cases in which its fusion partner could be detected, MYB was fused to QKI. . . . MYB-QKI rearrangements appeared specific to Angiocentric Glioma. None of the 147 non-Angiocentric Gliomas profiled with WGS or RNA-seq exhibited MYB-QKI fusions (p<0.0001, Figure 1c)."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1700,
+    "output_tokens": 289,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-26829751"
+        ],
+        "fingerprint": "d5dad07f948f29ad94e437bab3f58fb84447180c017351b56e308668104aa55e",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-26829751"
+        ],
+        "query": "{\n  \"disease\": \"Angiocentric Glioma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"DIAGNOSTIC\",\n  \"molecularProfile\": \"MYB::QKI Fusion\",\n  \"phenotypes\": [\n    \"Childhood onset\",\n    \"Juvenile onset\"\n  ],\n  \"significance\": \"positive\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-26829751"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-26829751": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-26829751": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-26829751"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-26829751": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-26829751": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "70c7f68fe085be5830746535de03a65b2b1a2840c3114d351cfaaf21800fa80c",
+        "source_ids": [
+          "pmid-26829751"
+        ],
+        "token_reservation": 10379,
+        "evidence_ids": [
+          "pmid-26829751:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-26829751": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 398,
+              "chars_sent": 398,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-26829751:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 398,
+          "chars_sent": 398,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1700,
+        "output_tokens": 289,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.555,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-26829751 explicitly states that all 19 profiled Angiocentric Gliomas displayed MYB alterations, and in the majority of cases where the fusion partner was detectable, MYB was fused to QKI. The text further notes that MYB-QKI rearrangements appeared specific to Angiocentric Glioma, with none found in 147 non-Angiocentric Gliomas. This directly supports the claim that MYB::QKI fusion is associated with Angiocentric Glioma. The evidence confirms the molecular profile (MYB::QKI Fusion) and the disease (Angiocentric Glioma). While the specific phenotypes (Childhood/Juvenile onset) and variant origin (SOMATIC) are not explicitly detailed in this specific fragment, the strong association of the fusion with the specific tumor type supports the core diagnostic claim. The evidence is sufficient to support the diagnostic association.",
+          "citations": [
+            {
+              "document_id": "pmid-26829751",
+              "start": 0,
+              "end": 398,
+              "quote": "In total, all 19 Angiocentric Gliomas profiled by WGS, RNA-seq, WES, FISH, or aCGH displayed MYB alterations, and in six of the seven cases in which its fusion partner could be detected, MYB was fused to QKI. . . . MYB-QKI rearrangements appeared specific to Angiocentric Glioma. None of the 147 non-Angiocentric Gliomas profiled with WGS or RNA-seq exhibited MYB-QKI fusions (p<0.0001, Figure 1c)."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-26829751 explicitly states that all 19 profiled Angiocentric Gliomas displayed MYB alterations, and in the majority of cases where the fusion partner was detectable, MYB was fused to QKI. The text further notes that MYB-QKI rearrangements appeared specific to Angiocentric Glioma, with none found in 147 non-Angiocentric Gliomas. This directly supports the claim that MYB::QKI fusion is associated with Angiocentric Glioma. The evidence confirms the molecular profile (MYB::QKI Fusion) and the disease (Angiocentric Glioma). While the specific phenotypes (Childhood/Juvenile onset) and variant origin (SOMATIC) are not explicitly detailed in this specific fragment, the strong association of the fusion with the specific tumor type supports the core diagnostic claim. The evidence is sufficient to support the diagnostic association.",
+          "citations": [
+            {
+              "document_id": "pmid-26829751",
+              "start": 0,
+              "end": 398,
+              "quote": "In total, all 19 Angiocentric Gliomas profiled by WGS, RNA-seq, WES, FISH, or aCGH displayed MYB alterations, and in six of the seven cases in which its fusion partner could be detected, MYB was fused to QKI. . . . MYB-QKI rearrangements appeared specific to Angiocentric Glioma. None of the 147 non-Angiocentric Gliomas profiled with WGS or RNA-seq exhibited MYB-QKI fusions (p<0.0001, Figure 1c)."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-26829751"
+  ],
+  "duration_seconds": 3.567907,
+  "research_only": true
+}

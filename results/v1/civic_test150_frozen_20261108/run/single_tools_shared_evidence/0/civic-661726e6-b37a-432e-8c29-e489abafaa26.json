@@ -1,0 +1,371 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-661726e6-b37a-432e-8c29-e489abafaa26",
+  "patient_id": "article-9829912",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "5622feadcdec76c3c9d91b14584cc788229f713d2a6a901c69ab109fceed7fe0",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The evidence from pmid-9829912 explicitly states that a missense mutation was found in a VHL type 1 patient. The context of the study involves screening patients with VHL disease and identifying DNA variants, which aligns with the claim of predisposition. While the specific variant Y156C (c.467A>G) is not named in the provided text snippet, the text confirms the identification of a missense mutation in a VHL type 1 patient, supporting the general category of predisposing missense mutations in VHL. The evidence supports the claim that VHL disease is associated with predisposing genetic variants, and the specific variant mentioned in the claim is a known VHL mutation. Given the limited text, the support is based on the confirmation of a missense mutation in a VHL patient, which is consistent with the claim's direction and significance.",
+    "citations": [
+      {
+        "document_id": "pmid-9829912",
+        "start": 0,
+        "end": 259,
+        "quote": "Screening of 92 unrelated patients with VHL disease revealed 61 DNA variants. No variants were found in 96 control cases. This missense mutation was found in a VHL type 1 patient (patient no. V265). One unaffected family member was negative for this mutation."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1625,
+    "output_tokens": 278,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-9829912"
+        ],
+        "fingerprint": "5622feadcdec76c3c9d91b14584cc788229f713d2a6a901c69ab109fceed7fe0",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Y156C (c.467A>G)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Y156C (c.467A>G)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Y156C (c.467A>G)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-9829912"
+        ],
+        "query": "{\n  \"disease\": \"Von Hippel-Lindau Disease\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDISPOSING\",\n  \"molecularProfile\": \"VHL Y156C (c.467A>G)\",\n  \"significance\": \"predisposition\",\n  \"variantOrigin\": \"RARE_GERMLINE\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-9829912"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-9829912": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Y156C (c.467A>G)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-9829912": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-9829912"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-9829912": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Y156C (c.467A>G)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-9829912": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "d7e0e7e77d52952ad32d4510d843271b67b898abd0ae0377e6c58a17f711f742",
+        "source_ids": [
+          "pmid-9829912"
+        ],
+        "token_reservation": 10117,
+        "evidence_ids": [
+          "pmid-9829912:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-9829912": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 259,
+              "chars_sent": 259,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-9829912:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 259,
+          "chars_sent": 259,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1625,
+        "output_tokens": 278,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 9.637,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from pmid-9829912 explicitly states that a missense mutation was found in a VHL type 1 patient. The context of the study involves screening patients with VHL disease and identifying DNA variants, which aligns with the claim of predisposition. While the specific variant Y156C (c.467A>G) is not named in the provided text snippet, the text confirms the identification of a missense mutation in a VHL type 1 patient, supporting the general category of predisposing missense mutations in VHL. The evidence supports the claim that VHL disease is associated with predisposing genetic variants, and the specific variant mentioned in the claim is a known VHL mutation. Given the limited text, the support is based on the confirmation of a missense mutation in a VHL patient, which is consistent with the claim's direction and significance.",
+          "citations": [
+            {
+              "document_id": "pmid-9829912",
+              "start": 0,
+              "end": 259,
+              "quote": "Screening of 92 unrelated patients with VHL disease revealed 61 DNA variants. No variants were found in 96 control cases. This missense mutation was found in a VHL type 1 patient (patient no. V265). One unaffected family member was negative for this mutation."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from pmid-9829912 explicitly states that a missense mutation was found in a VHL type 1 patient. The context of the study involves screening patients with VHL disease and identifying DNA variants, which aligns with the claim of predisposition. While the specific variant Y156C (c.467A>G) is not named in the provided text snippet, the text confirms the identification of a missense mutation in a VHL type 1 patient, supporting the general category of predisposing missense mutations in VHL. The evidence supports the claim that VHL disease is associated with predisposing genetic variants, and the specific variant mentioned in the claim is a known VHL mutation. Given the limited text, the support is based on the confirmation of a missense mutation in a VHL patient, which is consistent with the claim's direction and significance.",
+          "citations": [
+            {
+              "document_id": "pmid-9829912",
+              "start": 0,
+              "end": 259,
+              "quote": "Screening of 92 unrelated patients with VHL disease revealed 61 DNA variants. No variants were found in 96 control cases. This missense mutation was found in a VHL type 1 patient (patient no. V265). One unaffected family member was negative for this mutation."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-9829912"
+  ],
+  "duration_seconds": 9.649433,
+  "research_only": true
+}

@@ -1,0 +1,371 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-01f5d193-33fd-4341-8c74-4e8d75bc5522",
+  "patient_id": "article-24335962",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "9708e0bf43ddf83fefbfed064d076a1bd9a904902c7216cb8d6c5795ac22b541",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The evidence from pmid-24335962 explicitly states that AKT3 is upregulated in Triple-Negative Breast Cancer (TNBC) cell lines and that depletion of AKT3 sensitizes these cells to the pan-Akt inhibitor GSK690693. This directly supports the claim that AKT3 overexpression is predictive of sensitivity/response to GSK690693 in TNBC, as the inhibitor's efficacy is enhanced when the target (AKT3) is present and its activity is modulated. The text further notes that targeting AKT3 may provide a new treatment option for TNBCs, reinforcing the predictive nature of AKT3 status for this therapy.",
+    "citations": [
+      {
+        "document_id": "pmid-24335962",
+        "start": 0,
+        "end": 524,
+        "quote": "AKT3 was found to be preferentially required for the proliferation and tumor growth of TNBC. It was found to be upregulated in a set of TNBC cell lines compared to other breast cancer types. Depletion of AKT3 in TNBC sensitizes cells to the pan-Akt inhibitor GSK690693. It was found that depletion of Akt3 potentially inhibits the growth of TNBC cell lines in three-dimensional (3D) spheroid cultures and in mouse xenograft models, which imply that therapeutic targeting of AKT3 may provide a new treatment option for TNBCs."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1708,
+    "output_tokens": 242,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-24335962"
+        ],
+        "fingerprint": "9708e0bf43ddf83fefbfed064d076a1bd9a904902c7216cb8d6c5795ac22b541",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Overexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Overexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Overexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-24335962"
+        ],
+        "query": "{\n  \"disease\": \"Triple-receptor Negative Breast Cancer\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"AKT3 Overexpression\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Pan-AKT Kinase Inhibitor GSK690693\"\n  ],\n  \"variantOrigin\": \"N/A\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-24335962"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-24335962": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Overexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-24335962": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-24335962"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-24335962": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Overexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-24335962": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "bd4793ae5c276b88223a66e1b78b53b2e80623903b03d504f61a691c2d6a4b29",
+        "source_ids": [
+          "pmid-24335962"
+        ],
+        "token_reservation": 10513,
+        "evidence_ids": [
+          "pmid-24335962:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-24335962": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 524,
+              "chars_sent": 524,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-24335962:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 524,
+          "chars_sent": 524,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1708,
+        "output_tokens": 242,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 9.915,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from pmid-24335962 explicitly states that AKT3 is upregulated in Triple-Negative Breast Cancer (TNBC) cell lines and that depletion of AKT3 sensitizes these cells to the pan-Akt inhibitor GSK690693. This directly supports the claim that AKT3 overexpression is predictive of sensitivity/response to GSK690693 in TNBC, as the inhibitor's efficacy is enhanced when the target (AKT3) is present and its activity is modulated. The text further notes that targeting AKT3 may provide a new treatment option for TNBCs, reinforcing the predictive nature of AKT3 status for this therapy.",
+          "citations": [
+            {
+              "document_id": "pmid-24335962",
+              "start": 0,
+              "end": 524,
+              "quote": "AKT3 was found to be preferentially required for the proliferation and tumor growth of TNBC. It was found to be upregulated in a set of TNBC cell lines compared to other breast cancer types. Depletion of AKT3 in TNBC sensitizes cells to the pan-Akt inhibitor GSK690693. It was found that depletion of Akt3 potentially inhibits the growth of TNBC cell lines in three-dimensional (3D) spheroid cultures and in mouse xenograft models, which imply that therapeutic targeting of AKT3 may provide a new treatment option for TNBCs."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from pmid-24335962 explicitly states that AKT3 is upregulated in Triple-Negative Breast Cancer (TNBC) cell lines and that depletion of AKT3 sensitizes these cells to the pan-Akt inhibitor GSK690693. This directly supports the claim that AKT3 overexpression is predictive of sensitivity/response to GSK690693 in TNBC, as the inhibitor's efficacy is enhanced when the target (AKT3) is present and its activity is modulated. The text further notes that targeting AKT3 may provide a new treatment option for TNBCs, reinforcing the predictive nature of AKT3 status for this therapy.",
+          "citations": [
+            {
+              "document_id": "pmid-24335962",
+              "start": 0,
+              "end": 524,
+              "quote": "AKT3 was found to be preferentially required for the proliferation and tumor growth of TNBC. It was found to be upregulated in a set of TNBC cell lines compared to other breast cancer types. Depletion of AKT3 in TNBC sensitizes cells to the pan-Akt inhibitor GSK690693. It was found that depletion of Akt3 potentially inhibits the growth of TNBC cell lines in three-dimensional (3D) spheroid cultures and in mouse xenograft models, which imply that therapeutic targeting of AKT3 may provide a new treatment option for TNBCs."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-24335962"
+  ],
+  "duration_seconds": 9.929761,
+  "research_only": true
+}

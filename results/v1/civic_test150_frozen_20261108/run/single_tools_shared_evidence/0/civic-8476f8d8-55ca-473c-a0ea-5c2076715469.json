@@ -1,0 +1,397 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-8476f8d8-55ca-473c-a0ea-5c2076715469",
+  "patient_id": "article-25072261",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "a84b1d6e0cc9c95e151322334ddc150ea051b5a81bae7bd9f110f31c3607e495",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The evidence supports that BRCA1/2 mutation carriers with pancreatic cancer (PDAC) have improved overall survival when treated with platinum-based agents compared to non-platinum treatments. However, the claim specifies 'BRCA1 Mutation' exclusively, whereas the evidence indicates that the majority of participants (69%) had BRCA2 mutations, and the benefit was observed in the combined group of BRCA1 or BRCA2 carriers. Furthermore, the claim lists 'Cisplatin' and 'Oxaliplatin' as specific therapies, but the evidence states that the majority of platinum-treated patients received gemcitabine and cisplatin, with only one patient receiving gemcitabine and oxaliplatin. Thus, the evidence supports the general concept of platinum sensitivity in BRCA-mutated PDAC but requires revision to reflect that the data is driven by BRCA2 carriers and that the specific regimen was primarily gemcitabine plus cisplatin, not a direct substitution of cisplatin/oxaliplatin monotherapy or specific dual-agent comparison as implied. The claim's specificity regarding BRCA1-only and the specific drug combination is not fully supported by the aggregated data.",
+    "citations": [
+      {
+        "document_id": "pmid-25072261",
+        "start": 0,
+        "end": 600,
+        "quote": "Of all study participants, 69% (n=49) had a BRCA2 mutation, 30% (n=21) a BRCA1 mutation and 1% (n=1) had both a BRCA1 and a BRCA2 mutation. . . . The majority of our platinum-treated patients received gemcitabine and cisplatin, one patient received gemcitabine and oxaliplatin and three patients received FOLFIRINOX (oxaliplatin, irinotecan, folinic acid and fluorouracil). . . . When combining data for stages 3 and 4, the mOS was 22 months for the platinum exposed (n=22) compared with 9 months for the non-platinum (n=21) treatment groups (P<0.039; Figure 2C). . . . The main finding in our study "
+      },
+      {
+        "document_id": "pmid-25072261",
+        "start": 600,
+        "end": 784,
+        "quote": "is an improvement in OS in stage 3 and 4 BRCA1 or BRCA2-associated PDAC patients who were treated with platinum-based agents compared with those who were not treated with these agents."
+      }
+    ],
+    "unresolved": [
+      "Specific efficacy of Cisplatin or Oxaliplatin monotherapy or specific combination in BRCA1-mutated PDAC is not isolated from BRCA2 data."
+    ],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1953,
+    "output_tokens": 405,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25072261"
+        ],
+        "fingerprint": "a84b1d6e0cc9c95e151322334ddc150ea051b5a81bae7bd9f110f31c3607e495",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25072261"
+        ],
+        "query": "{\n  \"disease\": \"pancreatic cancer\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BRCA1 Mutation\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Cisplatin\",\n    \"Oxaliplatin\"\n  ],\n  \"therapyInteractionType\": \"SUBSTITUTES\",\n  \"variantOrigin\": \"RARE_GERMLINE\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25072261"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25072261": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25072261": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25072261"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25072261": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25072261": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "c75008af050be12891fe49fc6db6ce9deb2c3b494e0bb86efc54e2629e9c1440",
+        "source_ids": [
+          "pmid-25072261"
+        ],
+        "token_reservation": 11093,
+        "evidence_ids": [
+          "pmid-25072261:f01",
+          "pmid-25072261:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-25072261": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 784,
+              "chars_sent": 784,
+              "key_records": 2,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-25072261:f01",
+                "pmid-25072261:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 784,
+          "chars_sent": 784,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1953,
+        "output_tokens": 405,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 6.937,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence supports that BRCA1/2 mutation carriers with pancreatic cancer (PDAC) have improved overall survival when treated with platinum-based agents compared to non-platinum treatments. However, the claim specifies 'BRCA1 Mutation' exclusively, whereas the evidence indicates that the majority of participants (69%) had BRCA2 mutations, and the benefit was observed in the combined group of BRCA1 or BRCA2 carriers. Furthermore, the claim lists 'Cisplatin' and 'Oxaliplatin' as specific therapies, but the evidence states that the majority of platinum-treated patients received gemcitabine and cisplatin, with only one patient receiving gemcitabine and oxaliplatin. Thus, the evidence supports the general concept of platinum sensitivity in BRCA-mutated PDAC but requires revision to reflect that the data is driven by BRCA2 carriers and that the specific regimen was primarily gemcitabine plus cisplatin, not a direct substitution of cisplatin/oxaliplatin monotherapy or specific dual-agent comparison as implied. The claim's specificity regarding BRCA1-only and the specific drug combination is not fully supported by the aggregated data.",
+          "citations": [
+            {
+              "document_id": "pmid-25072261",
+              "start": 0,
+              "end": 600,
+              "quote": "Of all study participants, 69% (n=49) had a BRCA2 mutation, 30% (n=21) a BRCA1 mutation and 1% (n=1) had both a BRCA1 and a BRCA2 mutation. . . . The majority of our platinum-treated patients received gemcitabine and cisplatin, one patient received gemcitabine and oxaliplatin and three patients received FOLFIRINOX (oxaliplatin, irinotecan, folinic acid and fluorouracil). . . . When combining data for stages 3 and 4, the mOS was 22 months for the platinum exposed (n=22) compared with 9 months for the non-platinum (n=21) treatment groups (P<0.039; Figure 2C). . . . The main finding in our study "
+            },
+            {
+              "document_id": "pmid-25072261",
+              "start": 600,
+              "end": 784,
+              "quote": "is an improvement in OS in stage 3 and 4 BRCA1 or BRCA2-associated PDAC patients who were treated with platinum-based agents compared with those who were not treated with these agents."
+            }
+          ],
+          "unresolved": [
+            "Specific efficacy of Cisplatin or Oxaliplatin monotherapy or specific combination in BRCA1-mutated PDAC is not isolated from BRCA2 data."
+          ],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence supports that BRCA1/2 mutation carriers with pancreatic cancer (PDAC) have improved overall survival when treated with platinum-based agents compared to non-platinum treatments. However, the claim specifies 'BRCA1 Mutation' exclusively, whereas the evidence indicates that the majority of participants (69%) had BRCA2 mutations, and the benefit was observed in the combined group of BRCA1 or BRCA2 carriers. Furthermore, the claim lists 'Cisplatin' and 'Oxaliplatin' as specific therapies, but the evidence states that the majority of platinum-treated patients received gemcitabine and cisplatin, with only one patient receiving gemcitabine and oxaliplatin. Thus, the evidence supports the general concept of platinum sensitivity in BRCA-mutated PDAC but requires revision to reflect that the data is driven by BRCA2 carriers and that the specific regimen was primarily gemcitabine plus cisplatin, not a direct substitution of cisplatin/oxaliplatin monotherapy or specific dual-agent comparison as implied. The claim's specificity regarding BRCA1-only and the specific drug combination is not fully supported by the aggregated data.",
+          "citations": [
+            {
+              "document_id": "pmid-25072261",
+              "start": 0,
+              "end": 600,
+              "quote": "Of all study participants, 69% (n=49) had a BRCA2 mutation, 30% (n=21) a BRCA1 mutation and 1% (n=1) had both a BRCA1 and a BRCA2 mutation. . . . The majority of our platinum-treated patients received gemcitabine and cisplatin, one patient received gemcitabine and oxaliplatin and three patients received FOLFIRINOX (oxaliplatin, irinotecan, folinic acid and fluorouracil). . . . When combining data for stages 3 and 4, the mOS was 22 months for the platinum exposed (n=22) compared with 9 months for the non-platinum (n=21) treatment groups (P<0.039; Figure 2C). . . . The main finding in our study "
+            },
+            {
+              "document_id": "pmid-25072261",
+              "start": 600,
+              "end": 784,
+              "quote": "is an improvement in OS in stage 3 and 4 BRCA1 or BRCA2-associated PDAC patients who were treated with platinum-based agents compared with those who were not treated with these agents."
+            }
+          ],
+          "unresolved": [
+            "Specific efficacy of Cisplatin or Oxaliplatin monotherapy or specific combination in BRCA1-mutated PDAC is not isolated from BRCA2 data."
+          ],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25072261"
+  ],
+  "duration_seconds": 6.963134,
+  "research_only": true
+}

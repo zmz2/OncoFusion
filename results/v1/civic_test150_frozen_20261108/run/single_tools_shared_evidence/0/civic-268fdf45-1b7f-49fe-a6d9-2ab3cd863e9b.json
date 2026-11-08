@@ -1,0 +1,377 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-268fdf45-1b7f-49fe-a6d9-2ab3cd863e9b",
+  "patient_id": "article-27894077",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "d68d515f322b7f06be25ad2e5f67e328dbea04d56dad2a0817b397432dd3b8db",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The evidence from pmid-27894077 confirms that JAK2 fusions are present in BCR-ABL1-like ALL, occurring in 6.5% of cases (Table 1). It also notes that 50% of ABL/JAK class fusion-positive BCR-ABL1-like cases are aged >= 10 years (Table 3). However, the evidence does not support the specific claim that JAK2 fusions are associated with 'Juvenile onset', 'Early young adult onset', 'Intermediate young adult onset', and 'Late young adult onset' as distinct phenotypic categories. The data only provides a broad age cutoff (>= 10 years) and does not validate the specific onset age subcategories listed in the claim. Therefore, the claim requires revision to reflect the available age data without asserting specific onset categories not supported by the source.",
+    "citations": [
+      {
+        "document_id": "pmid-27894077",
+        "start": 0,
+        "end": 294,
+        "quote": "Table 1\nFrequency of identified tyrosine kinase fusion genes\nMarker\tBCR-ABL1-like (n=77)\tRemaining B-other (n=76) . . . JAK2 fusion\t6.5%\t0% . . . Table 3\nClinical and molecular features of ABL/JAK class tyrosine kinase fusions\n\t\tTK fusion-positiveBCR-ABL1-like . . . age >= 10 years\t\t7/14 (50%)"
+      }
+    ],
+    "unresolved": [
+      "Specific onset age categories (Juvenile, Early/Intermediate/Late young adult) are not validated by the source data."
+    ],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1732,
+    "output_tokens": 309,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-27894077"
+        ],
+        "fingerprint": "d68d515f322b7f06be25ad2e5f67e328dbea04d56dad2a0817b397432dd3b8db",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-27894077"
+        ],
+        "query": "{\n  \"disease\": \"B-lymphoblastic Leukemia/lymphoma, BCR-ABL1\\u2013like\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"DIAGNOSTIC\",\n  \"molecularProfile\": \"v::JAK2 Fusion\",\n  \"phenotypes\": [\n    \"Juvenile onset\",\n    \"Early young adult onset\",\n    \"Intermediate young adult onset\",\n    \"Late young adult onset\"\n  ],\n  \"significance\": \"positive\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-27894077"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27894077": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27894077": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-27894077"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27894077": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27894077": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "208999572794144d35472ef6a9ab8fdbee1d9861236b96ae8470bd53fef0465a",
+        "source_ids": [
+          "pmid-27894077"
+        ],
+        "token_reservation": 10422,
+        "evidence_ids": [
+          "pmid-27894077:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27894077": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 294,
+              "chars_sent": 294,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27894077:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 294,
+          "chars_sent": 294,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1732,
+        "output_tokens": 309,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 5.603,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-27894077 confirms that JAK2 fusions are present in BCR-ABL1-like ALL, occurring in 6.5% of cases (Table 1). It also notes that 50% of ABL/JAK class fusion-positive BCR-ABL1-like cases are aged >= 10 years (Table 3). However, the evidence does not support the specific claim that JAK2 fusions are associated with 'Juvenile onset', 'Early young adult onset', 'Intermediate young adult onset', and 'Late young adult onset' as distinct phenotypic categories. The data only provides a broad age cutoff (>= 10 years) and does not validate the specific onset age subcategories listed in the claim. Therefore, the claim requires revision to reflect the available age data without asserting specific onset categories not supported by the source.",
+          "citations": [
+            {
+              "document_id": "pmid-27894077",
+              "start": 0,
+              "end": 294,
+              "quote": "Table 1\nFrequency of identified tyrosine kinase fusion genes\nMarker\tBCR-ABL1-like (n=77)\tRemaining B-other (n=76) . . . JAK2 fusion\t6.5%\t0% . . . Table 3\nClinical and molecular features of ABL/JAK class tyrosine kinase fusions\n\t\tTK fusion-positiveBCR-ABL1-like . . . age >= 10 years\t\t7/14 (50%)"
+            }
+          ],
+          "unresolved": [
+            "Specific onset age categories (Juvenile, Early/Intermediate/Late young adult) are not validated by the source data."
+          ],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-27894077 confirms that JAK2 fusions are present in BCR-ABL1-like ALL, occurring in 6.5% of cases (Table 1). It also notes that 50% of ABL/JAK class fusion-positive BCR-ABL1-like cases are aged >= 10 years (Table 3). However, the evidence does not support the specific claim that JAK2 fusions are associated with 'Juvenile onset', 'Early young adult onset', 'Intermediate young adult onset', and 'Late young adult onset' as distinct phenotypic categories. The data only provides a broad age cutoff (>= 10 years) and does not validate the specific onset age subcategories listed in the claim. Therefore, the claim requires revision to reflect the available age data without asserting specific onset categories not supported by the source.",
+          "citations": [
+            {
+              "document_id": "pmid-27894077",
+              "start": 0,
+              "end": 294,
+              "quote": "Table 1\nFrequency of identified tyrosine kinase fusion genes\nMarker\tBCR-ABL1-like (n=77)\tRemaining B-other (n=76) . . . JAK2 fusion\t6.5%\t0% . . . Table 3\nClinical and molecular features of ABL/JAK class tyrosine kinase fusions\n\t\tTK fusion-positiveBCR-ABL1-like . . . age >= 10 years\t\t7/14 (50%)"
+            }
+          ],
+          "unresolved": [
+            "Specific onset age categories (Juvenile, Early/Intermediate/Late young adult) are not validated by the source data."
+          ],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-27894077"
+  ],
+  "duration_seconds": 5.61246,
+  "research_only": true
+}

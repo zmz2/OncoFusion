@@ -1,0 +1,401 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-e7805d41-15ea-4fe5-ae3a-976a74aecaf3",
+  "patient_id": "article-19001320",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "5fe6994a34364ccf657b129abd66f5b8eb63a4fc9615f396ddae748f8aea8fb9",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The evidence from pmid-19001320 explicitly states that in metastatic colorectal cancer patients with wildtype KRAS status, those with a BRAF V600E mutation were less likely to respond to treatment with cetuximab or panitumumab compared to those with wildtype BRAF. It further notes that transfection of colorectal cancer cells with BRAF V600E conferred decreased sensitivity to these drugs. This directly supports the claim that BRAF V600E is a predictive biomarker for resistance to Panitumumab and Cetuximab in Colorectal Cancer.",
+    "citations": [
+      {
+        "document_id": "pmid-19001320",
+        "start": 0,
+        "end": 577,
+        "quote": "In metastatic colorectal cancer patients with wildtype KRAS status, those with a BRAF V600E mutation were less likely to respond to treatment with cetuximab or panitumumab than  those with wildtype BRAF (0%  vs. 32% , P=0.029). Regardless of KRAS status, patients with BRAF mutations had reduced progression-free and overall survival (P=0.0107 and P <0.0001, respectively). Transfection of the colorectal cancer cell line DiFi with a BRAF V600E expression vector conferred decreased sensitivity to cetuximab and panitumumab in comparison to cells transfected with empty vector."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1848,
+    "output_tokens": 226,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-19001320"
+        ],
+        "fingerprint": "5fe6994a34364ccf657b129abd66f5b8eb63a4fc9615f396ddae748f8aea8fb9",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-19001320"
+        ],
+        "query": "{\n  \"disease\": \"Colorectal Cancer\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BRAF V600E\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Panitumumab\",\n    \"Cetuximab\"\n  ],\n  \"therapyInteractionType\": \"SUBSTITUTES\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-19001320"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-19001320": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-19001320",
+              "start": 86,
+              "end": 91,
+              "raw": "V600E",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "pmid-19001320",
+              "start": 439,
+              "end": 444,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-19001320": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-19001320"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-19001320": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-19001320",
+              "start": 86,
+              "end": 91,
+              "raw": "V600E",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "pmid-19001320",
+              "start": 439,
+              "end": 444,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-19001320": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "c36b6940bae5c53488e0a489ccd17f4306e215f5dec54000aa98959cb65b2788",
+        "source_ids": [
+          "pmid-19001320"
+        ],
+        "token_reservation": 10720,
+        "evidence_ids": [
+          "pmid-19001320:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-19001320": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 577,
+              "chars_sent": 577,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-19001320:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 577,
+          "chars_sent": 577,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1848,
+        "output_tokens": 226,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 6.145,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from pmid-19001320 explicitly states that in metastatic colorectal cancer patients with wildtype KRAS status, those with a BRAF V600E mutation were less likely to respond to treatment with cetuximab or panitumumab compared to those with wildtype BRAF. It further notes that transfection of colorectal cancer cells with BRAF V600E conferred decreased sensitivity to these drugs. This directly supports the claim that BRAF V600E is a predictive biomarker for resistance to Panitumumab and Cetuximab in Colorectal Cancer.",
+          "citations": [
+            {
+              "document_id": "pmid-19001320",
+              "start": 0,
+              "end": 577,
+              "quote": "In metastatic colorectal cancer patients with wildtype KRAS status, those with a BRAF V600E mutation were less likely to respond to treatment with cetuximab or panitumumab than  those with wildtype BRAF (0%  vs. 32% , P=0.029). Regardless of KRAS status, patients with BRAF mutations had reduced progression-free and overall survival (P=0.0107 and P <0.0001, respectively). Transfection of the colorectal cancer cell line DiFi with a BRAF V600E expression vector conferred decreased sensitivity to cetuximab and panitumumab in comparison to cells transfected with empty vector."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from pmid-19001320 explicitly states that in metastatic colorectal cancer patients with wildtype KRAS status, those with a BRAF V600E mutation were less likely to respond to treatment with cetuximab or panitumumab compared to those with wildtype BRAF. It further notes that transfection of colorectal cancer cells with BRAF V600E conferred decreased sensitivity to these drugs. This directly supports the claim that BRAF V600E is a predictive biomarker for resistance to Panitumumab and Cetuximab in Colorectal Cancer.",
+          "citations": [
+            {
+              "document_id": "pmid-19001320",
+              "start": 0,
+              "end": 577,
+              "quote": "In metastatic colorectal cancer patients with wildtype KRAS status, those with a BRAF V600E mutation were less likely to respond to treatment with cetuximab or panitumumab than  those with wildtype BRAF (0%  vs. 32% , P=0.029). Regardless of KRAS status, patients with BRAF mutations had reduced progression-free and overall survival (P=0.0107 and P <0.0001, respectively). Transfection of the colorectal cancer cell line DiFi with a BRAF V600E expression vector conferred decreased sensitivity to cetuximab and panitumumab in comparison to cells transfected with empty vector."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-19001320"
+  ],
+  "duration_seconds": 6.15952,
+  "research_only": true
+}

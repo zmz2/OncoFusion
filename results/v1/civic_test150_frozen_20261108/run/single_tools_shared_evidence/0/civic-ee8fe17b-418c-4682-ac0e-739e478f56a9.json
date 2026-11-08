@@ -1,0 +1,383 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-ee8fe17b-418c-4682-ac0e-739e478f56a9",
+  "patient_id": "article-22215888",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "6d27a0266f9c7f79facc096ff5b20afdb30d17df9d3d0acc1fa20c35aed2cc5a",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-22215888:f01) discusses IDH2 R172 mutations in angioimmunoblastic T-cell lymphoma. It does not contain any information regarding PIK3CA E545K mutations, Cervical Cancer, or DNA Adduct Forming Agents. Therefore, there is insufficient evidence to support, revise, or refute the claim that PIK3CA E545K confers resistance to DNA Adduct Forming Agents in Cervical Cancer.",
+    "citations": [
+      {
+        "document_id": "pmid-22215888",
+        "start": 0,
+        "end": 175,
+        "quote": "IDH2 R172 mutations were frequently observed in patients with the angioimmunoblastic T-cell lymphoma subtype of peripheral T-cell lymphomas but not observed in other subtypes."
+      }
+    ],
+    "unresolved": [
+      "Evidence for PIK3CA E545K in Cervical Cancer",
+      "Evidence for DNA Adduct Forming Agent efficacy/resistance in Cervical Cancer",
+      "Evidence linking PIK3CA E545K to resistance against DNA Adduct Forming Agents"
+    ],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1608,
+    "output_tokens": 268,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-22215888"
+        ],
+        "fingerprint": "6d27a0266f9c7f79facc096ff5b20afdb30d17df9d3d0acc1fa20c35aed2cc5a",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "E545K",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "E545K",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "E545K",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-22215888"
+        ],
+        "query": "{\n  \"disease\": \"Cervical Cancer\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"PIK3CA E545K\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"DNA Adduct Forming Agent\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-22215888"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-22215888": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "E545K",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-22215888": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-22215888"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-22215888": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "E545K",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-22215888": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "b9adad89bc2dd6e82b53c13b8322f83a8423577d03464fbecb7b07f498a53e5b",
+        "source_ids": [
+          "pmid-22215888"
+        ],
+        "token_reservation": 10077,
+        "evidence_ids": [
+          "pmid-22215888:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-22215888": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 175,
+              "chars_sent": 175,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-22215888:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 175,
+          "chars_sent": 175,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1608,
+        "output_tokens": 268,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 28.614,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-22215888:f01) discusses IDH2 R172 mutations in angioimmunoblastic T-cell lymphoma. It does not contain any information regarding PIK3CA E545K mutations, Cervical Cancer, or DNA Adduct Forming Agents. Therefore, there is insufficient evidence to support, revise, or refute the claim that PIK3CA E545K confers resistance to DNA Adduct Forming Agents in Cervical Cancer.",
+          "citations": [
+            {
+              "document_id": "pmid-22215888",
+              "start": 0,
+              "end": 175,
+              "quote": "IDH2 R172 mutations were frequently observed in patients with the angioimmunoblastic T-cell lymphoma subtype of peripheral T-cell lymphomas but not observed in other subtypes."
+            }
+          ],
+          "unresolved": [
+            "Evidence for PIK3CA E545K in Cervical Cancer",
+            "Evidence for DNA Adduct Forming Agent efficacy/resistance in Cervical Cancer",
+            "Evidence linking PIK3CA E545K to resistance against DNA Adduct Forming Agents"
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-22215888:f01) discusses IDH2 R172 mutations in angioimmunoblastic T-cell lymphoma. It does not contain any information regarding PIK3CA E545K mutations, Cervical Cancer, or DNA Adduct Forming Agents. Therefore, there is insufficient evidence to support, revise, or refute the claim that PIK3CA E545K confers resistance to DNA Adduct Forming Agents in Cervical Cancer.",
+          "citations": [
+            {
+              "document_id": "pmid-22215888",
+              "start": 0,
+              "end": 175,
+              "quote": "IDH2 R172 mutations were frequently observed in patients with the angioimmunoblastic T-cell lymphoma subtype of peripheral T-cell lymphomas but not observed in other subtypes."
+            }
+          ],
+          "unresolved": [
+            "Evidence for PIK3CA E545K in Cervical Cancer",
+            "Evidence for DNA Adduct Forming Agent efficacy/resistance in Cervical Cancer",
+            "Evidence linking PIK3CA E545K to resistance against DNA Adduct Forming Agents"
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-22215888"
+  ],
+  "duration_seconds": 28.666563,
+  "research_only": true
+}

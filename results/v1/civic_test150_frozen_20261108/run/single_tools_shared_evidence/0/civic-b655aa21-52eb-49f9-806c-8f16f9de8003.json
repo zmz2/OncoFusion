@@ -1,0 +1,415 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-b655aa21-52eb-49f9-806c-8f16f9de8003",
+  "patient_id": "article-26989027",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "0d91b414a198a78649e197b573a808671bc6c7b786710284921df583dcd25220",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The evidence from pmid-26989027 explicitly identifies KRAS Q61L mutations in patients with metastatic colorectal cancer (mCRC) who were non-responders to cetuximab (an EGFR-targeting agent) combined with chemotherapy. Specifically, the text states: 'For example, two Q61L (exon 3)... KRAS mutations were detected in the non-responders'. This directly supports the claim that KRAS Q61L is associated with resistance (lack of sensitivity/response) to EGFR-targeting agents in colorectal cancer. The disease context is mCRC, which includes sigmoid colon cancer as a primary site. The variant origin is somatic, consistent with cancer mutations. The evidence supports the predictive nature of the mutation for resistance.",
+    "citations": [
+      {
+        "document_id": "pmid-26989027",
+        "start": 0,
+        "end": 475,
+        "quote": "A total of 53 mCRC patients were treated with cetuximab in combination with chemotherapy either as a first line (n = 39, 73.5%) or third line (n = 14, 26.4%) therapy . . . Among the 23 non-responders, 4 (17.4%) subjects had a non-exon 2 KRAS mutation, 3 (13%) subjects had a BRAF mutation, and 2 subjects (8.7%) had an NRAS mutation (Figure 2B) . . . For example, two Q61L (exon 3), one Q61H (exon 3), and one A146T (exon 4) KRAS mutations were detected in the non-responders"
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1917,
+    "output_tokens": 260,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-26989027"
+        ],
+        "fingerprint": "0d91b414a198a78649e197b573a808671bc6c7b786710284921df583dcd25220",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Q61L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Q61L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Q61L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-26989027"
+        ],
+        "query": "{\n  \"disease\": \"sigmoid colon cancer\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"KRAS Q61L\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"EGFR-targeting Agent\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-26989027"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-26989027": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Q61L",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-26989027",
+              "start": 368,
+              "end": 372,
+              "raw": "Q61L",
+              "canonical": "Q61L"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 387,
+              "end": 391,
+              "raw": "Q61H",
+              "canonical": "Q61H"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 410,
+              "end": 415,
+              "raw": "A146T",
+              "canonical": "A146T"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-26989027": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-26989027"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-26989027": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Q61L",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-26989027",
+              "start": 368,
+              "end": 372,
+              "raw": "Q61L",
+              "canonical": "Q61L"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 387,
+              "end": 391,
+              "raw": "Q61H",
+              "canonical": "Q61H"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 410,
+              "end": 415,
+              "raw": "A146T",
+              "canonical": "A146T"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-26989027": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "0f75aee9bba7953e10c636347a33191020f99e47d87b30674bedc2fdf7adba34",
+        "source_ids": [
+          "pmid-26989027"
+        ],
+        "token_reservation": 10777,
+        "evidence_ids": [
+          "pmid-26989027:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-26989027": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 475,
+              "chars_sent": 475,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-26989027:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 475,
+          "chars_sent": 475,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1917,
+        "output_tokens": 260,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 5.912,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from pmid-26989027 explicitly identifies KRAS Q61L mutations in patients with metastatic colorectal cancer (mCRC) who were non-responders to cetuximab (an EGFR-targeting agent) combined with chemotherapy. Specifically, the text states: 'For example, two Q61L (exon 3)... KRAS mutations were detected in the non-responders'. This directly supports the claim that KRAS Q61L is associated with resistance (lack of sensitivity/response) to EGFR-targeting agents in colorectal cancer. The disease context is mCRC, which includes sigmoid colon cancer as a primary site. The variant origin is somatic, consistent with cancer mutations. The evidence supports the predictive nature of the mutation for resistance.",
+          "citations": [
+            {
+              "document_id": "pmid-26989027",
+              "start": 0,
+              "end": 475,
+              "quote": "A total of 53 mCRC patients were treated with cetuximab in combination with chemotherapy either as a first line (n = 39, 73.5%) or third line (n = 14, 26.4%) therapy . . . Among the 23 non-responders, 4 (17.4%) subjects had a non-exon 2 KRAS mutation, 3 (13%) subjects had a BRAF mutation, and 2 subjects (8.7%) had an NRAS mutation (Figure 2B) . . . For example, two Q61L (exon 3), one Q61H (exon 3), and one A146T (exon 4) KRAS mutations were detected in the non-responders"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from pmid-26989027 explicitly identifies KRAS Q61L mutations in patients with metastatic colorectal cancer (mCRC) who were non-responders to cetuximab (an EGFR-targeting agent) combined with chemotherapy. Specifically, the text states: 'For example, two Q61L (exon 3)... KRAS mutations were detected in the non-responders'. This directly supports the claim that KRAS Q61L is associated with resistance (lack of sensitivity/response) to EGFR-targeting agents in colorectal cancer. The disease context is mCRC, which includes sigmoid colon cancer as a primary site. The variant origin is somatic, consistent with cancer mutations. The evidence supports the predictive nature of the mutation for resistance.",
+          "citations": [
+            {
+              "document_id": "pmid-26989027",
+              "start": 0,
+              "end": 475,
+              "quote": "A total of 53 mCRC patients were treated with cetuximab in combination with chemotherapy either as a first line (n = 39, 73.5%) or third line (n = 14, 26.4%) therapy . . . Among the 23 non-responders, 4 (17.4%) subjects had a non-exon 2 KRAS mutation, 3 (13%) subjects had a BRAF mutation, and 2 subjects (8.7%) had an NRAS mutation (Figure 2B) . . . For example, two Q61L (exon 3), one Q61H (exon 3), and one A146T (exon 4) KRAS mutations were detected in the non-responders"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-26989027"
+  ],
+  "duration_seconds": 5.937742,
+  "research_only": true
+}

@@ -1,0 +1,401 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-e1e3959b-e131-493e-a7b9-f3d33d0352e5",
+  "patient_id": "article-16875718",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "a43af4fad3ea354a01a946cd9699cb19bed25747c892e429818585be1b07e550",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The provided evidence from pmid-16875718 explicitly states that the response to platinum-based neoadjuvant chemotherapy (NAC) was higher in patients with the XRCC1 R399Q polymorphism (P=0.015) and that there was a significant increased chance of treatment response in women with the G/G genotype (OR 38.0; P=0.023). The study concludes that the genetic polymorphism of XRCC1 R399Q is associated with response to platinum-based NAC in bulky cervical cancer. This directly supports the claim that the XRCC1 Q399R variant is predictive of sensitivity/response to platinum agents (Carboplatin/Cisplatin) in Cervical Cancer. The evidence direction is sensitivity, which aligns with the claim's significance of 'sensitivity/response'. The therapy interaction type 'SUBSTITUTES' is not explicitly addressed in the text, but the core claim of predictive sensitivity is supported.",
+    "citations": [
+      {
+        "document_id": "pmid-16875718",
+        "start": 0,
+        "end": 447,
+        "quote": "The response to platinum-based NAC was higher in patients with SNP of XRCC1 R399Q (P=0.015) . . . and there was a significant increased chance of treatment response in women with the G/G genotype (OR 38.0; 95% CI 1.66-870.45; P=0.023). The probability of response was also higher in patients with SNP of SLC19A1 6318C/T (P=0.032). . . . Genetic polymorphism of XRCC1 R399Q is associated with response to platinum-based NAC in bulky cervical cancer"
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1868,
+    "output_tokens": 303,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-16875718"
+        ],
+        "fingerprint": "a43af4fad3ea354a01a946cd9699cb19bed25747c892e429818585be1b07e550",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Q399R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Q399R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Q399R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-16875718"
+        ],
+        "query": "{\n  \"disease\": \"Cervical Cancer\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"XRCC1 Q399R\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Carboplatin\",\n    \"Cisplatin\"\n  ],\n  \"therapyInteractionType\": \"SUBSTITUTES\",\n  \"variantOrigin\": \"RARE_GERMLINE\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-16875718"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-16875718": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Q399R",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-16875718",
+              "start": 76,
+              "end": 81,
+              "raw": "R399Q",
+              "canonical": "R399Q"
+            },
+            {
+              "document_id": "pmid-16875718",
+              "start": 367,
+              "end": 372,
+              "raw": "R399Q",
+              "canonical": "R399Q"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-16875718": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-16875718"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-16875718": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Q399R",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-16875718",
+              "start": 76,
+              "end": 81,
+              "raw": "R399Q",
+              "canonical": "R399Q"
+            },
+            {
+              "document_id": "pmid-16875718",
+              "start": 367,
+              "end": 372,
+              "raw": "R399Q",
+              "canonical": "R399Q"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-16875718": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "728645c22bce6551a73f7bf4b4e6b4466d8ce1f789b6fa3ec351a6b9ee4ac281",
+        "source_ids": [
+          "pmid-16875718"
+        ],
+        "token_reservation": 10713,
+        "evidence_ids": [
+          "pmid-16875718:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-16875718": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 447,
+              "chars_sent": 447,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-16875718:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 447,
+          "chars_sent": 447,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1868,
+        "output_tokens": 303,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 5.038,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-16875718 explicitly states that the response to platinum-based neoadjuvant chemotherapy (NAC) was higher in patients with the XRCC1 R399Q polymorphism (P=0.015) and that there was a significant increased chance of treatment response in women with the G/G genotype (OR 38.0; P=0.023). The study concludes that the genetic polymorphism of XRCC1 R399Q is associated with response to platinum-based NAC in bulky cervical cancer. This directly supports the claim that the XRCC1 Q399R variant is predictive of sensitivity/response to platinum agents (Carboplatin/Cisplatin) in Cervical Cancer. The evidence direction is sensitivity, which aligns with the claim's significance of 'sensitivity/response'. The therapy interaction type 'SUBSTITUTES' is not explicitly addressed in the text, but the core claim of predictive sensitivity is supported.",
+          "citations": [
+            {
+              "document_id": "pmid-16875718",
+              "start": 0,
+              "end": 447,
+              "quote": "The response to platinum-based NAC was higher in patients with SNP of XRCC1 R399Q (P=0.015) . . . and there was a significant increased chance of treatment response in women with the G/G genotype (OR 38.0; 95% CI 1.66-870.45; P=0.023). The probability of response was also higher in patients with SNP of SLC19A1 6318C/T (P=0.032). . . . Genetic polymorphism of XRCC1 R399Q is associated with response to platinum-based NAC in bulky cervical cancer"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-16875718 explicitly states that the response to platinum-based neoadjuvant chemotherapy (NAC) was higher in patients with the XRCC1 R399Q polymorphism (P=0.015) and that there was a significant increased chance of treatment response in women with the G/G genotype (OR 38.0; P=0.023). The study concludes that the genetic polymorphism of XRCC1 R399Q is associated with response to platinum-based NAC in bulky cervical cancer. This directly supports the claim that the XRCC1 Q399R variant is predictive of sensitivity/response to platinum agents (Carboplatin/Cisplatin) in Cervical Cancer. The evidence direction is sensitivity, which aligns with the claim's significance of 'sensitivity/response'. The therapy interaction type 'SUBSTITUTES' is not explicitly addressed in the text, but the core claim of predictive sensitivity is supported.",
+          "citations": [
+            {
+              "document_id": "pmid-16875718",
+              "start": 0,
+              "end": 447,
+              "quote": "The response to platinum-based NAC was higher in patients with SNP of XRCC1 R399Q (P=0.015) . . . and there was a significant increased chance of treatment response in women with the G/G genotype (OR 38.0; 95% CI 1.66-870.45; P=0.023). The probability of response was also higher in patients with SNP of SLC19A1 6318C/T (P=0.032). . . . Genetic polymorphism of XRCC1 R399Q is associated with response to platinum-based NAC in bulky cervical cancer"
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-16875718"
+  ],
+  "duration_seconds": 5.050182,
+  "research_only": true
+}

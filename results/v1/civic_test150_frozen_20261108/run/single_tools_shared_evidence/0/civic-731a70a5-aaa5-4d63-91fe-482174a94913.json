@@ -1,0 +1,401 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-731a70a5-aaa5-4d63-91fe-482174a94913",
+  "patient_id": "article-25686603",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "5d11a07783508247181d0efc8ef7ea565c2a2dd215fdc0cdcc26363d1e2bfe14",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The evidence from pmid-25686603 supports the claim that the BCR::ABL1 T315I variant confers resistance to Nilotinib, Imatinib, and Dasatinib in acute lymphoblastic leukemia (ALL). The source explicitly states that cells from ALL patients with the BCR-ABL1 T315I variant were 'insensitive to Nilotinib, Imatinib, and Dasatinib' and that 'T315I variants were resistant to imatinib'. This directly supports the 'resistance' significance and the specific therapies listed. However, the claim specifies the therapy interaction type as 'SUBSTITUTES'. The evidence describes resistance (insensitivity), which implies that these drugs are ineffective, but does not explicitly state that they are substituted by another specific agent in a clinical protocol context, although it notes sensitivity to Ponatinib and Axitinib. The term 'SUBSTITUTES' is a specific interaction type that might imply a recommended alternative, whereas the evidence primarily establishes resistance. Therefore, the claim is partially supported but the interaction type 'SUBSTITUTES' is not explicitly evidenced as a directive or standard substitution protocol in this specific text, making 'REVISIONS' the appropriate stance if 'SUBSTITUTES' is interpreted strictly as a clinical substitution recommendation rather than just a pharmacological resistance profile. However, given the options, SUPPORTS is strong for the resistance aspect. Let's re-evaluate. The claim is: 'BCR::ABL1 Fusion AND ABL1 T315I ... significance: resistance ... therapies: Nilotinib, Imatinib, Dasatinib ... therapyInteractionType: SUBSTITUTES'. The evidence shows resistance to these three drugs. It does not explicitly state that one substitutes for the other in a therapeutic algorithm, but rather that they are ineffective. If 'SUBSTITUTES' is interpreted as 'these drugs are substituted by others due to resistance', the evidence supports the *reason* (resistance) but not the *action* (substitution) directly. However, in many contexts, resistance implies substitution. Let's look at the 'REVISIONS' definition: 'partial support with a necessary claim correction'. If the claim implies that Nilotinib/Imatinib/Dasatinib are the *substitutes* for something else, or that they *substitute* for each other, that is not supported. If the claim means 'these drugs are substituted by Ponatinib', the evidence supports Ponatinib sensitivity. The claim lists Nilotinib, Imatinib, Dasatinib as the therapies with interaction type SUBSTITUTES. This is ambiguous. Usually, 'SUBSTITUTES' means Drug A substitutes for Drug B. Here, it lists three drugs. It likely means these drugs are substituted *by* something else, or they substitute *for* something. Given the resistance, they are likely substituted *by* Ponatinib. The evidence supports resistance to the listed drugs. It does not explicitly state the substitution relationship. Thus, the claim's specific interaction type 'SUBSTITUTES' is not fully evidenced, requiring a revision to 'RESISTANCE' or 'INEFFECTIVE' for the listed drugs, or clarifying that they are substituted by Ponatinib. Therefore, REVISIONS is appropriate.",
+    "citations": [
+      {
+        "document_id": "pmid-25686603",
+        "start": 0,
+        "end": 462,
+        "quote": "Bone marrow mononuclear cells (BM MNCs) isolated from three acute lymphoblastic leukemia patients with the BCR-ABL1 T315I variant. Patients were pretreated with various chemotherapeutics and dasatinib. The patients' cells were sensitive to Ponatinib and Axitinib and insensitive to Nilotinib, Imatinib, and Dasatinib using drug sensitivity scoring detailed in a referenced paper. Additionally, in a proliferation assay, T315I variants were resistant to imatinib."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1811,
+    "output_tokens": 781,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25686603"
+        ],
+        "fingerprint": "5d11a07783508247181d0efc8ef7ea565c2a2dd215fdc0cdcc26363d1e2bfe14",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25686603"
+        ],
+        "query": "{\n  \"disease\": \"acute lymphoblastic leukemia\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BCR::ABL1 Fusion AND ABL1 T315I\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Nilotinib\",\n    \"Imatinib\",\n    \"Dasatinib\"\n  ],\n  \"therapyInteractionType\": \"SUBSTITUTES\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25686603"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25686603": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25686603",
+              "start": 116,
+              "end": 121,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25686603",
+              "start": 420,
+              "end": 425,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25686603": "mixed"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25686603"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25686603": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25686603",
+              "start": 116,
+              "end": 121,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25686603",
+              "start": 420,
+              "end": 425,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25686603": "mixed"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "5730e65d699889a779f4127f2c0020d507d9a4c8111c3db0409f44e6467c9202",
+        "source_ids": [
+          "pmid-25686603"
+        ],
+        "token_reservation": 10668,
+        "evidence_ids": [
+          "pmid-25686603:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-25686603": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 462,
+              "chars_sent": 462,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-25686603:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 462,
+          "chars_sent": 462,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1811,
+        "output_tokens": 781,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 45.921,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-25686603 supports the claim that the BCR::ABL1 T315I variant confers resistance to Nilotinib, Imatinib, and Dasatinib in acute lymphoblastic leukemia (ALL). The source explicitly states that cells from ALL patients with the BCR-ABL1 T315I variant were 'insensitive to Nilotinib, Imatinib, and Dasatinib' and that 'T315I variants were resistant to imatinib'. This directly supports the 'resistance' significance and the specific therapies listed. However, the claim specifies the therapy interaction type as 'SUBSTITUTES'. The evidence describes resistance (insensitivity), which implies that these drugs are ineffective, but does not explicitly state that they are substituted by another specific agent in a clinical protocol context, although it notes sensitivity to Ponatinib and Axitinib. The term 'SUBSTITUTES' is a specific interaction type that might imply a recommended alternative, whereas the evidence primarily establishes resistance. Therefore, the claim is partially supported but the interaction type 'SUBSTITUTES' is not explicitly evidenced as a directive or standard substitution protocol in this specific text, making 'REVISIONS' the appropriate stance if 'SUBSTITUTES' is interpreted strictly as a clinical substitution recommendation rather than just a pharmacological resistance profile. However, given the options, SUPPORTS is strong for the resistance aspect. Let's re-evaluate. The claim is: 'BCR::ABL1 Fusion AND ABL1 T315I ... significance: resistance ... therapies: Nilotinib, Imatinib, Dasatinib ... therapyInteractionType: SUBSTITUTES'. The evidence shows resistance to these three drugs. It does not explicitly state that one substitutes for the other in a therapeutic algorithm, but rather that they are ineffective. If 'SUBSTITUTES' is interpreted as 'these drugs are substituted by others due to resistance', the evidence supports the *reason* (resistance) but not the *action* (substitution) directly. However, in many contexts, resistance implies substitution. Let's look at the 'REVISIONS' definition: 'partial support with a necessary claim correction'. If the claim implies that Nilotinib/Imatinib/Dasatinib are the *substitutes* for something else, or that they *substitute* for each other, that is not supported. If the claim means 'these drugs are substituted by Ponatinib', the evidence supports Ponatinib sensitivity. The claim lists Nilotinib, Imatinib, Dasatinib as the therapies with interaction type SUBSTITUTES. This is ambiguous. Usually, 'SUBSTITUTES' means Drug A substitutes for Drug B. Here, it lists three drugs. It likely means these drugs are substituted *by* something else, or they substitute *for* something. Given the resistance, they are likely substituted *by* Ponatinib. The evidence supports resistance to the listed drugs. It does not explicitly state the substitution relationship. Thus, the claim's specific interaction type 'SUBSTITUTES' is not fully evidenced, requiring a revision to 'RESISTANCE' or 'INEFFECTIVE' for the listed drugs, or clarifying that they are substituted by Ponatinib. Therefore, REVISIONS is appropriate.",
+          "citations": [
+            {
+              "document_id": "pmid-25686603",
+              "start": 0,
+              "end": 462,
+              "quote": "Bone marrow mononuclear cells (BM MNCs) isolated from three acute lymphoblastic leukemia patients with the BCR-ABL1 T315I variant. Patients were pretreated with various chemotherapeutics and dasatinib. The patients' cells were sensitive to Ponatinib and Axitinib and insensitive to Nilotinib, Imatinib, and Dasatinib using drug sensitivity scoring detailed in a referenced paper. Additionally, in a proliferation assay, T315I variants were resistant to imatinib."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The evidence from pmid-25686603 supports the claim that the BCR::ABL1 T315I variant confers resistance to Nilotinib, Imatinib, and Dasatinib in acute lymphoblastic leukemia (ALL). The source explicitly states that cells from ALL patients with the BCR-ABL1 T315I variant were 'insensitive to Nilotinib, Imatinib, and Dasatinib' and that 'T315I variants were resistant to imatinib'. This directly supports the 'resistance' significance and the specific therapies listed. However, the claim specifies the therapy interaction type as 'SUBSTITUTES'. The evidence describes resistance (insensitivity), which implies that these drugs are ineffective, but does not explicitly state that they are substituted by another specific agent in a clinical protocol context, although it notes sensitivity to Ponatinib and Axitinib. The term 'SUBSTITUTES' is a specific interaction type that might imply a recommended alternative, whereas the evidence primarily establishes resistance. Therefore, the claim is partially supported but the interaction type 'SUBSTITUTES' is not explicitly evidenced as a directive or standard substitution protocol in this specific text, making 'REVISIONS' the appropriate stance if 'SUBSTITUTES' is interpreted strictly as a clinical substitution recommendation rather than just a pharmacological resistance profile. However, given the options, SUPPORTS is strong for the resistance aspect. Let's re-evaluate. The claim is: 'BCR::ABL1 Fusion AND ABL1 T315I ... significance: resistance ... therapies: Nilotinib, Imatinib, Dasatinib ... therapyInteractionType: SUBSTITUTES'. The evidence shows resistance to these three drugs. It does not explicitly state that one substitutes for the other in a therapeutic algorithm, but rather that they are ineffective. If 'SUBSTITUTES' is interpreted as 'these drugs are substituted by others due to resistance', the evidence supports the *reason* (resistance) but not the *action* (substitution) directly. However, in many contexts, resistance implies substitution. Let's look at the 'REVISIONS' definition: 'partial support with a necessary claim correction'. If the claim implies that Nilotinib/Imatinib/Dasatinib are the *substitutes* for something else, or that they *substitute* for each other, that is not supported. If the claim means 'these drugs are substituted by Ponatinib', the evidence supports Ponatinib sensitivity. The claim lists Nilotinib, Imatinib, Dasatinib as the therapies with interaction type SUBSTITUTES. This is ambiguous. Usually, 'SUBSTITUTES' means Drug A substitutes for Drug B. Here, it lists three drugs. It likely means these drugs are substituted *by* something else, or they substitute *for* something. Given the resistance, they are likely substituted *by* Ponatinib. The evidence supports resistance to the listed drugs. It does not explicitly state the substitution relationship. Thus, the claim's specific interaction type 'SUBSTITUTES' is not fully evidenced, requiring a revision to 'RESISTANCE' or 'INEFFECTIVE' for the listed drugs, or clarifying that they are substituted by Ponatinib. Therefore, REVISIONS is appropriate.",
+          "citations": [
+            {
+              "document_id": "pmid-25686603",
+              "start": 0,
+              "end": 462,
+              "quote": "Bone marrow mononuclear cells (BM MNCs) isolated from three acute lymphoblastic leukemia patients with the BCR-ABL1 T315I variant. Patients were pretreated with various chemotherapeutics and dasatinib. The patients' cells were sensitive to Ponatinib and Axitinib and insensitive to Nilotinib, Imatinib, and Dasatinib using drug sensitivity scoring detailed in a referenced paper. Additionally, in a proliferation assay, T315I variants were resistant to imatinib."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25686603"
+  ],
+  "duration_seconds": 45.958025,
+  "research_only": true
+}

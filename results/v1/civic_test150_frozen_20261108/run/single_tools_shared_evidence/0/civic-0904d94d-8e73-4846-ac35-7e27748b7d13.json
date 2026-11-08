@@ -1,0 +1,419 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-0904d94d-8e73-4846-ac35-7e27748b7d13",
+  "patient_id": "article-37376747",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "e2c80f414749a10a6cf3cc03c51d50f763fa27e47079e959d053c6c68d26b881",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-37376747) exclusively discusses the RET p.632_633del mutation in Medullary Thyroid Cancer (MTC) and its response to the RET inhibitor selpercatinib. The evidence does not contain any information regarding EGFR L858R mutations, Lung Small Cell Carcinoma, or resistance to Epidermal Growth Factor Receptor Tyrosine Kinase Inhibitors. Therefore, there is insufficient evidence to support, revise, or refute the claim.",
+    "citations": [
+      {
+        "document_id": "pmid-37376747",
+        "start": 0,
+        "end": 597,
+        "quote": "\"Re: \\\"A Case Report of Poor Response to Selpercatinib in the Presence of a 632_633 RET Deletion\\\" by Wijewardene et al.\\nDear Editor:\\nIn this letter to the editor, we wish to provide additional information and clarification relevant to the article by Wijewardene et al. entitled \\\"A case report of poor response to selpercatinib in the presence of a 632_633 RET deletion\\\" published in Thyroid in January 2023.\\nExperimental evidence and clinical observations from the LIBRETTO-001 trial suggest that the RET p.632_633del mutation is neither rare in patients with medullary thyroid cancer (MTC) "
+      }
+    ],
+    "unresolved": [
+      "No evidence found for EGFR L858R in Lung Small Cell Carcinoma."
+    ],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 3386,
+    "output_tokens": 233,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-37376747"
+        ],
+        "fingerprint": "e2c80f414749a10a6cf3cc03c51d50f763fa27e47079e959d053c6c68d26b881",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-37376747"
+        ],
+        "query": "{\n  \"disease\": \"lung small cell carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"EGFR L858R\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Epidermal Growth Factor Receptor Tyrosine Kinase Inhibitor\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-37376747"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-37376747": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-37376747",
+              "start": 2975,
+              "end": 2980,
+              "raw": "M918T",
+              "canonical": "M918T"
+            },
+            {
+              "document_id": "pmid-37376747",
+              "start": 2991,
+              "end": 2996,
+              "raw": "C618R",
+              "canonical": "C618R"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-37376747": "mixed"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-37376747"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-37376747": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-37376747",
+              "start": 2975,
+              "end": 2980,
+              "raw": "M918T",
+              "canonical": "M918T"
+            },
+            {
+              "document_id": "pmid-37376747",
+              "start": 2991,
+              "end": 2996,
+              "raw": "C618R",
+              "canonical": "C618R"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-37376747": "mixed"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "6b666e1d356a8cee4d744d8b178719a56e9eb93f2c01fa5bc6c08acf89c935c3",
+        "source_ids": [
+          "pmid-37376747"
+        ],
+        "token_reservation": 15263,
+        "evidence_ids": [
+          "pmid-37376747:f01",
+          "pmid-37376747:f02",
+          "pmid-37376747:f03",
+          "pmid-37376747:f04",
+          "pmid-37376747:f05",
+          "pmid-37376747:f06",
+          "pmid-37376747:f07"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-37376747": {
+              "candidates": 7,
+              "sent": 7,
+              "chars_total": 3592,
+              "chars_sent": 3592,
+              "key_records": 2,
+              "required_candidates": 6,
+              "required_sent": 6,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-37376747:f01",
+                "pmid-37376747:f02",
+                "pmid-37376747:f03",
+                "pmid-37376747:f04",
+                "pmid-37376747:f05",
+                "pmid-37376747:f06",
+                "pmid-37376747:f07"
+              ]
+            }
+          },
+          "candidates": 7,
+          "sent": 7,
+          "chars_total": 3592,
+          "chars_sent": 3592,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 6,
+              "sent": 6,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 3386,
+        "output_tokens": 233,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 41.527,
+        "evidence_fragments": 7
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-37376747) exclusively discusses the RET p.632_633del mutation in Medullary Thyroid Cancer (MTC) and its response to the RET inhibitor selpercatinib. The evidence does not contain any information regarding EGFR L858R mutations, Lung Small Cell Carcinoma, or resistance to Epidermal Growth Factor Receptor Tyrosine Kinase Inhibitors. Therefore, there is insufficient evidence to support, revise, or refute the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-37376747",
+              "start": 0,
+              "end": 597,
+              "quote": "\"Re: \\\"A Case Report of Poor Response to Selpercatinib in the Presence of a 632_633 RET Deletion\\\" by Wijewardene et al.\\nDear Editor:\\nIn this letter to the editor, we wish to provide additional information and clarification relevant to the article by Wijewardene et al. entitled \\\"A case report of poor response to selpercatinib in the presence of a 632_633 RET deletion\\\" published in Thyroid in January 2023.\\nExperimental evidence and clinical observations from the LIBRETTO-001 trial suggest that the RET p.632_633del mutation is neither rare in patients with medullary thyroid cancer (MTC) "
+            }
+          ],
+          "unresolved": [
+            "No evidence found for EGFR L858R in Lung Small Cell Carcinoma."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-37376747) exclusively discusses the RET p.632_633del mutation in Medullary Thyroid Cancer (MTC) and its response to the RET inhibitor selpercatinib. The evidence does not contain any information regarding EGFR L858R mutations, Lung Small Cell Carcinoma, or resistance to Epidermal Growth Factor Receptor Tyrosine Kinase Inhibitors. Therefore, there is insufficient evidence to support, revise, or refute the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-37376747",
+              "start": 0,
+              "end": 597,
+              "quote": "\"Re: \\\"A Case Report of Poor Response to Selpercatinib in the Presence of a 632_633 RET Deletion\\\" by Wijewardene et al.\\nDear Editor:\\nIn this letter to the editor, we wish to provide additional information and clarification relevant to the article by Wijewardene et al. entitled \\\"A case report of poor response to selpercatinib in the presence of a 632_633 RET deletion\\\" published in Thyroid in January 2023.\\nExperimental evidence and clinical observations from the LIBRETTO-001 trial suggest that the RET p.632_633del mutation is neither rare in patients with medullary thyroid cancer (MTC) "
+            }
+          ],
+          "unresolved": [
+            "No evidence found for EGFR L858R in Lung Small Cell Carcinoma."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-37376747"
+  ],
+  "duration_seconds": 41.548114,
+  "research_only": true
+}

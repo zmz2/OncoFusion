@@ -1,0 +1,529 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-531705ea-dda6-426f-9c05-c237751c5d59",
+  "patient_id": "article-29320312",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "8473895dc0fd7b306f93b4b3a1358eb3fc08fccc4b5a7cf425f45245767d29b5",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The provided evidence from the MyPathway study (pmid-29320312) indicates that BRAF G464V is a non-responding mutation to Vemurafenib. Specifically, the text lists G464V among the 'Nonresponding BRAF mutations' and notes that only 1 of 23 patients with non-V600 BRAF mutations had a partial response, implying G464V did not show sensitivity or response. The claim asks to assess the stance toward the supplied claim, which is implicitly about sensitivity/response. Since the evidence shows lack of response, it does not support the claim of sensitivity/response. However, the task is to assess the stance of each finding toward the supplied claim. The supplied claim is not explicitly stated as a sentence, but the question structure implies a hypothesis about BRAF G464V and Vemurafenib sensitivity. The evidence refutes sensitivity. In the context of the options SUPPORTS, REVISIONS, NEI: SUPPORTS means the claim is evidenced as written. REVISIONS means partial support with a necessary claim correction. NEI means missing/irrelevant/insufficient. If the implicit claim is 'BRAF G464V is sensitive to Vemurafenib', the evidence refutes it. However, the schema requires one of SUPPORTS, REVISIONS, NEI. REVISIONS is defined as 'partial support with a necessary claim correction; it is not equivalent to REFUTES'. If the evidence shows no response, and the claim was about response, this is a refutation. But the options don't include REFUTES. Let's re-read the instruction: 'Assess the stance of each finding toward the supplied claim using: SUPPORTS, REVISIONS, NEI.' The 'supplied claim' is likely the hypothesis embedded in the question parameters: that BRAF G464V has sensitivity/response to Vemurafenib. The evidence shows it does not. This is a refutation. Since REFUTES is not an option, and REVISIONS is 'not equivalent to REFUTES', this might be NEI if the claim is considered unsupported? No, NEI is 'missing, irrelevant or insufficient evidence'. Here evidence is present and contradicts. Wait, looking at similar tasks, if the evidence contradicts the claim, it is often labeled REVISIONS if the claim can be corrected to match the evidence (e.g., 'BRAF G464V is resistant'). Or it might be NEI if the claim is just 'sensitivity' and the evidence says 'no sensitivity', which is a revision of the claim from 'sensitive' to 'resistant'. Let's assume the claim is 'BRAF G464V responds to Vemurafenib'. The evidence says it does not. This requires revising the claim to 'BRAF G464V does not respond'. Thus REVISIONS is appropriate. The evidence explicitly lists G464V as non-responding.",
+    "citations": [
+      {
+        "document_id": "pmid-29320312",
+        "start": 0,
+        "end": 596,
+        "quote": "The phase 2a MyPathway study assigned patients with HER2, EGFR, BRAF or SHH alterations to treatment with pertuzumab plus trastuzumab, erlotinib, vemurafenib, or vismodegib, respectively. Of 26 patients with BRAF V600E mutations, objective responses were seen in 12 patients (46%; 95% CI, 27% to 67%). Only one of 23 patients (4%; 95% CI, 0% to 22%) with other non-V600 BRAF mutations had a PR (pancreas cancer with a CUX1-BRAF fusion). Nonresponding BRAF mutations included: K601E (n = 6), G464V (n = 2), G469A (n = 2), G496A (n = 2), N581S (n = 2), and one each for G466V, G596R, G606E, L597Q, "
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2537,
+    "output_tokens": 726,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-29320312"
+        ],
+        "fingerprint": "8473895dc0fd7b306f93b4b3a1358eb3fc08fccc4b5a7cf425f45245767d29b5",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "G464V",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "G464V",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "G464V",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-29320312"
+        ],
+        "query": "{\n  \"disease\": \"Cancer\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BRAF G464V\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Vemurafenib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-29320312"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-29320312": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "G464V",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-29320312",
+              "start": 213,
+              "end": 218,
+              "raw": "V600E",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 476,
+              "end": 481,
+              "raw": "K601E",
+              "canonical": "K601E"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 491,
+              "end": 496,
+              "raw": "G464V",
+              "canonical": "G464V"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 506,
+              "end": 511,
+              "raw": "G469A",
+              "canonical": "G469A"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 521,
+              "end": 526,
+              "raw": "G496A",
+              "canonical": "G496A"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 536,
+              "end": 541,
+              "raw": "N581S",
+              "canonical": "N581S"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 568,
+              "end": 573,
+              "raw": "G466V",
+              "canonical": "G466V"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 575,
+              "end": 580,
+              "raw": "G596R",
+              "canonical": "G596R"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 582,
+              "end": 587,
+              "raw": "G606E",
+              "canonical": "G606E"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 589,
+              "end": 594,
+              "raw": "L597Q",
+              "canonical": "L597Q"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 596,
+              "end": 601,
+              "raw": "P731T",
+              "canonical": "P731T"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-29320312": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-29320312"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-29320312": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "G464V",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-29320312",
+              "start": 213,
+              "end": 218,
+              "raw": "V600E",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 476,
+              "end": 481,
+              "raw": "K601E",
+              "canonical": "K601E"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 491,
+              "end": 496,
+              "raw": "G464V",
+              "canonical": "G464V"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 506,
+              "end": 511,
+              "raw": "G469A",
+              "canonical": "G469A"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 521,
+              "end": 526,
+              "raw": "G496A",
+              "canonical": "G496A"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 536,
+              "end": 541,
+              "raw": "N581S",
+              "canonical": "N581S"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 568,
+              "end": 573,
+              "raw": "G466V",
+              "canonical": "G466V"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 575,
+              "end": 580,
+              "raw": "G596R",
+              "canonical": "G596R"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 582,
+              "end": 587,
+              "raw": "G606E",
+              "canonical": "G606E"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 589,
+              "end": 594,
+              "raw": "L597Q",
+              "canonical": "L597Q"
+            },
+            {
+              "document_id": "pmid-29320312",
+              "start": 596,
+              "end": 601,
+              "raw": "P731T",
+              "canonical": "P731T"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-29320312": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "985d553b0e2f7c78b9cbf1974963fe8b3ff9425d4f99eac7426704fa1b1b0929",
+        "source_ids": [
+          "pmid-29320312"
+        ],
+        "token_reservation": 11868,
+        "evidence_ids": [
+          "pmid-29320312:f01",
+          "pmid-29320312:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-29320312": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 685,
+              "chars_sent": 685,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-29320312:f01",
+                "pmid-29320312:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 685,
+          "chars_sent": 685,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2537,
+        "output_tokens": 726,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 18.904,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The provided evidence from the MyPathway study (pmid-29320312) indicates that BRAF G464V is a non-responding mutation to Vemurafenib. Specifically, the text lists G464V among the 'Nonresponding BRAF mutations' and notes that only 1 of 23 patients with non-V600 BRAF mutations had a partial response, implying G464V did not show sensitivity or response. The claim asks to assess the stance toward the supplied claim, which is implicitly about sensitivity/response. Since the evidence shows lack of response, it does not support the claim of sensitivity/response. However, the task is to assess the stance of each finding toward the supplied claim. The supplied claim is not explicitly stated as a sentence, but the question structure implies a hypothesis about BRAF G464V and Vemurafenib sensitivity. The evidence refutes sensitivity. In the context of the options SUPPORTS, REVISIONS, NEI: SUPPORTS means the claim is evidenced as written. REVISIONS means partial support with a necessary claim correction. NEI means missing/irrelevant/insufficient. If the implicit claim is 'BRAF G464V is sensitive to Vemurafenib', the evidence refutes it. However, the schema requires one of SUPPORTS, REVISIONS, NEI. REVISIONS is defined as 'partial support with a necessary claim correction; it is not equivalent to REFUTES'. If the evidence shows no response, and the claim was about response, this is a refutation. But the options don't include REFUTES. Let's re-read the instruction: 'Assess the stance of each finding toward the supplied claim using: SUPPORTS, REVISIONS, NEI.' The 'supplied claim' is likely the hypothesis embedded in the question parameters: that BRAF G464V has sensitivity/response to Vemurafenib. The evidence shows it does not. This is a refutation. Since REFUTES is not an option, and REVISIONS is 'not equivalent to REFUTES', this might be NEI if the claim is considered unsupported? No, NEI is 'missing, irrelevant or insufficient evidence'. Here evidence is present and contradicts. Wait, looking at similar tasks, if the evidence contradicts the claim, it is often labeled REVISIONS if the claim can be corrected to match the evidence (e.g., 'BRAF G464V is resistant'). Or it might be NEI if the claim is just 'sensitivity' and the evidence says 'no sensitivity', which is a revision of the claim from 'sensitive' to 'resistant'. Let's assume the claim is 'BRAF G464V responds to Vemurafenib'. The evidence says it does not. This requires revising the claim to 'BRAF G464V does not respond'. Thus REVISIONS is appropriate. The evidence explicitly lists G464V as non-responding.",
+          "citations": [
+            {
+              "document_id": "pmid-29320312",
+              "start": 0,
+              "end": 596,
+              "quote": "The phase 2a MyPathway study assigned patients with HER2, EGFR, BRAF or SHH alterations to treatment with pertuzumab plus trastuzumab, erlotinib, vemurafenib, or vismodegib, respectively. Of 26 patients with BRAF V600E mutations, objective responses were seen in 12 patients (46%; 95% CI, 27% to 67%). Only one of 23 patients (4%; 95% CI, 0% to 22%) with other non-V600 BRAF mutations had a PR (pancreas cancer with a CUX1-BRAF fusion). Nonresponding BRAF mutations included: K601E (n = 6), G464V (n = 2), G469A (n = 2), G496A (n = 2), N581S (n = 2), and one each for G466V, G596R, G606E, L597Q, "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The provided evidence from the MyPathway study (pmid-29320312) indicates that BRAF G464V is a non-responding mutation to Vemurafenib. Specifically, the text lists G464V among the 'Nonresponding BRAF mutations' and notes that only 1 of 23 patients with non-V600 BRAF mutations had a partial response, implying G464V did not show sensitivity or response. The claim asks to assess the stance toward the supplied claim, which is implicitly about sensitivity/response. Since the evidence shows lack of response, it does not support the claim of sensitivity/response. However, the task is to assess the stance of each finding toward the supplied claim. The supplied claim is not explicitly stated as a sentence, but the question structure implies a hypothesis about BRAF G464V and Vemurafenib sensitivity. The evidence refutes sensitivity. In the context of the options SUPPORTS, REVISIONS, NEI: SUPPORTS means the claim is evidenced as written. REVISIONS means partial support with a necessary claim correction. NEI means missing/irrelevant/insufficient. If the implicit claim is 'BRAF G464V is sensitive to Vemurafenib', the evidence refutes it. However, the schema requires one of SUPPORTS, REVISIONS, NEI. REVISIONS is defined as 'partial support with a necessary claim correction; it is not equivalent to REFUTES'. If the evidence shows no response, and the claim was about response, this is a refutation. But the options don't include REFUTES. Let's re-read the instruction: 'Assess the stance of each finding toward the supplied claim using: SUPPORTS, REVISIONS, NEI.' The 'supplied claim' is likely the hypothesis embedded in the question parameters: that BRAF G464V has sensitivity/response to Vemurafenib. The evidence shows it does not. This is a refutation. Since REFUTES is not an option, and REVISIONS is 'not equivalent to REFUTES', this might be NEI if the claim is considered unsupported? No, NEI is 'missing, irrelevant or insufficient evidence'. Here evidence is present and contradicts. Wait, looking at similar tasks, if the evidence contradicts the claim, it is often labeled REVISIONS if the claim can be corrected to match the evidence (e.g., 'BRAF G464V is resistant'). Or it might be NEI if the claim is just 'sensitivity' and the evidence says 'no sensitivity', which is a revision of the claim from 'sensitive' to 'resistant'. Let's assume the claim is 'BRAF G464V responds to Vemurafenib'. The evidence says it does not. This requires revising the claim to 'BRAF G464V does not respond'. Thus REVISIONS is appropriate. The evidence explicitly lists G464V as non-responding.",
+          "citations": [
+            {
+              "document_id": "pmid-29320312",
+              "start": 0,
+              "end": 596,
+              "quote": "The phase 2a MyPathway study assigned patients with HER2, EGFR, BRAF or SHH alterations to treatment with pertuzumab plus trastuzumab, erlotinib, vemurafenib, or vismodegib, respectively. Of 26 patients with BRAF V600E mutations, objective responses were seen in 12 patients (46%; 95% CI, 27% to 67%). Only one of 23 patients (4%; 95% CI, 0% to 22%) with other non-V600 BRAF mutations had a PR (pancreas cancer with a CUX1-BRAF fusion). Nonresponding BRAF mutations included: K601E (n = 6), G464V (n = 2), G469A (n = 2), G496A (n = 2), N581S (n = 2), and one each for G466V, G596R, G606E, L597Q, "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-29320312"
+  ],
+  "duration_seconds": 18.920122,
+  "research_only": true
+}

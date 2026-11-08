@@ -1,0 +1,373 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-2d693d0c-8662-4ca9-b965-8f5f178b29c5",
+  "patient_id": "article-7728151",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "a169bfc5c6be099b194d1c733ae8dd035b6e48b207093374af55b96109bda75c",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The evidence from pmid-7728151 describes a study of VHL families where germline mutations were detected in affected members but not in unaffected individuals or normal controls, supporting a predisposing role. Specifically, a nonsense mutation (identified in the context of the study's molecular findings) was found in a VHL type 1 family. The text notes cosegregation with disease in multiple affected family members, including phenotypes such as retinal hemangioblastomas, cerebellar hemangioblastomas, and renal cell carcinoma, which aligns with the phenotypes listed in the claim. The evidence explicitly supports the pathogenicity and predisposition aspect of the VHL gene mutation in the context of Von Hippel-Lindau Disease. While the specific variant Q73* (c.217C>T) is not explicitly named in the provided text snippet, the text refers to a 'nonsense mutation' in a VHL family with the specified phenotypes and cites ACMG pathogenicity criteria (cosegregation). Given the task constraints to use visible evidence and the strong alignment of the described mutation's effect (nonsense), disease (VHL), and phenotypes, the evidence supports the claim's core assertion of predisposition. The evidence does not refute or require revision of the claim's direction or significance.",
+    "citations": [
+      {
+        "document_id": "pmid-7728151",
+        "start": 0,
+        "end": 596,
+        "quote": "In a study of 114 unrelated VHL families, 85 germline mutations were found. VHL mutations were detected in affected family members, but not in unaffected family members or 96 normal individuals. This nonsense mutation was found in a VHL type 1 family of 7 individuals (family ID 2753). Six of 7 individuals were identified with retinal hemangioblastomas, 3 with cerebellar hemangioblastomas and one with renal cell carcinoma. Supporting evidence of pathogenicity because cosegregation with disease in multiple affected family members in a gene definitively known to cause the disease (ACMG code: "
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.8,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1857,
+    "output_tokens": 368,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-7728151"
+        ],
+        "fingerprint": "a169bfc5c6be099b194d1c733ae8dd035b6e48b207093374af55b96109bda75c",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Q73* (c.217C>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Q73* (c.217C>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Q73* (c.217C>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-7728151"
+        ],
+        "query": "{\n  \"disease\": \"Von Hippel-Lindau Disease\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDISPOSING\",\n  \"molecularProfile\": \"VHL Q73* (c.217C>T)\",\n  \"phenotypes\": [\n    \"Renal cell carcinoma\",\n    \"Cerebellar hemangioblastoma\",\n    \"Retinal capillary hemangioma\"\n  ],\n  \"significance\": \"predisposition\",\n  \"variantOrigin\": \"RARE_GERMLINE\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-7728151"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-7728151": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Q73* (c.217C>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-7728151": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-7728151"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-7728151": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Q73* (c.217C>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-7728151": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "5386bac92d88563f58f01cce0cb5d95d23b1c82100acaba03ef0a4403ec4f709",
+        "source_ids": [
+          "pmid-7728151"
+        ],
+        "token_reservation": 10818,
+        "evidence_ids": [
+          "pmid-7728151:f01",
+          "pmid-7728151:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-7728151": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 601,
+              "chars_sent": 601,
+              "key_records": 2,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-7728151:f01",
+                "pmid-7728151:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 601,
+          "chars_sent": 601,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1857,
+        "output_tokens": 368,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 10.869,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from pmid-7728151 describes a study of VHL families where germline mutations were detected in affected members but not in unaffected individuals or normal controls, supporting a predisposing role. Specifically, a nonsense mutation (identified in the context of the study's molecular findings) was found in a VHL type 1 family. The text notes cosegregation with disease in multiple affected family members, including phenotypes such as retinal hemangioblastomas, cerebellar hemangioblastomas, and renal cell carcinoma, which aligns with the phenotypes listed in the claim. The evidence explicitly supports the pathogenicity and predisposition aspect of the VHL gene mutation in the context of Von Hippel-Lindau Disease. While the specific variant Q73* (c.217C>T) is not explicitly named in the provided text snippet, the text refers to a 'nonsense mutation' in a VHL family with the specified phenotypes and cites ACMG pathogenicity criteria (cosegregation). Given the task constraints to use visible evidence and the strong alignment of the described mutation's effect (nonsense), disease (VHL), and phenotypes, the evidence supports the claim's core assertion of predisposition. The evidence does not refute or require revision of the claim's direction or significance.",
+          "citations": [
+            {
+              "document_id": "pmid-7728151",
+              "start": 0,
+              "end": 596,
+              "quote": "In a study of 114 unrelated VHL families, 85 germline mutations were found. VHL mutations were detected in affected family members, but not in unaffected family members or 96 normal individuals. This nonsense mutation was found in a VHL type 1 family of 7 individuals (family ID 2753). Six of 7 individuals were identified with retinal hemangioblastomas, 3 with cerebellar hemangioblastomas and one with renal cell carcinoma. Supporting evidence of pathogenicity because cosegregation with disease in multiple affected family members in a gene definitively known to cause the disease (ACMG code: "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The evidence from pmid-7728151 describes a study of VHL families where germline mutations were detected in affected members but not in unaffected individuals or normal controls, supporting a predisposing role. Specifically, a nonsense mutation (identified in the context of the study's molecular findings) was found in a VHL type 1 family. The text notes cosegregation with disease in multiple affected family members, including phenotypes such as retinal hemangioblastomas, cerebellar hemangioblastomas, and renal cell carcinoma, which aligns with the phenotypes listed in the claim. The evidence explicitly supports the pathogenicity and predisposition aspect of the VHL gene mutation in the context of Von Hippel-Lindau Disease. While the specific variant Q73* (c.217C>T) is not explicitly named in the provided text snippet, the text refers to a 'nonsense mutation' in a VHL family with the specified phenotypes and cites ACMG pathogenicity criteria (cosegregation). Given the task constraints to use visible evidence and the strong alignment of the described mutation's effect (nonsense), disease (VHL), and phenotypes, the evidence supports the claim's core assertion of predisposition. The evidence does not refute or require revision of the claim's direction or significance.",
+          "citations": [
+            {
+              "document_id": "pmid-7728151",
+              "start": 0,
+              "end": 596,
+              "quote": "In a study of 114 unrelated VHL families, 85 germline mutations were found. VHL mutations were detected in affected family members, but not in unaffected family members or 96 normal individuals. This nonsense mutation was found in a VHL type 1 family of 7 individuals (family ID 2753). Six of 7 individuals were identified with retinal hemangioblastomas, 3 with cerebellar hemangioblastomas and one with renal cell carcinoma. Supporting evidence of pathogenicity because cosegregation with disease in multiple affected family members in a gene definitively known to cause the disease (ACMG code: "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.8,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-7728151"
+  ],
+  "duration_seconds": 10.881273,
+  "research_only": true
+}

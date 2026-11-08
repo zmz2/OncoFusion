@@ -1,0 +1,494 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-31021ed2-d0a0-4772-8495-6290df86983f",
+  "patient_id": "article-20147967",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "2cfc665efd241513bf5ba2f37b552b6644765c2c4f83db85ba60232337335fa5",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-20147967:f01) focuses on K-Ras mutations in colorectal tumours and assesses their oncogenic potential via transformation assays in NIH3T3 cells. The specific variant requested, KRAS Q597T, is not mentioned in the evidence. The study tested mutations G12V, G12D, G13D, Q61H, L19F, K117N, A146T, and R164Q. Furthermore, the disease context is colorectal cancer, not breast cancer. There is no evidence provided regarding the oncogenicity of KRAS Q597T specifically, nor its relevance to breast cancer. Therefore, the evidence is insufficient to support, revise, or refute the claim regarding KRAS Q597T in breast cancer.",
+    "citations": [
+      {
+        "document_id": "pmid-20147967",
+        "start": 0,
+        "end": 542,
+        "quote": "Colorectal tumours (n=106) were screened for additional K-Ras mutations, phenotypes compared in transformation and Ras GTPase activating assays . . . To compare the transformation potential of the K-Ras mutants, therefore, NIH3T3 cells were transiently transfected with plasmids expressing wt K-Ras and the K-Ras mutations G12V, G12D, G13D, Q61H, L19F, K117N, A146T and R164Q . . . No foci were observed in untransfected cells or in cells transfected with wt K-Ras, whereas abundant foci were seen with each hotspot K-Ras mutation (Figure 3A)"
+      }
+    ],
+    "unresolved": [
+      "Evidence for KRAS Q597T oncogenicity is missing.",
+      "Evidence for KRAS Q597T in breast cancer is missing."
+    ],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2140,
+    "output_tokens": 316,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-20147967"
+        ],
+        "fingerprint": "2cfc665efd241513bf5ba2f37b552b6644765c2c4f83db85ba60232337335fa5",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Q597T",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Q597T",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Q597T",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-20147967"
+        ],
+        "query": "{\n  \"disease\": \"breast cancer\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"FUNCTIONAL\",\n  \"molecularProfile\": \"KRAS Q597T\",\n  \"significance\": \"oncogenicity\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-20147967"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-20147967": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Q597T",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-20147967",
+              "start": 323,
+              "end": 327,
+              "raw": "G12V",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 329,
+              "end": 333,
+              "raw": "G12D",
+              "canonical": "G12D"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 335,
+              "end": 339,
+              "raw": "G13D",
+              "canonical": "G13D"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 341,
+              "end": 345,
+              "raw": "Q61H",
+              "canonical": "Q61H"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 347,
+              "end": 351,
+              "raw": "L19F",
+              "canonical": "L19F"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 353,
+              "end": 358,
+              "raw": "K117N",
+              "canonical": "K117N"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 360,
+              "end": 365,
+              "raw": "A146T",
+              "canonical": "A146T"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 370,
+              "end": 375,
+              "raw": "R164Q",
+              "canonical": "R164Q"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-20147967": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-20147967"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-20147967": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Q597T",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-20147967",
+              "start": 323,
+              "end": 327,
+              "raw": "G12V",
+              "canonical": "G12V"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 329,
+              "end": 333,
+              "raw": "G12D",
+              "canonical": "G12D"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 335,
+              "end": 339,
+              "raw": "G13D",
+              "canonical": "G13D"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 341,
+              "end": 345,
+              "raw": "Q61H",
+              "canonical": "Q61H"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 347,
+              "end": 351,
+              "raw": "L19F",
+              "canonical": "L19F"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 353,
+              "end": 358,
+              "raw": "K117N",
+              "canonical": "K117N"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 360,
+              "end": 365,
+              "raw": "A146T",
+              "canonical": "A146T"
+            },
+            {
+              "document_id": "pmid-20147967",
+              "start": 370,
+              "end": 375,
+              "raw": "R164Q",
+              "canonical": "R164Q"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-20147967": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "e038cd981cfc4d2db9c796b944e3a6c873133e84148285d0d1271e824cc7a95e",
+        "source_ids": [
+          "pmid-20147967"
+        ],
+        "token_reservation": 11265,
+        "evidence_ids": [
+          "pmid-20147967:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-20147967": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 542,
+              "chars_sent": 542,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-20147967:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 542,
+          "chars_sent": 542,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2140,
+        "output_tokens": 316,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 11.128,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-20147967:f01) focuses on K-Ras mutations in colorectal tumours and assesses their oncogenic potential via transformation assays in NIH3T3 cells. The specific variant requested, KRAS Q597T, is not mentioned in the evidence. The study tested mutations G12V, G12D, G13D, Q61H, L19F, K117N, A146T, and R164Q. Furthermore, the disease context is colorectal cancer, not breast cancer. There is no evidence provided regarding the oncogenicity of KRAS Q597T specifically, nor its relevance to breast cancer. Therefore, the evidence is insufficient to support, revise, or refute the claim regarding KRAS Q597T in breast cancer.",
+          "citations": [
+            {
+              "document_id": "pmid-20147967",
+              "start": 0,
+              "end": 542,
+              "quote": "Colorectal tumours (n=106) were screened for additional K-Ras mutations, phenotypes compared in transformation and Ras GTPase activating assays . . . To compare the transformation potential of the K-Ras mutants, therefore, NIH3T3 cells were transiently transfected with plasmids expressing wt K-Ras and the K-Ras mutations G12V, G12D, G13D, Q61H, L19F, K117N, A146T and R164Q . . . No foci were observed in untransfected cells or in cells transfected with wt K-Ras, whereas abundant foci were seen with each hotspot K-Ras mutation (Figure 3A)"
+            }
+          ],
+          "unresolved": [
+            "Evidence for KRAS Q597T oncogenicity is missing.",
+            "Evidence for KRAS Q597T in breast cancer is missing."
+          ],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-20147967:f01) focuses on K-Ras mutations in colorectal tumours and assesses their oncogenic potential via transformation assays in NIH3T3 cells. The specific variant requested, KRAS Q597T, is not mentioned in the evidence. The study tested mutations G12V, G12D, G13D, Q61H, L19F, K117N, A146T, and R164Q. Furthermore, the disease context is colorectal cancer, not breast cancer. There is no evidence provided regarding the oncogenicity of KRAS Q597T specifically, nor its relevance to breast cancer. Therefore, the evidence is insufficient to support, revise, or refute the claim regarding KRAS Q597T in breast cancer.",
+          "citations": [
+            {
+              "document_id": "pmid-20147967",
+              "start": 0,
+              "end": 542,
+              "quote": "Colorectal tumours (n=106) were screened for additional K-Ras mutations, phenotypes compared in transformation and Ras GTPase activating assays . . . To compare the transformation potential of the K-Ras mutants, therefore, NIH3T3 cells were transiently transfected with plasmids expressing wt K-Ras and the K-Ras mutations G12V, G12D, G13D, Q61H, L19F, K117N, A146T and R164Q . . . No foci were observed in untransfected cells or in cells transfected with wt K-Ras, whereas abundant foci were seen with each hotspot K-Ras mutation (Figure 3A)"
+            }
+          ],
+          "unresolved": [
+            "Evidence for KRAS Q597T oncogenicity is missing.",
+            "Evidence for KRAS Q597T in breast cancer is missing."
+          ],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-20147967"
+  ],
+  "duration_seconds": 11.145191,
+  "research_only": true
+}

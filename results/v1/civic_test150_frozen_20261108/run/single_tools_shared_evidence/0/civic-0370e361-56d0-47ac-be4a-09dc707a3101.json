@@ -1,0 +1,391 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-0370e361-56d0-47ac-be4a-09dc707a3101",
+  "patient_id": "article-17442989",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "c79414f446976fcda02e0d322b1cbe162935c36588376cfe8673909471f0863e",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The provided evidence from pmid-17442989 explicitly demonstrates that patients with low MGMT expression (underexpression) in glioblastoma have significantly higher response rates, improved progression-free survival (PFS), and improved overall survival (OS) compared to those with high MGMT expression. This directly supports the claim that MGMT underexpression is a predictive biomarker for sensitivity/response to therapy in glioblastoma. While the text mentions radiotherapy and neoadjuvant chemotherapy, the context of the study (implied by the comparison of MGMT levels and outcomes in glioblastoma patients) aligns with the known efficacy of Temozolomide (an alkylating agent whose efficacy is reduced by MGMT repair activity) in this setting. The evidence confirms the direction of the relationship: low MGMT correlates with better response/survival.",
+    "citations": [
+      {
+        "document_id": "pmid-17442989",
+        "start": 0,
+        "end": 598,
+        "quote": "In this study, patients with low MGMT expression, compared with patients with high MGMT expression, had a significantly higher response rate (55% v 7%, respectively; P = .004) and improved PFS (median, 5.5 v 1.9 months, respectively; P = .009) and OS (median, 16 v 5 months, respectively; P = .003). Among patients with MGMT data available for analysis, radiotherapy was started and completed in 91% of patients with low MGMT expression. In contrast, among patients with high MGMT expression, only 64% started radiotherapy, and 43% completed it. These results suggest that neoadjuvant chemotherapy "
+      },
+      {
+        "document_id": "pmid-17442989",
+        "start": 598,
+        "end": 884,
+        "quote": "may be feasible for inoperable glioblastoma patients expressing low levels of MGMT without compromising subsequent treatment with radiotherapy, whereas patients with high MGMT expression are less likely to respond and more likely to experience progression before or during radiotherapy."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.95,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1884,
+    "output_tokens": 303,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-17442989"
+        ],
+        "fingerprint": "c79414f446976fcda02e0d322b1cbe162935c36588376cfe8673909471f0863e",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-17442989"
+        ],
+        "query": "{\n  \"disease\": \"Glioblastoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"MGMT Underexpression\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Temozolomide\"\n  ],\n  \"variantOrigin\": \"N/A\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-17442989"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-17442989": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-17442989": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-17442989"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-17442989": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-17442989": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "33281dba4f0daf465966668db81c8bee3833118536d645e278f3151aff0473fc",
+        "source_ids": [
+          "pmid-17442989"
+        ],
+        "token_reservation": 11027,
+        "evidence_ids": [
+          "pmid-17442989:f01",
+          "pmid-17442989:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-17442989": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 884,
+              "chars_sent": 884,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-17442989:f01",
+                "pmid-17442989:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 884,
+          "chars_sent": 884,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1884,
+        "output_tokens": 303,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 7.539,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-17442989 explicitly demonstrates that patients with low MGMT expression (underexpression) in glioblastoma have significantly higher response rates, improved progression-free survival (PFS), and improved overall survival (OS) compared to those with high MGMT expression. This directly supports the claim that MGMT underexpression is a predictive biomarker for sensitivity/response to therapy in glioblastoma. While the text mentions radiotherapy and neoadjuvant chemotherapy, the context of the study (implied by the comparison of MGMT levels and outcomes in glioblastoma patients) aligns with the known efficacy of Temozolomide (an alkylating agent whose efficacy is reduced by MGMT repair activity) in this setting. The evidence confirms the direction of the relationship: low MGMT correlates with better response/survival.",
+          "citations": [
+            {
+              "document_id": "pmid-17442989",
+              "start": 0,
+              "end": 598,
+              "quote": "In this study, patients with low MGMT expression, compared with patients with high MGMT expression, had a significantly higher response rate (55% v 7%, respectively; P = .004) and improved PFS (median, 5.5 v 1.9 months, respectively; P = .009) and OS (median, 16 v 5 months, respectively; P = .003). Among patients with MGMT data available for analysis, radiotherapy was started and completed in 91% of patients with low MGMT expression. In contrast, among patients with high MGMT expression, only 64% started radiotherapy, and 43% completed it. These results suggest that neoadjuvant chemotherapy "
+            },
+            {
+              "document_id": "pmid-17442989",
+              "start": 598,
+              "end": 884,
+              "quote": "may be feasible for inoperable glioblastoma patients expressing low levels of MGMT without compromising subsequent treatment with radiotherapy, whereas patients with high MGMT expression are less likely to respond and more likely to experience progression before or during radiotherapy."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.95,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-17442989 explicitly demonstrates that patients with low MGMT expression (underexpression) in glioblastoma have significantly higher response rates, improved progression-free survival (PFS), and improved overall survival (OS) compared to those with high MGMT expression. This directly supports the claim that MGMT underexpression is a predictive biomarker for sensitivity/response to therapy in glioblastoma. While the text mentions radiotherapy and neoadjuvant chemotherapy, the context of the study (implied by the comparison of MGMT levels and outcomes in glioblastoma patients) aligns with the known efficacy of Temozolomide (an alkylating agent whose efficacy is reduced by MGMT repair activity) in this setting. The evidence confirms the direction of the relationship: low MGMT correlates with better response/survival.",
+          "citations": [
+            {
+              "document_id": "pmid-17442989",
+              "start": 0,
+              "end": 598,
+              "quote": "In this study, patients with low MGMT expression, compared with patients with high MGMT expression, had a significantly higher response rate (55% v 7%, respectively; P = .004) and improved PFS (median, 5.5 v 1.9 months, respectively; P = .009) and OS (median, 16 v 5 months, respectively; P = .003). Among patients with MGMT data available for analysis, radiotherapy was started and completed in 91% of patients with low MGMT expression. In contrast, among patients with high MGMT expression, only 64% started radiotherapy, and 43% completed it. These results suggest that neoadjuvant chemotherapy "
+            },
+            {
+              "document_id": "pmid-17442989",
+              "start": 598,
+              "end": 884,
+              "quote": "may be feasible for inoperable glioblastoma patients expressing low levels of MGMT without compromising subsequent treatment with radiotherapy, whereas patients with high MGMT expression are less likely to respond and more likely to experience progression before or during radiotherapy."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.95,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-17442989"
+  ],
+  "duration_seconds": 7.558107,
+  "research_only": true
+}

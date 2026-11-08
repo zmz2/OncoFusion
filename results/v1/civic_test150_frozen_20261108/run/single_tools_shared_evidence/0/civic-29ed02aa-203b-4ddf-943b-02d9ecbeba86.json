@@ -1,0 +1,415 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-29ed02aa-203b-4ddf-943b-02d9ecbeba86",
+  "patient_id": "article-30624546",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "5b3805790bebd2774cd6c8527873960fe55b0b443d0d0ff9d9be7d0c1aed22dd",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "REVISIONS",
+    "explanation": "The claim posits that Larotrectinib has sensitivity/response in Lung Non-small Cell Carcinoma (NSCLC) with NTRK1 G595R and NTRK1 G667S variants. The provided evidence from pmid-30624546 describes a case of a 29-year-old male with NSCLC who had an initial response to Larotrectinib but subsequently progressed due to acquired resistance mutations, specifically identifying TRKA G595R and TRKA G667S. While the variants match, the evidence indicates that these specific mutations confer resistance and lead to disease progression, rather than supporting sensitivity or response. Therefore, the claim that these variants are associated with sensitivity/response is incorrect and requires revision to reflect that they are resistance mechanisms.",
+    "citations": [
+      {
+        "document_id": "pmid-30624546",
+        "start": 0,
+        "end": 467,
+        "quote": "Larotrectinib had limited activity in tumours with NTRK mutations or amplifications. . . . Following an initial response to treatment, a 29-year-old male with NSCLC and a 58-year-old male with a gastrointestinal stromal tumour (GIST) progressed after developing acquired resistance mutations; solvent-front (TRKA G595R) and xDFG (TRKA G667S) mutations in the case of the patient with NSCLC, and a gatekeeper mutation (TRKC F617L) in the case of the patient with GIST."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1893,
+    "output_tokens": 263,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-30624546"
+        ],
+        "fingerprint": "5b3805790bebd2774cd6c8527873960fe55b0b443d0d0ff9d9be7d0c1aed22dd",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-30624546"
+        ],
+        "query": "{\n  \"disease\": \"Lung Non-small Cell Carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"NTRK1 G595R AND NTRK1 G667S\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Larotrectinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-30624546"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-30624546": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-30624546",
+              "start": 313,
+              "end": 318,
+              "raw": "G595R",
+              "canonical": "G595R"
+            },
+            {
+              "document_id": "pmid-30624546",
+              "start": 335,
+              "end": 340,
+              "raw": "G667S",
+              "canonical": "G667S"
+            },
+            {
+              "document_id": "pmid-30624546",
+              "start": 423,
+              "end": 428,
+              "raw": "F617L",
+              "canonical": "F617L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-30624546": "mixed"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-30624546"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-30624546": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-30624546",
+              "start": 313,
+              "end": 318,
+              "raw": "G595R",
+              "canonical": "G595R"
+            },
+            {
+              "document_id": "pmid-30624546",
+              "start": 335,
+              "end": 340,
+              "raw": "G667S",
+              "canonical": "G667S"
+            },
+            {
+              "document_id": "pmid-30624546",
+              "start": 423,
+              "end": 428,
+              "raw": "F617L",
+              "canonical": "F617L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-30624546": "mixed"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "9e63e0f4a36a91d072572ba694a6a39a118b7d1ea5f8ddb408929301895afea7",
+        "source_ids": [
+          "pmid-30624546"
+        ],
+        "token_reservation": 10783,
+        "evidence_ids": [
+          "pmid-30624546:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-30624546": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 467,
+              "chars_sent": 467,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-30624546:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 467,
+          "chars_sent": 467,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1893,
+        "output_tokens": 263,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 17.738,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that Larotrectinib has sensitivity/response in Lung Non-small Cell Carcinoma (NSCLC) with NTRK1 G595R and NTRK1 G667S variants. The provided evidence from pmid-30624546 describes a case of a 29-year-old male with NSCLC who had an initial response to Larotrectinib but subsequently progressed due to acquired resistance mutations, specifically identifying TRKA G595R and TRKA G667S. While the variants match, the evidence indicates that these specific mutations confer resistance and lead to disease progression, rather than supporting sensitivity or response. Therefore, the claim that these variants are associated with sensitivity/response is incorrect and requires revision to reflect that they are resistance mechanisms.",
+          "citations": [
+            {
+              "document_id": "pmid-30624546",
+              "start": 0,
+              "end": 467,
+              "quote": "Larotrectinib had limited activity in tumours with NTRK mutations or amplifications. . . . Following an initial response to treatment, a 29-year-old male with NSCLC and a 58-year-old male with a gastrointestinal stromal tumour (GIST) progressed after developing acquired resistance mutations; solvent-front (TRKA G595R) and xDFG (TRKA G667S) mutations in the case of the patient with NSCLC, and a gatekeeper mutation (TRKC F617L) in the case of the patient with GIST."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "REVISIONS",
+          "explanation": "The claim posits that Larotrectinib has sensitivity/response in Lung Non-small Cell Carcinoma (NSCLC) with NTRK1 G595R and NTRK1 G667S variants. The provided evidence from pmid-30624546 describes a case of a 29-year-old male with NSCLC who had an initial response to Larotrectinib but subsequently progressed due to acquired resistance mutations, specifically identifying TRKA G595R and TRKA G667S. While the variants match, the evidence indicates that these specific mutations confer resistance and lead to disease progression, rather than supporting sensitivity or response. Therefore, the claim that these variants are associated with sensitivity/response is incorrect and requires revision to reflect that they are resistance mechanisms.",
+          "citations": [
+            {
+              "document_id": "pmid-30624546",
+              "start": 0,
+              "end": 467,
+              "quote": "Larotrectinib had limited activity in tumours with NTRK mutations or amplifications. . . . Following an initial response to treatment, a 29-year-old male with NSCLC and a 58-year-old male with a gastrointestinal stromal tumour (GIST) progressed after developing acquired resistance mutations; solvent-front (TRKA G595R) and xDFG (TRKA G667S) mutations in the case of the patient with NSCLC, and a gatekeeper mutation (TRKC F617L) in the case of the patient with GIST."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-30624546"
+  ],
+  "duration_seconds": 17.781043,
+  "research_only": true
+}

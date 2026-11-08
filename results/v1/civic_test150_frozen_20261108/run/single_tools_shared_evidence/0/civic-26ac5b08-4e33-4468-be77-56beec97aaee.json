@@ -1,0 +1,387 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-26ac5b08-4e33-4468-be77-56beec97aaee",
+  "patient_id": "article-27283860",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "39837a549405ea6a398206e29ddf9782a5b7a370bc436bce97e40e77c9fead84",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The provided evidence from pmid-27283860 describes a phase 2 trial evaluating the combination of dabrafenib and trametinib in patients with previously treated metastatic BRAF V600E-mutant non-small cell lung cancer (NSCLC). The study reports an investigator-assessed confirmed overall response rate of 63.2%, including complete and partial responses. This directly supports the claim that the combination of dabrafenib and trametinib is associated with sensitivity/response in NSCLC patients with somatic BRAF V600E mutations.",
+    "citations": [
+      {
+        "document_id": "pmid-27283860",
+        "start": 0,
+        "end": 476,
+        "quote": "In this phase 2, multicenter, nonrandomized, open-label study of patients with pretreated metastatic BRAF V600E-mutant NSCLC, antitumor activity and safety of oral dabrafenib (150 mg twice daily) plus oral trametinib (2 mg once daily) were evaluated. . . . With a median follow-up of 11.6 months (IQR 8.8-15.2), the investigator-assessed confirmed overall response was 63.2% (36 of 57; 95% CI 49.3-75.6), including 2 (3.5%) of 57 patients with CR and 34 (59.6%) of 57 with PR."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1853,
+    "output_tokens": 217,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-27283860"
+        ],
+        "fingerprint": "39837a549405ea6a398206e29ddf9782a5b7a370bc436bce97e40e77c9fead84",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-27283860"
+        ],
+        "query": "{\n  \"disease\": \"Lung Non-small Cell Carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BRAF V600E\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Dabrafenib\",\n    \"Trametinib\"\n  ],\n  \"therapyInteractionType\": \"COMBINATION\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27283860": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27283860",
+              "start": 106,
+              "end": 111,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27283860": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27283860": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V600E",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-27283860",
+              "start": 106,
+              "end": 111,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27283860": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "f3fa4a645080cb014ebd9a6e2b2c77d843afe905fb26ea37b8a6a0e611e3f7b4",
+        "source_ids": [
+          "pmid-27283860"
+        ],
+        "token_reservation": 10697,
+        "evidence_ids": [
+          "pmid-27283860:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27283860": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 476,
+              "chars_sent": 476,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27283860:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 476,
+          "chars_sent": 476,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1853,
+        "output_tokens": 217,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 4.835,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-27283860 describes a phase 2 trial evaluating the combination of dabrafenib and trametinib in patients with previously treated metastatic BRAF V600E-mutant non-small cell lung cancer (NSCLC). The study reports an investigator-assessed confirmed overall response rate of 63.2%, including complete and partial responses. This directly supports the claim that the combination of dabrafenib and trametinib is associated with sensitivity/response in NSCLC patients with somatic BRAF V600E mutations.",
+          "citations": [
+            {
+              "document_id": "pmid-27283860",
+              "start": 0,
+              "end": 476,
+              "quote": "In this phase 2, multicenter, nonrandomized, open-label study of patients with pretreated metastatic BRAF V600E-mutant NSCLC, antitumor activity and safety of oral dabrafenib (150 mg twice daily) plus oral trametinib (2 mg once daily) were evaluated. . . . With a median follow-up of 11.6 months (IQR 8.8-15.2), the investigator-assessed confirmed overall response was 63.2% (36 of 57; 95% CI 49.3-75.6), including 2 (3.5%) of 57 patients with CR and 34 (59.6%) of 57 with PR."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-27283860 describes a phase 2 trial evaluating the combination of dabrafenib and trametinib in patients with previously treated metastatic BRAF V600E-mutant non-small cell lung cancer (NSCLC). The study reports an investigator-assessed confirmed overall response rate of 63.2%, including complete and partial responses. This directly supports the claim that the combination of dabrafenib and trametinib is associated with sensitivity/response in NSCLC patients with somatic BRAF V600E mutations.",
+          "citations": [
+            {
+              "document_id": "pmid-27283860",
+              "start": 0,
+              "end": 476,
+              "quote": "In this phase 2, multicenter, nonrandomized, open-label study of patients with pretreated metastatic BRAF V600E-mutant NSCLC, antitumor activity and safety of oral dabrafenib (150 mg twice daily) plus oral trametinib (2 mg once daily) were evaluated. . . . With a median follow-up of 11.6 months (IQR 8.8-15.2), the investigator-assessed confirmed overall response was 63.2% (36 of 57; 95% CI 49.3-75.6), including 2 (3.5%) of 57 patients with CR and 34 (59.6%) of 57 with PR."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-27283860"
+  ],
+  "duration_seconds": 4.913453,
+  "research_only": true
+}

@@ -1,0 +1,400 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-cb3477de-f37a-4930-aa4d-12acf00e86fc",
+  "patient_id": "article-28630796",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "0d99bb0e5d0728e453cf910b62af39388d5e1decd81acd39d79ac16437623706",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-28630796) discusses Von Hippel-Lindau (VHL) disease and a p.R161X mutation in the VHL gene. It does not mention rectum sarcoma, the PIK3CA gene, the V346C variant, or any association with Antineoplastic Agents or resistance. Therefore, there is insufficient evidence to support, revise, or refute the claim regarding PIK3CA V346C and resistance to Antineoplastic Agents in rectum sarcoma.",
+    "citations": [
+      {
+        "document_id": "pmid-28630796",
+        "start": 0,
+        "end": 595,
+        "quote": "Von Hippel-Lindau (VHL) disease a familial cancer syndrome characterized by benign or malignant tumors and cystic lesions affecting multiple systems. It may present with hemangioblastomas in the brain, spinal cord, and retina; renal cysts and clear cell renal cell carcinoma; pheochromocytoma; pancreatic cysts and neuroendocrine tumors; endolymphatic sac tumors; and epididymal and ligamentum latum cysts. . . . VHL was suspected based on the presence of multiple, bilateral retinal hemangioblastomas and history of cerebral hemangioblastoma. VHL gene sequence analysis revealed a heterozygous "
+      },
+      {
+        "document_id": "pmid-28630796",
+        "start": 595,
+        "end": 612,
+        "quote": "p.R161X mutation."
+      }
+    ],
+    "unresolved": [
+      "No evidence found for PIK3CA V346C in rectum sarcoma.",
+      "No evidence found for Antineoplastic Agent resistance related to PIK3CA V346C."
+    ],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1855,
+    "output_tokens": 291,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-28630796"
+        ],
+        "fingerprint": "0d99bb0e5d0728e453cf910b62af39388d5e1decd81acd39d79ac16437623706",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V346C",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V346C",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V346C",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-28630796"
+        ],
+        "query": "{\n  \"disease\": \"rectum sarcoma\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"PIK3CA V346C\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Antineoplastic Agent\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-28630796"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28630796": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V346C",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28630796": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-28630796"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28630796": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V346C",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28630796": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "19fccfc688b3cc946ae759107d8add4bc8845a306a0961116faf797b31b06f95",
+        "source_ids": [
+          "pmid-28630796"
+        ],
+        "token_reservation": 10824,
+        "evidence_ids": [
+          "pmid-28630796:f01",
+          "pmid-28630796:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-28630796": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 612,
+              "chars_sent": 612,
+              "key_records": 2,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-28630796:f01",
+                "pmid-28630796:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 612,
+          "chars_sent": 612,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1855,
+        "output_tokens": 291,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 4.525,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-28630796) discusses Von Hippel-Lindau (VHL) disease and a p.R161X mutation in the VHL gene. It does not mention rectum sarcoma, the PIK3CA gene, the V346C variant, or any association with Antineoplastic Agents or resistance. Therefore, there is insufficient evidence to support, revise, or refute the claim regarding PIK3CA V346C and resistance to Antineoplastic Agents in rectum sarcoma.",
+          "citations": [
+            {
+              "document_id": "pmid-28630796",
+              "start": 0,
+              "end": 595,
+              "quote": "Von Hippel-Lindau (VHL) disease a familial cancer syndrome characterized by benign or malignant tumors and cystic lesions affecting multiple systems. It may present with hemangioblastomas in the brain, spinal cord, and retina; renal cysts and clear cell renal cell carcinoma; pheochromocytoma; pancreatic cysts and neuroendocrine tumors; endolymphatic sac tumors; and epididymal and ligamentum latum cysts. . . . VHL was suspected based on the presence of multiple, bilateral retinal hemangioblastomas and history of cerebral hemangioblastoma. VHL gene sequence analysis revealed a heterozygous "
+            },
+            {
+              "document_id": "pmid-28630796",
+              "start": 595,
+              "end": 612,
+              "quote": "p.R161X mutation."
+            }
+          ],
+          "unresolved": [
+            "No evidence found for PIK3CA V346C in rectum sarcoma.",
+            "No evidence found for Antineoplastic Agent resistance related to PIK3CA V346C."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-28630796) discusses Von Hippel-Lindau (VHL) disease and a p.R161X mutation in the VHL gene. It does not mention rectum sarcoma, the PIK3CA gene, the V346C variant, or any association with Antineoplastic Agents or resistance. Therefore, there is insufficient evidence to support, revise, or refute the claim regarding PIK3CA V346C and resistance to Antineoplastic Agents in rectum sarcoma.",
+          "citations": [
+            {
+              "document_id": "pmid-28630796",
+              "start": 0,
+              "end": 595,
+              "quote": "Von Hippel-Lindau (VHL) disease a familial cancer syndrome characterized by benign or malignant tumors and cystic lesions affecting multiple systems. It may present with hemangioblastomas in the brain, spinal cord, and retina; renal cysts and clear cell renal cell carcinoma; pheochromocytoma; pancreatic cysts and neuroendocrine tumors; endolymphatic sac tumors; and epididymal and ligamentum latum cysts. . . . VHL was suspected based on the presence of multiple, bilateral retinal hemangioblastomas and history of cerebral hemangioblastoma. VHL gene sequence analysis revealed a heterozygous "
+            },
+            {
+              "document_id": "pmid-28630796",
+              "start": 595,
+              "end": 612,
+              "quote": "p.R161X mutation."
+            }
+          ],
+          "unresolved": [
+            "No evidence found for PIK3CA V346C in rectum sarcoma.",
+            "No evidence found for Antineoplastic Agent resistance related to PIK3CA V346C."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-28630796"
+  ],
+  "duration_seconds": 4.540976,
+  "research_only": true
+}

@@ -1,0 +1,452 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-e8c18723-cc7a-4927-8cc6-ca1725333e62",
+  "patient_id": "article-28424201",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "fa755c418112533f250708fc0bf0a393789b257e52558d972ceb95d298018b76",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-28424201:f01) discusses PIK3CA mutations contributing to acquired cetuximab resistance in metastatic colorectal cancer (mCRC). The claim specifies 'rectum sarcoma' as the disease, which is a distinct pathology from colorectal cancer. Furthermore, the specific variant mentioned in the evidence is not V734L; the evidence lists p.K944N, p.F930S, p.V955G, p.V955I, and p.K966E. The evidence indicates resistance, not sensitivity/response. Therefore, there is insufficient evidence to support the claim regarding rectum sarcoma, the specific V734L variant, or a sensitivity response to Cetuximab.",
+    "citations": [
+      {
+        "document_id": "pmid-28424201",
+        "start": 0,
+        "end": 480,
+        "quote": "We analyzed 32 patients with acquired cetuximab resistance in a development cohort. Of them, 7 (22%) carried five novel PIK3CA mutations, whereas 8 (25%) carried previously reported KRAS mutations. Functional studies showed that novel PIK3CA mutations (all in exon 19; p.K944N, p.F930S, p.V955G, p.V955I, and p.K966E) promote cell viability in the presence of cetuximab. . . . The PIK3CA mutations may potentially contribute to acquired cetuximab resistance in patients with mCRC."
+      }
+    ],
+    "unresolved": [
+      "Evidence for PIK3CA V734L in rectum sarcoma",
+      "Evidence for Cetuximab sensitivity in rectum sarcoma"
+    ],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2000,
+    "output_tokens": 299,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-28424201"
+        ],
+        "fingerprint": "fa755c418112533f250708fc0bf0a393789b257e52558d972ceb95d298018b76",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V734L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V734L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "V734L",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-28424201"
+        ],
+        "query": "{\n  \"disease\": \"rectum sarcoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"PIK3CA V734L\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Cetuximab\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-28424201"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28424201": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V734L",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28424201",
+              "start": 269,
+              "end": 276,
+              "raw": "p.K944N",
+              "canonical": "K944N"
+            },
+            {
+              "document_id": "pmid-28424201",
+              "start": 278,
+              "end": 285,
+              "raw": "p.F930S",
+              "canonical": "F930S"
+            },
+            {
+              "document_id": "pmid-28424201",
+              "start": 287,
+              "end": 294,
+              "raw": "p.V955G",
+              "canonical": "V955G"
+            },
+            {
+              "document_id": "pmid-28424201",
+              "start": 296,
+              "end": 303,
+              "raw": "p.V955I",
+              "canonical": "V955I"
+            },
+            {
+              "document_id": "pmid-28424201",
+              "start": 309,
+              "end": 316,
+              "raw": "p.K966E",
+              "canonical": "K966E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28424201": "resistance"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-28424201"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28424201": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "V734L",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28424201",
+              "start": 269,
+              "end": 276,
+              "raw": "p.K944N",
+              "canonical": "K944N"
+            },
+            {
+              "document_id": "pmid-28424201",
+              "start": 278,
+              "end": 285,
+              "raw": "p.F930S",
+              "canonical": "F930S"
+            },
+            {
+              "document_id": "pmid-28424201",
+              "start": 287,
+              "end": 294,
+              "raw": "p.V955G",
+              "canonical": "V955G"
+            },
+            {
+              "document_id": "pmid-28424201",
+              "start": 296,
+              "end": 303,
+              "raw": "p.V955I",
+              "canonical": "V955I"
+            },
+            {
+              "document_id": "pmid-28424201",
+              "start": 309,
+              "end": 316,
+              "raw": "p.K966E",
+              "canonical": "K966E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28424201": "resistance"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "1dd30932a14311715a7beb4ed9b9e566bd5b2cb07958cc13ee0550c499829346",
+        "source_ids": [
+          "pmid-28424201"
+        ],
+        "token_reservation": 10954,
+        "evidence_ids": [
+          "pmid-28424201:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-28424201": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 480,
+              "chars_sent": 480,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-28424201:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 480,
+          "chars_sent": 480,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2000,
+        "output_tokens": 299,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 5.505,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-28424201:f01) discusses PIK3CA mutations contributing to acquired cetuximab resistance in metastatic colorectal cancer (mCRC). The claim specifies 'rectum sarcoma' as the disease, which is a distinct pathology from colorectal cancer. Furthermore, the specific variant mentioned in the evidence is not V734L; the evidence lists p.K944N, p.F930S, p.V955G, p.V955I, and p.K966E. The evidence indicates resistance, not sensitivity/response. Therefore, there is insufficient evidence to support the claim regarding rectum sarcoma, the specific V734L variant, or a sensitivity response to Cetuximab.",
+          "citations": [
+            {
+              "document_id": "pmid-28424201",
+              "start": 0,
+              "end": 480,
+              "quote": "We analyzed 32 patients with acquired cetuximab resistance in a development cohort. Of them, 7 (22%) carried five novel PIK3CA mutations, whereas 8 (25%) carried previously reported KRAS mutations. Functional studies showed that novel PIK3CA mutations (all in exon 19; p.K944N, p.F930S, p.V955G, p.V955I, and p.K966E) promote cell viability in the presence of cetuximab. . . . The PIK3CA mutations may potentially contribute to acquired cetuximab resistance in patients with mCRC."
+            }
+          ],
+          "unresolved": [
+            "Evidence for PIK3CA V734L in rectum sarcoma",
+            "Evidence for Cetuximab sensitivity in rectum sarcoma"
+          ],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-28424201:f01) discusses PIK3CA mutations contributing to acquired cetuximab resistance in metastatic colorectal cancer (mCRC). The claim specifies 'rectum sarcoma' as the disease, which is a distinct pathology from colorectal cancer. Furthermore, the specific variant mentioned in the evidence is not V734L; the evidence lists p.K944N, p.F930S, p.V955G, p.V955I, and p.K966E. The evidence indicates resistance, not sensitivity/response. Therefore, there is insufficient evidence to support the claim regarding rectum sarcoma, the specific V734L variant, or a sensitivity response to Cetuximab.",
+          "citations": [
+            {
+              "document_id": "pmid-28424201",
+              "start": 0,
+              "end": 480,
+              "quote": "We analyzed 32 patients with acquired cetuximab resistance in a development cohort. Of them, 7 (22%) carried five novel PIK3CA mutations, whereas 8 (25%) carried previously reported KRAS mutations. Functional studies showed that novel PIK3CA mutations (all in exon 19; p.K944N, p.F930S, p.V955G, p.V955I, and p.K966E) promote cell viability in the presence of cetuximab. . . . The PIK3CA mutations may potentially contribute to acquired cetuximab resistance in patients with mCRC."
+            }
+          ],
+          "unresolved": [
+            "Evidence for PIK3CA V734L in rectum sarcoma",
+            "Evidence for Cetuximab sensitivity in rectum sarcoma"
+          ],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-28424201"
+  ],
+  "duration_seconds": 5.537198,
+  "research_only": true
+}

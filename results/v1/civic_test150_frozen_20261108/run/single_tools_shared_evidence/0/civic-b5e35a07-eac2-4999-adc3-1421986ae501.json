@@ -1,0 +1,507 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-b5e35a07-eac2-4999-adc3-1421986ae501",
+  "patient_id": "article-24353160",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "e3cdf9c51ba4bd4258d05c3f10fbaf13f0a69492ceefc5cbf7e819051a0f63aa",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The provided evidence from pmid-24353160 explicitly identifies the EGFR L858R mutation as 'erlotinib-sensitive' in the context of assay controls and proliferation assays. Specifically, fragment f01 states that L858R mutations are used as 'erlotinib-sensitive' controls and that cells expressing L858R were inhibited by erlotinib. Fragment f03 further confirms that the proliferation of cells with EGFR mutations (including L858R, as referenced in f01/f02 context) was inhibited by submicromolar concentrations of erlotinib, indicating sensitivity. While the study focuses heavily on exon 20 insertions, it uses L858R as a known sensitive comparator, thereby supporting the claim that EGFR L858R is associated with sensitivity/response to Erlotinib in lung non-small cell carcinoma.",
+    "citations": [
+      {
+        "document_id": "pmid-24353160",
+        "start": 0,
+        "end": 597,
+        "quote": "In addition, we used gefitinib/erlotinib-sensitive (L858R and exon 19 deletion mutations [delL747_S752 and delL747_P753insS]) and gefitinib/erlotinib-resistant (L858R+T790M and exon 19 deletion mutations+T790M) mutations as assay controls. . . . We created Ba/F3 cells stably expressing the aforementioned EGFR mutations. All were able to proliferate in the absence of IL3 (Sup. Fig. 1), indicating transforming ability of these mutations. We next measured proliferation in the presence of erlotinib and showed that only cells with EGFR-delL747_P753insS, L858R and the atypical A763_Y764insFQEA - "
+      },
+      {
+        "document_id": "pmid-24353160",
+        "start": 1192,
+        "end": 1526,
+        "quote": "Proliferation assays with increasing concentrations of EGFR TKIs disclosed that growth of BID007, PC9, HCC827 and H3255 cells was inhibited by submicromolar concentrations of erlotinib (Fig. 3C, Sup. Table 2), gefitinib and afatinib (Sup. Table 2), indicating augmented sensitivity relative to the inhibitor-resistant H1975 cell line."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2746,
+    "output_tokens": 315,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-24353160"
+        ],
+        "fingerprint": "e3cdf9c51ba4bd4258d05c3f10fbaf13f0a69492ceefc5cbf7e819051a0f63aa",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-24353160"
+        ],
+        "query": "{\n  \"disease\": \"lung non-small cell carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"EGFR L858R\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Erlotinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-24353160"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-24353160": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-24353160",
+              "start": 52,
+              "end": 57,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 161,
+              "end": 166,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 167,
+              "end": 172,
+              "raw": "T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 204,
+              "end": 209,
+              "raw": "T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 555,
+              "end": 560,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 846,
+              "end": 851,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 1177,
+              "end": 1182,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 1183,
+              "end": 1188,
+              "raw": "T790M",
+              "canonical": "T790M"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-24353160": "mixed"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-24353160"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-24353160": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "L858R",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-24353160",
+              "start": 52,
+              "end": 57,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 161,
+              "end": 166,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 167,
+              "end": 172,
+              "raw": "T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 204,
+              "end": 209,
+              "raw": "T790M",
+              "canonical": "T790M"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 555,
+              "end": 560,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 846,
+              "end": 851,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 1177,
+              "end": 1182,
+              "raw": "L858R",
+              "canonical": "L858R"
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 1183,
+              "end": 1188,
+              "raw": "T790M",
+              "canonical": "T790M"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-24353160": "mixed"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "0f79fce9ffe871fffa33ae32f6289f86e7340c20527a92105237b18f6011509e",
+        "source_ids": [
+          "pmid-24353160"
+        ],
+        "token_reservation": 12818,
+        "evidence_ids": [
+          "pmid-24353160:f01",
+          "pmid-24353160:f02",
+          "pmid-24353160:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-24353160": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 1526,
+              "chars_sent": 1526,
+              "key_records": 2,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-24353160:f01",
+                "pmid-24353160:f02",
+                "pmid-24353160:f03"
+              ]
+            }
+          },
+          "candidates": 3,
+          "sent": 3,
+          "chars_total": 1526,
+          "chars_sent": 1526,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2746,
+        "output_tokens": 315,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.647,
+        "evidence_fragments": 3
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-24353160 explicitly identifies the EGFR L858R mutation as 'erlotinib-sensitive' in the context of assay controls and proliferation assays. Specifically, fragment f01 states that L858R mutations are used as 'erlotinib-sensitive' controls and that cells expressing L858R were inhibited by erlotinib. Fragment f03 further confirms that the proliferation of cells with EGFR mutations (including L858R, as referenced in f01/f02 context) was inhibited by submicromolar concentrations of erlotinib, indicating sensitivity. While the study focuses heavily on exon 20 insertions, it uses L858R as a known sensitive comparator, thereby supporting the claim that EGFR L858R is associated with sensitivity/response to Erlotinib in lung non-small cell carcinoma.",
+          "citations": [
+            {
+              "document_id": "pmid-24353160",
+              "start": 0,
+              "end": 597,
+              "quote": "In addition, we used gefitinib/erlotinib-sensitive (L858R and exon 19 deletion mutations [delL747_S752 and delL747_P753insS]) and gefitinib/erlotinib-resistant (L858R+T790M and exon 19 deletion mutations+T790M) mutations as assay controls. . . . We created Ba/F3 cells stably expressing the aforementioned EGFR mutations. All were able to proliferate in the absence of IL3 (Sup. Fig. 1), indicating transforming ability of these mutations. We next measured proliferation in the presence of erlotinib and showed that only cells with EGFR-delL747_P753insS, L858R and the atypical A763_Y764insFQEA - "
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 1192,
+              "end": 1526,
+              "quote": "Proliferation assays with increasing concentrations of EGFR TKIs disclosed that growth of BID007, PC9, HCC827 and H3255 cells was inhibited by submicromolar concentrations of erlotinib (Fig. 3C, Sup. Table 2), gefitinib and afatinib (Sup. Table 2), indicating augmented sensitivity relative to the inhibitor-resistant H1975 cell line."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-24353160 explicitly identifies the EGFR L858R mutation as 'erlotinib-sensitive' in the context of assay controls and proliferation assays. Specifically, fragment f01 states that L858R mutations are used as 'erlotinib-sensitive' controls and that cells expressing L858R were inhibited by erlotinib. Fragment f03 further confirms that the proliferation of cells with EGFR mutations (including L858R, as referenced in f01/f02 context) was inhibited by submicromolar concentrations of erlotinib, indicating sensitivity. While the study focuses heavily on exon 20 insertions, it uses L858R as a known sensitive comparator, thereby supporting the claim that EGFR L858R is associated with sensitivity/response to Erlotinib in lung non-small cell carcinoma.",
+          "citations": [
+            {
+              "document_id": "pmid-24353160",
+              "start": 0,
+              "end": 597,
+              "quote": "In addition, we used gefitinib/erlotinib-sensitive (L858R and exon 19 deletion mutations [delL747_S752 and delL747_P753insS]) and gefitinib/erlotinib-resistant (L858R+T790M and exon 19 deletion mutations+T790M) mutations as assay controls. . . . We created Ba/F3 cells stably expressing the aforementioned EGFR mutations. All were able to proliferate in the absence of IL3 (Sup. Fig. 1), indicating transforming ability of these mutations. We next measured proliferation in the presence of erlotinib and showed that only cells with EGFR-delL747_P753insS, L858R and the atypical A763_Y764insFQEA - "
+            },
+            {
+              "document_id": "pmid-24353160",
+              "start": 1192,
+              "end": 1526,
+              "quote": "Proliferation assays with increasing concentrations of EGFR TKIs disclosed that growth of BID007, PC9, HCC827 and H3255 cells was inhibited by submicromolar concentrations of erlotinib (Fig. 3C, Sup. Table 2), gefitinib and afatinib (Sup. Table 2), indicating augmented sensitivity relative to the inhibitor-resistant H1975 cell line."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-24353160"
+  ],
+  "duration_seconds": 3.662931,
+  "research_only": true
+}

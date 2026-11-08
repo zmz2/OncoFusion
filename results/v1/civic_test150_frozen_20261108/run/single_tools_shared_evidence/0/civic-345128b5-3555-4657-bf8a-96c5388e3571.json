@@ -1,0 +1,407 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-345128b5-3555-4657-bf8a-96c5388e3571",
+  "patient_id": "article-29789510",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "7c2fde8ceece61959ed88b28668bc656f817d381f30994e843be5e7a0bb74303",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The provided evidence from PMID 29789510 describes a family with a germline VHL mutation c.311G>T (p.Gly104Val). The proband presented with a functional mediastinal paraganglioma and hypertension (high blood pressure). Additionally, the proband's sister was found to have a retinal hemangioblastoma. The text explicitly notes that this specific mutation was previously described as inducing polycythemia and/or pheochromocytoma but not paraganglioma or retinal hemangioblastoma, implying that the current case represents a novel or expanded phenotype association for this specific variant. The evidence supports the presence of Paraganglioma, Hemangioblastoma, and Hypertension in the context of the VHL G104V variant. The significance is described as 'protectiveness' in the query, but the evidence describes a pathogenic association (inducing disease). However, the core claim of the variant predisposing to these specific phenotypes is supported. The query asks to assess the stance toward the supplied claim. The supplied claim is a structured object. The 'answer' field must be one of SUPPORTS, REVISIONS, NEI. The evidence supports the association of the variant with the listed phenotypes. The 'significance' field in the query is 'protectiveness', which contradicts the evidence (which describes disease induction). Therefore, the claim as a whole is not fully supported because the direction/significance is reversed. The evidence shows the variant is pathogenic/predisposing, not protective. Thus, the claim requires revision regarding the significance/direction. The phenotypes and variant are correct. The disease is correct. The origin is correct. The only mismatch is 'protectiveness' vs 'predisposing/pathogenic'. This constitutes a REVISION.",
+    "citations": [
+      {
+        "document_id": "pmid-29789510",
+        "start": 0,
+        "end": 597,
+        "quote": "a heterozygous missense mutation, c.311G > T, was found in exon 1 of the von Hippel-Lindau gene, VHL, resulting in a glycine to valine substitution in the VHL protein at position 104, p.Gly104Val. This same mutation was found in both the mother and the 17-year old sister in whom a small retinal hemangioblastoma was also found. We diagnose an unusual functional mediastinal paraganglioma in this young patient with a germline VHL gene mutation, a mutation previously described as inducing polycythemia and/or pheochromocytoma but not paraganglioma or retinal hemangioblastoma. . . . A healthy 21 "
+      },
+      {
+        "document_id": "pmid-29789510",
+        "start": 597,
+        "end": 972,
+        "quote": "year-old woman without past medical history was referred to the department of endocrinology for high blood pressure, suspicious of endocrine hypertension. . . . The heterozygous missense variant for VHL gene was identified on her 17-year-old sister and her mother, but not her father. The sister's evaluation was normal with the exception of a small retinal hemangioblastoma."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2061,
+    "output_tokens": 507,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-29789510"
+        ],
+        "fingerprint": "7c2fde8ceece61959ed88b28668bc656f817d381f30994e843be5e7a0bb74303",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "G104V (c.311G>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "G104V (c.311G>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "G104V (c.311G>T)",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-29789510"
+        ],
+        "query": "{\n  \"disease\": \"von Hippel-Lindau disease\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDISPOSING\",\n  \"molecularProfile\": \"VHL G104V (c.311G>T)\",\n  \"phenotypes\": [\n    \"Paraganglioma\",\n    \"Hemangioblastoma\",\n    \"Hypertension\"\n  ],\n  \"significance\": \"protectiveness\",\n  \"variantOrigin\": \"RARE_GERMLINE\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-29789510"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-29789510": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "G104V (c.311G>T)",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-29789510",
+              "start": 184,
+              "end": 195,
+              "raw": "p.Gly104Val",
+              "canonical": "G104V"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-29789510": "unknown"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-29789510"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-29789510": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "G104V (c.311G>T)",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-29789510",
+              "start": 184,
+              "end": 195,
+              "raw": "p.Gly104Val",
+              "canonical": "G104V"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-29789510": "unknown"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "6452ae0a0794523ed4c6f5bc097e333775dacf7e6a474e2436f44a3cabefe346",
+        "source_ids": [
+          "pmid-29789510"
+        ],
+        "token_reservation": 11390,
+        "evidence_ids": [
+          "pmid-29789510:f01",
+          "pmid-29789510:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-29789510": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 972,
+              "chars_sent": 972,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-29789510:f01",
+                "pmid-29789510:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 972,
+          "chars_sent": 972,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2061,
+        "output_tokens": 507,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 7.462,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from PMID 29789510 describes a family with a germline VHL mutation c.311G>T (p.Gly104Val). The proband presented with a functional mediastinal paraganglioma and hypertension (high blood pressure). Additionally, the proband's sister was found to have a retinal hemangioblastoma. The text explicitly notes that this specific mutation was previously described as inducing polycythemia and/or pheochromocytoma but not paraganglioma or retinal hemangioblastoma, implying that the current case represents a novel or expanded phenotype association for this specific variant. The evidence supports the presence of Paraganglioma, Hemangioblastoma, and Hypertension in the context of the VHL G104V variant. The significance is described as 'protectiveness' in the query, but the evidence describes a pathogenic association (inducing disease). However, the core claim of the variant predisposing to these specific phenotypes is supported. The query asks to assess the stance toward the supplied claim. The supplied claim is a structured object. The 'answer' field must be one of SUPPORTS, REVISIONS, NEI. The evidence supports the association of the variant with the listed phenotypes. The 'significance' field in the query is 'protectiveness', which contradicts the evidence (which describes disease induction). Therefore, the claim as a whole is not fully supported because the direction/significance is reversed. The evidence shows the variant is pathogenic/predisposing, not protective. Thus, the claim requires revision regarding the significance/direction. The phenotypes and variant are correct. The disease is correct. The origin is correct. The only mismatch is 'protectiveness' vs 'predisposing/pathogenic'. This constitutes a REVISION.",
+          "citations": [
+            {
+              "document_id": "pmid-29789510",
+              "start": 0,
+              "end": 597,
+              "quote": "a heterozygous missense mutation, c.311G > T, was found in exon 1 of the von Hippel-Lindau gene, VHL, resulting in a glycine to valine substitution in the VHL protein at position 104, p.Gly104Val. This same mutation was found in both the mother and the 17-year old sister in whom a small retinal hemangioblastoma was also found. We diagnose an unusual functional mediastinal paraganglioma in this young patient with a germline VHL gene mutation, a mutation previously described as inducing polycythemia and/or pheochromocytoma but not paraganglioma or retinal hemangioblastoma. . . . A healthy 21 "
+            },
+            {
+              "document_id": "pmid-29789510",
+              "start": 597,
+              "end": 972,
+              "quote": "year-old woman without past medical history was referred to the department of endocrinology for high blood pressure, suspicious of endocrine hypertension. . . . The heterozygous missense variant for VHL gene was identified on her 17-year-old sister and her mother, but not her father. The sister's evaluation was normal with the exception of a small retinal hemangioblastoma."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from PMID 29789510 describes a family with a germline VHL mutation c.311G>T (p.Gly104Val). The proband presented with a functional mediastinal paraganglioma and hypertension (high blood pressure). Additionally, the proband's sister was found to have a retinal hemangioblastoma. The text explicitly notes that this specific mutation was previously described as inducing polycythemia and/or pheochromocytoma but not paraganglioma or retinal hemangioblastoma, implying that the current case represents a novel or expanded phenotype association for this specific variant. The evidence supports the presence of Paraganglioma, Hemangioblastoma, and Hypertension in the context of the VHL G104V variant. The significance is described as 'protectiveness' in the query, but the evidence describes a pathogenic association (inducing disease). However, the core claim of the variant predisposing to these specific phenotypes is supported. The query asks to assess the stance toward the supplied claim. The supplied claim is a structured object. The 'answer' field must be one of SUPPORTS, REVISIONS, NEI. The evidence supports the association of the variant with the listed phenotypes. The 'significance' field in the query is 'protectiveness', which contradicts the evidence (which describes disease induction). Therefore, the claim as a whole is not fully supported because the direction/significance is reversed. The evidence shows the variant is pathogenic/predisposing, not protective. Thus, the claim requires revision regarding the significance/direction. The phenotypes and variant are correct. The disease is correct. The origin is correct. The only mismatch is 'protectiveness' vs 'predisposing/pathogenic'. This constitutes a REVISION.",
+          "citations": [
+            {
+              "document_id": "pmid-29789510",
+              "start": 0,
+              "end": 597,
+              "quote": "a heterozygous missense mutation, c.311G > T, was found in exon 1 of the von Hippel-Lindau gene, VHL, resulting in a glycine to valine substitution in the VHL protein at position 104, p.Gly104Val. This same mutation was found in both the mother and the 17-year old sister in whom a small retinal hemangioblastoma was also found. We diagnose an unusual functional mediastinal paraganglioma in this young patient with a germline VHL gene mutation, a mutation previously described as inducing polycythemia and/or pheochromocytoma but not paraganglioma or retinal hemangioblastoma. . . . A healthy 21 "
+            },
+            {
+              "document_id": "pmid-29789510",
+              "start": 597,
+              "end": 972,
+              "quote": "year-old woman without past medical history was referred to the department of endocrinology for high blood pressure, suspicious of endocrine hypertension. . . . The heterozygous missense variant for VHL gene was identified on her 17-year-old sister and her mother, but not her father. The sister's evaluation was normal with the exception of a small retinal hemangioblastoma."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-29789510"
+  ],
+  "duration_seconds": 7.491762,
+  "research_only": true
+}

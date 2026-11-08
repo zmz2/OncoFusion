@@ -1,0 +1,463 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-fa05f0c2-996e-4970-a9f8-de3439a1ba68",
+  "patient_id": "article-31395785",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "ac1178d078eefb261d15b2238981ea27840cb647c28f2b055c8e981a184ed2e6",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence from pmid-31395785 explicitly states that the R282W mutation 'does not induce a neomorphic p53 function' and that its gene expression signature was most similar to p53 loss. This directly contradicts the claim that the TP53 R282W variant has a 'neomorphic' significance. Therefore, the evidence does not support the claim; it refutes it. However, the required output schema only allows for SUPPORTS, REVISIONS, or NEI. Since the evidence actively contradicts the claim rather than merely lacking support or requiring a minor revision, and given the strict options, the most accurate classification among the choices is NEI (Not Enough Information to Support) in the sense that the evidence does not support the specific assertion of neomorphism. Alternatively, if 'NEI' is interpreted as 'No Evidence for the Claim', it fits. If the system expects a binary support/refusal, this is a refusal. Given the options, NEI is the correct choice as the evidence does not support the claim.",
+    "citations": [
+      {
+        "document_id": "pmid-31395785",
+        "start": 0,
+        "end": 597,
+        "quote": "The R282W mutation was used to create isogenic AML cell lines using MOLM13 and K526 lines. R282W/- cells showed resistance to chemotherapeutic agents and failure to induce p21, indicating disruption of p53 function. ChIP assays demonstrated reduced p53 occupation across the genome for most p53 variants tested, while R282W cells indicated mutant p53 neomorphic binding at sites not occupied by wt. RNAseq studies determined that a novel gene expression program was not induced in R282W cells at baseline or with DNA damage induced p53 signal activation, and that the signature of gene expression "
+      },
+      {
+        "document_id": "pmid-31395785",
+        "start": 597,
+        "end": 707,
+        "quote": "was most similar to that of p53 loss, indicating that R282W mutation does not induce a neomophic p53 function."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2077,
+    "output_tokens": 348,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-31395785"
+        ],
+        "fingerprint": "ac1178d078eefb261d15b2238981ea27840cb647c28f2b055c8e981a184ed2e6",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R282W",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R282W",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R282W",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-31395785"
+        ],
+        "query": "{\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"FUNCTIONAL\",\n  \"molecularProfile\": \"TP53 R282W\",\n  \"significance\": \"neomorphic\",\n  \"variantOrigin\": \"UNKNOWN\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-31395785"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-31395785": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R282W",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-31395785",
+              "start": 4,
+              "end": 9,
+              "raw": "R282W",
+              "canonical": "R282W"
+            },
+            {
+              "document_id": "pmid-31395785",
+              "start": 91,
+              "end": 96,
+              "raw": "R282W",
+              "canonical": "R282W"
+            },
+            {
+              "document_id": "pmid-31395785",
+              "start": 318,
+              "end": 323,
+              "raw": "R282W",
+              "canonical": "R282W"
+            },
+            {
+              "document_id": "pmid-31395785",
+              "start": 481,
+              "end": 486,
+              "raw": "R282W",
+              "canonical": "R282W"
+            },
+            {
+              "document_id": "pmid-31395785",
+              "start": 651,
+              "end": 656,
+              "raw": "R282W",
+              "canonical": "R282W"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-31395785": "resistance"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-31395785"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-31395785": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R282W",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-31395785",
+              "start": 4,
+              "end": 9,
+              "raw": "R282W",
+              "canonical": "R282W"
+            },
+            {
+              "document_id": "pmid-31395785",
+              "start": 91,
+              "end": 96,
+              "raw": "R282W",
+              "canonical": "R282W"
+            },
+            {
+              "document_id": "pmid-31395785",
+              "start": 318,
+              "end": 323,
+              "raw": "R282W",
+              "canonical": "R282W"
+            },
+            {
+              "document_id": "pmid-31395785",
+              "start": 481,
+              "end": 486,
+              "raw": "R282W",
+              "canonical": "R282W"
+            },
+            {
+              "document_id": "pmid-31395785",
+              "start": 651,
+              "end": 656,
+              "raw": "R282W",
+              "canonical": "R282W"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-31395785": "resistance"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "d42f8d9e21521c7e79f8321da63f7c6b38ad77468015f73589baeeaf92bc74a5",
+        "source_ids": [
+          "pmid-31395785"
+        ],
+        "token_reservation": 11210,
+        "evidence_ids": [
+          "pmid-31395785:f01",
+          "pmid-31395785:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-31395785": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 707,
+              "chars_sent": 707,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-31395785:f01",
+                "pmid-31395785:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 707,
+          "chars_sent": 707,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2077,
+        "output_tokens": 348,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 9.128,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence from pmid-31395785 explicitly states that the R282W mutation 'does not induce a neomorphic p53 function' and that its gene expression signature was most similar to p53 loss. This directly contradicts the claim that the TP53 R282W variant has a 'neomorphic' significance. Therefore, the evidence does not support the claim; it refutes it. However, the required output schema only allows for SUPPORTS, REVISIONS, or NEI. Since the evidence actively contradicts the claim rather than merely lacking support or requiring a minor revision, and given the strict options, the most accurate classification among the choices is NEI (Not Enough Information to Support) in the sense that the evidence does not support the specific assertion of neomorphism. Alternatively, if 'NEI' is interpreted as 'No Evidence for the Claim', it fits. If the system expects a binary support/refusal, this is a refusal. Given the options, NEI is the correct choice as the evidence does not support the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-31395785",
+              "start": 0,
+              "end": 597,
+              "quote": "The R282W mutation was used to create isogenic AML cell lines using MOLM13 and K526 lines. R282W/- cells showed resistance to chemotherapeutic agents and failure to induce p21, indicating disruption of p53 function. ChIP assays demonstrated reduced p53 occupation across the genome for most p53 variants tested, while R282W cells indicated mutant p53 neomorphic binding at sites not occupied by wt. RNAseq studies determined that a novel gene expression program was not induced in R282W cells at baseline or with DNA damage induced p53 signal activation, and that the signature of gene expression "
+            },
+            {
+              "document_id": "pmid-31395785",
+              "start": 597,
+              "end": 707,
+              "quote": "was most similar to that of p53 loss, indicating that R282W mutation does not induce a neomophic p53 function."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence from pmid-31395785 explicitly states that the R282W mutation 'does not induce a neomorphic p53 function' and that its gene expression signature was most similar to p53 loss. This directly contradicts the claim that the TP53 R282W variant has a 'neomorphic' significance. Therefore, the evidence does not support the claim; it refutes it. However, the required output schema only allows for SUPPORTS, REVISIONS, or NEI. Since the evidence actively contradicts the claim rather than merely lacking support or requiring a minor revision, and given the strict options, the most accurate classification among the choices is NEI (Not Enough Information to Support) in the sense that the evidence does not support the specific assertion of neomorphism. Alternatively, if 'NEI' is interpreted as 'No Evidence for the Claim', it fits. If the system expects a binary support/refusal, this is a refusal. Given the options, NEI is the correct choice as the evidence does not support the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-31395785",
+              "start": 0,
+              "end": 597,
+              "quote": "The R282W mutation was used to create isogenic AML cell lines using MOLM13 and K526 lines. R282W/- cells showed resistance to chemotherapeutic agents and failure to induce p21, indicating disruption of p53 function. ChIP assays demonstrated reduced p53 occupation across the genome for most p53 variants tested, while R282W cells indicated mutant p53 neomorphic binding at sites not occupied by wt. RNAseq studies determined that a novel gene expression program was not induced in R282W cells at baseline or with DNA damage induced p53 signal activation, and that the signature of gene expression "
+            },
+            {
+              "document_id": "pmid-31395785",
+              "start": 597,
+              "end": 707,
+              "quote": "was most similar to that of p53 loss, indicating that R282W mutation does not induce a neomophic p53 function."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-31395785"
+  ],
+  "duration_seconds": 9.138089,
+  "research_only": true
+}

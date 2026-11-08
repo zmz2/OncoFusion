@@ -1,0 +1,381 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-c16897e9-b5c9-400d-8e15-13f8a4c718f9",
+  "patient_id": "article-27004155",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "d00ae2064b50a3de310321aeb61f62388d3c91977291852986aa415c96ea6833",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The supplied evidence (pmid-27004155) describes a case report of a patient with stage IVb colorectal cancer (CRC), not Ovary Epithelial Cancer. The study investigates the use of regorafenib in the context of a KDR mutation and does not contain any data regarding ERCC1 underexpression, platinum compound therapy, or resistance in ovarian cancer. Therefore, there is insufficient evidence to support, revise, or refute the claim regarding ERCC1 underexpression and platinum resistance in Ovary Epithelial Cancer.",
+    "citations": [
+      {
+        "document_id": "pmid-27004155",
+        "start": 0,
+        "end": 110,
+        "quote": "Case Report of a 84-year-old woman with stage IVb CRC after progression under 5-fluorouracil and bevacizumab.\n"
+      }
+    ],
+    "unresolved": [
+      "Evidence is from a different disease (CRC) and does not address ERCC1 or platinum compounds in ovarian cancer."
+    ],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1990,
+    "output_tokens": 237,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-27004155"
+        ],
+        "fingerprint": "d00ae2064b50a3de310321aeb61f62388d3c91977291852986aa415c96ea6833",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-27004155"
+        ],
+        "query": "{\n  \"disease\": \"Ovary Epithelial Cancer\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"ERCC1 Underexpression\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Platinum Compound\"\n  ],\n  \"variantOrigin\": \"N/A\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-27004155"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27004155": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27004155": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-27004155"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27004155": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Underexpression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27004155": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "37a9b14f16769dfbc20e431d5c357e41119ff41d8f0fd8971be50ce8a7d2abc8",
+        "source_ids": [
+          "pmid-27004155"
+        ],
+        "token_reservation": 11193,
+        "evidence_ids": [
+          "pmid-27004155:f01",
+          "pmid-27004155:f02",
+          "pmid-27004155:f03"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27004155": {
+              "candidates": 3,
+              "sent": 3,
+              "chars_total": 803,
+              "chars_sent": 803,
+              "key_records": 2,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27004155:f01",
+                "pmid-27004155:f02",
+                "pmid-27004155:f03"
+              ]
+            }
+          },
+          "candidates": 3,
+          "sent": 3,
+          "chars_total": 803,
+          "chars_sent": 803,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1990,
+        "output_tokens": 237,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 2.27,
+        "evidence_fragments": 3
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The supplied evidence (pmid-27004155) describes a case report of a patient with stage IVb colorectal cancer (CRC), not Ovary Epithelial Cancer. The study investigates the use of regorafenib in the context of a KDR mutation and does not contain any data regarding ERCC1 underexpression, platinum compound therapy, or resistance in ovarian cancer. Therefore, there is insufficient evidence to support, revise, or refute the claim regarding ERCC1 underexpression and platinum resistance in Ovary Epithelial Cancer.",
+          "citations": [
+            {
+              "document_id": "pmid-27004155",
+              "start": 0,
+              "end": 110,
+              "quote": "Case Report of a 84-year-old woman with stage IVb CRC after progression under 5-fluorouracil and bevacizumab.\n"
+            }
+          ],
+          "unresolved": [
+            "Evidence is from a different disease (CRC) and does not address ERCC1 or platinum compounds in ovarian cancer."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The supplied evidence (pmid-27004155) describes a case report of a patient with stage IVb colorectal cancer (CRC), not Ovary Epithelial Cancer. The study investigates the use of regorafenib in the context of a KDR mutation and does not contain any data regarding ERCC1 underexpression, platinum compound therapy, or resistance in ovarian cancer. Therefore, there is insufficient evidence to support, revise, or refute the claim regarding ERCC1 underexpression and platinum resistance in Ovary Epithelial Cancer.",
+          "citations": [
+            {
+              "document_id": "pmid-27004155",
+              "start": 0,
+              "end": 110,
+              "quote": "Case Report of a 84-year-old woman with stage IVb CRC after progression under 5-fluorouracil and bevacizumab.\n"
+            }
+          ],
+          "unresolved": [
+            "Evidence is from a different disease (CRC) and does not address ERCC1 or platinum compounds in ovarian cancer."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-27004155"
+  ],
+  "duration_seconds": 2.283113,
+  "research_only": true
+}

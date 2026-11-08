@@ -1,0 +1,403 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-af42e07d-62bc-429b-88a8-3f4d0a44acf7",
+  "patient_id": "article-25686603",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "16a7a31aabec97cd4f280c032ccb056329a87670d5cb7a196689111baa53c382",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The claim requires evidence linking TERT promoter mutations in thyroid adenoma to a diagnostic context. The provided evidence (pmid-25686603) exclusively discusses the BCR-ABL1 T315I mutation in chronic myeloid leukemia (CML) and drug sensitivity to Ponatinib. There is no mention of thyroid adenoma, TERT promoter mutations, or diagnostic applications for thyroid conditions. The evidence is entirely irrelevant to the claim's disease, molecular profile, and variant.",
+    "citations": [
+      {
+        "document_id": "pmid-25686603",
+        "start": 0,
+        "end": 594,
+        "quote": "Bone marrow mononuclear cells (BM MNCs) were isolated from a chronic myeloid leukemia patient with the BCR-ABL1 T315I variant. The patient was pretreated with imatinib, dasatinib, and chemotherapy. The patients' cells were sensitive to Ponatinib and Axitinib and insensitive to Nilotinib, Imatinib, and Dasatinib compared to BM MNCs from healthy controls using drug sensitivity scoring of proliferation assays. In a rezasurin proliferation assay, Ba/F3 cells carrying the T315I variant in the ABL1 portion of the BCR-ABL fusion showed high sensitivity to ponatinib (IC50 of 11 nM vs. 3.1 nM in "
+      }
+    ],
+    "unresolved": [],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1927,
+    "output_tokens": 198,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25686603"
+        ],
+        "fingerprint": "16a7a31aabec97cd4f280c032ccb056329a87670d5cb7a196689111baa53c382",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Promoter mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Promoter mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Promoter mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25686603"
+        ],
+        "query": "{\n  \"disease\": \"thyroid adenoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"DIAGNOSTIC\",\n  \"molecularProfile\": \"TERT Promoter Mutation\",\n  \"significance\": \"positive\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25686603"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25686603": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Promoter mutation",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25686603",
+              "start": 112,
+              "end": 117,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25686603",
+              "start": 472,
+              "end": 477,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25686603": "mixed"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25686603"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25686603": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Promoter mutation",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25686603",
+              "start": 112,
+              "end": 117,
+              "raw": "T315I",
+              "canonical": "T315I"
+            },
+            {
+              "document_id": "pmid-25686603",
+              "start": 472,
+              "end": 477,
+              "raw": "T315I",
+              "canonical": "T315I"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25686603": "mixed"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "37a1b3b8a196533bd27f02b67fcd228f9ea69ef6010fd35e5bd64a6bfb3aa445",
+        "source_ids": [
+          "pmid-25686603"
+        ],
+        "token_reservation": 10900,
+        "evidence_ids": [
+          "pmid-25686603:f01",
+          "pmid-25686603:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-25686603": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 612,
+              "chars_sent": 612,
+              "key_records": 2,
+              "required_candidates": 2,
+              "required_sent": 2,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-25686603:f01",
+                "pmid-25686603:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 612,
+          "chars_sent": 612,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 2,
+              "sent": 2,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1927,
+        "output_tokens": 198,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.073,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The claim requires evidence linking TERT promoter mutations in thyroid adenoma to a diagnostic context. The provided evidence (pmid-25686603) exclusively discusses the BCR-ABL1 T315I mutation in chronic myeloid leukemia (CML) and drug sensitivity to Ponatinib. There is no mention of thyroid adenoma, TERT promoter mutations, or diagnostic applications for thyroid conditions. The evidence is entirely irrelevant to the claim's disease, molecular profile, and variant.",
+          "citations": [
+            {
+              "document_id": "pmid-25686603",
+              "start": 0,
+              "end": 594,
+              "quote": "Bone marrow mononuclear cells (BM MNCs) were isolated from a chronic myeloid leukemia patient with the BCR-ABL1 T315I variant. The patient was pretreated with imatinib, dasatinib, and chemotherapy. The patients' cells were sensitive to Ponatinib and Axitinib and insensitive to Nilotinib, Imatinib, and Dasatinib compared to BM MNCs from healthy controls using drug sensitivity scoring of proliferation assays. In a rezasurin proliferation assay, Ba/F3 cells carrying the T315I variant in the ABL1 portion of the BCR-ABL fusion showed high sensitivity to ponatinib (IC50 of 11 nM vs. 3.1 nM in "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The claim requires evidence linking TERT promoter mutations in thyroid adenoma to a diagnostic context. The provided evidence (pmid-25686603) exclusively discusses the BCR-ABL1 T315I mutation in chronic myeloid leukemia (CML) and drug sensitivity to Ponatinib. There is no mention of thyroid adenoma, TERT promoter mutations, or diagnostic applications for thyroid conditions. The evidence is entirely irrelevant to the claim's disease, molecular profile, and variant.",
+          "citations": [
+            {
+              "document_id": "pmid-25686603",
+              "start": 0,
+              "end": 594,
+              "quote": "Bone marrow mononuclear cells (BM MNCs) were isolated from a chronic myeloid leukemia patient with the BCR-ABL1 T315I variant. The patient was pretreated with imatinib, dasatinib, and chemotherapy. The patients' cells were sensitive to Ponatinib and Axitinib and insensitive to Nilotinib, Imatinib, and Dasatinib compared to BM MNCs from healthy controls using drug sensitivity scoring of proliferation assays. In a rezasurin proliferation assay, Ba/F3 cells carrying the T315I variant in the ABL1 portion of the BCR-ABL fusion showed high sensitivity to ponatinib (IC50 of 11 nM vs. 3.1 nM in "
+            }
+          ],
+          "unresolved": [],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25686603"
+  ],
+  "duration_seconds": 3.094798,
+  "research_only": true
+}

@@ -1,0 +1,520 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-e2408cde-1d77-45f4-a609-826e6abb9d8b",
+  "patient_id": "article-26989027",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "f1818544bfde1f16583212d2b09ad885e563456e4c3bf7de5eb930333a78f84a",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-26989027) exclusively discusses the predictive value of mutations (BRAF, KRAS, NRAS, PIK3CA, etc.) for resistance to cetuximab in metastatic colorectal cancer (mCRC). It does not contain any information regarding Chronic Myeloid Leukemia (CML), the BCR::ABL1 fusion, the ABL1 L384M variant, or the drug Axitinib. Therefore, there is insufficient evidence to support, refute, or revise the claim regarding Axitinib resistance in CML patients with BCR::ABL1 Fusion AND ABL1 L384M.",
+    "citations": [
+      {
+        "document_id": "pmid-26989027",
+        "start": 0,
+        "end": 599,
+        "quote": "\"Mutations of KRAS/NRAS/BRAF predict cetuximab resistance in metastatic colorectal cancer patients\\nApproximately 45% of metastatic colorectal cancer (mCRC) patients with wild-type KRAS exon 2 are resistant to cetuximab treatment. We set out to identify additional genetic markers that might predict the response to cetuximab treatment. Fifty-three wild-type KRAS exon 2 mCRC patients were treated with cetuximab/irinotecan-based chemotherapy as a first- or third-line therapy. The mutational statuses of 10 EGFR pathway genes were analyzed in primary tumors using next-generation sequencing. BRAF, "
+      }
+    ],
+    "unresolved": [
+      "Evidence for Axitinib efficacy/resistance in CML with BCR::ABL1/ABL1 L384M is missing.",
+      "Evidence linking ABL1 L384M specifically to Axitinib resistance in CML is missing."
+    ],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 3771,
+    "output_tokens": 299,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-26989027"
+        ],
+        "fingerprint": "f1818544bfde1f16583212d2b09ad885e563456e4c3bf7de5eb930333a78f84a",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-26989027"
+        ],
+        "query": "{\n  \"disease\": \"Chronic Myeloid Leukemia\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"BCR::ABL1 Fusion AND ABL1 L384M\",\n  \"significance\": \"resistance\",\n  \"therapies\": [\n    \"Axitinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-26989027"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-26989027": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-26989027",
+              "start": 1057,
+              "end": 1062,
+              "raw": "V600E",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1101,
+              "end": 1106,
+              "raw": "V600E",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1274,
+              "end": 1279,
+              "raw": "V600E",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1324,
+              "end": 1329,
+              "raw": "G466A",
+              "canonical": "G466A"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1343,
+              "end": 1348,
+              "raw": "G469A",
+              "canonical": "G469A"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1366,
+              "end": 1371,
+              "raw": "D594G",
+              "canonical": "D594G"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1889,
+              "end": 1894,
+              "raw": "E542K",
+              "canonical": "E542K"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1899,
+              "end": 1904,
+              "raw": "E545K",
+              "canonical": "E545K"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 4011,
+              "end": 4016,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-26989027": "mixed"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-26989027"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-26989027": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-26989027",
+              "start": 1057,
+              "end": 1062,
+              "raw": "V600E",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1101,
+              "end": 1106,
+              "raw": "V600E",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1274,
+              "end": 1279,
+              "raw": "V600E",
+              "canonical": "V600E"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1324,
+              "end": 1329,
+              "raw": "G466A",
+              "canonical": "G466A"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1343,
+              "end": 1348,
+              "raw": "G469A",
+              "canonical": "G469A"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1366,
+              "end": 1371,
+              "raw": "D594G",
+              "canonical": "D594G"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1889,
+              "end": 1894,
+              "raw": "E542K",
+              "canonical": "E542K"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 1899,
+              "end": 1904,
+              "raw": "E545K",
+              "canonical": "E545K"
+            },
+            {
+              "document_id": "pmid-26989027",
+              "start": 4011,
+              "end": 4016,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-26989027": "mixed"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "66539cbde8c41d2b764e6fe83e2526cea1e31d9a269c6292a49a4aba736ab79b",
+        "source_ids": [
+          "pmid-26989027"
+        ],
+        "token_reservation": 16343,
+        "evidence_ids": [
+          "pmid-26989027:f01",
+          "pmid-26989027:f02",
+          "pmid-26989027:f03",
+          "pmid-26989027:f04",
+          "pmid-26989027:f05",
+          "pmid-26989027:f06",
+          "pmid-26989027:f07"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-26989027": {
+              "candidates": 7,
+              "sent": 7,
+              "chars_total": 4036,
+              "chars_sent": 4036,
+              "key_records": 2,
+              "required_candidates": 7,
+              "required_sent": 7,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-26989027:f01",
+                "pmid-26989027:f02",
+                "pmid-26989027:f03",
+                "pmid-26989027:f04",
+                "pmid-26989027:f05",
+                "pmid-26989027:f06",
+                "pmid-26989027:f07"
+              ]
+            }
+          },
+          "candidates": 7,
+          "sent": 7,
+          "chars_total": 4036,
+          "chars_sent": 4036,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 7,
+              "sent": 7,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 3771,
+        "output_tokens": 299,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 24.382,
+        "evidence_fragments": 7
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-26989027) exclusively discusses the predictive value of mutations (BRAF, KRAS, NRAS, PIK3CA, etc.) for resistance to cetuximab in metastatic colorectal cancer (mCRC). It does not contain any information regarding Chronic Myeloid Leukemia (CML), the BCR::ABL1 fusion, the ABL1 L384M variant, or the drug Axitinib. Therefore, there is insufficient evidence to support, refute, or revise the claim regarding Axitinib resistance in CML patients with BCR::ABL1 Fusion AND ABL1 L384M.",
+          "citations": [
+            {
+              "document_id": "pmid-26989027",
+              "start": 0,
+              "end": 599,
+              "quote": "\"Mutations of KRAS/NRAS/BRAF predict cetuximab resistance in metastatic colorectal cancer patients\\nApproximately 45% of metastatic colorectal cancer (mCRC) patients with wild-type KRAS exon 2 are resistant to cetuximab treatment. We set out to identify additional genetic markers that might predict the response to cetuximab treatment. Fifty-three wild-type KRAS exon 2 mCRC patients were treated with cetuximab/irinotecan-based chemotherapy as a first- or third-line therapy. The mutational statuses of 10 EGFR pathway genes were analyzed in primary tumors using next-generation sequencing. BRAF, "
+            }
+          ],
+          "unresolved": [
+            "Evidence for Axitinib efficacy/resistance in CML with BCR::ABL1/ABL1 L384M is missing.",
+            "Evidence linking ABL1 L384M specifically to Axitinib resistance in CML is missing."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-26989027) exclusively discusses the predictive value of mutations (BRAF, KRAS, NRAS, PIK3CA, etc.) for resistance to cetuximab in metastatic colorectal cancer (mCRC). It does not contain any information regarding Chronic Myeloid Leukemia (CML), the BCR::ABL1 fusion, the ABL1 L384M variant, or the drug Axitinib. Therefore, there is insufficient evidence to support, refute, or revise the claim regarding Axitinib resistance in CML patients with BCR::ABL1 Fusion AND ABL1 L384M.",
+          "citations": [
+            {
+              "document_id": "pmid-26989027",
+              "start": 0,
+              "end": 599,
+              "quote": "\"Mutations of KRAS/NRAS/BRAF predict cetuximab resistance in metastatic colorectal cancer patients\\nApproximately 45% of metastatic colorectal cancer (mCRC) patients with wild-type KRAS exon 2 are resistant to cetuximab treatment. We set out to identify additional genetic markers that might predict the response to cetuximab treatment. Fifty-three wild-type KRAS exon 2 mCRC patients were treated with cetuximab/irinotecan-based chemotherapy as a first- or third-line therapy. The mutational statuses of 10 EGFR pathway genes were analyzed in primary tumors using next-generation sequencing. BRAF, "
+            }
+          ],
+          "unresolved": [
+            "Evidence for Axitinib efficacy/resistance in CML with BCR::ABL1/ABL1 L384M is missing.",
+            "Evidence linking ABL1 L384M specifically to Axitinib resistance in CML is missing."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-26989027"
+  ],
+  "duration_seconds": 24.399101,
+  "research_only": true
+}

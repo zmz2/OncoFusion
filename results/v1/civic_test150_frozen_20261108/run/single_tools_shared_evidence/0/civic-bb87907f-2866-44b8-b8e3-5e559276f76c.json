@@ -1,0 +1,407 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-bb87907f-2866-44b8-b8e3-5e559276f76c",
+  "patient_id": "article-25686603",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "77bf8c1db60c740f4ea1e7abecaef6000887c6f78e5de6dc9d305d38941c209d",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The claim requires evidence linking the FLT3 D835Y variant to sensitivity/response to Gilteritinib in pre-malignant neoplasm. The provided evidence (pmid-25686603:f01) discusses the ABL1 V299L variant, BCR-ABL1 fusions, and the drug axitinib. It does not mention FLT3, D835Y, Gilteritinib, or pre-malignant neoplasm. Therefore, there is insufficient evidence to support, revise, or refute the claim.",
+    "citations": [
+      {
+        "document_id": "pmid-25686603",
+        "start": 0,
+        "end": 377,
+        "quote": "In a proliferation assay measuring tritiated thymidine incorporation in the presence of axitinib, Ba/F3 cells carrying the BCR-ABL1 variant showed decreased incorporation when harboring fusions with the V299L variant of ABL1 compared to fusions with wildtype ABL1 (IC50 of 188nM vs. 823 nM), indicating V299L induces sensitivity compared to BCR-ABL1 without secondary variants."
+      }
+    ],
+    "unresolved": [
+      "No evidence found for FLT3 D835Y and Gilteritinib."
+    ],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1775,
+    "output_tokens": 237,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-25686603"
+        ],
+        "fingerprint": "77bf8c1db60c740f4ea1e7abecaef6000887c6f78e5de6dc9d305d38941c209d",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-25686603"
+        ],
+        "query": "{\n  \"disease\": \"pre-malignant neoplasm\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"FLT3 D835Y\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Gilteritinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-25686603"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25686603": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25686603",
+              "start": 203,
+              "end": 208,
+              "raw": "V299L",
+              "canonical": "V299L"
+            },
+            {
+              "document_id": "pmid-25686603",
+              "start": 303,
+              "end": 308,
+              "raw": "V299L",
+              "canonical": "V299L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25686603": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-25686603"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-25686603": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "D835Y",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-25686603",
+              "start": 203,
+              "end": 208,
+              "raw": "V299L",
+              "canonical": "V299L"
+            },
+            {
+              "document_id": "pmid-25686603",
+              "start": 303,
+              "end": 308,
+              "raw": "V299L",
+              "canonical": "V299L"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-25686603": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "5282cfa59d1d6244a1248f4f40b548c3c330fde9d9b105dac55dfd67ccdf88b5",
+        "source_ids": [
+          "pmid-25686603"
+        ],
+        "token_reservation": 10465,
+        "evidence_ids": [
+          "pmid-25686603:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-25686603": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 377,
+              "chars_sent": 377,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-25686603:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 377,
+          "chars_sent": 377,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1775,
+        "output_tokens": 237,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 2.804,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The claim requires evidence linking the FLT3 D835Y variant to sensitivity/response to Gilteritinib in pre-malignant neoplasm. The provided evidence (pmid-25686603:f01) discusses the ABL1 V299L variant, BCR-ABL1 fusions, and the drug axitinib. It does not mention FLT3, D835Y, Gilteritinib, or pre-malignant neoplasm. Therefore, there is insufficient evidence to support, revise, or refute the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-25686603",
+              "start": 0,
+              "end": 377,
+              "quote": "In a proliferation assay measuring tritiated thymidine incorporation in the presence of axitinib, Ba/F3 cells carrying the BCR-ABL1 variant showed decreased incorporation when harboring fusions with the V299L variant of ABL1 compared to fusions with wildtype ABL1 (IC50 of 188nM vs. 823 nM), indicating V299L induces sensitivity compared to BCR-ABL1 without secondary variants."
+            }
+          ],
+          "unresolved": [
+            "No evidence found for FLT3 D835Y and Gilteritinib."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The claim requires evidence linking the FLT3 D835Y variant to sensitivity/response to Gilteritinib in pre-malignant neoplasm. The provided evidence (pmid-25686603:f01) discusses the ABL1 V299L variant, BCR-ABL1 fusions, and the drug axitinib. It does not mention FLT3, D835Y, Gilteritinib, or pre-malignant neoplasm. Therefore, there is insufficient evidence to support, revise, or refute the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-25686603",
+              "start": 0,
+              "end": 377,
+              "quote": "In a proliferation assay measuring tritiated thymidine incorporation in the presence of axitinib, Ba/F3 cells carrying the BCR-ABL1 variant showed decreased incorporation when harboring fusions with the V299L variant of ABL1 compared to fusions with wildtype ABL1 (IC50 of 188nM vs. 823 nM), indicating V299L induces sensitivity compared to BCR-ABL1 without secondary variants."
+            }
+          ],
+          "unresolved": [
+            "No evidence found for FLT3 D835Y and Gilteritinib."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-25686603"
+  ],
+  "duration_seconds": 2.823564,
+  "research_only": true
+}
