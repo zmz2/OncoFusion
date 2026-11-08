@@ -578,6 +578,21 @@ class Engine:
                 role == "genomics" and not visible.entities.gene and not any(d.kind == "genomics" for d in docs)) or (
                 role == "pathology" and not visible.entities.disease and not any(d.kind == "pathology" for d in docs)) or (
                 role == "drug" and not visible.entities.drug and not any(d.kind == "therapy" for d in docs))
+            if claims_on and empty_specialty:
+                scope = next(iter(ROLE_SCOPES[role]))
+                finding = Finding(
+                    statement=f"not_applicable: no {role} input was supplied for this case.",
+                    relation="NEI", claim_id=f"{role}-01", author_role=role,
+                    scope=scope, evidence_level="absent",
+                    material_status="not_applicable",
+                    material_basis="not_recorded")
+                output = AnalysisOutput(findings=[finding])
+                reports.append(AgentReport(role=role, executor=role, output=output))
+                known_claims[finding.claim_id] = role
+                emit("agent_skipped", role, reason="no matching input modality")
+                emit("agent_reported", role, output=output.model_dump(mode="json"),
+                     synthesized_not_applicable=True)
+                return
             if config.routing == "adaptive" and empty_specialty:
                 emit("agent_skipped", role, reason="no matching input modality")
                 return

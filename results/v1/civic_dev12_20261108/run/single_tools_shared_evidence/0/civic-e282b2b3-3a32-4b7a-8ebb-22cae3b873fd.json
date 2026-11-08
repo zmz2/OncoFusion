@@ -1,0 +1,371 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-e282b2b3-3a32-4b7a-8ebb-22cae3b873fd",
+  "patient_id": "article-28787259",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "4ad2e19663dea1bfc8c8e8bf59d8c27928201ccd18e92e5ca546c81bd47c707e",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "SUPPORTS",
+    "explanation": "The provided evidence from pmid-28787259 describes a phase I/II study involving 26 patients with relapsed/refractory ALK-positive Anaplastic Large Cell Lymphoma (ALCL) treated with crizotinib. The study reports an objective response rate of 90%, with complete response rates of 83% and 80% for different dose groups. This directly supports the claim that crizotinib is effective (sensitivity/response) in ALK-positive ALCL. The evidence explicitly links the drug (crizotinib), the disease (ALCL), and the molecular profile (ALK-positive, which corresponds to ALK Fusion). The response rates indicate high sensitivity to the treatment.",
+    "citations": [
+      {
+        "document_id": "pmid-28787259",
+        "start": 0,
+        "end": 551,
+        "quote": "In this phase I/II study, 26 patients with relapsed/refractory ALK-positive ALCL were administered crizotinib orally twice daily in 28-day cycles as a single agent for an indefinite duration. Patients with relapsed ALCL achieved an objective response rate of 90%. The overall response rates for patients with ALCL treated at doses of 165 and 280 mg/m2 were 83% and 90%, respectively. Rates of complete response were 83% and 80% for 165 and 280 mg/m2 dose groups, respectively. The most common grade 3 or 4 adverse event was decreased neutrophil count."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.95,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1702,
+    "output_tokens": 249,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-28787259"
+        ],
+        "fingerprint": "4ad2e19663dea1bfc8c8e8bf59d8c27928201ccd18e92e5ca546c81bd47c707e",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-28787259"
+        ],
+        "query": "{\n  \"disease\": \"Anaplastic Large Cell Lymphoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"v::ALK Fusion\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Crizotinib\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-28787259"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28787259": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28787259": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-28787259"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28787259": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28787259": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "2cf4662b93453ba907a54688b27f6c46bc1e81912b3dbb87fad41f93f46a5a2d",
+        "source_ids": [
+          "pmid-28787259"
+        ],
+        "token_reservation": 10446,
+        "evidence_ids": [
+          "pmid-28787259:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-28787259": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 551,
+              "chars_sent": 551,
+              "key_records": 1,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-28787259:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 551,
+          "chars_sent": 551,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1702,
+        "output_tokens": 249,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 23.157,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-28787259 describes a phase I/II study involving 26 patients with relapsed/refractory ALK-positive Anaplastic Large Cell Lymphoma (ALCL) treated with crizotinib. The study reports an objective response rate of 90%, with complete response rates of 83% and 80% for different dose groups. This directly supports the claim that crizotinib is effective (sensitivity/response) in ALK-positive ALCL. The evidence explicitly links the drug (crizotinib), the disease (ALCL), and the molecular profile (ALK-positive, which corresponds to ALK Fusion). The response rates indicate high sensitivity to the treatment.",
+          "citations": [
+            {
+              "document_id": "pmid-28787259",
+              "start": 0,
+              "end": 551,
+              "quote": "In this phase I/II study, 26 patients with relapsed/refractory ALK-positive ALCL were administered crizotinib orally twice daily in 28-day cycles as a single agent for an indefinite duration. Patients with relapsed ALCL achieved an objective response rate of 90%. The overall response rates for patients with ALCL treated at doses of 165 and 280 mg/m2 were 83% and 90%, respectively. Rates of complete response were 83% and 80% for 165 and 280 mg/m2 dose groups, respectively. The most common grade 3 or 4 adverse event was decreased neutrophil count."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.95,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "SUPPORTS",
+          "explanation": "The provided evidence from pmid-28787259 describes a phase I/II study involving 26 patients with relapsed/refractory ALK-positive Anaplastic Large Cell Lymphoma (ALCL) treated with crizotinib. The study reports an objective response rate of 90%, with complete response rates of 83% and 80% for different dose groups. This directly supports the claim that crizotinib is effective (sensitivity/response) in ALK-positive ALCL. The evidence explicitly links the drug (crizotinib), the disease (ALCL), and the molecular profile (ALK-positive, which corresponds to ALK Fusion). The response rates indicate high sensitivity to the treatment.",
+          "citations": [
+            {
+              "document_id": "pmid-28787259",
+              "start": 0,
+              "end": 551,
+              "quote": "In this phase I/II study, 26 patients with relapsed/refractory ALK-positive ALCL were administered crizotinib orally twice daily in 28-day cycles as a single agent for an indefinite duration. Patients with relapsed ALCL achieved an objective response rate of 90%. The overall response rates for patients with ALCL treated at doses of 165 and 280 mg/m2 were 83% and 90%, respectively. Rates of complete response were 83% and 80% for 165 and 280 mg/m2 dose groups, respectively. The most common grade 3 or 4 adverse event was decreased neutrophil count."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.95,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-28787259"
+  ],
+  "duration_seconds": 23.172385,
+  "research_only": true
+}

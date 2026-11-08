@@ -1,0 +1,479 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-3c3fe354-8eef-41b3-bf8c-58c46feb26d2",
+  "patient_id": "article-20942962",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "91c50abe1664ba8cd31b8cc09be07323c619f21c39c67daa9469f830aac22527",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-20942962) concerns malignant peritoneal mesothelioma (MPM) and focuses on EGFR mutations (W731L, E734Q, T785A, C797Y, Y801H, L831H, E868G) and their sensitivity to Erlotinib. The query asks about DNMT3A R882 in acute myeloid leukemia (AML). The evidence does not mention DNMT3A, AML, or the prognostic significance of DNMT3A R882. Therefore, there is insufficient evidence to support, refute, or revise the claim.",
+    "citations": [
+      {
+        "document_id": "pmid-20942962",
+        "start": 0,
+        "end": 598,
+        "quote": "We analyzed a cohort of MPM samples (n = 29) by DHPLC and sequencing analysis, and identified eight mutations in the tyrosine kinase domain (TKD) of EGFR. Of the 8 mutations in the TK domain, 7 were novel (W731L, E734Q, T785A, C797Y, Y801H, L831H and E868G) (Figure 1A, B). . . . The mutant EGFRs were then transfected into COS-7 cells and exposed to EGF. . . . In order to investigate whether the EGFR mutations are sensitive to the EGFR inhibitor Erlotinib, COS-7 cells transfected with mutant EGFR and treated with various concentrations (0.002 to 2.0 muM) of Erlotinib and exposed to EGF. EGFR "
+      }
+    ],
+    "unresolved": [
+      "Evidence for DNMT3A R882 in AML is missing."
+    ],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 2294,
+    "output_tokens": 268,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-20942962"
+        ],
+        "fingerprint": "91c50abe1664ba8cd31b8cc09be07323c619f21c39c67daa9469f830aac22527",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R882",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R882",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "R882",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-20942962"
+        ],
+        "query": "{\n  \"disease\": \"acute myeloid leukemia\",\n  \"evidenceDirection\": \"DOES_NOT_SUPPORT\",\n  \"evidenceType\": \"PROGNOSTIC\",\n  \"molecularProfile\": \"DNMT3A R882\",\n  \"significance\": \"better outcome\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-20942962"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-20942962": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R882",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-20942962",
+              "start": 206,
+              "end": 211,
+              "raw": "W731L",
+              "canonical": "W731L"
+            },
+            {
+              "document_id": "pmid-20942962",
+              "start": 213,
+              "end": 218,
+              "raw": "E734Q",
+              "canonical": "E734Q"
+            },
+            {
+              "document_id": "pmid-20942962",
+              "start": 220,
+              "end": 225,
+              "raw": "T785A",
+              "canonical": "T785A"
+            },
+            {
+              "document_id": "pmid-20942962",
+              "start": 227,
+              "end": 232,
+              "raw": "C797Y",
+              "canonical": "C797Y"
+            },
+            {
+              "document_id": "pmid-20942962",
+              "start": 234,
+              "end": 239,
+              "raw": "Y801H",
+              "canonical": "Y801H"
+            },
+            {
+              "document_id": "pmid-20942962",
+              "start": 241,
+              "end": 246,
+              "raw": "L831H",
+              "canonical": "L831H"
+            },
+            {
+              "document_id": "pmid-20942962",
+              "start": 251,
+              "end": 256,
+              "raw": "E868G",
+              "canonical": "E868G"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-20942962": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-20942962"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-20942962": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "R882",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-20942962",
+              "start": 206,
+              "end": 211,
+              "raw": "W731L",
+              "canonical": "W731L"
+            },
+            {
+              "document_id": "pmid-20942962",
+              "start": 213,
+              "end": 218,
+              "raw": "E734Q",
+              "canonical": "E734Q"
+            },
+            {
+              "document_id": "pmid-20942962",
+              "start": 220,
+              "end": 225,
+              "raw": "T785A",
+              "canonical": "T785A"
+            },
+            {
+              "document_id": "pmid-20942962",
+              "start": 227,
+              "end": 232,
+              "raw": "C797Y",
+              "canonical": "C797Y"
+            },
+            {
+              "document_id": "pmid-20942962",
+              "start": 234,
+              "end": 239,
+              "raw": "Y801H",
+              "canonical": "Y801H"
+            },
+            {
+              "document_id": "pmid-20942962",
+              "start": 241,
+              "end": 246,
+              "raw": "L831H",
+              "canonical": "L831H"
+            },
+            {
+              "document_id": "pmid-20942962",
+              "start": 251,
+              "end": 256,
+              "raw": "E868G",
+              "canonical": "E868G"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-20942962": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "9390c0df41e4b83e3b76d0742ef096034cb6fa28ff2ec0a4e72864950cc19237",
+        "source_ids": [
+          "pmid-20942962"
+        ],
+        "token_reservation": 11622,
+        "evidence_ids": [
+          "pmid-20942962:f01",
+          "pmid-20942962:f02"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-20942962": {
+              "candidates": 2,
+              "sent": 2,
+              "chars_total": 771,
+              "chars_sent": 771,
+              "key_records": 2,
+              "required_candidates": 1,
+              "required_sent": 1,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-20942962:f01",
+                "pmid-20942962:f02"
+              ]
+            }
+          },
+          "candidates": 2,
+          "sent": 2,
+          "chars_total": 771,
+          "chars_sent": 771,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 1,
+              "sent": 1,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "supplied",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 2294,
+        "output_tokens": 268,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 3.965,
+        "evidence_fragments": 2
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-20942962) concerns malignant peritoneal mesothelioma (MPM) and focuses on EGFR mutations (W731L, E734Q, T785A, C797Y, Y801H, L831H, E868G) and their sensitivity to Erlotinib. The query asks about DNMT3A R882 in acute myeloid leukemia (AML). The evidence does not mention DNMT3A, AML, or the prognostic significance of DNMT3A R882. Therefore, there is insufficient evidence to support, refute, or revise the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-20942962",
+              "start": 0,
+              "end": 598,
+              "quote": "We analyzed a cohort of MPM samples (n = 29) by DHPLC and sequencing analysis, and identified eight mutations in the tyrosine kinase domain (TKD) of EGFR. Of the 8 mutations in the TK domain, 7 were novel (W731L, E734Q, T785A, C797Y, Y801H, L831H and E868G) (Figure 1A, B). . . . The mutant EGFRs were then transfected into COS-7 cells and exposed to EGF. . . . In order to investigate whether the EGFR mutations are sensitive to the EGFR inhibitor Erlotinib, COS-7 cells transfected with mutant EGFR and treated with various concentrations (0.002 to 2.0 muM) of Erlotinib and exposed to EGF. EGFR "
+            }
+          ],
+          "unresolved": [
+            "Evidence for DNMT3A R882 in AML is missing."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-20942962) concerns malignant peritoneal mesothelioma (MPM) and focuses on EGFR mutations (W731L, E734Q, T785A, C797Y, Y801H, L831H, E868G) and their sensitivity to Erlotinib. The query asks about DNMT3A R882 in acute myeloid leukemia (AML). The evidence does not mention DNMT3A, AML, or the prognostic significance of DNMT3A R882. Therefore, there is insufficient evidence to support, refute, or revise the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-20942962",
+              "start": 0,
+              "end": 598,
+              "quote": "We analyzed a cohort of MPM samples (n = 29) by DHPLC and sequencing analysis, and identified eight mutations in the tyrosine kinase domain (TKD) of EGFR. Of the 8 mutations in the TK domain, 7 were novel (W731L, E734Q, T785A, C797Y, Y801H, L831H and E868G) (Figure 1A, B). . . . The mutant EGFRs were then transfected into COS-7 cells and exposed to EGF. . . . In order to investigate whether the EGFR mutations are sensitive to the EGFR inhibitor Erlotinib, COS-7 cells transfected with mutant EGFR and treated with various concentrations (0.002 to 2.0 muM) of Erlotinib and exposed to EGF. EGFR "
+            }
+          ],
+          "unresolved": [
+            "Evidence for DNMT3A R882 in AML is missing."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-20942962"
+  ],
+  "duration_seconds": 3.980728,
+  "research_only": true
+}

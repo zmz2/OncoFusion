@@ -1,0 +1,393 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-4c0efb20-8ed6-46c3-a0f7-65ea4d373b0d",
+  "patient_id": "article-28078132",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "a2f00968a14b92491b177eb06666bdfba5a7d46f909d68bbc19a301bf3c1e68e",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The provided evidence (pmid-28078132:f01) describes two cases of intrahepatic cholangiocarcinoma with BRAF V600E mutations responding to dabrafenib and trametinib. The claim to be verified concerns NPM1 exon 11 mutations in acute myeloid leukemia (AML) and their prognostic significance (better outcome). The evidence is entirely irrelevant to the claim: it involves a different disease (cholangiocarcinoma vs. AML), a different gene/variant (BRAF V600E vs. NPM1 exon 11), and a different context (treatment response vs. prognostic significance). There is no information in the source document regarding NPM1, AML, or prognosis. Therefore, the evidence is insufficient to support, revise, or refute the claim.",
+    "citations": [
+      {
+        "document_id": "pmid-28078132",
+        "start": 0,
+        "end": 354,
+        "quote": "Two cases of patients with BRAF V600E positive, refractory intrahepatic cholangiocarcinoma showed excellent clinical and radiographic response to combination dabrafenib and trametinib treatment. One patient achieved complete remission at 6 months with progression at 9 months and the other partial remission at 2 months and no progression as of 5 months."
+      }
+    ],
+    "unresolved": [
+      "No evidence found linking NPM1 exon 11 mutations in AML to better outcome."
+    ],
+    "confidence": 1.0,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1676,
+    "output_tokens": 304,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-28078132"
+        ],
+        "fingerprint": "a2f00968a14b92491b177eb06666bdfba5a7d46f909d68bbc19a301bf3c1e68e",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "EXON 11 mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "EXON 11 mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "EXON 11 mutation",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-28078132"
+        ],
+        "query": "{\n  \"disease\": \"acute myeloid leukemia\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PROGNOSTIC\",\n  \"molecularProfile\": \"NPM1 EXON 11 MUTATION\",\n  \"significance\": \"better outcome\",\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-28078132"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28078132": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "EXON 11 mutation",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28078132",
+              "start": 32,
+              "end": 37,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28078132": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-28078132"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-28078132": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "EXON 11 mutation",
+          "source_variant_mentions": [
+            {
+              "document_id": "pmid-28078132",
+              "start": 32,
+              "end": 37,
+              "raw": "V600E",
+              "canonical": "V600E"
+            }
+          ],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-28078132": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "89ef647e9c7416aa69f4ec7e2e72819ab6b4b56c9e67ecc6c8a3c062c1fe602b",
+        "source_ids": [
+          "pmid-28078132"
+        ],
+        "token_reservation": 10298,
+        "evidence_ids": [
+          "pmid-28078132:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-28078132": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 354,
+              "chars_sent": 354,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-28078132:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 354,
+          "chars_sent": 354,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1676,
+        "output_tokens": 304,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 7.099,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-28078132:f01) describes two cases of intrahepatic cholangiocarcinoma with BRAF V600E mutations responding to dabrafenib and trametinib. The claim to be verified concerns NPM1 exon 11 mutations in acute myeloid leukemia (AML) and their prognostic significance (better outcome). The evidence is entirely irrelevant to the claim: it involves a different disease (cholangiocarcinoma vs. AML), a different gene/variant (BRAF V600E vs. NPM1 exon 11), and a different context (treatment response vs. prognostic significance). There is no information in the source document regarding NPM1, AML, or prognosis. Therefore, the evidence is insufficient to support, revise, or refute the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-28078132",
+              "start": 0,
+              "end": 354,
+              "quote": "Two cases of patients with BRAF V600E positive, refractory intrahepatic cholangiocarcinoma showed excellent clinical and radiographic response to combination dabrafenib and trametinib treatment. One patient achieved complete remission at 6 months with progression at 9 months and the other partial remission at 2 months and no progression as of 5 months."
+            }
+          ],
+          "unresolved": [
+            "No evidence found linking NPM1 exon 11 mutations in AML to better outcome."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The provided evidence (pmid-28078132:f01) describes two cases of intrahepatic cholangiocarcinoma with BRAF V600E mutations responding to dabrafenib and trametinib. The claim to be verified concerns NPM1 exon 11 mutations in acute myeloid leukemia (AML) and their prognostic significance (better outcome). The evidence is entirely irrelevant to the claim: it involves a different disease (cholangiocarcinoma vs. AML), a different gene/variant (BRAF V600E vs. NPM1 exon 11), and a different context (treatment response vs. prognostic significance). There is no information in the source document regarding NPM1, AML, or prognosis. Therefore, the evidence is insufficient to support, revise, or refute the claim.",
+          "citations": [
+            {
+              "document_id": "pmid-28078132",
+              "start": 0,
+              "end": 354,
+              "quote": "Two cases of patients with BRAF V600E positive, refractory intrahepatic cholangiocarcinoma showed excellent clinical and radiographic response to combination dabrafenib and trametinib treatment. One patient achieved complete remission at 6 months with progression at 9 months and the other partial remission at 2 months and no progression as of 5 months."
+            }
+          ],
+          "unresolved": [
+            "No evidence found linking NPM1 exon 11 mutations in AML to better outcome."
+          ],
+          "confidence": 1.0,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-28078132"
+  ],
+  "duration_seconds": 7.12139,
+  "research_only": true
+}

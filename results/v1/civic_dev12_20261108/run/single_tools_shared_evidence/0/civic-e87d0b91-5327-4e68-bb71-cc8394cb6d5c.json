@@ -1,0 +1,371 @@
+{
+  "schema_version": "1.0",
+  "case_id": "civic-e87d0b91-5327-4e68-bb71-cc8394cb6d5c",
+  "patient_id": "article-27093365",
+  "status": "completed",
+  "provider": "openai_compatible",
+  "model": "hc-qwen38-27b-fp8",
+  "simulated": false,
+  "fingerprint": "79fb060f934b1c7f3f51310cf2b1c16eae7779876ecd830a61b884ce95ae3ef4",
+  "config": {
+    "mode": "single_tools",
+    "ablations": {
+      "variant_normalization": true,
+      "disease_matching": true,
+      "drug_polarity": true,
+      "retrieval_reranking": true,
+      "timeline_structure": true,
+      "external_verification": true,
+      "source_deduplication": true,
+      "structured_board": true,
+      "targeted_requery": false
+    },
+    "delegated_roles": [],
+    "routing": "fixed",
+    "workflow_backend": "langgraph",
+    "evidence_first": true,
+    "specialist_contracts": false,
+    "latest_role_board": false,
+    "max_calls": 12,
+    "max_tool_calls": 12,
+    "max_total_tokens": 260000,
+    "max_output_tokens": 5000,
+    "citation_mode": "fragment",
+    "fragment_chars": 600,
+    "max_fragments_per_document": 8,
+    "fragment_budget": 12000,
+    "findings_limit": 3,
+    "interaction_protocol": "legacy",
+    "schema_retries": 2,
+    "top_k": 6,
+    "candidate_k": 20,
+    "seed": 0,
+    "temperature": 0.0
+  },
+  "decision": {
+    "answer": "NEI",
+    "explanation": "The claim posits that CD274 (PD-L1) expression is a predictive biomarker for sensitivity/response to Immune Checkpoint Inhibitors in cutaneous adenocystic carcinoma. The provided evidence (pmid-27093365) concerns Merkel-cell carcinoma, not cutaneous adenocystic carcinoma. Furthermore, the evidence explicitly states that PD-L1 expression did not correlate significantly with clinical response to pembrolizumab in the studied cohort. Therefore, the evidence does not support the claim for the specified disease and actually contradicts the predictive utility in the studied context. Since the disease is incorrect and the direction is contradictory, the evidence is insufficient to support the specific claim as written.",
+    "citations": [
+      {
+        "document_id": "pmid-27093365",
+        "start": 0,
+        "end": 442,
+        "quote": "Eligible patients were at least 18 years old and had distant metastatic or recurrent locoregional Merkel-cell carcinoma . . . Samples were considered to be positive for PD-L1 if 1% or more of tumor cells expressed PD-L1. . . . In our analysis of tumors from 25 patients, neither PD-L1 expression on tumor cells (Fig. 4C) nor expression on infiltrating immune cells (not shown) correlated significantly with clinical response to pembrolizumab."
+      }
+    ],
+    "unresolved": [],
+    "confidence": 0.9,
+    "adopted_claim_ids": [],
+    "rejected_claim_ids": []
+  },
+  "reports": [],
+  "usage": {
+    "calls": 1,
+    "http_attempts": 1,
+    "tool_calls": 6,
+    "input_tokens": 1688,
+    "output_tokens": 241,
+    "estimated_tokens": false,
+    "cost_usd": null
+  },
+  "trace": [
+    {
+      "sequence": 0,
+      "kind": "run_started",
+      "role": "",
+      "details": {
+        "visible_ids": [
+          "pmid-27093365"
+        ],
+        "fingerprint": "79fb060f934b1c7f3f51310cf2b1c16eae7779876ecd830a61b884ce95ae3ef4",
+        "simulated": false,
+        "version": "0.1.0",
+        "interaction_protocol": "legacy",
+        "citation_mode": "fragment"
+      }
+    },
+    {
+      "sequence": 1,
+      "kind": "tool_completed",
+      "role": "timeline",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {}
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "tool_completed",
+      "role": "genomics",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Expression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "tool_completed",
+      "role": "pathology",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Expression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "tool_completed",
+      "role": "drug",
+      "details": {
+        "source_ids": [],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {},
+          "canonical_variant": "Expression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {}
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "retrieval_completed",
+      "role": "literature",
+      "details": {
+        "ranked_ids": [
+          "pmid-27093365"
+        ],
+        "query": "{\n  \"disease\": \"cutaneous adenocystic carcinoma\",\n  \"evidenceDirection\": \"SUPPORTS\",\n  \"evidenceType\": \"PREDICTIVE\",\n  \"molecularProfile\": \"CD274 Expression\",\n  \"significance\": \"sensitivity/response\",\n  \"therapies\": [\n    \"Immune Checkpoint Inhibitor\"\n  ],\n  \"variantOrigin\": \"SOMATIC\"\n}",
+        "candidate_k": 20,
+        "top_k": 6
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "tool_completed",
+      "role": "literature",
+      "details": {
+        "source_ids": [
+          "pmid-27093365"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27093365": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Expression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27093365": "sensitivity"
+          }
+        }
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "tool_completed",
+      "role": "verifier",
+      "details": {
+        "source_ids": [
+          "pmid-27093365"
+        ],
+        "query": "",
+        "signals": {
+          "timeline": [],
+          "matches": {
+            "pmid-27093365": {
+              "gene": "unknown",
+              "variant": "unknown",
+              "disease": "unknown",
+              "drug": "unknown"
+            }
+          },
+          "canonical_variant": "Expression",
+          "source_variant_mentions": [],
+          "variant_mention_limit": 200,
+          "pathology_context": [],
+          "pathology_field_limit": 100,
+          "directions": {
+            "pmid-27093365": "sensitivity"
+          },
+          "verification_mode": "source_grounded"
+        }
+      }
+    },
+    {
+      "sequence": 8,
+      "kind": "agent_started",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "payload_sha256": "f0f3b9c567bcb072015784fa41a0047afb2da6009ea6f1bc8659253957207064",
+        "source_ids": [
+          "pmid-27093365"
+        ],
+        "token_reservation": 10456,
+        "evidence_ids": [
+          "pmid-27093365:f01"
+        ],
+        "evidence_coverage": {
+          "documents": {
+            "pmid-27093365": {
+              "candidates": 1,
+              "sent": 1,
+              "chars_total": 442,
+              "chars_sent": 442,
+              "key_records": 1,
+              "required_candidates": 0,
+              "required_sent": 0,
+              "over_fragment_cap": 0,
+              "share_characters": 12000,
+              "evidence_ids": [
+                "pmid-27093365:f01"
+              ]
+            }
+          },
+          "candidates": 1,
+          "sent": 1,
+          "chars_total": 442,
+          "chars_sent": 442,
+          "budget_characters": 12000,
+          "fragment_characters": 600,
+          "fragments_per_document": 8,
+          "documents_without_evidence": [],
+          "tail_dropped": false,
+          "required_labels": [
+            "treatment",
+            "molecular",
+            "pathology"
+          ],
+          "required": {
+            "treatment": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "molecular": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            },
+            "pathology": {
+              "candidates": 0,
+              "sent": 0,
+              "unsent": []
+            }
+          },
+          "guaranteed_unsent": []
+        },
+        "material_basis": "not_recorded",
+        "board_findings": 0,
+        "unresolved_items": 0,
+        "unresolved_by_role": {}
+      }
+    },
+    {
+      "sequence": 9,
+      "kind": "model_usage",
+      "role": "decision",
+      "details": {
+        "input_tokens": 1688,
+        "output_tokens": 241,
+        "attempts": 1,
+        "estimated": false,
+        "seconds": 12.462,
+        "evidence_fragments": 1
+      }
+    },
+    {
+      "sequence": 10,
+      "kind": "agent_reported",
+      "role": "decision",
+      "details": {
+        "output": {
+          "answer": "NEI",
+          "explanation": "The claim posits that CD274 (PD-L1) expression is a predictive biomarker for sensitivity/response to Immune Checkpoint Inhibitors in cutaneous adenocystic carcinoma. The provided evidence (pmid-27093365) concerns Merkel-cell carcinoma, not cutaneous adenocystic carcinoma. Furthermore, the evidence explicitly states that PD-L1 expression did not correlate significantly with clinical response to pembrolizumab in the studied cohort. Therefore, the evidence does not support the claim for the specified disease and actually contradicts the predictive utility in the studied context. Since the disease is incorrect and the direction is contradictory, the evidence is insufficient to support the specific claim as written.",
+          "citations": [
+            {
+              "document_id": "pmid-27093365",
+              "start": 0,
+              "end": 442,
+              "quote": "Eligible patients were at least 18 years old and had distant metastatic or recurrent locoregional Merkel-cell carcinoma . . . Samples were considered to be positive for PD-L1 if 1% or more of tumor cells expressed PD-L1. . . . In our analysis of tumors from 25 patients, neither PD-L1 expression on tumor cells (Fig. 4C) nor expression on infiltrating immune cells (not shown) correlated significantly with clinical response to pembrolizumab."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 11,
+      "kind": "agent_completed",
+      "role": "decision",
+      "details": {
+        "executor": "generalist",
+        "output": {
+          "answer": "NEI",
+          "explanation": "The claim posits that CD274 (PD-L1) expression is a predictive biomarker for sensitivity/response to Immune Checkpoint Inhibitors in cutaneous adenocystic carcinoma. The provided evidence (pmid-27093365) concerns Merkel-cell carcinoma, not cutaneous adenocystic carcinoma. Furthermore, the evidence explicitly states that PD-L1 expression did not correlate significantly with clinical response to pembrolizumab in the studied cohort. Therefore, the evidence does not support the claim for the specified disease and actually contradicts the predictive utility in the studied context. Since the disease is incorrect and the direction is contradictory, the evidence is insufficient to support the specific claim as written.",
+          "citations": [
+            {
+              "document_id": "pmid-27093365",
+              "start": 0,
+              "end": 442,
+              "quote": "Eligible patients were at least 18 years old and had distant metastatic or recurrent locoregional Merkel-cell carcinoma . . . Samples were considered to be positive for PD-L1 if 1% or more of tumor cells expressed PD-L1. . . . In our analysis of tumors from 25 patients, neither PD-L1 expression on tumor cells (Fig. 4C) nor expression on infiltrating immune cells (not shown) correlated significantly with clinical response to pembrolizumab."
+            }
+          ],
+          "unresolved": [],
+          "confidence": 0.9,
+          "adopted_claim_ids": [],
+          "rejected_claim_ids": []
+        }
+      }
+    },
+    {
+      "sequence": 12,
+      "kind": "run_completed",
+      "role": "",
+      "details": {
+        "status": "completed"
+      }
+    }
+  ],
+  "visible_document_ids": [
+    "pmid-27093365"
+  ],
+  "duration_seconds": 12.47596,
+  "research_only": true
+}

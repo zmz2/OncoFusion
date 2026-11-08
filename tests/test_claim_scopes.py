@@ -88,13 +88,26 @@ def test_first_claim_role_has_no_verdict_channel(recorder):
     result = Engine(recorder).run(CASE, v1_class_config("native"))
     roles = [payload["role"] for payload in recorder.payloads]
     first = recorder.systems[roles.index("literature")]
-    later = recorder.systems[roles.index("timeline")]
+    later = recorder.systems[roles.index("genomics")]
     verifier = recorder.systems[roles.index("verifier")]
     assert '"verdicts"' not in first
     assert "If that list is empty, do not emit verdicts." in first
     assert "previously committed claim ids: literature-" in later
     assert '"findings"' not in verifier and '"verdicts"' in verifier
     assert result.status == "completed"
+
+
+def test_missing_specialist_input_is_registered_as_not_applicable(recorder):
+    result = Engine(recorder).run(CASE, v1_class_config("native"))
+    timeline = next(report for report in result.reports if report.role == "timeline")
+    finding = timeline.output.findings[0]
+    assert finding.claim_id == "timeline-01"
+    assert finding.author_role == "timeline"
+    assert finding.scope == "temporal"
+    assert finding.material_status == "not_applicable"
+    assert finding.material_basis == "not_recorded"
+    assert finding.relation == "NEI" and not finding.citations
+    assert "timeline" not in [payload["role"] for payload in recorder.payloads]
 
 
 def test_decision_prompt_separates_claim_ids_from_evidence_ids(recorder):
@@ -115,10 +128,10 @@ def test_mcq_decision_prompt_excludes_verification_labels(recorder):
 
 def test_role_scope_is_encoded_in_the_response_schema(recorder):
     Engine(recorder).run(CASE, v1_class_config("native"))
-    timeline = recorder.systems[[payload["role"] for payload in recorder.payloads].index("timeline")]
+    timeline = recorder.systems[[payload["role"] for payload in recorder.payloads].index("genomics")]
     schema_text = timeline.split("conforming to this schema: ", 1)[1]
     schema = json.JSONDecoder().raw_decode(schema_text)[0]
-    assert schema["$defs"]["ClaimFinding"]["properties"]["scope"]["enum"] == ["temporal"]
+    assert schema["$defs"]["ClaimFinding"]["properties"]["scope"]["enum"] == ["molecular"]
 
 
 def test_verdict_citations_are_resolved_then_capped():
