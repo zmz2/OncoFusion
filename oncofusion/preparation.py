@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 from collections import Counter
 from pathlib import Path, PurePosixPath
@@ -17,6 +18,13 @@ CIVIC_FILE = "data_builder/builds/civicfact-2026.06.09/data.jsonl.gz"
 CIVIC_BLOB = "af1b4ee457b2f96f661a27ecce72e1c938dc8c4c"
 CIVIC_URL = f"https://raw.githubusercontent.com/creisle/civicfact/{CIVIC_REVISION}/{CIVIC_FILE}"
 HF_REPO = "EeshaanJain/MTBBench"
+HF_ENDPOINT_DEFAULT = "https://huggingface.co"
+
+
+def hf_endpoint() -> str:
+    """Host used for pinned dataset acquisition when the canonical host is unreachable."""
+    return (os.environ.get("ONCOFUSION_HF_ENDPOINT") or os.environ.get("HF_ENDPOINT")
+            or HF_ENDPOINT_DEFAULT).rstrip("/")
 
 
 def download(client: httpx.Client, url: str, destination: Path, max_bytes: int = 100_000_000,
@@ -171,7 +179,8 @@ def prepare_mtb(source: Path, root: Path, output: Path, path_map: dict[str, str]
 
 
 def acquire_mtb(client: httpx.Client, root: Path) -> dict:
-    response = client.get(f"https://huggingface.co/api/datasets/{HF_REPO}/revision/main")
+    endpoint = hf_endpoint()
+    response = client.get(f"{endpoint}/api/datasets/{HF_REPO}/revision/main")
     response.raise_for_status()
     metadata = response.json()
     revision = metadata["sha"]
@@ -182,7 +191,7 @@ def acquire_mtb(client: httpx.Client, root: Path) -> dict:
     if len(questions) != 1:
         raise ValueError("expected one questions_msk_bench.json; inspect upstream schema before proceeding")
     source = root / questions[0]
-    records = [download(client, f"https://huggingface.co/datasets/{HF_REPO}/resolve/{revision}/{questions[0]}", source)]
+    records = [download(client, f"{endpoint}/datasets/{HF_REPO}/resolve/{revision}/{questions[0]}", source)]
     data = json.loads(source.read_text())
     upstream = [path for entries in data.values() for event in entries for path in event.get("file_paths", [])]
     mapping = build_path_map(upstream, names)
@@ -190,8 +199,8 @@ def acquire_mtb(client: httpx.Client, root: Path) -> dict:
         path = (root / name).resolve()
         if not path.is_relative_to(root.resolve()) or path.suffix.lower() not in (".txt", ".csv", ".tsv", ".json"):
             raise ValueError("unsupported or unsafe benchmark source path")
-        records.append(download(client, f"https://huggingface.co/datasets/{HF_REPO}/resolve/{revision}/{name}", path))
-    inventory = {"repository": HF_REPO, "revision": revision, "downloads": records,
+        records.append(download(client, f"{endpoint}/datasets/{HF_REPO}/resolve/{revision}/{name}", path))
+    inventory = {"repository": HF_REPO, "endpoint": endpoint, "revision": revision, "downloads": records,
                  "questions": questions[0], "path_map": mapping}
     (root / "acquisition.json").write_text(json.dumps(inventory, indent=2))
     return inventory

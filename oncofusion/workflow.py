@@ -35,6 +35,18 @@ def role_order(config: RunConfig) -> tuple[str, ...]:
 
 
 def specification(config: RunConfig) -> dict:
+    if config.execution_model == "vote":
+        return {
+            "backend": "native-threaded-vote",
+            "evidence_first": True,
+            "nodes": ["independent_ballots", "aggregate_v0", "optional_v3_arbitration"],
+            "initial_sequence": ["independent_ballots"],
+            "terminal": "aggregate_v0",
+            "conditional": {"after_aggregate_v0": ["done", "optional_v3_arbitration"]},
+            "max_requeries": 0,
+            "parallel": True,
+            "checkpoint_resume": False,
+        }
     nodes = list(role_order(config)) if config.mode in ("multi", "fixed_five") else ["single_analysis"]
     nodes += ["requery", "decision"]
     return {"backend": config.workflow_backend, "evidence_first": config.evidence_first,

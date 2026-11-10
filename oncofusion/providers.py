@@ -11,7 +11,7 @@ from urllib.parse import urlsplit
 
 import httpx
 from .evidence import polarity, quote_document, tokens
-from .schemas import AnalysisOutput, DecisionOutput, Document, Finding
+from .schemas import AnalysisOutput, Citation, DecisionOutput, Document, Finding
 
 
 class ProviderError(RuntimeError):
@@ -51,7 +51,16 @@ class MockProvider:
 
     def complete(self, system: str, payload: dict, max_tokens: int,
                  temperature: float, seed: int) -> ModelReply:
-        docs = [Document.model_validate(d) for d in payload["sources"]]
+        fragments = payload.get("evidence") or []
+        if fragments:
+            # Fragment citation mode exposes numbered spans; the simulator rebuilds each source view.
+            joined: dict[str, str] = {}
+            for item in fragments:
+                joined[item["document_id"]] = joined.get(item["document_id"], "") + item["text"]
+            docs = [Document.model_validate({**entry, "text": joined.get(entry["id"], "") or " "})
+                    for entry in payload["sources"]]
+        else:
+            docs = [Document.model_validate(d) for d in payload["sources"]]
         signals = payload["signals"]
         findings = []
         claim_direction = polarity(payload["question"])
@@ -99,13 +108,97 @@ class MockProvider:
                 board = payload["board"]
                 if isinstance(board, str):
                     board = [json.loads(line) for line in board.splitlines() if line]
-                findings = [Finding.model_validate(f) for f in board]
+                findings = []
+                for entry in board:
+                    quotes = [Citation.model_validate(c) for c in entry.get("citations", []) if c.get("quote")]
+                    # A fragment-mode board hands over span references without the text, and the
+                    # reflection verifier receives no source view: the simulator downgrades such a
+                    # claim to NEI rather than inventing a quote it cannot see.
+                    relation = entry["relation"] if quotes or not entry.get("citations") else "NEI"
+                    findings.append(Finding(statement=entry["statement"], relation=relation, citations=quotes))
             if payload["role"] == "verifier":
                 relevant = [f for f in findings if f.relation != "NEI"][:20]
             unresolved = [] if relevant else ["No matching evidence in the provided source view."]
             out = AnalysisOutput(findings=relevant, unresolved=unresolved,
                                  requery=payload["question"] if unresolved and payload["role"] == "verifier" else "")
-        content = out.model_dump_json()
+        def render() -> str:
+            evidence = payload.get("evidence") or []
+            if not evidence:
+                roster = payload.get("claim_roster") or []
+                if payload.get("role") == "verifier" and roster:
+                    return json.dumps({
+                        "verdicts": [{
+                            "target_claim_id": entry["claim_id"],
+                            "verdict": "insufficient",
+                            "note": "SIMULATED: no visible source view was supplied for reflection.",
+                            "citations": [],
+                        } for entry in roster],
+                        "unresolved": out.unresolved,
+                        "requery": out.requery,
+                    }, ensure_ascii=False)
+                return out.model_dump_json()
+            ids = [item["evidence_id"] for item in evidence]
+            roster = payload.get("claim_roster") or []
+            if isinstance(out, DecisionOutput):
+                body = {"answer": out.answer, "explanation": out.explanation,
+                        "unresolved": out.unresolved, "confidence": out.confidence,
+                        "citations": [{"evidence_id": e} for e in ids[:2]]}
+                if payload.get("revision_gate"):
+                    if out.answer == "SUPPORTS":
+                        assessment = {"evidence_relevance": "relevant",
+                                      "claim_conformance": "as_written",
+                                      "revision_fields": [],
+                                      "minimal_revision": ""}
+                    elif out.answer == "REVISIONS":
+                        assessment = {"evidence_relevance": "relevant",
+                                      "claim_conformance": "requires_revision",
+                                      "revision_fields": ["significance"],
+                                      "minimal_revision": "Use the supported significance."}
+                    else:
+                        assessment = {"evidence_relevance": "insufficient",
+                                      "claim_conformance": "unclear",
+                                      "revision_fields": [],
+                                      "minimal_revision": ""}
+                    body["assessment"] = assessment
+                if roster:
+                    confirmed = [
+                        entry["claim_id"] for entry in roster
+                        if entry.get("verifier_verdict") == "confirmed"]
+                    excluded = [
+                        entry["claim_id"] for entry in roster
+                        if entry.get("verifier_verdict") != "confirmed"]
+                    body["adopted_claim_ids"] = confirmed
+                    body["rejected_claim_ids"] = excluded
+            elif payload["role"] == "verifier" and roster:
+                body = {"verdicts": [
+                    {"target_claim_id": entry["claim_id"], "verdict": "confirmed",
+                     "note": "simulated source check, not a biomedical judgement",
+                     "citations": [{"evidence_id": ids[0]}] if ids else []}
+                    for entry in roster
+                ], "unresolved": out.unresolved, "requery": out.requery}
+            else:
+                body = {"findings": [{"statement": f.statement, "relation": f.relation,
+                                      "citations": [{"evidence_id": e} for e in ids[:1]]}
+                                      for f in out.findings],
+                        "unresolved": out.unresolved, "requery": out.requery}
+                if "claim_roster" in payload:
+                    # The simulator stays inside the role's own layer so the scope contract is
+                    # exercised offline as well as against the real model.
+                    scope = {"timeline": "temporal", "genomics": "molecular", "pathology": "pathologic",
+                             "drug": "exposure", "literature": "source", "verifier": "verification"}[payload["role"]]
+                    for finding in body["findings"]:
+                        finding.update({"scope": scope,
+                                        "evidence_level": "measured" if ids else "absent",
+                                        "material_status": "present" if ids else "unknown"})
+                        if not ids:
+                            finding["citations"] = []
+                            finding["relation"] = "NEI"
+                if roster and body["findings"]:
+                    # The simulator only ever leans on the first earlier claim, but it must name it.
+                    body["findings"][0]["used_claim_ids"] = [roster[0]["claim_id"]]
+            return json.dumps(body, ensure_ascii=False)
+
+        content = render()
         while len(content) // 4 > max_tokens:
             if isinstance(out, AnalysisOutput) and out.findings:
                 out.findings.pop()
@@ -113,7 +206,7 @@ class MockProvider:
                 out.citations.pop()
             else:
                 raise ProviderError("simulated output exceeds configured output-token limit")
-            content = out.model_dump_json()
+            content = render()
         return ModelReply(content, max(1, len(json.dumps(payload, ensure_ascii=False)) // 4),
                           max(1, len(content) // 4), estimated=True)
 
@@ -127,6 +220,7 @@ class OpenAICompatibleProvider:
     retries: int = 2
     json_mode: bool = True
     token_parameter: str = "max_tokens"
+    thinking_token_budget: int | None = None
     send_temperature: bool = True
     send_seed: bool = True
     input_price: float | None = None
@@ -145,6 +239,9 @@ class OpenAICompatibleProvider:
             raise ValueError("real provider requires a model and API key")
         if self.token_parameter not in ("max_tokens", "max_completion_tokens"):
             raise ValueError("unsupported token parameter")
+        if self.thinking_token_budget is not None and (
+                type(self.thinking_token_budget) is not int or not 0 <= self.thinking_token_budget <= 8000):
+            raise ValueError("thinking_token_budget must be an integer from 0 to 8000")
         if not 0 <= self.retries <= 5 or (not math.isfinite(self.timeout) or self.timeout <= 0):
             raise ValueError("invalid timeout or retry limit")
         if any(p is not None and (not math.isfinite(p) or p < 0) for p in (self.input_price, self.output_price)):
@@ -162,6 +259,8 @@ class OpenAICompatibleProvider:
             body["seed"] = seed
         if self.json_mode:
             body["response_format"] = {"type": "json_object"}
+        if self.thinking_token_budget is not None:
+            body["thinking_token_budget"] = self.thinking_token_budget
         headers = {"Authorization": "Bearer " + self.api_key}
         with httpx.Client(timeout=self.timeout, transport=self.transport, follow_redirects=False) as client:
             for attempt in range(self.retries + 1):
@@ -205,6 +304,16 @@ class OpenAICompatibleProvider:
         raise AssertionError("retry loop must return or raise")
 
 
+def env_int(name: str, default: int | None = None) -> int | None:
+    raw = os.getenv(name)
+    if raw is None or not raw.strip():
+        return default
+    try:
+        return int(raw)
+    except ValueError as exc:
+        raise ValueError(name + " must be an integer") from exc
+
+
 def env_bool(name: str, default: bool) -> bool:
     value = os.getenv(name, str(default)).lower()
     if value not in ("true", "false"):
@@ -214,29 +323,49 @@ def env_bool(name: str, default: bool) -> bool:
 
 def provider_identity(provider: Provider) -> dict:
     """Include inference-affecting settings in cache identities; credentials stay private."""
-    identity = {"provider": provider.name, "model": provider.model, "simulated": provider.simulated}
-    if isinstance(provider, OpenAICompatibleProvider):
-        identity.update({key: getattr(provider, key) for key in
-                         ("base_url", "timeout", "retries", "json_mode", "token_parameter", "send_temperature", "send_seed", "input_price", "output_price")})
+    scheduler = getattr(provider, "scheduler", None)
+    inner = getattr(provider, "inner", provider)
+    identity = {
+        "provider": inner.name,
+        "model": inner.model,
+        "simulated": inner.simulated,
+    }
+    if scheduler is not None:
+        identity["scheduler_capacity"] = scheduler.capacity
+    if isinstance(inner, OpenAICompatibleProvider):
+        identity.update({key: getattr(inner, key) for key in
+                         ("base_url", "timeout", "retries", "json_mode", "token_parameter", "thinking_token_budget", "send_temperature", "send_seed", "input_price", "output_price")})
     return identity
 
 
 def provider_from_env() -> Provider:
     backend = os.getenv("ONCOFUSION_PROVIDER", "mock")
     if backend == "mock":
-        return MockProvider()
+        from .mock_routes import MockRouteProvider
+        provider = MockRouteProvider()
+        capacity = env_int("ONCOFUSION_API_CONCURRENCY")
+        if capacity is not None:
+            from .scheduling import ProviderScheduler, ScheduledProvider
+            provider = ScheduledProvider(provider, ProviderScheduler(capacity))
+        return provider
     if backend != "openai_compatible":
         raise ValueError("unknown ONCOFUSION_PROVIDER")
     missing = [key for key in ("ONCOFUSION_BASE_URL", "ONCOFUSION_MODEL", "ONCOFUSION_API_KEY") if not os.getenv(key)]
     if missing:
         raise ValueError("missing real-provider environment variables: " + ", ".join(missing))
     prices = [float(os.environ[k]) if k in os.environ else None for k in ("ONCOFUSION_INPUT_PRICE", "ONCOFUSION_OUTPUT_PRICE")]
-    return OpenAICompatibleProvider(os.environ["ONCOFUSION_BASE_URL"], os.environ["ONCOFUSION_MODEL"],
-                                    os.environ["ONCOFUSION_API_KEY"],
-                                    timeout=float(os.getenv("ONCOFUSION_TIMEOUT", "60")),
-                                    retries=int(os.getenv("ONCOFUSION_RETRIES", "2")),
-                                    json_mode=env_bool("ONCOFUSION_JSON_MODE", True),
-                                    send_temperature=env_bool("ONCOFUSION_SEND_TEMPERATURE", True),
-                                    send_seed=env_bool("ONCOFUSION_SEND_SEED", True),
-                                    token_parameter=os.getenv("ONCOFUSION_TOKEN_PARAMETER", "max_tokens"),
-                                    input_price=prices[0], output_price=prices[1])
+    provider = OpenAICompatibleProvider(os.environ["ONCOFUSION_BASE_URL"], os.environ["ONCOFUSION_MODEL"],
+                                        os.environ["ONCOFUSION_API_KEY"],
+                                        timeout=float(os.getenv("ONCOFUSION_TIMEOUT", "60")),
+                                        retries=int(os.getenv("ONCOFUSION_RETRIES", "2")),
+                                        json_mode=env_bool("ONCOFUSION_JSON_MODE", True),
+                                        send_temperature=env_bool("ONCOFUSION_SEND_TEMPERATURE", True),
+                                        send_seed=env_bool("ONCOFUSION_SEND_SEED", True),
+                                        token_parameter=os.getenv("ONCOFUSION_TOKEN_PARAMETER", "max_tokens"),
+                                        thinking_token_budget=env_int("ONCOFUSION_THINKING_TOKEN_BUDGET"),
+                                        input_price=prices[0], output_price=prices[1])
+    capacity = env_int("ONCOFUSION_API_CONCURRENCY")
+    if capacity is not None:
+        from .scheduling import ProviderScheduler, ScheduledProvider
+        provider = ScheduledProvider(provider, ProviderScheduler(capacity))
+    return provider

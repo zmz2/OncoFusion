@@ -66,3 +66,18 @@ def test_import_retains_question_but_keeps_claim_entities_out_of_source(tmp_path
     coverage = audit['role_coverage']
     assert all(coverage['explicit_role_input_cases'][r] == 1 for r in ('genomics','pathology','drug'))
     assert coverage['heterogeneous_input_cases'] == 0
+
+
+def test_civic_document_is_addressed_by_its_source_identity():
+    """A citation id must be the real source identity; a shared generic label cannot be cited back."""
+    from oncofusion.datasets import import_civicfact
+    row = {"id": "x1", "claim.flat": "Claim", "evidence.flat": "Evidence text.",
+           "document.pmid": "12345", "document.title": "Study", "document.license": "CC BY",
+           "partition": "dev", "gold_label_name": "SUPPORTS"}
+    cases, _ = import_civicfact([row])
+    doc = cases[0].documents[0]
+    assert doc.id == doc.origin_id == "pmid-12345"
+
+    abstract = dict(row, id="x2", **{"document.pmid": "ASH:10.1182/blood.2020007657"})
+    second, _ = import_civicfact([abstract])
+    assert second[0].documents[0].id.startswith("source-") and second[0].documents[0].id != "evidence"

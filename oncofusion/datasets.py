@@ -84,7 +84,7 @@ def import_civicfact(rows: list[dict], refutes_label: str = "REFUTES", *,
         evidence = row["evidence.flat"]
         # Whitelist fields; never forward civic.description, reviews, labels, or augmentation metadata.
         documents = [] if not evidence.strip() else [Document(
-            id="evidence", origin_id=origin_id, kind="literature", text=evidence,
+            id=origin_id, origin_id=origin_id, kind="literature", text=evidence,
             title="" if row.get("document.title") is None else row["document.title"], url=source_url,
             license="" if row.get("document.license") is None else row["document.license"])]
         cases.append(CaseInput(id=cid, patient_id=group_id, task="verification",

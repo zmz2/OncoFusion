@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import json
+from concurrent.futures import ThreadPoolExecutor
+import math
 import random
 import statistics
 from collections import defaultdict
@@ -10,6 +12,20 @@ from .datasets import validate_alignment, GoldRecord, read_jsonl, validate_split
 from .engine import Engine, run_fingerprint
 from .providers import ProviderError
 from .schemas import CaseInput, RunConfig, RunResult, TraceEvent
+
+
+def observed_call_count(events: list[TraceEvent]) -> int:
+    """Count every provider call that reached a model node, including failed route runs."""
+    return sum(event.kind in {"agent_started", "route_node_started"} for event in events)
+
+
+def nearest_rank_percentile(values: list[float], percentile: float) -> float | None:
+    if not values:
+        return None
+    if not 0 < percentile <= 1:
+        raise ValueError("percentile must be in (0, 1]")
+    ordered = sorted(values)
+    return ordered[max(1, math.ceil(percentile * len(ordered))) - 1]
 
 
 def classification_metrics(gold: list[str], predicted: list[str], labels: list[str]) -> dict:
@@ -71,8 +87,110 @@ def risk_coverage(correct: list[bool], confidence: list[float]) -> list[dict]:
     return results
 
 
+def run_case(case: CaseInput, gold_record: GoldRecord, engine: Engine, config: RunConfig,
+             output: Path | None, resume: bool, retry_failed: bool) -> dict:
+    events = []
+    try:
+        result_path = output / (case.id + ".json") if output else None
+        failure_path = output / (case.id + ".failed.json") if output else None
+        result = None
+        if resume and result_path and result_path.exists():
+            cached = RunResult.model_validate_json(result_path.read_text())
+            if cached.fingerprint != run_fingerprint(case, config, engine.provider):
+                raise ValueError("cached result identity mismatch; use a new output directory")
+            if cached.status == "completed" or not retry_failed:
+                result = cached
+        if resume and result is None and failure_path and failure_path.exists() and not retry_failed:
+            failure = json.loads(failure_path.read_text())
+            if failure.get("fingerprint") != run_fingerprint(case, config, engine.provider):
+                raise ValueError("failed-result identity mismatch; use a new output directory")
+            events.extend(TraceEvent.model_validate(e) for e in failure["trace"])
+            raise ProviderError(failure["error"])
+        if result is None:
+            result = engine.run(case, config, events.append)
+        events = result.trace
+        prediction = result.decision.answer if result.decision else "__INCOMPLETE__"
+        row = {"case_id": case.id, "group_id": gold_record.group_id,
+               "gold": gold_record.label, "prediction": prediction,
+               "status": result.status, "usage": result.usage.model_dump(),
+               "duration_seconds": result.duration_seconds, "fingerprint": result.fingerprint}
+        if result.vote_result is not None:
+            row["vote_completion_status"] = result.vote_result.completion_status
+        if result.status == "failed" and result.vote_result is not None:
+            row["error"] = result.vote_result.failure_reason
+        if output:
+            (output / (case.id + ".json")).write_text(result.model_dump_json(indent=2), encoding="utf-8")
+    except ProviderError as exc:
+        row = {"case_id": case.id, "group_id": gold_record.group_id,
+               "gold": gold_record.label, "prediction": "__FAILED__", "status": "failed",
+               "error": str(exc), "usage_incomplete": True,
+               "observed_usage": {
+                   "calls": observed_call_count(events),
+                   "input_tokens": sum(e.details["input_tokens"] for e in events if e.kind == "model_usage"),
+                   "output_tokens": sum(e.details["output_tokens"] for e in events if e.kind == "model_usage")}}
+        if output:
+            (output / (case.id + ".failed.json")).write_text(json.dumps({
+                "error": str(exc), "fingerprint": run_fingerprint(case, config, engine.provider),
+                "trace": [e.model_dump() for e in events]}, ensure_ascii=False), encoding="utf-8")
+    observed_events = [e.details for e in events if e.kind == "model_usage"]
+    prices_known = engine.provider.input_price is not None and engine.provider.output_price is not None
+    def event_cost(event):
+        return (event["input_tokens"] * engine.provider.input_price +
+                event["output_tokens"] * engine.provider.output_price) / 1_000_000
+    row["known_cost_usd"] = sum(event_cost(e) for e in observed_events if not e["estimated"]) if prices_known else 0.0
+    row["estimated_cost_usd"] = sum(event_cost(e) for e in observed_events if e["estimated"]) if prices_known else None
+    row["usage_incomplete"] = row.get("usage_incomplete", False) or (
+        not engine.provider.simulated and any(e["estimated"] or e["attempts"] > 1 for e in observed_events))
+    row["cost_complete"] = prices_known and not row["usage_incomplete"]
+    return row
+
+
+def summarize(rows: list[dict], engine: Engine, config: RunConfig, cases: list[CaseInput]) -> dict:
+    universe = list(cases[0].verification_labels) if cases[0].task == "verification" else sorted(
+        {key for case in cases for key in case.options})
+    metrics = classification_metrics([r["gold"] for r in rows],
+                                     [r["prediction"] for r in rows], universe)
+    group_scores = defaultdict(list)
+    for row in rows:
+        group_scores[row["group_id"]].append(row["prediction"] == row["gold"])
+    metrics["group_macro_accuracy"] = statistics.mean(
+        statistics.mean(values) for values in group_scores.values())
+    observed = [r["usage"] if "usage" in r else r["observed_usage"] for r in rows]
+    times = [r["duration_seconds"] for r in rows if "duration_seconds" in r]
+    efficiency = {
+        "observed_completed_runs": sum(r["status"] == "completed" for r in rows),
+        "full_completion": sum(
+            r.get("vote_completion_status") == "full" for r in rows),
+        "degraded_completion": sum(
+            r.get("vote_completion_status") == "degraded" for r in rows),
+        "vote_failed": sum(
+            r.get("vote_completion_status") == "failed" for r in rows),
+        "usage_incomplete_runs": sum(r["usage_incomplete"] for r in rows),
+        "total_calls": sum(u["calls"] for u in observed),
+        "total_input_tokens": sum(u["input_tokens"] for u in observed),
+        "total_output_tokens": sum(u["output_tokens"] for u in observed),
+        "mean_seconds": statistics.mean(times) if times else None,
+        "p95_seconds": nearest_rank_percentile(times, .95),
+        "known_cost_usd": sum(r["known_cost_usd"] for r in rows),
+        "estimated_cost_usd": sum(r["estimated_cost_usd"] for r in rows
+                                  if r["estimated_cost_usd"] is not None),
+        "cost_complete": all(r["cost_complete"] for r in rows)}
+    return {
+        "provider": engine.provider.name, "model": engine.provider.model,
+        "simulated": engine.provider.simulated,
+        "interpretation": ("software-only; no biomedical efficacy claim"
+                           if engine.provider.simulated else "requires benchmark protocol audit"),
+        "task": cases[0].task,
+        "verification_scheme": (cases[0].verification_scheme
+                                if cases[0].task == "verification" else None),
+        "count": len(rows), "config": config.model_dump(), "metrics": metrics,
+        "efficiency": efficiency,
+        "failed_or_incomplete": sum(r["status"] != "completed" for r in rows), "rows": rows}
+
+
 def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, config: RunConfig,
-             output: Path | None = None, resume: bool = False, retry_failed: bool = False) -> dict:
+             output: Path | None = None, resume: bool = False, retry_failed: bool = False,
+             workers: int = 1) -> dict:
     validate_alignment(cases, gold)
     labels = {g.case_id: g for g in gold}
     if not cases or len(labels) != len(gold) or len({c.id for c in cases}) != len(cases) or set(labels) != {c.id for c in cases}:
@@ -86,78 +204,16 @@ def evaluate(cases: list[CaseInput], gold: list[GoldRecord], engine: Engine, con
         raise ValueError("gold labels must belong to the declared task vocabulary")
     if output:
         output.mkdir(parents=True, exist_ok=True)
-    rows = []
-    for case in cases:
-        events = []
-        # Only this label-free CaseInput crosses the inference boundary.
-        try:
-            result_path = output / (case.id + ".json") if output else None
-            failure_path = output / (case.id + ".failed.json") if output else None
-            result = None
-            if resume and result_path and result_path.exists():
-                cached = RunResult.model_validate_json(result_path.read_text())
-                if cached.fingerprint != run_fingerprint(case, config, engine.provider):
-                    raise ValueError("cached result identity mismatch; use a new output directory")
-                if cached.status == "completed" or not retry_failed:
-                    result = cached
-            if resume and result is None and failure_path and failure_path.exists() and not retry_failed:
-                failure = json.loads(failure_path.read_text())
-                if failure.get("fingerprint") != run_fingerprint(case, config, engine.provider):
-                    raise ValueError("failed-result identity mismatch; use a new output directory")
-                events.extend(TraceEvent.model_validate(e) for e in failure["trace"])
-                raise ProviderError(failure["error"])
-            if result is None:
-                result = engine.run(case, config, events.append)
-            events = result.trace
-            prediction = result.decision.answer if result.decision else "__INCOMPLETE__"
-            row = {"case_id": case.id, "group_id": labels[case.id].group_id,
-                   "gold": labels[case.id].label, "prediction": prediction,
-                   "status": result.status, "usage": result.usage.model_dump(),
-                   "duration_seconds": result.duration_seconds, "fingerprint": result.fingerprint}
-            if output:
-                (output / (case.id + ".json")).write_text(result.model_dump_json(indent=2), encoding="utf-8")
-        except ProviderError as exc:
-            row = {"case_id": case.id, "group_id": labels[case.id].group_id,
-                   "gold": labels[case.id].label, "prediction": "__FAILED__", "status": "failed", "error": str(exc), "usage_incomplete": True,
-                   "observed_usage": {"calls": sum(e.kind == "agent_started" for e in events),
-                                      "input_tokens": sum(e.details["input_tokens"] for e in events if e.kind == "model_usage"),
-                                      "output_tokens": sum(e.details["output_tokens"] for e in events if e.kind == "model_usage")}}
-            if output:
-                (output / (case.id + ".failed.json")).write_text(json.dumps({
-                    "error": str(exc), "fingerprint": run_fingerprint(case, config, engine.provider), "trace": [e.model_dump() for e in events]}, ensure_ascii=False), encoding="utf-8")
-        observed_events = [e.details for e in events if e.kind == "model_usage"]
-        prices_known = engine.provider.input_price is not None and engine.provider.output_price is not None
-        def event_cost(event):
-            return (event["input_tokens"] * engine.provider.input_price +
-                    event["output_tokens"] * engine.provider.output_price) / 1_000_000
-        row["known_cost_usd"] = sum(event_cost(e) for e in observed_events if not e["estimated"]) if prices_known else 0.0
-        row["estimated_cost_usd"] = sum(event_cost(e) for e in observed_events if e["estimated"]) if prices_known else None
-        row["usage_incomplete"] = row.get("usage_incomplete", False) or (
-            not engine.provider.simulated and any(e["estimated"] or e["attempts"] > 1 for e in observed_events))
-        row["cost_complete"] = prices_known and not row["usage_incomplete"]
-        rows.append(row)
-    metrics = classification_metrics([r["gold"] for r in rows], [r["prediction"] for r in rows], universe)
-    group_scores = defaultdict(list)
-    for row in rows:
-        group_scores[row["group_id"]].append(row["prediction"] == row["gold"])
-    metrics["group_macro_accuracy"] = statistics.mean(statistics.mean(values) for values in group_scores.values())
-    observed = [r["usage"] if "usage" in r else r["observed_usage"] for r in rows]
-    times = sorted(r["duration_seconds"] for r in rows if "duration_seconds" in r)
-    efficiency = {"observed_completed_runs": sum(r["status"] == "completed" for r in rows),
-                  "usage_incomplete_runs": sum(r["usage_incomplete"] for r in rows),
-                  "total_calls": sum(u["calls"] for u in observed),
-                  "total_input_tokens": sum(u["input_tokens"] for u in observed),
-                  "total_output_tokens": sum(u["output_tokens"] for u in observed),
-                  "mean_seconds": statistics.mean(times) if times else None,
-                  "p95_seconds": times[min(len(times) - 1, int(.95 * len(times)))] if times else None,
-                  "known_cost_usd": sum(r["known_cost_usd"] for r in rows),
-                  "estimated_cost_usd": sum(r["estimated_cost_usd"] for r in rows if r["estimated_cost_usd"] is not None),
-                  "cost_complete": all(r["cost_complete"] for r in rows)}
-    report = {"provider": engine.provider.name, "model": engine.provider.model,
-              "simulated": engine.provider.simulated,
-              "interpretation": "software-only; no biomedical efficacy claim" if engine.provider.simulated else "requires benchmark protocol audit",
-              "task": cases[0].task, "verification_scheme": cases[0].verification_scheme if cases[0].task == "verification" else None, "count": len(rows), "config": config.model_dump(), "metrics": metrics, "efficiency": efficiency,
-              "failed_or_incomplete": sum(r["status"] != "completed" for r in rows), "rows": rows}
+    def run_one(case):
+        return run_case(case, labels[case.id], engine, config, output, resume, retry_failed)
+    if workers < 1 or workers > 64:
+        raise ValueError("workers must be between 1 and 64")
+    if workers == 1:
+        rows = [run_one(case) for case in cases]
+    else:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            rows = list(pool.map(run_one, cases))
+    report = summarize(rows, engine, config, cases)
     if output:
         (output / "summary.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     return report

@@ -32,11 +32,16 @@ def test_synthetic_fixture_contract(example, answer):
     assert Engine(MockProvider()).run(examples()[example]).decision.answer == answer
 
 
+def _without_runtime_seconds(events):
+    return [{**event.model_dump(), "details": {k: v for k, v in event.details.items() if k != "seconds"}}
+            for event in events]
+
+
 def test_reproducible(case):
     a, b = Engine(MockProvider()).run(case), Engine(MockProvider()).run(case)
     assert a.fingerprint == b.fingerprint
     assert a.decision == b.decision
-    assert a.trace == b.trace
+    assert _without_runtime_seconds(a.trace) == _without_runtime_seconds(b.trace)
     assert Engine(MockProvider()).run(case, RunConfig(seed=3)).fingerprint != a.fingerprint
 
 
@@ -132,11 +137,20 @@ class CorruptProvider(MockProvider):
 
 
 @pytest.mark.parametrize("content", ["not json", "{}", '{"answer":"INVALID","explanation":"x"}',
-                                   '{"answer":"SUPPORTS","explanation":"x","citations":[]}',
                                    '{"answer":"NEI","explanation":"x","citations":[{"document_id":"future","start":0,"end":5,"quote":"wrong"}]}'])
 def test_invalid_model_answers_fail(case, content):
     with pytest.raises(ProviderError):
         Engine(CorruptProvider(content)).run(case, RunConfig(mode="single_direct"))
+
+
+def test_uncited_answer_records_unresolved_without_becoming_nei(case):
+    content = '{"answer":"SUPPORTS","explanation":"x","citations":[]}'
+    result = Engine(CorruptProvider(content)).run(case, RunConfig(mode="single_direct"))
+    assert result.status == "completed"
+    assert result.decision.answer == "SUPPORTS"
+    assert result.decision.citations == []
+    assert any("no visible supporting citation" in item
+               for item in result.decision.unresolved)
 
 
 def test_invalid_mcq_answer_fails():

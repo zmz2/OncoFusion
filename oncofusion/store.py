@@ -93,8 +93,14 @@ class Store:
         if (result is None) == (error is None):
             raise ValueError("finish requires exactly one of result or error")
         with self.connect() as conn:
+            terminal_status = (
+                "failed" if error else
+                "succeeded" if result.status == "completed" else
+                "failed" if result.status == "failed" else
+                "budget_exhausted"
+            )
             count = conn.execute("UPDATE runs SET status=?, result=?, error=?, updated=? WHERE id=? AND status='running'",
-                                 ("failed" if error else ("succeeded" if result.status == "completed" else "budget_exhausted"), result.model_dump_json() if result else None,
+                                 (terminal_status, result.model_dump_json() if result else None,
                                   error, time.time(), run_id)).rowcount
         if count != 1:
             raise RuntimeError("only a running job can finish")

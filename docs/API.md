@@ -92,3 +92,29 @@ GET `/v1/agents` 返回七角色目的、步骤、设计来源及复用层级。
 GET `/v1/profiles` 返回v1固定配置、运行依赖可用性及范围；GET `/v1/profiles/v1/example` 返回多来源虚构样本；POST `/v1/cases/inspect` 接受CaseInput并返回角色结构化输入覆盖、可见模态及警告，不保存病例、不调用模型。三者均遵循现有Bearer。
 
 网页将v1.config传给POST /v1/runs；缺图依赖返回503且无持久化任务；真实provider拒绝unreviewed病例。data_class人工审核声明与allow_remote_processing同意标志分别保留。默认省略config仍使用历史预设。graph增加id=decision的最终答案节点及其直接引用边，原source/finding节点保持兼容。
+
+## vote-v1
+
+`GET /v1/configs/vote` 返回独立专业票的完整 `RunConfig`。
+`GET /v1/configs/demo` 同时在 `configs.vote_v1` 提供同一配置，旧
+`config` 字段继续返回 `v1_class`，因此既有客户端不会被强制迁移。
+
+使用 vote-v1 时，提交给 `/v1/runs` 的 `config` 必须包含
+`execution_model=vote`、`interaction_protocol=vote-v1` 和适用的
+`vote_rule`。结果新增：
+
+- `ballots`：每位适用专家生成的不可变选票、同题标签、未校准
+  confidence、发现、引用、模型、seed 和 usage；
+- `vote_result`：V0/V1/V2/C-raw 分数、有效/弃权/失败票、full/degraded/
+  failed 状态、平票及可选 V3 仲裁结果；
+- trace 事件：`vote_member_completed`、`vote_aggregated`、
+  `vote_arbitration_started/completed/failed`。
+
+`run_started.details.role_applicability` 记录五种专业职责在模型调用前是否
+适用及原因。每个独立成员记录实际 `seed`；支持的供应商还会收到配置中的
+`temperature`。`agent_started` 与 `model_usage` 使失败、修复和最终 usage
+可以逐次对账。
+
+纯投票（V0/V1/V2）不另调用模型改写最终标签。V3 只对低一致性样本发起
+一次 Verifier 仲裁；仲裁失败时保留初始聚合标签并标记失败。旧版本的
+`decision`、`reports`、SSE、幂等和失败分母语义继续保留。

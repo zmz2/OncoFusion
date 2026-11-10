@@ -1,5 +1,10 @@
 # OncoFusion：稳妥第一版接手任务
 
+> 2026-11-10 classroom-web-v2: this branch delivers the vote-v1 classroom page
+> and six fixed real executions. See docs/CLASSROOM_WEB_V2.md and the public
+> artifacts/classroom_web_v2_20261110/ handoff. Older experiment results are
+> preserved and are not replaced by these demonstration runs.
+
 ## 先锁定目标
 
 课题是**肿瘤异构生物医学证据的多智能体整合与核验**。主任务采用MTBBench逐阶段文本病例问答；CIViC-Fact原生主张核验与段落检索作为组件评测。答案必须保留来源和证据适用条件。药物关系可以作为研究解释，但这两套数据的标准答案不验证最佳治疗方案。

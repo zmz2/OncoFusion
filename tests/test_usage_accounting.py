@@ -2,10 +2,10 @@
 import pytest
 from oncofusion.datasets import GoldRecord
 from oncofusion.engine import Engine
-from oncofusion.evaluation import evaluate
+from oncofusion.evaluation import evaluate, nearest_rank_percentile, observed_call_count
 from oncofusion.examples import examples
 from oncofusion.providers import MockProvider, ProviderError
-from oncofusion.schemas import RunConfig
+from oncofusion.schemas import RunConfig, TraceEvent
 
 
 class PricedProvider(MockProvider):
@@ -74,3 +74,13 @@ def test_mock_cost_is_explicitly_zero_and_simulated():
     result = report(MockProvider())
     assert result['simulated'] and result['efficiency']['cost_complete']
     assert result['efficiency']['known_cost_usd'] == 0
+
+
+def test_failed_route_calls_count_route_nodes_and_p95_uses_nearest_rank():
+    events = [
+        TraceEvent(sequence=0, kind="agent_started", role="single_agent"),
+        TraceEvent(sequence=1, kind="route_node_started", role="genomics"),
+        TraceEvent(sequence=2, kind="route_node_started", role="verifier"),
+    ]
+    assert observed_call_count(events) == 3
+    assert nearest_rank_percentile([1, 2, 3, 4], .95) == 4

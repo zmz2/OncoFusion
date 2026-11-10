@@ -90,3 +90,26 @@ python scripts/review_citations.py score --first results/review/reviewer_A.csv \
 ## 上游复用版开发集计划
 
 新增两个 `upstream_*_dev.json` 计划，各24配置×3重复、五个开发集来源组。新机制为证据先行、专业工作清单和同角色最新报告板；LangGraph/native等价比较单独报告。每个旧角色与机制消融也套用新版配置。外部ToolUniverse快照不加入标准基准；未来扩展必须所有对照共用固定快照并单独定义协议。全文见 AGENT_REUSE_AUDIT。
+
+## vote-v1 开发评测
+
+`vote-v1` 的主比较不是十个不同提示，而是同一票池的三种系统：
+
+- `b0_common_single`：一项共同证据包、一次通用作答。
+- `g_k`：与适用专业角色数相同的独立通用成员。
+- `p_k_specialists`：同一 K 的独立专业成员。
+
+计划由 `scripts/make_vote_plans.py` 生成。P-K 每个样本只生成一次选票；
+V0/V1/V2/C-raw 由 `scripts/analyze_vote_pool.py` 复用同一批 ballot，
+不能为每个聚合规则重新调用模型。V1 的角色可靠性和 V2 的 Platt 参数只能
+来自来源隔离的 calibration plan；确认集只使用已选择的规则。
+
+可靠性计数和校准拟合都按来源组分配总权重 1。Platt 拟合在标准化 logit
+空间进行并带 L2 正则，避免高置信度分离样本把系数推到数值边界。CIViC
+使用独立 180 条校准集。MTB 只有 8 位开发患者，V1/V2 使用
+leave-one-patient-out 拟合，仅作探索性比较。
+
+任务状态按 full、degraded 和 failed 分开报告。ABSTAIN 不是技术失败，
+NEI 是有效任务票；正式指标分母包含技术失败和无最终标签样本。主表同时
+报告每类指标、实际调用/token、分歧/双错、oracle-union 诊断上限和相对
+B0 的净纠错。
