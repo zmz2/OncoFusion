@@ -292,7 +292,7 @@ def case_note(case_id: str, row: dict, case: dict, cohort: str) -> str:
              f"- 主张中文释义（据原字段直译，非模型输出）：{claim_gloss(question)}",
              f"- 专业角色：{roles}；选票分布：" + (", ".join(f"{k} {v}" for k, v in sorted(tally.items())) or "无") + ".",
              f"- 初始等权标签：{row.get('initial_label') or '无有效标签'}；仲裁触发：{'是' if arb.get('triggered') else '否'}；仲裁状态：{arb.get('status', '未执行')}。",
-             f"- 仲裁前/后：{arb.get('initial_label') or row.get('initial_label') or '无'} → {arb.get('final_label') or row.get('initial_label') or '无'}；最终标签：{row.get('oncofusion_prediction') or '失败'}；参考标签：{row['gold_label']}。"]
+             f"- 仲裁前/后：{arb.get('initial_label') or row.get('initial_label') or '无'} → {arb.get('final_label') or row.get('initial_label') or '无'}；最终标签：{row.get('oncofusion_prediction') or '失败'}；参考标签：{row['gold_label']}；评测命中：{'是' if row.get('oncofusion_prediction') == row['gold_label'] else '否'}。"]
     if arb.get("triggered"):
         evidence_ids = ", ".join(arb.get("evidence_ids", [])) or "记录中无引用编号"
         explanation = re.sub(r"\s+", " ", arb.get("explanation", "")).strip() or "无保存的仲裁解释"
