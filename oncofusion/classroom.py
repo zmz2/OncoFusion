@@ -12,6 +12,8 @@ from fastapi import HTTPException, Query
 from pydantic import BaseModel, ConfigDict, Field
 
 from .schemas import CaseInput, RunConfig, RunRequest
+from .schemas import FragmentCitation
+from .evidence import fragment_documents, resolve_fragment_citations, visible_case
 from .store import TERMINAL
 
 MODEL_DISPLAY = "千问 3.6 35B-A3B"
@@ -114,6 +116,19 @@ class Classroom:
             result, status, config, error = run["result"], run["status"], run["config"], run["error"]
             created, code_commit = utc_time(run["created"]), protocol["code_commit"]
         ballot_rows = (result or {}).get("ballots", [])
+        _, source_case = self.case(alias)
+        visible = visible_case(source_case)
+        query = " ".join(filter(None, [visible.question, *[str(v) for v in visible.entities.model_dump().values() if v]]))
+        _, evidence_index, _ = fragment_documents(visible.documents, config["fragment_chars"],
+            config["max_fragments_per_document"], query, config["fragment_budget"], role="decision")
+        def citations(ids):
+            values = [c.model_dump(mode="json") for c in resolve_fragment_citations(
+                [FragmentCitation(evidence_id=eid) for eid in ids], evidence_index)]
+            if not private:
+                for citation in values:
+                    citation["quote"] = None
+                    citation["redaction"] = "原文省略 · 完整引用保存在服务器"
+            return values
         note = self.annotations().get("records", {}).get(record_id, {})
         ballots = []
         for ballot in ballot_rows:
@@ -123,8 +138,10 @@ class Classroom:
             ballots.append({**{k: ballot.get(k) for k in ["role", "label", "status", "confidence", "evidence_ids"]},
                             "brief_reason": ballot["brief_reason"] if private else None,
                             "summary_zh": translated, "findings": ballot.get("findings", []) if private else [],
+                            "citations": citations(ballot.get("evidence_ids", [])),
                             "error": ballot.get("error", "") if private else None})
         vote = (result or {}).get("vote_result")
+        arbitration_citations = citations((vote or {}).get("arbitration", {}).get("evidence_ids", []))
         if vote:
             vote = json.loads(json.dumps(vote))
             if not private:
@@ -150,7 +167,8 @@ class Classroom:
                 "model_display": MODEL_DISPLAY, "model_id": (result or {}).get("model", self.provider.model),
                 "simulated": (result or {}).get("simulated", self.provider.simulated),
                 "config": config, "input": self.input_view(alias, private), "ballots": ballots,
-                "vote": vote, "decision": decision, "usage": (result or {}).get("usage"),
+                "vote": vote, "decision": decision, "arbitration_citations": arbitration_citations,
+                "usage": (result or {}).get("usage"),
                 "seconds": (result or {}).get("duration_seconds"),
                 "gold": labels.get(alias), "error": error,
                 "fingerprint": (result or {}).get("fingerprint"), "private": private}
@@ -167,7 +185,8 @@ def install_classroom(router, store, provider, submit_run):
                 "code_commit": protocol["code_commit"], "batch_id": protocol["batch_id"],
                 "scope": "三例 × 两系统各一次；刷新与重复点击复用原任务",
                 "records": [{"id": "history-" + c["alias"], "case_alias": c["alias"],
-                             "source": "historical", "system": "OncoFusion", "status": "succeeded"}
+                             "source": "historical", "system": "OncoFusion",
+                             "status": classroom.record("history-" + c["alias"])["status"]}
                             for c in protocol["cases"]]
                 + [{"id": classroom.new_id(c["alias"], system), "case_alias": c["alias"],
                     "source": "new", "system": system,

@@ -36,7 +36,10 @@ Use the dedicated checkout and the existing installed Python environment:
 
 Prepare only before the frozen batch; do not replace protocol identity after
 runs exist. Normal restart only needs the serve command. The service refuses
-mock providers and changes to the frozen Python implementation digest.
+mock providers. After the six runs, presentation/API projections may be
+corrected while frozen inference files are checked against their committed
+bytes. The execution commit and initial environment remain attached to the
+original records; a later UI commit never replaces them.
 
 From the user's Mac, create a private tunnel and open the page:
 

@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 import subprocess
+import hashlib
 from pathlib import Path
 
 import uvicorn
@@ -25,13 +26,22 @@ def main():
         raise RuntimeError("classroom service requires an explicit real provider")
     protocol = json.loads((args.root / "protocol.json").read_text())
     if protocol["implementation_digest"] != implementation_digest():
-        raise RuntimeError("frozen implementation changed; prepare a new version before inference")
+        # A projection/API fix may follow the six recorded executions. Verify the frozen
+        # inference sources against their committed bytes; never refresh the run identity.
+        for source in Path("oncofusion").glob("*.py"):
+            if source.name in {"api.py", "classroom.py", "library.py"}:
+                continue
+            frozen = subprocess.check_output(["git", "show", protocol["code_commit"] + ":" + str(source)])
+            if hashlib.sha256(frozen).digest() != hashlib.sha256(source.read_bytes()).digest():
+                raise RuntimeError("frozen inference source changed: " + str(source))
     environment = {"provider": provider_identity(provider),
                    "software_commit_at_start": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
                    "frozen_execution_commit": protocol["code_commit"],
                    "implementation_digest": implementation_digest(),
                    "model_display": "千问 3.6 35B-A3B"}
-    (args.root / "environment.json").write_text(json.dumps(environment, indent=2, ensure_ascii=False))
+    (args.root / "service_environment.json").write_text(json.dumps(environment, indent=2, ensure_ascii=False))
+    if not (args.root / "environment.json").exists():
+        (args.root / "environment.json").write_text(json.dumps(environment, indent=2, ensure_ascii=False))
     app = create_app(args.root / "runs.sqlite3", provider=provider, max_workers=6)
     uvicorn.run(app, host="127.0.0.1", port=args.port)
 

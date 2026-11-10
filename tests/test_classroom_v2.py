@@ -113,3 +113,19 @@ def test_classroom_page_keeps_vote_and_real_events_visible(classroom):
     assert "events.set(e.sequence,e)" in page
     assert "Decision没有额外模型调用" in page
     assert client.get("/app").status_code == 200
+
+
+def test_catalog_uses_stored_status_and_citations_are_specific_to_the_recorded_role(classroom):
+    client, _, root = classroom
+    path = root / "history/case-01.json"
+    result = json.loads(path.read_text())
+    result["status"] = "failed"
+    path.write_text(json.dumps(result))
+    catalog = client.get("/v1/classroom/catalog").json()
+    assert next(r for r in catalog["records"] if r["id"] == "history-case-01")["status"] == "failed"
+    public = client.get("/v1/classroom/records/history-case-02").json()
+    private = client.get("/v1/classroom/records/history-case-02?private=true").json()
+    for left, right in zip(public["ballots"], private["ballots"]):
+        assert len(left["citations"]) == len(left["evidence_ids"])
+        assert all(c["quote"] is None for c in left["citations"])
+        assert all(c["quote"] for c in right["citations"])

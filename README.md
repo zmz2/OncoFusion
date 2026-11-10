@@ -1,5 +1,10 @@
 # OncoFusion
 
+课堂新版入口为 /classroom，使用已提交的 vote-v1 独立专业投票与选择性仲裁。
+部署、私密数据与公开投屏规则见 [CLASSROOM_WEB_V2](docs/CLASSROOM_WEB_V2.md)；
+本轮三例、六次真实链路记录与截图见 artifacts/classroom_web_v2_20261110/。
+历史 MTB43 成绩保持独立，不由这六次演示运行替换。
+
 **肿瘤异构证据整合与核验的多智能体研究后端。**
 
 第一版采用 **LangGraph固定专家工作流＋可选ToolUniverse只读工具＋OncoFusion证据与评测契约**。固定七角色、同一模型、文献先行、零自动回查。当前交付覆盖算法与后端；网页通过版本化HTTP API接入。完整范围及风险处置见 [第一版审查](docs/V1_REVIEW.md)。
