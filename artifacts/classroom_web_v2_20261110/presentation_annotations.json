@@ -1,0 +1,178 @@
+{
+  "cases": {
+    "case-01": {
+      "question_zh": "依据当前已知资料，判断未来12个月是否发生疾病进展。",
+      "source_summaries": [
+        "既往资料明确记录了复发和进展；这里描述的是已发生的历史事件。",
+        "同一影像记录中有不同癌症状态字段，并明确记有进展事件，需联系原始上下文理解。",
+        "来源列出了后续多药化疗暴露；治疗记录不等于未来结局已知。"
+      ]
+    },
+    "case-02": {
+      "question_zh": "依据当前已知资料，判断未来12个月是否仍存活。",
+      "source_summaries": [
+        "最近一段观察区间没有记录进展，属于截至当时的疾病状态。",
+        "近期影像记载未进展，并有同时期的肿瘤标志物化验。",
+        "更早的来源保留了治疗、放疗和体能状态记录，供专业角色联系病程。"
+      ]
+    },
+    "case-03": {
+      "question_zh": "依据当前已知资料，判断未来12个月是否仍存活。",
+      "source_summaries": [
+        "较早阶段出现影像进展与转移；这构成部分角色判断预后的依据。",
+        "较新的化验记录显示肿瘤标志物水平降低。",
+        "后续来源记载影像未进展、体能状态和治疗暴露；仲裁需要同时核对这些信息。"
+      ]
+    }
+  },
+  "records": {
+    "history-case-01": {
+      "ballots": {
+        "literature": {
+          "summary_zh": "援引既往进展与后续治疗；同时误把 refutes 协议字段当作否定未来进展的依据。",
+          "reason_sha256": "f8f1061293a40244a1fe325c16352dea814f7e0e43e77aefb6efd648a4d384be"
+        },
+        "timeline": {
+          "summary_zh": "关注治疗后的病程，但也把 refutes 字段误读为未来进展被否定。",
+          "reason_sha256": "d8c0e64196de0156c4e0b208a34d65ad509bdcdcddebe4a26a1b6d96692c8ffe"
+        },
+        "genomics": {
+          "summary_zh": "援引治疗后体能状态与疾病控制，并同样误用了 refutes 协议字段。",
+          "reason_sha256": "e15d65b841931c6557a7db145a81a6cf957d658b24643e393fc3b88f2cfa1a34"
+        },
+        "pathology": {
+          "summary_zh": "根据持续治疗作出判断，并把 refutes 字段作为答案依据。",
+          "reason_sha256": "adb9e38ec7ea2ce82a9ae57a0274cf76f294acc7c9037c0f5430126a03b34f39"
+        }
+      },
+      "decision_zh": "四位角色一致选择否定标签；原始理由同时援引既往治疗与协议字段。该字段并非真实临床证据，完整理由保留在私密视图。"
+    },
+    "history-case-02": {
+      "ballots": {
+        "literature": {
+          "summary_zh": "强调最近观察区间的稳定病情、影像与体能状态，支持肯定回答。",
+          "reason_sha256": "c66c5fa020e7caf545e322fcde734e9b5ef400b2006f6af115b536718b4fad51"
+        },
+        "timeline": {
+          "summary_zh": "更重视既往复发与较激进的病程；虽看到近期稳定，仍给出否定回答。",
+          "reason_sha256": "ba1877d8a95a90ba9b5c61f5088543989d51756083e61b411249aa4dc2c7fc21"
+        },
+        "genomics": {
+          "summary_zh": "依据近期未进展和影像稳定，支持肯定回答；本票理由主要来自临床资料。",
+          "reason_sha256": "f3beb53702bfcc7b024aae4a7880282220920a6232ccbcdef43ec2ff0602e1ab"
+        },
+        "pathology": {
+          "summary_zh": "强调截至当前的疾病控制和近期稳定，支持肯定回答。",
+          "reason_sha256": "eed3aac82921d757ef9aa6ebdf668e376de0de926563cce83af9835c352f774c"
+        }
+      },
+      "decision_zh": "多数角色强调近期未进展与影像稳定；少数角色更重视既往复发。程序按三比一的等权票数确定最终标签。"
+    },
+    "history-case-03": {
+      "ballots": {
+        "literature": {
+          "summary_zh": "更重视较早的复发、转移与病程，判断未来生存不利，并保留治疗反应的不确定性。",
+          "reason_sha256": "9461036afd0a484c53c9bdaccd71d3fd191e98f6ede082c34e72d4680914e3a6"
+        },
+        "timeline": {
+          "summary_zh": "强调当前治疗反应、较低的标志物与保留的体能状态，给出肯定回答。",
+          "reason_sha256": "f13a70621b350b8e290e4f31234dad6d0f3c2defd14099e859e1b68c9a083a8c"
+        },
+        "genomics": {
+          "summary_zh": "强调治疗后标志物下降和体能状态，支持肯定回答；本票主要使用临床证据。",
+          "reason_sha256": "a655cd7d1fe7d108a0a26b32ca00448e64c64d32de31fc150c0c9a116b0396d7"
+        },
+        "pathology": {
+          "summary_zh": "强调晚期、早期复发与较激进病程，给出否定回答。",
+          "reason_sha256": "95174f542ee184e2c5524b75a11aa62416ff39f191d32ccc81c6ceee90b24cd2"
+        }
+      },
+      "decision_zh": "原仲裁理由强调治疗后影像稳定、标志物下降及体能状态保留，并据此选择最终标签。",
+      "arbitration_zh": "Verifier复核早期进展后的治疗反应、近期标志物与影像稳定信息后，改变了初始标签。"
+    },
+    "run-286d7242a9fb43368867bb3eb819e644": {
+      "ballots": {
+        "generalist": {
+          "summary_zh": "根据既往进展与所述疾病侵袭性，外推未来仍可能进展，给出肯定回答。",
+          "reason_sha256": "5ed537af5275174f00a13972af28da9ff85ca94d25d6faf6a7845cbe73f77736"
+        }
+      },
+      "decision_zh": "单Agent根据既往进展与所述疾病侵袭性，预测未来仍会进展。"
+    },
+    "run-f29d60b1ebad436b9e48575c3de43c68": {
+      "ballots": {
+        "timeline": {
+          "summary_zh": "强调治疗后的体能状态与标志物稳定，支持未来不进展的判断。",
+          "reason_sha256": "b8ee9df4c4e94251ae1b480a2ca5f30d1d4f0791186e3a51718c51f9a290cb2a"
+        },
+        "genomics": {
+          "summary_zh": "更重视近期进展与所述疾病侵袭性，预测未来仍会进展。",
+          "reason_sha256": "44678cede5056d4cec3bc92ad7c664e060648c3ec43f44e55819ce8951311f84"
+        },
+        "pathology": {
+          "summary_zh": "强调截至当前的体能状态稳定，给出不进展的预测。",
+          "reason_sha256": "f4700a5575404f14e90a44f5224a8f52d688d5737e9a33951aff59ec5d8ff5ac"
+        }
+      },
+      "decision_zh": "Verifier侧重治疗后的体能状态与标志物稳定，维持初始标签。前序三张有效选票为一票肯定、两票否定。",
+      "arbitration_zh": "Verifier复核近期治疗后体能状态与标志物等记录，维持初始标签；本次仲裁没有改变标签。"
+    },
+    "run-3c8a6c6d5610471aa39fddfdd2e06eed": {
+      "ballots": {},
+      "decision_zh": "单Agent依据相同允许资料独立作答，答案与引用来自其已记录输出。"
+    },
+    "run-7e4b5608ecf74f3cb885d0974451e33b": {
+      "ballots": {
+        "literature": {
+          "summary_zh": "更重视既往复发与进展；虽看到近期稳定，仍预测未来生存不利。",
+          "reason_sha256": "9ec7c3ae58bee28932e4d58ce58606d7f1644496c767efca826db3576045612a"
+        },
+        "timeline": {
+          "summary_zh": "强调近期影像未进展、标志物与体能状态，支持继续生存。",
+          "reason_sha256": "3aea569a6e35ff9a5d77c080930aa4f36a33e460c692269ef121003a6e723dc0"
+        },
+        "genomics": {
+          "summary_zh": "主要根据既往复发及所述预后作否定判断，并承认截止点后的预测不确定性。",
+          "reason_sha256": "2b1f75c313b3ce0c854ef3511088797b715985d3b66a492e9898dba9194ae8f0"
+        },
+        "pathology": {
+          "summary_zh": "强调一段时间内的疾病控制与标志物恢复，支持肯定回答。",
+          "reason_sha256": "4a2acdfcc7e937f4ba8eed277502483c5989eaf5fcf901d9c058facb5768fdbe"
+        }
+      },
+      "decision_zh": "近期影像未进展，标志物及体能状态保持稳定；仲裁据此维持初始标签。",
+      "arbitration_zh": "Verifier复核近期稳定、影像与体能信息，维持初始标签；本次仲裁没有改变标签。"
+    },
+    "run-132460d39a0549d7a5de8d6db7385f35": {
+      "ballots": {
+        "generalist": {
+          "summary_zh": "虽看到后续治疗反应，仍更重视转移和晚期疾病风险，给出否定回答。",
+          "reason_sha256": "ce8a0231027fdb631fdc97ff86e64ee4d90bf46987bf46fd5e908d9a50991afd"
+        }
+      },
+      "decision_zh": "单Agent虽看到治疗反应，仍更重视转移复发与晚期疾病风险，给出否定回答。"
+    },
+    "run-f76f38e676434c64a0aaa7fd4eb2f8a6": {
+      "ballots": {
+        "literature": {
+          "summary_zh": "强调近期影像、体能状态与标志物反映的疾病控制，支持继续生存。",
+          "reason_sha256": "024c93aed3526936d289377d4ed878779b989ed1bbc789fecf04f5e771798ffd"
+        },
+        "timeline": {
+          "summary_zh": "更重视较早的转移进展与预后风险，给出否定回答。",
+          "reason_sha256": "8cac800d6aac90deb2ee64cd2974e283ce0a2eada04f2b6158a18b06f27768e4"
+        },
+        "genomics": {
+          "summary_zh": "将所述分子特征与侵袭性联系，给出否定判断；这是模型的推断。",
+          "reason_sha256": "b0141babccaf51996411dde484a90c362b1373cd414d6f90b48384118f47f197"
+        },
+        "pathology": {
+          "summary_zh": "强调治疗后标志物下降和体能状态，支持肯定回答。",
+          "reason_sha256": "ee610f67e025c50e97b944ea9ccd44fe3210a977500417951ed5c6051d0e3df4"
+        }
+      },
+      "decision_zh": "仲裁更重视较早的转移复发风险；虽记录有治疗反应，仍维持初始标签。",
+      "arbitration_zh": "Verifier看到治疗反应后，仍更重视转移复发风险，维持初始标签；本次仲裁没有改变标签。"
+    }
+  }
+}

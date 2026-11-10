@@ -4,6 +4,8 @@ import csv
 import hashlib
 import json
 import subprocess
+import sys
+from importlib.metadata import version
 from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
@@ -82,6 +84,12 @@ def main():
         "delivery_commit_parent": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
         "frozen_implementation_digest": protocol["implementation_digest"],
         "source_code_snapshot": protocol["source_code_commit"],
+        "software": {"python": sys.version, **{name: version(name) for name in ["fastapi", "pydantic", "httpx", "uvicorn"]}},
+        "frozen_inference_sources": {
+            name: hashlib.sha256(subprocess.check_output(["git", "show",
+                protocol["code_commit"] + ":oncofusion/" + name])).hexdigest()
+            for name in ["vote_runner.py", "voting.py", "evidence.py", "agent_design.py",
+                         "providers.py", "scheduling.py", "schemas.py", "engine.py", "profiles.py"]},
         "historical_implementation": {"commit": protocol["history"]["case-01"]["commit"],
             "implementation_digest": protocol["history"]["case-01"]["implementation_digest"],
             "dirty_worktree": True, "rendered_prompts_not_saved": True},
