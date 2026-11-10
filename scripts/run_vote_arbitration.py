@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import threading
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from oncofusion.datasets import GoldRecord, read_jsonl
@@ -33,9 +34,13 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--min-share", type=float, default=.75)
     parser.add_argument("--min-margin", type=float, default=.25)
+    parser.add_argument("--workers", type=int, default=1,
+                        help="parallel triggered cases; provider scheduler still caps actual API calls")
     args = parser.parse_args()
     if args.execution_cap < 1:
         raise ValueError("execution-cap must be positive")
+    if args.workers < 1:
+        raise ValueError("workers must be positive")
 
     cases = {
         case.id: case
@@ -93,8 +98,8 @@ def main() -> int:
 
     engine = VoteEngine(provider)
     args.out.mkdir(parents=True, exist_ok=True)
-    manifest = []
-    for path, case, result, initial in results:
+    def arbitrate(item):
+        path, case, result, initial = item
         config = result.config.model_copy(update={
             "vote_rule": "v3",
             "vote_arbitration_min_share": args.min_share,
@@ -162,7 +167,7 @@ def main() -> int:
         target = args.out / args.arm / "0" / (case.id + ".json")
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(updated.model_dump_json(indent=2), encoding="utf-8")
-        manifest.append({
+        return {
             "case_id": case.id,
             "initial_label": initial.label,
             "final_label": vote.label,
@@ -174,7 +179,9 @@ def main() -> int:
             "extra_http_attempts": usage.http_attempts - result.usage.http_attempts,
             "initial_correct": initial.label == gold[case.id],
             "final_correct": vote.label == gold[case.id],
-        })
+        }
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+        manifest = list(pool.map(arbitrate, results))
     triggered_ids = {case.id for _, case, _, _ in results}
     copied_v0 = 0
     for path, case, result, initial in all_results:
