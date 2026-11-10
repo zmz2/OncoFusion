@@ -15,7 +15,18 @@ from pathlib import Path
 
 LABELS = ["SUPPORTS", "REVISIONS", "NEI"]
 FAILED = "FAILED"
-PUBLIC_ARTICLE_LICENSES = {"CC BY", "CC0"}
+PUBLIC_ARTICLE_LICENSES = {
+    "26445453": {
+        "label": "CC BY 4.0", "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4596370/",
+        "authors": "Megiorni F et al.",
+    },
+    "26689995": {
+        "label": "CC BY 2.5", "license_url": "https://creativecommons.org/licenses/by/2.5/",
+        "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4823091/",
+        "authors": "Umelo I, Noeparast A, Chen G, et al.",
+    },
+}
 FIELD_LABELS = {
     "disease": "疾病", "evidenceDirection": "证据方向", "evidenceType": "证据类型",
     "molecularProfile": "分子特征", "significance": "临床意义", "therapies": "治疗药物",
@@ -29,9 +40,12 @@ VALUE_TRANSLATIONS = {
     "lung adenoid cystic carcinoma": "肺腺样囊性癌",
     "PTEN Deletion": "PTEN 缺失", "Afatinib": "阿法替尼",
     "Pertuzumab": "帕妥珠单抗", "SUBSTITUTES": "替代",
+    "Alveolar Rhabdomyosarcoma": "肺泡型横纹肌肉瘤",
+    "MET Overexpression AND ALK Overexpression": "MET 和 ALK 过表达",
+    "Crizotinib": "克唑替尼",
 }
 EXCERPT_TRANSLATIONS = {
-    "17700571": "本研究还表明，PTEN 单等位基因和双等位基因缺失都是预后不良的重要标志……",
+    "26445453": "体外使用克唑替尼处理，抑制了 ALK、MET 蛋白以及胰岛素样生长因子 1 受体（IGF1R），并伴随……",
     "26689995": "本文报告一例晚期、化疗耐药的非小细胞肺癌病例，携带一种新型 HER3 V855A 体细胞突变……（后文省略）。",
 }
 
@@ -215,7 +229,9 @@ def quote_for(case: dict, row: dict) -> dict | None:
     docs = {doc.get("id"): doc for doc in case.get("documents", [])}
     for citation in candidates:
         doc = docs.get(citation.get("document_id"))
-        if not doc or doc.get("license") not in PUBLIC_ARTICLE_LICENSES:
+        pmid = str((doc or {}).get("id", "")).removeprefix("pmid-")
+        license_info = PUBLIC_ARTICLE_LICENSES.get(pmid)
+        if not doc or not license_info:
             continue
         start, end = citation.get("start"), citation.get("end")
         text = doc.get("text", "")
@@ -233,7 +249,8 @@ def quote_for(case: dict, row: dict) -> dict | None:
         return {"document_id": doc.get("id"), "pmid": str(doc.get("id", "")).removeprefix("pmid-"),
                 "start": start, "end": end, "excerpt": excerpt, "word_count": min(len(words), 22),
                 "title": doc.get("title", ""), "url": doc.get("url", ""),
-                "license": doc.get("license", ""), "authors": doc.get("authors", [])}
+                "license": license_info["label"], "license_url": license_info["license_url"],
+                "source_url": license_info["source_url"], "authors": license_info["authors"]}
     return None
 
 
@@ -285,12 +302,12 @@ def case_note(case_id: str, row: dict, case: dict, cohort: str) -> str:
         lines += ["- 仲裁输入与结论：未触发仲裁。"]
     if citation:
         authors = citation.get("authors")
-        author_text = f"作者：{', '.join(authors)}；" if isinstance(authors, list) and authors else ""
+        author_text = f"作者：{authors}；" if authors else ""
         lines += [f"- 原文摘录：“{citation['excerpt']}”",
-                  f"- 来源归属：{author_text}《{citation['title']}》，PMID {citation['pmid']}，[来源页]({citation['url']})；许可：{citation['license']}。摘录已截短，省略处以省略号标示。",
+                  f"- 来源归属：{author_text}《{citation['title']}》，PMID {citation['pmid']}，[PMC全文]({citation['source_url']})（[PubMed]({citation['url']})）；许可：[{citation['license']}]({citation['license_url']})。摘录已截短，省略处以省略号标示。",
                   f"- 摘录中文释义（人工直译，非模型输出）：{EXCERPT_TRANSLATIONS.get(citation['pmid'], '该句已截短；请结合来源页阅读。')}"]
     else:
-        lines += ["- 原文摘录：该运行没有找到带 CC BY/CC0 许可且可核对的精确引用；不从其他段落补造。",
+        lines += ["- 原文摘录：该运行没有找到许可已核实且可核对的精确引用；不从其他段落补造。",
                   "- 中文释义：无。"]
     reason_rows = []
     for ballot in votes:
@@ -489,11 +506,13 @@ def main() -> int:
         writer.writerows(csv_rows)
 
     provider_settings = read_json(args.provider_settings)
-    source_files = ["oncofusion/vote_runner.py", "oncofusion/voting.py", "oncofusion/evidence.py",
+    source_files = ["oncofusion/vote_runner.py", "oncofusion/voting.py", "oncofusion/engine.py", "oncofusion/evidence.py",
                     "oncofusion/agent_design.py", "oncofusion/profiles.py", "oncofusion/schemas.py",
                     "oncofusion/providers.py", "oncofusion/experiments.py", "scripts/run_study.py",
                     "scripts/run_vote_arbitration.py"]
     source_hashes = {path: sha256(args.source_root / path) for path in source_files}
+    prompt_source_files = ["oncofusion/vote_runner.py", "oncofusion/agent_design.py",
+                           "oncofusion/engine.py", "oncofusion/schemas.py"]
     frozen = {
         "benchmark": "CIViC-Fact source-isolated confirmation supplement",
         "label_version": "2026.06.09 native labels: SUPPORTS / REVISIONS / NEI",
@@ -523,6 +542,11 @@ def main() -> int:
             "arbitration_failure": "retain initial vote label; no new specialist ballots",
         },
         "inference_source_sha256": source_hashes,
+        "prompt_identity": {
+            "template_source_sha256": {path: source_hashes[path] for path in prompt_source_files},
+            "rendered_prompt_capture": "The private run traces record per-call payload_sha256, but not the full rendered system prompt. Template hashes identify the committed prompt source; prompts are rendered with each case, role, evidence packet and schema.",
+        },
+        "public_case_source_license_checks": PUBLIC_ARTICLE_LICENSES,
         "source_commit_used_for_run": args.source_commit,
         "started_at": args.started_at, "ended_at": args.ended_at,
         "result_paths_server_only": {
@@ -580,7 +604,7 @@ def main() -> int:
     }
     (args.out / "metrics.json").write_text(json.dumps(metrics_payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-    # Select only examples whose exact cited source permits redistribution.
+    # Select only examples whose exact cited source has a verified redistributable license.
     # Skip age-bearing excerpts to minimize public exposure of case details.
     vote_case = next((row for row in rows if not row["arbitration"].get("triggered")
                       and sum(b.get("status") == "vote" and b.get("label") in LABELS for b in row["ballots"]) >= 3
@@ -589,7 +613,7 @@ def main() -> int:
                      and (vote_case is None or row["pmid"] != vote_case["pmid"])
                      and classroom_quote(row) is not None), None)
     case_notes = ["# 课堂案例（脱敏公开版）", "",
-                  "按固定名单顺序，选择有至少三张有效专业票、且引用原文许可为 CC BY/CC0 的未仲裁案例；再选一个不同来源的实际仲裁案例。为减少病例细节暴露，跳过含年龄的摘录。以下是过程示例，不用于替代总体统计。", ""]
+                  "按固定名单顺序，选择有至少三张有效专业票、且精确来源已核实为可再发布 CC BY 许可的未仲裁案例；再选一个不同来源的实际仲裁案例。为减少病例细节暴露，跳过含年龄的摘录。以下是过程示例，不用于替代总体统计。", ""]
     for row, tag in ((vote_case, "专业投票示例"), (arb_case, "实际触发仲裁示例")):
         if row is not None:
             case_notes += [f"## {tag}", "", case_note(row["case_id"], row, row["_case"], row["history_use"]), ""]
@@ -614,6 +638,7 @@ def main() -> int:
     lines += ["", "## 仲裁消融", "", "完整方法与去除仲裁使用相同专业选票；去除仲裁只输出初始等权标签。见`ablation_table.csv`。", "",
               f"- 实际仲裁触发：{arb['triggered']}；完成：{arb['completed']}；失败：{arb['failed']}；未触发：{arb['not_triggered']}。",
               f"- 错误改对：{arb['wrong_to_right']}；正确改错：{arb['right_to_wrong']}；原本正确且保持：{arb['retained_initial_correct']}；原本错误且保持：{arb['retained_initial_wrong']}。", "",
+              f"- 114条此前未用来源上，仲裁前后Accuracy均为{metrics['previously_unused_114']['oncofusion_v0_no_arbitration']['correct']}/{metrics['previously_unused_114']['oncofusion_v0_no_arbitration']['n']}；Macro-F1从{metrics['previously_unused_114']['oncofusion_v0_no_arbitration']['macro_f1']:.4f}变为{metrics['previously_unused_114']['oncofusion_v3_arbitrated']['macro_f1']:.4f}。", "",
               "## 配对结果", "", "来源组配对bootstrap 2000次，统计seed=0。点估计和95%区间见`metrics.json`。", "",
               f"- 114条未用来源组上，OncoFusion相对B0准确率差：{paired['previously_unused_114']['oncofusion_vs_b0']['accuracy_delta_cluster_bootstrap']['mean_accuracy_difference']:+.4f}，95% CI {paired['previously_unused_114']['oncofusion_vs_b0']['accuracy_delta_cluster_bootstrap']['ci95']}。",
               f"- 双方均有有效答案：{paired['previously_unused_114']['oncofusion_vs_b0']['both_valid']}；改错为对：{paired['previously_unused_114']['oncofusion_vs_b0']['changed_wrong_to_right']}；改对为错：{paired['previously_unused_114']['oncofusion_vs_b0']['changed_right_to_wrong']}；B0失败而OncoFusion答对：{paired['previously_unused_114']['oncofusion_vs_b0']['single_agent_failure_recovered_by_oncofusion']}。", "",
