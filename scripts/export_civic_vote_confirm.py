@@ -15,6 +15,25 @@ from pathlib import Path
 
 LABELS = ["SUPPORTS", "REVISIONS", "NEI"]
 FAILED = "FAILED"
+PUBLIC_ARTICLE_LICENSES = {"CC BY", "CC0"}
+FIELD_LABELS = {
+    "disease": "疾病", "evidenceDirection": "证据方向", "evidenceType": "证据类型",
+    "molecularProfile": "分子特征", "significance": "临床意义", "therapies": "治疗药物",
+    "therapyInteractionType": "药物关系", "variantOrigin": "变异来源",
+}
+VALUE_TRANSLATIONS = {
+    "DOES_NOT_SUPPORT": "不支持", "SUPPORTS": "支持", "PREDICTIVE": "预测性",
+    "PROGNOSTIC": "预后", "SOMATIC": "体细胞", "N/A": "不适用",
+    "sensitivity/response": "敏感/应答", "poor outcome": "预后不良",
+    "prostate rhabdomyosarcoma": "前列腺横纹肌肉瘤",
+    "lung adenoid cystic carcinoma": "肺腺样囊性癌",
+    "PTEN Deletion": "PTEN 缺失", "Afatinib": "阿法替尼",
+    "Pertuzumab": "帕妥珠单抗", "SUBSTITUTES": "替代",
+}
+EXCERPT_TRANSLATIONS = {
+    "17700571": "本研究还表明，PTEN 单等位基因和双等位基因缺失都是预后不良的重要标志……",
+    "26689995": "本文报告一例晚期、化疗耐药的非小细胞肺癌病例，携带一种新型 HER3 V855A 体细胞突变……（后文省略）。",
+}
 
 
 def read_json(path: Path):
@@ -188,16 +207,15 @@ def quote_for(case: dict, row: dict) -> dict | None:
     candidates = []
     if result:
         candidates.extend((result.get("decision") or {}).get("citations", []))
-    if not candidates:
-        result = row.get("_pool_result")
-        for ballot in (result or {}).get("ballots", []):
-            candidates.extend(ballot.get("citations", []))
-            for finding in ballot.get("findings", []):
-                candidates.extend(finding.get("citations", []))
+    result = row.get("_pool_result")
+    for ballot in (result or {}).get("ballots", []):
+        candidates.extend(ballot.get("citations", []))
+        for finding in ballot.get("findings", []):
+            candidates.extend(finding.get("citations", []))
     docs = {doc.get("id"): doc for doc in case.get("documents", [])}
     for citation in candidates:
         doc = docs.get(citation.get("document_id"))
-        if not doc:
+        if not doc or doc.get("license") not in PUBLIC_ARTICLE_LICENSES:
             continue
         start, end = citation.get("start"), citation.get("end")
         text = doc.get("text", "")
@@ -210,9 +228,34 @@ def quote_for(case: dict, row: dict) -> dict | None:
         excerpt = " ".join(words[:22])
         if len(words) > 22:
             excerpt = excerpt.rstrip(".,;:") + " …"
+        if re.search(r"\b(?:\d{1,3}\s*[- ]\s*year[- ]old|aged\s+\d{1,3})\b", excerpt, re.I):
+            continue
         return {"document_id": doc.get("id"), "pmid": str(doc.get("id", "")).removeprefix("pmid-"),
-                "start": start, "end": end, "excerpt": excerpt, "word_count": min(len(words), 22)}
+                "start": start, "end": end, "excerpt": excerpt, "word_count": min(len(words), 22),
+                "title": doc.get("title", ""), "url": doc.get("url", ""),
+                "license": doc.get("license", ""), "authors": doc.get("authors", [])}
     return None
+
+
+def classroom_quote(row: dict) -> dict | None:
+    citation = quote_for(row["_case"], row)
+    return citation if citation and citation["pmid"] in EXCERPT_TRANSLATIONS else None
+
+
+def claim_gloss(question: str) -> str:
+    try:
+        claim = json.loads(question)
+    except (TypeError, json.JSONDecodeError):
+        return "（未提供结构化字段）"
+    if not isinstance(claim, dict):
+        return "（未提供结构化字段）"
+    return "；".join(
+        f"{FIELD_LABELS.get(key, key)}：" + ", ".join(
+            VALUE_TRANSLATIONS.get(str(value), str(value)) for value in item
+        ) if isinstance(item, list) else
+        f"{FIELD_LABELS.get(key, key)}：{VALUE_TRANSLATIONS.get(str(item), str(item))}"
+        for key, item in claim.items()
+    )
 
 
 def case_note(case_id: str, row: dict, case: dict, cohort: str) -> str:
@@ -222,23 +265,39 @@ def case_note(case_id: str, row: dict, case: dict, cohort: str) -> str:
                     if ballot.get("status") == "vote" and ballot.get("label") in LABELS)
     arb = row.get("arbitration", {})
     citation = quote_for(case, row)
+    question = case.get("question", "").strip()
+    try:
+        question_json = json.dumps(json.loads(question), ensure_ascii=False, indent=2)
+    except (TypeError, json.JSONDecodeError):
+        question_json = question
     lines = [f"### {case_id}", "", f"- 队列：{cohort}；来源 PMID：{row['pmid']}。",
-             f"- 待核验主张（原文）：{case.get('question', '').strip()}",
+             "- 待核验主张（原始字段）：", "```json", question_json, "```",
+             f"- 主张中文释义（据原字段直译，非模型输出）：{claim_gloss(question)}",
              f"- 专业角色：{roles}；选票分布：" + (", ".join(f"{k} {v}" for k, v in sorted(tally.items())) or "无") + ".",
              f"- 初始等权标签：{row.get('initial_label') or '无有效标签'}；仲裁触发：{'是' if arb.get('triggered') else '否'}；仲裁状态：{arb.get('status', '未执行')}。",
              f"- 仲裁前/后：{arb.get('initial_label') or row.get('initial_label') or '无'} → {arb.get('final_label') or row.get('initial_label') or '无'}；最终标签：{row.get('oncofusion_prediction') or '失败'}；参考标签：{row['gold_label']}。"]
-    if citation:
-        lines += [f"- 原文摘录（PMID {citation['pmid']}，{citation['word_count']}词，偏移 {citation['start']}–{citation['end']}）：“{citation['excerpt']}”",
-                  "- 中文释义：待根据以上短摘录填写忠实译文；这不是模型输出。"]
+    if arb.get("triggered"):
+        evidence_ids = ", ".join(arb.get("evidence_ids", [])) or "记录中无引用编号"
+        explanation = re.sub(r"\s+", " ", arb.get("explanation", "")).strip() or "无保存的仲裁解释"
+        lines += [f"- 仲裁输入：原始主张、允许证据、全部专业选票及其简短依据；仲裁记录的证据编号：{evidence_ids}。",
+                  f"- 仲裁结论与依据（模型保存解释）：{explanation}"]
     else:
-        lines += ["- 原文摘录：该运行没有可公开核对的精确引用；不从其他段落补造。",
+        lines += ["- 仲裁输入与结论：未触发仲裁。"]
+    if citation:
+        authors = citation.get("authors")
+        author_text = f"作者：{', '.join(authors)}；" if isinstance(authors, list) and authors else ""
+        lines += [f"- 原文摘录：“{citation['excerpt']}”",
+                  f"- 来源归属：{author_text}《{citation['title']}》，PMID {citation['pmid']}，[来源页]({citation['url']})；许可：{citation['license']}。摘录已截短，省略处以省略号标示。",
+                  f"- 摘录中文释义（人工直译，非模型输出）：{EXCERPT_TRANSLATIONS.get(citation['pmid'], '该句已截短；请结合来源页阅读。')}"]
+    else:
+        lines += ["- 原文摘录：该运行没有找到带 CC BY/CC0 许可且可核对的精确引用；不从其他段落补造。",
                   "- 中文释义：无。"]
     reason_rows = []
     for ballot in votes:
         reason = re.sub(r"\s+", " ", ballot.get("brief_reason", "")).strip()
-        short_reason = " ".join(reason.split()[:5])
-        if len(reason.split()) > 5:
-            short_reason += " …"
+        short_reason = reason[:360]
+        if len(reason) > 360:
+            short_reason = short_reason.rsplit(" ", 1)[0] + " …"
         reason_rows.append(f"  - {ballot.get('role')}: {ballot.get('label') or ballot.get('status')}；依据：{short_reason or '无保存的简短依据'}")
     if reason_rows:
         lines += ["- 角色简短依据（模型原始短输出，公开版截短）：", *reason_rows]
@@ -521,18 +580,16 @@ def main() -> int:
     }
     (args.out / "metrics.json").write_text(json.dumps(metrics_payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-    # Deterministic case selection: first qualifying fixed case for each process illustration.
+    # Select only examples whose exact cited source permits redistribution.
+    # Skip age-bearing excerpts to minimize public exposure of case details.
     vote_case = next((row for row in rows if not row["arbitration"].get("triggered")
                       and sum(b.get("status") == "vote" and b.get("label") in LABELS for b in row["ballots"]) >= 3
-                      and len({b.get("label") for b in row["ballots"] if b.get("label") in LABELS}) > 1), None)
-    if vote_case is None:
-        vote_case = next((row for row in rows if sum(
-            b.get("status") == "vote" and b.get("label") in LABELS for b in row["ballots"]) >= 3
-            and not row["arbitration"].get("triggered")), None)
+                      and classroom_quote(row) is not None), None)
     arb_case = next((row for row in rows if row["arbitration"].get("triggered")
-                     and (vote_case is None or row["pmid"] != vote_case["pmid"])), None)
+                     and (vote_case is None or row["pmid"] != vote_case["pmid"])
+                     and classroom_quote(row) is not None), None)
     case_notes = ["# 课堂案例（脱敏公开版）", "",
-                  "按预先固定的顺序规则选取：先取固定名单中第一个未触发仲裁且至少三张有效专业票的案例，再取第一个不同的实际仲裁案例。以下是过程示例，不用于替代总体统计。", ""]
+                  "按固定名单顺序，选择有至少三张有效专业票、且引用原文许可为 CC BY/CC0 的未仲裁案例；再选一个不同来源的实际仲裁案例。为减少病例细节暴露，跳过含年龄的摘录。以下是过程示例，不用于替代总体统计。", ""]
     for row, tag in ((vote_case, "专业投票示例"), (arb_case, "实际触发仲裁示例")):
         if row is not None:
             case_notes += [f"## {tag}", "", case_note(row["case_id"], row, row["_case"], row["history_use"]), ""]
