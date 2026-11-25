@@ -51,7 +51,7 @@ def main():
  if args.out.exists(): raise FileExistsError(args.out)
  args.out.mkdir(parents=True)
  provider=provider_from_env()
- if not provider.simulated and (not os.getenv('ONCOFUSION_API_CONCURRENCY') or int(os.environ['ONCOFUSION_API_CONCURRENCY'])!=20): raise ValueError('threshold sweep requires shared process concurrency 20')
+ if not provider.simulated and (not os.getenv('ONCOFUSION_API_CONCURRENCY') or not 1 <= int(os.environ['ONCOFUSION_API_CONCURRENCY']) <= 20): raise ValueError('threshold sweep process cap must be between 1 and the global 20-slot limit')
  if args.raw_audit: attach_raw_audit(provider,args.raw_audit)
  engine=VoteEngine(provider)
  def arbitrate(cid):
