@@ -1,0 +1,63 @@
+{
+  "objective": "Frozen supplementary evaluation of current vote-v1 method; E01-E09; no main-method or model changes.",
+  "code_base_commit": "a6351d3d8e5748d7894ab071aadeaf1edee06229",
+  "branch": "codex/vote-v1-extended-experiments",
+  "model": {
+    "display_name": "千问 3.6 35B-A3B",
+    "api_model": "hc-qwen38-27b-fp8"
+  },
+  "api_concurrency": 20,
+  "aggregate_call_or_token_cap": null,
+  "fixed_per_case_settings": {
+    "b0_temperature": 0.0,
+    "specialist_temperature": 0.4,
+    "seed": 0,
+    "max_output_tokens": 5000,
+    "schema_retries": 2,
+    "max_calls_b0": 3,
+    "max_calls_pool": 12,
+    "max_calls_arbitration": 3,
+    "max_total_tokens_per_case": 260000
+  },
+  "mtb_data": {
+    "directory": "server21:/home/zhangmingzhou/BioOncoFusion/data/mtbbench",
+    "inputs_sha256": "e093bd91da2add4103971a6ee71c9fbf722bde67f68503ee866c1a90e753ffe5",
+    "gold_sha256_evaluation_only": "3dcce219f360be0b7d1193496270957ebf3834947bb59b3e8fc7886fc34f628f"
+  },
+  "civic_data": {
+    "directory": "server21:/home/zhangmingzhou/BioOncoFusion/data/civicfact-pmidids",
+    "inputs_sha256": "165c8d3415eb8588dcbafcc10eae378e1a3d0be30c1b9698bfae78b2b2d7183d",
+    "gold_sha256_evaluation_only": "f3221fa1e39e75a002f8a08c83bf409ffdf02e78c91d0ed7654ad7fe4c522088",
+    "labels": [
+      "SUPPORTS",
+      "REVISIONS",
+      "NEI"
+    ]
+  },
+  "arbitration": {
+    "trigger": "top_share < 0.75 or margin < 0.25; strict comparisons",
+    "tie_seed": 0,
+    "confidence_weighting": false,
+    "failure": "retain initial valid vote"
+  },
+  "holdout_plan": {
+    "path": "experiments/vote_extensions_20261125/mtb_holdout.json",
+    "sha256": "04594fa46d5b626e1180567f5bac8f0a0b6bb2bd375eedc94e0790ba46bc695f",
+    "cases": 85,
+    "patient_groups": 19,
+    "excluded_historical_groups": 13
+  },
+  "sequence": [
+    "E01 historical role contribution",
+    "E02a historical input length",
+    "E03 member count",
+    "E06 expert complementarity",
+    "E08 citation quality",
+    "E09 MTB source-isolated confirmation",
+    "E05 fresh development pools and prompt contributions",
+    "E02b evidence position",
+    "E04 missing evidence",
+    "E07 threshold sensitivity"
+  ],
+  "storage_policy": "After all runs and validated exports, remove only this run's high-volume logs and full traces; preserve summaries, protocol, plans, and selected case examples."
+}

@@ -30,15 +30,15 @@ def main() -> int:
     parser.add_argument("--arm", default="p_k_specialists")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--allow-remote", action="store_true")
-    parser.add_argument("--execution-cap", type=int, default=1000)
+    parser.add_argument("--execution-cap", type=int, default=0, help="maximum triggered cases; 0 disables the batch cap")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--min-share", type=float, default=.75)
     parser.add_argument("--min-margin", type=float, default=.25)
     parser.add_argument("--workers", type=int, default=1,
                         help="parallel triggered cases; provider scheduler still caps actual API calls")
     args = parser.parse_args()
-    if args.execution_cap < 1:
-        raise ValueError("execution-cap must be positive")
+    if args.execution_cap < 0:
+        raise ValueError("execution-cap must be zero or positive")
     if args.workers < 1:
         raise ValueError("workers must be positive")
 
@@ -87,7 +87,7 @@ def main() -> int:
             "output": str(args.out),
         }))
         return 0
-    if len(results) > args.execution_cap:
+    if args.execution_cap and len(results) > args.execution_cap:
         raise ValueError(
             f"{len(results)} triggered cases exceed execution cap {args.execution_cap}")
     provider = provider_from_env()
