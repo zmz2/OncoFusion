@@ -32,6 +32,8 @@ def main() -> int:
     parser.add_argument("--allow-remote", action="store_true")
     parser.add_argument("--execution-cap", type=int, default=0, help="maximum triggered cases; 0 disables the batch cap")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--raw-audit", type=Path,
+                        help="write private exact arbitration requests and responses")
     parser.add_argument("--min-share", type=float, default=.75)
     parser.add_argument("--min-margin", type=float, default=.25)
     parser.add_argument("--workers", type=int, default=1,
@@ -96,6 +98,9 @@ def main() -> int:
     if any(result.model != provider.model for _, _, result, _ in results):
         raise ValueError("saved ballots and current provider use different models")
 
+    if args.raw_audit:
+        from oncofusion.audit import attach_raw_audit
+        attach_raw_audit(provider, args.raw_audit)
     engine = VoteEngine(provider)
     args.out.mkdir(parents=True, exist_ok=True)
     def arbitrate(item):

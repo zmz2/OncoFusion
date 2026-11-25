@@ -25,6 +25,8 @@ def main():
                    help="run each case through every arm together, up to --workers cases in flight")
     p.add_argument("--order-json", type=Path,
                    help="write an append-only provider call log for execution-order audit")
+    p.add_argument("--raw-audit", type=Path,
+                   help="write private exact model requests and responses; never publish this file")
     p.add_argument("--execution-cap", type=int, default=0, help="maximum real case executions; 0 disables the batch cap")
     args = p.parse_args()
     if args.execution_cap < 0:
@@ -55,6 +57,9 @@ def main():
                 }, ensure_ascii=False) + "\n")
             return original_complete(system, payload, max_tokens, temperature, seed)
         provider.complete = logged_complete
+    if args.raw_audit:
+        from oncofusion.audit import attach_raw_audit
+        attach_raw_audit(provider, args.raw_audit)
     report = run_study(plan, cases, gold, Engine(provider), args.out, args.resume, args.retry_failed,
                        workers=args.workers, interleave_treatments=args.interleave_treatments)
     # The order-log wrapper is attached after the scheduled provider is built, so inspect
