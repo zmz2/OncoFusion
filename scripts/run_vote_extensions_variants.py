@@ -227,7 +227,7 @@ def main():
         plan_rows.append({'case_id':cid,'condition':condition,'anchor_id':anchor,'arm':arm,'case':case,'change':change})
     outputs=[]
     def execute(job):
-        cid,condition,anchor,arm,case,change=job
+        cid=job["case_id"]; condition=job["condition"]; anchor=job["anchor_id"]; arm=job["arm"]; case=job["case"]; change=job["change"]
         TLS.context={'kind':'position' if args.mode=='position' else ('mask_fragments' if condition=='R4' else 'docs'),'condition':condition,'case_id':cid,'anchor_id':anchor}
         TLS.last_removed=[]; TLS.observed={}
         result=engine.run(case,treatments[arm])
