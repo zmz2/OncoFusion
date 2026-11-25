@@ -1,7 +1,9 @@
 """Execute a JSON study plan. Run --dry-run first to see the workload."""
 import argparse
 import json
+import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from oncofusion.engine import Engine
 from oncofusion.evaluation import load_evaluation
 from oncofusion.experiments import StudyPlan, run_study, select_cases

@@ -2,6 +2,8 @@ from __future__ import annotations
 import argparse,copy,hashlib,json,re
 from collections import Counter,defaultdict
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from oncofusion.datasets import read_jsonl
 from oncofusion.evidence import fragment_documents,visible_case

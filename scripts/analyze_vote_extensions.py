@@ -2,6 +2,8 @@ from __future__ import annotations
 import argparse, csv, hashlib, itertools, json, math, random
 from collections import Counter, defaultdict
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from statistics import mean
 
 from oncofusion.evidence import fragment_documents, visible_case
@@ -100,9 +102,9 @@ def cluster_bootstrap(case_ids, gold, preds_a, preds_b, groups, repeats=2000, se
         picked=[rng.choice(keys) for _ in keys]
         sample=[cid for g in picked for cid in by_group[g]]
         if not sample: continue
-        da=sum(pred(preds_b.get(cid))==gold[cid] for cid in sample)/len(sample)
-        db=sum(pred(preds_a.get(cid))==gold[cid] for cid in sample)/len(sample)
-        values.append(db-da)
+        baseline=sum(pred(preds_a.get(cid))==gold[cid] for cid in sample)/len(sample)
+        candidate=sum(pred(preds_b.get(cid))==gold[cid] for cid in sample)/len(sample)
+        values.append(candidate-baseline)
     values.sort()
     if not values: return [None,None]
     return [values[int(.025*(len(values)-1))],values[int(.975*(len(values)-1))]]
