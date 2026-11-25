@@ -1,5 +1,5 @@
 from __future__ import annotations
-import argparse,copy,hashlib,json,os,sys,threading,time
+import argparse,copy,hashlib,json,os,shutil,sys,threading,time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime,timezone
 from pathlib import Path
@@ -74,28 +74,47 @@ def expected_system(case,config,role):
  return system
 
 class ReplayProvider:
- def __init__(self,real,target,base_result,base_ballots):
+ def __init__(self,real,target,base_result,base_ballots,prior_audit_rows=()):
   self.inner=real; self.scheduler=getattr(real,'scheduler',None)
   for attr in ('name','model','simulated','input_price','output_price'): setattr(self,attr,getattr(real,attr))
-  self.target=target; self.base_result=base_result; self.base_ballots={b.role:b for b in base_ballots}; self.actual_calls=0; self.actual_in=0; self.actual_out=0; self.actual_attempts=0; self.rows=[]
-  self.expected={}
+  self.target=target; self.base_result=base_result; self.base_ballots={b.role:b for b in base_ballots}; self.actual_calls=0; self.actual_in=0; self.actual_out=0; self.actual_attempts=0; self.resumed_calls=0; self.new_calls=0; self.rows=[]
+  self.prior_audit_rows=list(prior_audit_rows); self.used_prior_rows=set(); self.expected={}
   for event in base_result.trace:
-   if event.kind=='agent_started' and event.role: self.expected[event.role]=event.details.get('payload_sha256')
+   if event.kind=='agent_started' and event.role and event.role not in self.expected: self.expected[event.role]=event.details.get('payload_sha256')
  def complete(self,system,payload,max_tokens,temperature,seed):
-  role=payload['role']; ph=digest(dumps(payload)); expected=self.expected.get(role)
-  if expected and ph!=expected: raise ValueError(f'cached or target payload differs from baseline for {self.base_result.case_id}/{role}')
+  role=payload['role']; identity_payload={k:v for k,v in payload.items() if k!='repair'}
+  base_ph=hashlib.sha256(json.dumps(identity_payload,sort_keys=True,ensure_ascii=False).encode()).hexdigest()
+  request_ph=hashlib.sha256(json.dumps(payload,sort_keys=True,ensure_ascii=False).encode()).hexdigest(); system_hash=digest(system); expected=self.expected.get(role)
+  if expected and base_ph!=expected: raise ValueError(f'cached or target payload differs from baseline for {self.base_result.case_id}/{role}')
   if role!='generalist' and role!=self.target and role not in self.base_ballots: raise ValueError('planned baseline ballot missing')
-  self.rows.append({'role':role,'system_sha256':digest(system),'payload_sha256':ph,'seed':seed,'temperature':temperature,'max_output_tokens':max_tokens,'actual_api_call':role==self.target,'cache_replay':role!=self.target})
+  prior=None
   if role==self.target:
+   for i,row in enumerate(self.prior_audit_rows):
+    req=row.get('request') or {}
+    if i not in self.used_prior_rows and row.get('role')==role and row.get('payload_sha256')==request_ph and row.get('system_sha256')==system_hash and req.get('seed')==seed and req.get('temperature')==temperature and req.get('max_output_tokens')==max_tokens:
+     prior=(i,row); break
+  self.rows.append({'role':role,'system_sha256':system_hash,'payload_sha256':request_ph,'baseline_payload_sha256':base_ph,'seed':seed,'temperature':temperature,'max_output_tokens':max_tokens,'actual_api_call':role==self.target,'cache_replay':role!=self.target,'source':'prior_raw_audit_replay' if prior else ('new_api_call' if role==self.target else 'baseline_ballot_replay')})
+  if role==self.target:
+   if prior:
+    i,row=prior; self.used_prior_rows.add(i); self.resumed_calls+=1; self.actual_calls+=1
+    if row.get('status')!='completed':
+     observed=row.get('observed_usage')
+     reply=ModelReply('',int((observed or {}).get('input_tokens',0)),int((observed or {}).get('output_tokens',0)),int((observed or {}).get('attempts',0)),bool(row.get('estimated_usage',False))) if observed else None
+     if reply:
+      self.actual_in+=reply.input_tokens; self.actual_out+=reply.output_tokens; self.actual_attempts+=reply.attempts
+     raise ProviderError(row.get('error') or 'replayed prior provider failure',observed_reply=reply)
+    reply=ModelReply(row['response'],int(row.get('input_tokens',0)),int(row.get('output_tokens',0)),int(row.get('http_attempts',1)),bool(row.get('estimated_usage',False)))
+    self.actual_in+=reply.input_tokens; self.actual_out+=reply.output_tokens; self.actual_attempts+=reply.attempts
+    return reply
    reply=self.inner.complete(system,payload,max_tokens,temperature,seed)
-   self.actual_calls+=1; self.actual_in+=reply.input_tokens; self.actual_out+=reply.output_tokens; self.actual_attempts+=reply.attempts
+   self.actual_calls+=1; self.new_calls+=1; self.actual_in+=reply.input_tokens; self.actual_out+=reply.output_tokens; self.actual_attempts+=reply.attempts
    return reply
   ballot=self.base_ballots[role]
   if ballot.status=='failed': raise ProviderError('cached baseline member was a failed ballot')
   return ModelReply(ballot_wire(ballot,payload['evidence']),0,0,0,False)
 
 def main():
- ap=argparse.ArgumentParser(); ap.add_argument('--selection',type=Path,required=True); ap.add_argument('--mtb-data',type=Path,required=True); ap.add_argument('--civic-data',type=Path,required=True); ap.add_argument('--mtb-run',type=Path,required=True); ap.add_argument('--civic-run',type=Path,required=True); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--workers',type=int,default=15); ap.add_argument('--raw-audit',type=Path); ap.add_argument('--dry-run',action='store_true'); x=ap.parse_args()
+ ap=argparse.ArgumentParser(); ap.add_argument('--selection',type=Path,required=True); ap.add_argument('--mtb-data',type=Path,required=True); ap.add_argument('--civic-data',type=Path,required=True); ap.add_argument('--mtb-run',type=Path,required=True); ap.add_argument('--civic-run',type=Path,required=True); ap.add_argument('--out',type=Path,required=True); ap.add_argument('--workers',type=int,default=15); ap.add_argument('--raw-audit',type=Path); ap.add_argument('--resume-from',type=Path); ap.add_argument('--dry-run',action='store_true'); x=ap.parse_args()
  selection=json.loads(x.selection.read_text()); targets=selection['e05b_role_case_ids']; specs={}; alljobs=[]; case_lookup={}; base_lookup={}; data_name={}
  for role,items in targets.items():
   base=original_duty(role); changed=altered_duty(role,base)
@@ -112,7 +131,16 @@ def main():
   print(json.dumps({'target_members':len(alljobs),'per_role':{r:len(v) for r,v in targets.items()},'workers':x.workers,'all_targets_in_base_pool':True,'spec_hashes':{r:{'original':s['original_sha256'],'ablated':s['ablated_sha256']} for r,s in specs.items()}},ensure_ascii=False)); return 0
  if x.out.exists(): raise FileExistsError(x.out)
  x.out.mkdir(parents=True)
- specpath=x.out/'prompt_ablation_specs.json'; specpath.write_text(json.dumps({'roles':specs,'selection_seed':0,'sample_selection':'input eligibility only, no model outcomes','cached_members':'same fresh P-K pool; unchanged members replayed from saved parsed ballots'},ensure_ascii=False,indent=2)+'\n')
+ prior_audit_rows=[]
+ if x.resume_from:
+  prior_path=x.resume_from/'raw_audit.jsonl'
+  if prior_path.exists():
+   for line in prior_path.read_text(encoding='utf-8').splitlines():
+    if line.strip(): prior_audit_rows.append(json.loads(line))
+   if x.raw_audit:
+    Path(x.raw_audit).parent.mkdir(parents=True,exist_ok=True)
+    shutil.copyfile(prior_path,x.raw_audit)
+ specpath=x.out/'prompt_ablation_specs.json'; specpath.write_text(json.dumps({'roles':specs,'selection_seed':0,'sample_selection':'input eligibility only, no model outcomes','cached_members':'same fresh P-K pool; unchanged members replayed from saved parsed ballots','resume_from':str(x.resume_from) if x.resume_from else None,'prior_api_request_records_replayed':len(prior_audit_rows)},ensure_ascii=False,indent=2)+'\n')
  provider=provider_from_env()
  if not provider.simulated and (not os.getenv('ONCOFUSION_API_CONCURRENCY') or not 1 <= int(os.environ['ONCOFUSION_API_CONCURRENCY']) <= 20): raise ValueError('prompt ablation requires shared process concurrency 20')
  if x.raw_audit: attach_raw_audit(provider,x.raw_audit)
@@ -126,7 +154,7 @@ def main():
    jobs=[j for j in alljobs if j['role']==role]
    def one(j):
     base=j['base']; cfg=base.config
-    engine=VoteEngine(ReplayProvider(provider,role,base,base.ballots))
+    engine=VoteEngine(ReplayProvider(provider,role,base,base.ballots,prior_audit_rows))
     wrapped=engine.provider
     run=engine.run(j['case'],cfg)
     cached_roles=[b.role for b in run.ballots if b.role!=role]
@@ -139,9 +167,9 @@ def main():
     run.usage=actual
     base_target=next(b for b in base.ballots if b.role==role)
     logical={'calls':base.usage.calls-base_target.usage.calls+wrapped.actual_calls,'input_tokens':base.usage.input_tokens-base_target.usage.input_tokens+wrapped.actual_in,'output_tokens':base.usage.output_tokens-base_target.usage.output_tokens+wrapped.actual_out}
-    raw={'dataset':j['dataset'],'case_id':j['case_id'],'role':role,'result':run.model_dump(mode='json'),'prompt_audit':wrapped.rows,'logical_full_cost':logical,'incremental_actual_cost':{'calls':wrapped.actual_calls,'input_tokens':wrapped.actual_in,'output_tokens':wrapped.actual_out},'cached_roles':cached_roles,'base_result_path':str(j['run']/'p_k_specialists'/'0'/(j['case_id']+'.json')),'base_code_commit':base.config.model_dump(mode='json')}
+    raw={'dataset':j['dataset'],'case_id':j['case_id'],'role':role,'result':run.model_dump(mode='json'),'prompt_audit':wrapped.rows,'logical_full_cost':logical,'incremental_actual_cost':{'calls':wrapped.actual_calls,'input_tokens':wrapped.actual_in,'output_tokens':wrapped.actual_out},'new_api_calls':wrapped.new_calls,'resumed_prior_api_calls':wrapped.resumed_calls,'cached_roles':cached_roles,'base_result_path':str(j['run']/'p_k_specialists'/'0'/(j['case_id']+'.json')),'base_code_commit':base.config.model_dump(mode='json')}
     path=x.out/'results'/j['dataset']/role/'0'/(j['case_id']+'.json'); path.parent.mkdir(parents=True,exist_ok=True); path.write_text(run.model_dump_json(indent=2),encoding='utf-8')
-    result_rows.append({'dataset':j['dataset'],'case_id':j['case_id'],'ablated_role':role,'base_label':base.vote_result.label,'ablated_label':run.vote_result.label,'base_status':base.vote_result.completion_status,'ablated_status':run.vote_result.completion_status,'planned_members':len(base.vote_result.planned_roles),'valid_votes':run.vote_result.valid_votes,'actual_api_calls':wrapped.actual_calls,'actual_input_tokens':wrapped.actual_in,'actual_output_tokens':wrapped.actual_out,'logical_full_calls':logical['calls'],'logical_full_input_tokens':logical['input_tokens'],'logical_full_output_tokens':logical['output_tokens'],'base_member_label':base_target.label,'base_member_status':base_target.status,'ablated_member_label':next(b.label for b in run.ballots if b.role==role),'ablated_member_status':next(b.status for b in run.ballots if b.role==role),'result_path':str(path)})
+    result_rows.append({'dataset':j['dataset'],'case_id':j['case_id'],'ablated_role':role,'base_label':base.vote_result.label,'ablated_label':run.vote_result.label,'base_status':base.vote_result.completion_status,'ablated_status':run.vote_result.completion_status,'planned_members':len(base.vote_result.planned_roles),'valid_votes':run.vote_result.valid_votes,'actual_api_calls':wrapped.actual_calls,'new_api_calls':wrapped.new_calls,'resumed_prior_api_calls':wrapped.resumed_calls,'actual_input_tokens':wrapped.actual_in,'actual_output_tokens':wrapped.actual_out,'logical_full_calls':logical['calls'],'logical_full_input_tokens':logical['input_tokens'],'logical_full_output_tokens':logical['output_tokens'],'base_member_label':base_target.label,'base_member_status':base_target.status,'ablated_member_label':next(b.label for b in run.ballots if b.role==role),'ablated_member_status':next(b.status for b in run.ballots if b.role==role),'result_path':str(path)})
     request_rows.extend({'dataset':j['dataset'],'case_id':j['case_id'],'ablated_role':role,**r} for r in wrapped.rows)
     return raw
    with ThreadPoolExecutor(max_workers=x.workers) as pool:
@@ -157,6 +185,6 @@ def main():
  with (x.out/'prompt_hash_audit.csv').open('w',encoding='utf-8',newline='') as f:
   import csv
   w=csv.DictWriter(f,fieldnames=list(request_rows[0])); w.writeheader(); w.writerows(request_rows)
- (x.out/'summary.json').write_text(json.dumps({'target_members':len(result_rows),'failed_ablated_votes':sum(r['ablated_status']=='failed' for r in result_rows),'actual_calls':sum(r['actual_api_calls'] for r in result_rows),'input_tokens':sum(r['actual_input_tokens'] for r in result_rows),'output_tokens':sum(r['actual_output_tokens'] for r in result_rows),'concurrency':getattr(getattr(provider,'scheduler',None),'snapshot',lambda:None)(),'finished_utc':datetime.now(timezone.utc).isoformat()},ensure_ascii=False,indent=2)+'\n')
+ (x.out/'summary.json').write_text(json.dumps({'target_members':len(result_rows),'failed_ablated_votes':sum(r['ablated_status']=='failed' for r in result_rows),'actual_calls':sum(r['actual_api_calls'] for r in result_rows),'new_api_calls':sum(r.get('new_api_calls',0) for r in result_rows),'resumed_prior_api_calls':sum(r.get('resumed_prior_api_calls',0) for r in result_rows),'input_tokens':sum(r['actual_input_tokens'] for r in result_rows),'output_tokens':sum(r['actual_output_tokens'] for r in result_rows),'concurrency':getattr(getattr(provider,'scheduler',None),'snapshot',lambda:None)(),'finished_utc':datetime.now(timezone.utc).isoformat()},ensure_ascii=False,indent=2)+'\n')
  print(json.dumps({'target_members':len(result_rows),'actual_calls':sum(r['actual_api_calls'] for r in result_rows),'failed_ablated_votes':sum(r['ablated_status']=='failed' for r in result_rows),'out':str(x.out)},ensure_ascii=False)); return 0
 if __name__=='__main__': raise SystemExit(main())
