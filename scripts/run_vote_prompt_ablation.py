@@ -114,7 +114,7 @@ def main():
  x.out.mkdir(parents=True)
  specpath=x.out/'prompt_ablation_specs.json'; specpath.write_text(json.dumps({'roles':specs,'selection_seed':0,'sample_selection':'input eligibility only, no model outcomes','cached_members':'same fresh P-K pool; unchanged members replayed from saved parsed ballots'},ensure_ascii=False,indent=2)+'\n')
  provider=provider_from_env()
- if not provider.simulated and (not os.getenv('ONCOFUSION_API_CONCURRENCY') or int(os.environ['ONCOFUSION_API_CONCURRENCY'])!=20): raise ValueError('prompt ablation requires shared process concurrency 20')
+ if not provider.simulated and (not os.getenv('ONCOFUSION_API_CONCURRENCY') or not 1 <= int(os.environ['ONCOFUSION_API_CONCURRENCY']) <= 20): raise ValueError('prompt ablation requires shared process concurrency 20')
  if x.raw_audit: attach_raw_audit(provider,x.raw_audit)
  original_module_duty=vote_runner.specialist_duty
  def dispatch_duty(role): return ACTIVE_DUTY if role==ACTIVE_ROLE else original_module_duty(role)

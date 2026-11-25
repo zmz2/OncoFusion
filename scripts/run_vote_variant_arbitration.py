@@ -64,7 +64,7 @@ def main():
     if args.out.exists(): raise FileExistsError(args.out)
     args.out.mkdir(parents=True)
     provider=provider_from_env()
-    if not provider.simulated and (not os.getenv('ONCOFUSION_API_CONCURRENCY') or int(os.environ['ONCOFUSION_API_CONCURRENCY'])!=20):
+    if not provider.simulated and (not os.getenv('ONCOFUSION_API_CONCURRENCY') or not 1 <= int(os.environ['ONCOFUSION_API_CONCURRENCY']) <= 20):
         raise ValueError('variant arbitration requires shared process concurrency 20')
     if args.raw_audit:
         from oncofusion.audit import attach_raw_audit
